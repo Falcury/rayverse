@@ -1,0 +1,130 @@
+Rayman 1 level numbers
+
+World 1 jungle
+
+lev 1: pink plant woods 1
+lev 2*: pink plant woods 2 -> magician 4
+lev 3: pink plant woods 3 (betilla punch)
+lev 4*: pink plant woods 4 -> magician 3
+lev 5: anguish lagoon 1
+lev 6: anguish lagoon 2 (bzzit mini-boss)
+lev 7: anguish lagoon 3 (bzzit)
+lev 8: anguish lagoon 4 (betilla hang)
+lev 9: swamps 1; tarayzan autoscroller with magic seed
+lev 10: swamps 2
+lev 11*: swamps 3 -> magician
+lev 12*: moskito 1 -> magician
+lev 13: moskito 2
+lev 14: moskito 3 (spiky fruit autoscroller)
+lev 15: moskito 4
+lev 16: moskito 5 (moskito boss)
+lev 17: moskito 6 (betilla grab)
+lev 18: magician 1 (swinging plums)
+lev 19: magician 2 (flower platforms)
+lev 20: magician 3 (grass platforms) -> from level 4
+lev 21: magician 4 (low flower platforms) -> from level 2
+lev 22: break-out easter egg
+
+World 2 music
+
+lev 1: bongo hills 1
+lev 2: bongo hills 2
+lev 3: bongo hills 3
+lev 4*: bongo hills 4   -> magician 1 (level 17)
+lev 5: bongo hills 5
+lev 6: bongo hills 6
+lev 7: allegro presto 1
+lev 8: allegro presto 2
+lev 9*: allegro presto 3 -> magician 2 (level 18)
+lev 10: allegro presto 4 (Mr. Sax encounter)
+lev 11: allegro presto 5 (betilla copter)
+lev 12: gong heights 1
+lev 13: gong heights 2
+lev 14: mr sax 1
+lev 15: mr sax 2 (Mr. Sax chase)
+lev 16: mr sax 3 (boss fight)
+lev 17: magician 1 (slippery platforms) -> from level 4
+lev 18: magician 2 (rotating platforms) -> from level 9
+
+World 3 mountain
+
+lev 1: twilight gulch 1
+lev 2: twilight gulch 2 (Mr Stone encounter)
+lev 3: hard rocks 1 
+lev 4: hard rocks 2
+lev 5: hard rocks 3
+lev 6: mr stone 1 (supercopter level)
+lev 7: mr stone 2 (chasm supercopter level)
+lev 8: mr stone 3
+lev 9: mr stone 4
+lev 10: mr stone 5 (boss fight)
+lev 11: mr stone 6 (betilla run upgrade)
+lev 12: magician 1 (disappearing clouds)
+lev 13: magician 2 (bouncing clouds)
+
+World 4 image
+
+lev 1: eraser plains 1
+lev 2: eraser plains 2
+lev 3: eraser plains 3
+lev 4: eraser plains 4 (space mama pirate boss fight)
+lev 5: pencil pentathlon 1
+lev 6: pencil pentathlon 2 (supercopter level)
+lev 7: pencil pentathlon 3
+lev 8: space mama 1
+lev 9: space mama 2
+lev 10: space mama 3
+lev 11: space mama 4 (boss fight) -> cutscene: betilla is kidnapped by Mr Dark
+lev 12: magician 1 (parkour)
+lev 13: magician 2 (bouncy erasers)
+
+World 5 cave
+
+lev 1: crystal palace 1
+lev 2: crystal palace 2
+lev 3: eat at joes 1 (introduction/ firefly cutscene)
+lev 4: eat at joes 2 (firefly level)
+lev 5: eat at joes 3
+lev 6: eat at joes 4
+lev 7: eat at joes 5
+lev 8: eat at joes 6 (water buoys level)
+lev 9: mr skops 1
+lev 10: mr skops 2 (boss prelude)
+lev 11: mr skops 3 (boss fight) -> cutscene: betilla captured, rayman urged to hurry
+lev 12: magician (ring parkour)
+
+World 6 cake
+
+lev 1: mr dark 1
+lev 2: mr dark 2
+lev 3: mr dark 3
+lev 4: mr dark 4 (final boss)
+
+
+enum medaillonids {
+	medaillon_0_pink_plant_woods = 0,
+	medaillon_1_anguish_lagoon = 1,
+	medaillon_2_swamps_of_forgetfulness = 2,
+	medaillon_3_moskitos_nest = 3,
+	medaillon_4_bongo_hills = 4,
+	medaillon_5_allegro_presto = 5,
+	medaillon_6_gong_heights = 6,
+	medaillon_7_mr_saxs_hullaballoo = 7,
+	medaillon_8_twilight_gulch = 8,
+	medaillon_9_the_hard_rocks = 9,
+	medaillon_10_mr_stones_peaks = 10,
+	medaillon_11_eraser_plains = 11,
+	medaillon_12_pencil_pentathlon = 12,
+	medaillon_13_space_mamas_crater = 13,
+	medaillon_14_crystal_palace = 14,
+	medaillon_15_eat_at_joes = 15,
+	medaillon_16_mr_skops_stalactites = 16,
+	medaillon_17_mr_darks_dare = 17,
+	medaillon_18_save_jungle = 18,
+	medaillon_19_save_music1 = 19,
+	medaillon_20_save_music2 = 20,
+	medaillon_21_save_mountain = 21,
+	medaillon_22_save_picture = 22,
+	medaillon_23_save_cave = 23,
+}
+

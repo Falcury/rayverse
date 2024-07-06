@@ -1,0 +1,30 @@
+Note: the CD is a mixed-mode disc; the first track is a data track that has the game's data files.
+Therefore, the numbering of the audio tracks starts at 2, instead of 1.
+
+(The track numbers referenced in RAYMAN.EXE start numbering from 2 onwards.)
+
+2. Boss music: Mr. Dark fight - "Mr. Dark's Dare"
+3. Boss music: Mr. Skops fight - "Venomous Mr. Skops"
+4. Boss music: Space Mama fight - "Space Mama's Overture"
+5. Boss music: Moskito fight - "Moskito's Rage"
+6. Boss music: Mr. Stone fight - "Mr. Stone ~King of the Mountain~"
+7. Boss music: Mr. Sax fight - "Duet with Mr. Sax"
+8. Cave level music - "Lurking in the Darkness", "Sounds in the Shadows", "Entering the Cavern", "The Stalactites' Teardrops"
+9. Betilla music - "Betilla the Fairy"
+10. Game over music - "Once More"
+11. Cake level music - "Creepy Clowns", "Candy Party", "Cakewalk"
+12. Intro music - "Ubisoft Presents"
+13. Image level music - "Deep Concentration", "Painted Pentathlon", "Space Mama's Finale"
+14. Jungle level music - "First Steps", "Animal Life", "Deep Forest", "Flight of the Mosquito", "Bzzit Attacks"
+15. Bonus music - "The Magician's Challenge"
+16. Mountain level music - "Call of the Mountain", "Peaceful Peaks", "Night on Blue Mountain"
+17. Music level music - "Harmony", "The Band Awakens", "Blazing Brass", "Meditating Monks"
+18. Credits music - "Party at Joe's"
+19. Menu music - "World Map"
+20. Intro movie audio - English
+21. Intro movie audio - French
+22. Intro movie audio - German
+23. Outro movie audio - English
+24. Outro movie audio - French
+25. Outro movie audio - French (2)??
+26. Outro movie audio - German
