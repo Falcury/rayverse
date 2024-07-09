@@ -8,19 +8,47 @@ void win32_print_current_directory() {
 */
 
 image_t create_palettized_image(i32 width, i32 height) {
-	image_t result;
+	image_t result = {};
 	memset(&result, 0, sizeof(result));
 	result.width = width;
 	result.height = height;
 	result.memory_size = width * height;
 	result.memory = (u8*) calloc(1, result.memory_size);
+	result.pal = (rgb_palette_t*) calloc(1, sizeof(rgb_palette_t));
+	result.pal_needs_free = true;
 	return result;
+}
+
+void destroy_image(image_t* image) {
+	if (image->memory) {
+		free(image->memory);
+		image->memory = NULL;
+	}
+	if (image->pal_needs_free && image->pal) {
+		free(image->pal);
+		image->pal = NULL;
+	}
+}
+
+void copy_full_image_contents(image_t* dest, image_t* source) {
+	ASSERT(dest->width == source->width && dest->height == source->height && dest->memory_size == source->memory_size);
+	memcpy(dest->memory, source->memory, source->memory_size);
+	*dest->pal = *source->pal;
+}
+
+void copy_full_image_to_draw_buffer(image_t* image) {
+	copy_full_image_contents(&global_game->draw_buffer, image);
 }
 
 image_t ubisoft_logo_image;
 
+void game_init_sound(game_sound_buffer_t* sound, i32 samples_per_second) {
+	// Prepare a sound buffer for the game code to write into.
+	sound->samples_per_second = samples_per_second;
+	sound->samples = (i16*)calloc(1, sound->samples_per_second * 2 * sizeof(i16));
+}
+
 void game_init(game_state_t* game) {
-	
 	//load_level("data\\PCMAP\\JUNGLE\\RAY1.LEV");
 	//load_world("data\\PCMAP\\RAY1.WLD");
 	load_language_txt("data\\RAY.LNG");
@@ -31,9 +59,10 @@ void game_init(game_state_t* game) {
 	ogg_cd_track = open_cd_vorbis(12);
 	is_ogg_playing = true;
 
-	game->offscreen_buffer = create_palettized_image(320, 200);
+	game->draw_buffer = create_palettized_image(320, 200);
 
 	game->initialized = true;
+	global_game = game;
 
 }
 
@@ -44,7 +73,23 @@ void game_update_and_render(app_state_t* app_state) {
 	rgb_t clear_color = { 0, 0, 0 };
 	render_clear(app_state->active_surface, clear_color);
 
-	render_weird_gradient(app_state->active_surface, 0, 0);
-	surface_blit_palettized_image(&ubisoft_logo_image, NULL, app_state->active_surface, NULL, ubisoft_logo_image.pal);
+//	render_weird_gradient(app_state->active_surface, 0, 0);
+	copy_full_image_contents(&game->draw_buffer, &ubisoft_logo_image);
+	surface_blit_palettized_image(&game->draw_buffer, NULL, app_state->active_surface, NULL);
 
+}
+
+void advance_frame() {
+	app_state_t* app_state = &global_app_state;
+	game_state_t* game = &app_state->game;
+	rgb_t clear_color = { 0, 0, 0 };
+	render_clear(app_state->active_surface, clear_color);
+	surface_blit_palettized_image(&game->draw_buffer, NULL, app_state->active_surface, NULL);
+	win32_advance_frame(app_state);
+}
+
+void wait_frames(i32 n_frames) {
+	for (i32 i = 0; i < n_frames; ++i) {
+		advance_frame();
+	}
 }

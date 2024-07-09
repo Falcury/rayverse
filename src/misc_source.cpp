@@ -1,49 +1,4 @@
-// 3CA64
-void sub_3CA64() {
 
-/*
-	0003CA64                 push    edx
-	0003CA65                 xor     edx, edx
-	0003CA67                 mov     dl, ds:current_pal_id
-	0003CA6D                 lea     eax, ds:0[edx*4]
-	0003CA74                 sub     eax, edx
-	0003CA76                 shl     eax, 8
-	0003CA79                 mov     edx, offset current_rvb
-	0003CA7E                 add     eax, offset rvb
-	0003CA83                 call    do_fade_step?
-	                                 0003CA88                 pop     edx
-	0003CA89                 retn
-*/
-
-}
-
-//3CA8C
-void init_fade_in() {
-	// stub
-
-/*	0003CA8C init_fade_in    proc near               ; CODE XREF: do_perfect_bonus+1Dp
-	0003CA8C                                         ; game_over+49p ...
-	0003CA8C                 push    edx
-	0003CA8D                 xor     edx, edx
-	0003CA8F                 mov     dl, ds:current_pal_id
-	0003CA95                 lea     eax, ds:0[edx*4]
-	0003CA9C                 sub     eax, edx
-	0003CA9E                 mov     edx, offset rvb
-	0003CAA3                 shl     eax, 8
-	0003CAA6                 add     edx, eax
-	0003CAA8                 mov     eax, 2
-	0003CAAD                 call    start_fade_in
-	0003CAB2                 pop     edx
-	0003CAB3                 retn
-	0003CAB3 init_fade_in    endp*/
-
-}
-
-//3C54C
-void start_fade_in(u32 par_0) {
-	// apply palette par_0?
-	// It seems fading is done through shifting the palette?
-}
 
 
 
@@ -81,11 +36,12 @@ image_t load_vignet_pcx(u32 resource_id) {
 		image.width = width;
 		image.height = height;
 
-		if (header->bits_per_bitplane != 8 || header->n_color_planes != 1 || header->palette_mode != 1) {
+		if (header->bits_per_bitplane != 8 || header->n_color_planes != 1 /*|| header->palette_mode != 1*/) {
 			// unsupported file structure
 			fatal_error();
 		} else {
 			image.memory = (u8*)malloc(width * height);
+			image.memory_size = width * height;
 			// run-length decoding
 			u8* pos = pcx_buf + 128;
 			u8* end = pcx_buf + info->size;
@@ -163,7 +119,4 @@ void load_plan2_in_vignet(void* buffer, u32 resource_id)  {
 	image_t image = load_vignet_pcx(resource_id);
 }
 
-//71A70
-image_t load_ubisoft_logo() {
-	return load_vignet_pcx(29);
-}
+

@@ -521,8 +521,131 @@ void enter_scene(void* scene_func) {
 	//stub
 }
 
-void do_ubisoft_logo(u32 var_1, u16 var_2, u16 var_3) {
-	//start_fade_in();
-	//synchro();
+rgb_palette_t current_source_palette;
+u8 fade_mode; //CFA87 (?)
+u16 fade_temp[256*3];
+u16 fade_speed; //CF7EA
 
+
+void do_fade_step(rgb_palette_t* source_pal, rgb_palette_t* dest_pal) {
+	if (nb_fade > 0) {
+		--nb_fade;
+		if (fade_mode == 1) {
+			for (i32 i = 0; i < 256*3; ++i) {
+				u8 c1 = ((u8*)(source_pal->colors))[i];
+				u32 temp = c1 << fade_speed;
+				fade_temp[i] += temp;
+			}
+		} else if (fade_mode == 2) {
+			for (i32 i = 0; i < 256*3; ++i) {
+				if (fade_temp[i] > 0) {
+					u8 c1 = ((u8*)(source_pal->colors))[i];
+					u32 temp = c1 << fade_speed;
+					fade_temp[i] -= temp;
+				}
+			}
+		}
+		for (i32 i = 0; i < 256*3; ++i) {
+			u16 temp = fade_temp[i] >> 6;
+			((u8*)(dest_pal->colors))[i] = temp;
+		}
+		// (apply palette)
+		if (nb_fade == 0) {
+			fade_mode |= 0x40;
+		}
+	}
+}
+
+//3C54C
+void start_fade_in(u32 speed) {
+	// apply palette par_0?
+	nb_fade = 1 << (6 - speed);
+	fade_mode = 1; // fade in
+	for (i32 i = 0; i < 256*3; ++i) {
+		fade_temp[i] = ((u8*)(global_game->draw_buffer.pal->colors))[i];
+	}
+	memset(global_game->draw_buffer.pal, 0, sizeof(rgb_palette_t));
+	fade_speed = speed;
+	// apply palette
+}
+
+void start_fade_out(u32 speed) {
+	nb_fade = 1 << (6 - speed);
+	fade_mode = 2; // fade out
+	fade_speed = speed;
+}
+
+void fade_out(u32 speed, rgb_palette_t* palette) {
+	start_fade_out(speed);
+	u16 steps = nb_fade;
+	for (i32 i = 0; i < steps; ++i) {
+		advance_frame();
+		do_fade_step(palette, global_game->draw_buffer.pal);
+	}
+
+}
+
+
+void ubisoft_logo_loop(i32 par_0, i32 par_1, i32 par_2) {
+	start_fade_in(2);
+	wait_frames(5);
+	for (i32 i = 0; i < par_0; ++i) {
+		do_fade_step(&current_source_palette, global_game->draw_buffer.pal);
+		advance_frame();
+	}
+	while (is_ogg_playing) {
+		advance_frame();
+	}
+	fade_out(2, &current_source_palette);
+	wait_frames(1);
+}
+
+void start_basic_fade_in() {
+	start_fade_in(2);
+}
+
+//71B34
+void do_ubisoft_intro() {
+	image_t ubisoft_logo = load_vignet_pcx(29);
+	copy_full_image_to_draw_buffer(&ubisoft_logo);
+	current_source_palette = *ubisoft_logo.pal;
+	destroy_image(&ubisoft_logo);
+	start_basic_fade_in();
+	play_cd_track(12); // CD track 12: Intro music - "Ubisoft Presents"
+	ubisoft_logo_loop(60, -1, 8);
+
+
+}
+
+
+void do_big_ray_animation() {
+	image_t background = load_vignet_pcx(12);
+	copy_full_image_to_draw_buffer(&background);
+	current_source_palette = *background.pal;
+	destroy_image(&background);
+	start_basic_fade_in();
+	play_cd_track(19); // Menu music - "World Map"
+
+
+	u16 steps = nb_fade;
+	for (i32 i = 0; i < steps; ++i) {
+		do_fade_step(&current_source_palette, global_game->draw_buffer.pal);
+		advance_frame();
+	}
+	while (is_ogg_playing) {
+		advance_frame();
+	}
+	fade_out(2, &current_source_palette);
+	wait_frames(600);
+
+
+}
+
+void do_big_ray_intro() {
+	do_big_ray_animation();
+}
+
+void rayman_main() {
+	do_ubisoft_intro();
+	do_big_ray_animation();
 }

@@ -25,11 +25,12 @@ void render_clear(surface_t* surface, rgb_t color) {
 	}
 }
 
-void surface_blit_palettized_image(image_t* source, rect_t* source_rect, surface_t* target, rect_t* target_rect, rgb_palette_t* palette) {
-	if (!source || !target || !palette) {
+void surface_blit_palettized_image(image_t* source, rect_t* source_rect, surface_t* target, rect_t* target_rect) {
+	if (!source || !target) {
 		// error
 		return;
 	}
+	rgb_palette_t* palette = source->pal;
 	if (!source_rect) {
 		source_rect = (rect_t*) alloca(sizeof(rect_t));
 		source_rect->x = 0;

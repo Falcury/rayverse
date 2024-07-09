@@ -1,11 +1,14 @@
 
 // Note: MSVC 6 doesn't support __VA_ARGS__
 
+app_state_t global_app_state;
+game_state_t* global_game;
 
 // engine.cpp
 
 ogg_t ogg_cd_track;
 bool is_ogg_playing;
+bool is_ogg_finished;
 
 // 0xCEF47
 u8 plan0_num_pcx[10];
@@ -23,10 +26,59 @@ u32 background_DES;
 u16 bosses_beaten;
 // 0xCF886
 u16 rayman_obj_id_; //?
-// 0xCF88C
-i16 curr_world;
-// 0xCF892
-u16 new_world_and_rayman_obj_id;
+i16 curr_world; // 0xCF88C
+u16 pierre_acorde_obj_id; // CF88E
+u16 xmapmap; //CF890
+u16 new_world; // 0xCF892
+u16 rayman_obj_id; //CF894
+u16 mus_obd_id; //CF896
+i16 helico_time; //CF898
+u16 word_CF89A; //CF89A
+u16 word_CF89C; //CF89C
+i16 xmap; //CF89E
+i16 departlevel; //CF8A0
+i16 ray_y_main_pos_init; //CF8A2
+i16 jump_time; //CF8A4
+i16 ymap; //CF8A6
+i16 special_ray_mov_win_x_left; //CF8A8
+i16 ray_x_main_pos_init; //CF8AA
+i16 ymap_old; //CF8AC
+i16 special_ray_mov_win_x_right; //CF8AE
+i16 xmap_old; //CF8B0
+i16 h_scroll_speed; //CF8B2
+i16 v_scroll_speed; //CF8B4
+i16 saved_xmap; //CF8B6
+i16 saved_ymap; //CF8B8
+i16 scroll_y; //CF8BA
+u16 black_ray_obj_id; //CF8BC
+u16 word_CF8BE; //CF8BE
+u16 final_pass_n; //CF8C0
+u16 final_pass_a; //CF8C2
+u16 ray_old_etat; //CF8C4
+u16 final_pass_f; //CF8C6
+u16 moskitomama_left_obj_id; //CF8C8
+u16 final_pass_x; //CF8CA
+u16 rideau_obj_id; //CF8CC
+u16 corde_dark_obj_id; //CF8CE
+u16 stosko_obj_id; //CF8D0
+i16 scroll_x; //CF8D2
+u16 ray_old_subetat; //CF8D4
+u16 moskitosaxo_obj_id; //CF8D6
+u16 moskitomama_right_obj_id; //CF8D8
+u16 nb_fade; //CF8DA
+u16 skops_last_action; //CF8DC
+u16 skops_beam_on; //CF8DE
+i16 skops_final_y; //CF8E0
+i16 skops_final_x; //CF8E2
+u16 word_CF8E4; //CF8E4
+i16 skops_beam_speed; //CF8E6
+i16 skops_beam_ds; //CF8E8
+i16 skops_beam_dy; //CF8EA
+u16 rubis_list_calculated; //CF8EC
+i16 skops_beam_x; //CF8EE
+i16 skops_beam_y; //CF8F0
+u16 word_CF8F2; //CF8F2
+u16 word_CF8F4; //CF8F4
 // 0xCF894
 u16 some_obj_id_related_to_sound_; //?
 // 0xCE638

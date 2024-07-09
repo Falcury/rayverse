@@ -39,20 +39,20 @@ struct rect_t {
 	i32 h;
 };
 
-struct game_state_t {
-	bool initialized;
-	image_t offscreen_buffer;
-};
-
-
-// win32_sound.cpp
-
-
 struct game_sound_buffer_t {
 	i32 samples_per_second;
 	u32 sample_count;
 	i16* samples;
 };
+
+struct game_state_t {
+	bool initialized;
+	image_t draw_buffer;
+	game_sound_buffer_t sound_buffer;
+};
+
+
+// win32_sound.cpp
 
 struct win32_sound_output_t {
 	u32 samples_per_second;
@@ -68,7 +68,7 @@ struct win32_sound_output_t {
 struct ogg_t {
 	stb_vorbis* decoder;
 	mem_t* file;
-	i32 sample_count;
+	u32 sample_count;
 };
 
 
@@ -78,6 +78,7 @@ struct win32_state_t {
 	HWND window;
 	HINSTANCE instance;
 	HCURSOR cursor;
+	win32_sound_output_t sound_output;
 };
 
 struct opengl_state_t {
@@ -103,11 +104,14 @@ struct app_state_t {
 	surface_t offscreen_surface;
 	surface_t game_surface;
 	surface_t* active_surface;
+	i32 client_width;
+	i32 client_height;
 	bool running;
 	bool vsync_enabled;
 	float target_game_hz;
 	float target_seconds_per_frame;
 	game_state_t game;
+	i64 flip_clock;
 };
 
 

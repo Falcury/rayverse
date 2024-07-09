@@ -73,6 +73,25 @@ ogg_t open_cd_vorbis(i32 track_number) {
 	return result;
 }
 
+void stop_ogg(ogg_t* ogg) {
+	if (ogg->decoder) {
+		stb_vorbis_close(ogg->decoder);
+	}
+	if (ogg->file) {
+		free(ogg->file);
+	}
+}
+
+void play_cd_track(i32 track_number) {
+	stop_ogg(&ogg_cd_track);
+	ogg_cd_track = open_cd_vorbis(track_number);
+	is_ogg_playing = true;
+}
+
+void stop_cd_music() {
+	is_ogg_playing = false;
+}
+
 //float volume = 0.5f;
 
 void play_ogg(game_sound_buffer_t* sound_buffer, ogg_t* ogg) {
@@ -83,11 +102,45 @@ void play_ogg(game_sound_buffer_t* sound_buffer, ogg_t* ogg) {
 		i32 bytes_filled = samples_filled * bytes_per_sample;
 		i32 remaining_bytes = (samples_requested - samples_filled) * bytes_per_sample;
 		memset(sound_buffer->samples + bytes_filled, 0, remaining_bytes);
+		if (samples_filled == 0) {
+			is_ogg_finished = true;
+			is_ogg_playing = false;
+		}
 	}
 }
 
 float t_pitch_sine;
 float t_sine;
+
+void debug_produce_test_sound(game_sound_buffer_t* sound_buffer) {
+	i16 tone_volume = 3000;
+	float tone_hz = 400.0f;
+	//	real32 wave_period = sound_buffer.samples_per_second/tone_hz;
+	float pitch_hz = 2.0f;
+	float pitch_period = sound_buffer->samples_per_second / pitch_hz;
+
+
+	i16* sample_out = sound_buffer->samples;
+
+	for (u32 sample_index = 0; sample_index < sound_buffer->sample_count; ++sample_index) {
+#if 1
+		t_pitch_sine += two_pi32 / pitch_period;
+		if (t_pitch_sine > two_pi32) t_pitch_sine -= two_pi32;
+		float pitch_sine_value = sinf(t_pitch_sine);
+		float curr_hz = tone_hz + 100.0f * pitch_sine_value;
+		float curr_wave_period = sound_buffer->samples_per_second / curr_hz;
+		float t = t_sine += two_pi32 / curr_wave_period;
+		if (t_sine > two_pi32) t_sine -= two_pi32;
+		float sine_value = sinf(t);
+		i16 sample_value = (i16) (sine_value * tone_volume);
+#else
+		i16 sample_value = 0;
+#endif
+
+		*sample_out++ = sample_value;//left
+		*sample_out++ = sample_value;//right
+	}
+}
 
 void game_get_sound_samples(game_sound_buffer_t* sound_buffer) {
 	if (is_ogg_playing) {
@@ -95,35 +148,8 @@ void game_get_sound_samples(game_sound_buffer_t* sound_buffer) {
 			play_ogg(sound_buffer, &ogg_cd_track);
 		}
 	} else {
-#if 1
-		i16 tone_volume = 3000;
-		float tone_hz = 400.0f;
-		//	real32 wave_period = sound_buffer.samples_per_second/tone_hz;
-		float pitch_hz = 2.0f;
-		float pitch_period = sound_buffer->samples_per_second / pitch_hz;
-
-
-		i16* sample_out = sound_buffer->samples;
-
 		for (u32 sample_index = 0; sample_index < sound_buffer->sample_count; ++sample_index) {
-#if 1
-			t_pitch_sine += two_pi32 / pitch_period;
-			if (t_pitch_sine > two_pi32) t_pitch_sine -= two_pi32;
-			float pitch_sine_value = sinf(t_pitch_sine);
-			float curr_hz = tone_hz + 100.0f * pitch_sine_value;
-			float curr_wave_period = sound_buffer->samples_per_second / curr_hz;
-			float t = t_sine += two_pi32 / curr_wave_period;
-			if (t_sine > two_pi32) t_sine -= two_pi32;
-			float sine_value = sinf(t);
-			i16 sample_value = (i16) (sine_value * tone_volume);
-#else
 			i16 sample_value = 0;
-#endif
-
-			*sample_out++ = sample_value;//left
-			*sample_out++ = sample_value;//right
 		}
-#endif
 	}
-
 }

@@ -45,8 +45,7 @@
 
 
 
-bool global_running;
-app_state_t global_app_state;
+
 i64 performance_counter_frequency;
 i32 monitor_refresh_hz;
 
@@ -58,6 +57,31 @@ i64 get_clock() {
 
 float get_seconds_elapsed(i64 start, i64 end) {
 	return (float)(end - start) / (float)performance_counter_frequency;
+}
+
+WINDOWPLACEMENT window_position = { sizeof(window_position) };
+void toggle_fullscreen(HWND window) {
+	LONG style = GetWindowLong(window, GWL_STYLE);
+	if (style & WS_OVERLAPPEDWINDOW) {
+		MONITORINFO monitor_info = {};
+		monitor_info.cbSize = sizeof(monitor_info);
+		if (GetWindowPlacement(window, &window_position) &&
+		    GetMonitorInfo(MonitorFromWindow(window, MONITOR_DEFAULTTOPRIMARY), &monitor_info))
+		{
+			SetWindowLong(window, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW);
+			// See: https://stackoverflow.com/questions/23145217/flickering-when-borderless-window-and-desktop-dimensions-are-the-same
+			// Why????
+			SetWindowPos(window, HWND_TOP, monitor_info.rcMonitor.left, monitor_info.rcMonitor.top,
+			             monitor_info.rcMonitor.right - monitor_info.rcMonitor.left + 1,
+			             monitor_info.rcMonitor.bottom - monitor_info.rcMonitor.top,
+			             SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+		}
+	} else {
+		SetWindowLong(window, GWL_STYLE, style | WS_OVERLAPPEDWINDOW);
+		SetWindowPlacement(window, &window_position);
+		SetWindowPos(window, 0, 0, 0, 0, 0,
+		             SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+	}
 }
 
 
@@ -77,11 +101,11 @@ LRESULT CALLBACK main_window_callback(HWND window, UINT message, WPARAM wparam, 
 		result = DefWindowProc(window, message, wparam, lparam);
 			 } break;
 	case WM_CLOSE: {
-		global_running = false;
-				   } break;
+		global_app_state.running = false;
+	} break;
 	case WM_DESTROY: {
-		global_running = false;
-					 } break;
+		global_app_state.running = false;
+	} break;
 	case WM_SETCURSOR: {
 		u16 hit_test_result = LOWORD(lparam);
 //		printf("hit_test_result = %d\n", hit_test_result);
@@ -90,12 +114,12 @@ LRESULT CALLBACK main_window_callback(HWND window, UINT message, WPARAM wparam, 
 		} else {
 			SetCursor(global_app_state.win32.cursor);
 		}
-					   } break;
+	} break;
 	case WM_SIZE: {
 		int client_width, client_height;
 		win32_get_window_dimension(window, &client_width, &client_height);
 		surface_resize(&global_app_state.offscreen_surface, client_width, client_height);
-				  } break;
+	} break;
 	//case WM_ERASEBKGND: {
 	//	result = TRUE; // prevent flickering
 //						} break;
@@ -110,7 +134,7 @@ LRESULT CALLBACK main_window_callback(HWND window, UINT message, WPARAM wparam, 
 
 void process_message(HWND window, MSG message) {
 	if (message.message == WM_QUIT) {
-		global_running = false;
+		global_app_state.running = false;
 	}
 
 	switch(message.message) {
@@ -121,11 +145,53 @@ void process_message(HWND window, MSG message) {
 		} break;
 		case WM_ERASEBKGND:
 		case WM_MOUSEMOVE: break;
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+		case WM_SYSKEYDOWN:
+		case WM_SYSKEYUP: {
+			TranslateMessage(&message);
+			DispatchMessageA(&message);
+
+			//https://stackoverflow.com/questions/8737566/rolling-ones-own-keyboard-input-system-in-c-c
+			u32 vk_code = (u32) message.wParam;
+			u32 lparam = message.lParam;
+			u32 scancode = ((lparam >> 16) & 0x7f) | ((lparam & (1 << 24)) != 0 ? 0x80 : 0);
+//			u32 hid_code = keycode_windows_to_hid(scancode);
+//			if (vk_code == VK_SPACE) {
+//				hid_code = KEY_Space; // NOTE: for some reason, Space is missing from the table in keycode_windows_to_hid()
+//			}
+			bool32 alt_down = message.lParam & (1 << 29);
+			bool32 is_down = ((message.lParam & (1 << 31)) == 0);
+			bool32 was_down = ((message.lParam & (1 << 30)) != 0);
+			int repeat_count = message.lParam & 0xFFFF;
+			i16 ctrl_state = GetKeyState(VK_CONTROL);
+			bool32 ctrl_down = (ctrl_state < 0); // 'down' determined by high order bit == sign bit
+			if (was_down && is_down) break; // uninteresting: repeated key
+
+			switch (vk_code) {
+				default: break;
+				case VK_F4: {
+					if (is_down && alt_down) {
+						global_app_state.running = false;
+					}
+				} break;
+				case VK_F11: {
+					if (is_down && message.hwnd && !alt_down) {
+						toggle_fullscreen(message.hwnd);
+					}
+				} break;
+				case VK_RETURN: {
+					if (is_down && message.hwnd && alt_down) {
+						toggle_fullscreen(message.hwnd);
+					}
+				} break;
+			}
+		}
 	}
 }
 
 bool process_input(HWND window) {
-	bool allow_idling = true;
+	bool allow_idling = false;
 
 	HWND foreground_window = GetForegroundWindow();
 	if (foreground_window == window) {
@@ -229,19 +295,16 @@ int main(int argc, char* argv[])
 
 
 	// Initialize DirectSound.
-	win32_sound_output_t sound = {0};
-	sound.samples_per_second = 44100;
-	sound.bytes_per_sample = sizeof(i16) * 2;
-	sound.secondary_buffer_size = sound.samples_per_second * sound.bytes_per_sample; // 1 second
-	sound.safety_bytes = (u32)((float)(sound.samples_per_second * sound.bytes_per_sample) * app_state->target_seconds_per_frame * 0.3333f);
-	win32_init_dsound(app_state->win32.window, &sound);
-	win32_clear_sound_buffer(&sound);
-	sound.secondary_buffer->Play(0, 0, DSBPLAY_LOOPING);
+	win32_sound_output_t* sound_output = &app_state->win32.sound_output;
+	sound_output->samples_per_second = 44100;
+	sound_output->bytes_per_sample = sizeof(i16) * 2;
+	sound_output->secondary_buffer_size = sound_output->samples_per_second * sound_output->bytes_per_sample; // 1 second
+	sound_output->safety_bytes = (u32)((float)(sound_output->samples_per_second * sound_output->bytes_per_sample) * app_state->target_seconds_per_frame * 0.3333f);
+	win32_init_dsound(app_state->win32.window, sound_output);
+	win32_clear_sound_buffer(sound_output);
+	sound_output->secondary_buffer->Play(0, 0, DSBPLAY_LOOPING);
 
-	// Prepare a sound buffer for the game code to write into.
-	game_sound_buffer_t game_sound_buffer = {0};
-	game_sound_buffer.samples_per_second = sound.samples_per_second;
-	game_sound_buffer.samples = (i16*)calloc(1, game_sound_buffer.samples_per_second * 2 * sizeof(i16));
+	game_init_sound(&app_state->game.sound_buffer, (i32)sound_output->samples_per_second);
 
 
 	if (!app_state->game.initialized) {
@@ -251,31 +314,45 @@ int main(int argc, char* argv[])
 	ShowWindow(app_state->win32.window, SW_SHOW);
 	SwapBuffers(wglGetCurrentDC()); // the very first frame, this may stall for a bit, so do this before entering the loop
 
-	i64 flip_clock = get_clock();
+	app_state->flip_clock = get_clock();
 
-	global_running = true;
-	while(global_running) {
-		process_input(app_state->win32.window);
-
-		glDrawBuffer(GL_BACK);
-		glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	
-
-		i32 client_width, client_height;
-		win32_get_window_dimension(app_state->win32.window, &client_width, &client_height);
+	global_app_state.running = true;
+	rayman_main();
+	while(app_state->running) {
+		win32_prepare_frame(app_state);
 		game_update_and_render(app_state);
-		opengl_upload_surface(app_state, app_state->active_surface, client_width, client_height);
-		win32_produce_sound_for_frame(app_state, &sound, &game_sound_buffer, flip_clock);
-
-		SwapBuffers(wglGetCurrentDC());
-		flip_clock = get_clock();
-
-		//Sleep(1000);
+		win32_end_frame(app_state);
 	}
 
 	printf("Hello World!\n");
 	return 0;
+}
+
+void win32_prepare_frame(app_state_t* app_state) {
+	process_input(app_state->win32.window);
+
+	glDrawBuffer(GL_BACK);
+	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	win32_get_window_dimension(app_state->win32.window, &app_state->client_width, &app_state->client_height);
+}
+
+void win32_end_frame(app_state_t* app_state) {
+	opengl_upload_surface(app_state, app_state->active_surface, app_state->client_width, app_state->client_height);
+	win32_produce_sound_for_frame(app_state, &app_state->win32.sound_output, &app_state->game.sound_buffer, app_state->flip_clock);
+
+	SwapBuffers(wglGetCurrentDC());
+	app_state->flip_clock = get_clock();
+
+	//Sleep(1000);
+}
+
+void win32_advance_frame(app_state_t* app_state) {
+	win32_prepare_frame(app_state);
+	win32_end_frame(app_state);
+	if (!app_state->running) {
+		exit(0);
+	}
 }
 
