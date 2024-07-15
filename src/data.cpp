@@ -209,6 +209,9 @@ u8 skops_nb_lave; //CFA96
 u8 nb_trames_ecrase; //CFA97
 u8 byte_CFA98; //CFA98
 u8 life_becoz_wiz; //CFA99
+u8 byte_CFA9A; //CFA9A
+u8 byte_CFA9B; //CFA9B
+u8 num_eta_blocks; //CFA9C
 
 // 0xE5490
 i16 voice_obj_ids[20];
@@ -316,7 +319,7 @@ u8 snd8b_headers[0x800];
 u8* snd8b_data;
 
 // vignet
-vignetinfo_t vignetinfos[75] = {
+archive_header_t vignetinfos[75] = {
 		{0, 42275, 5, 253}, // 0
 		{42275, 36462, 145, 81}, // 1
 		{78737, 36152, 208, 209}, // 2

@@ -241,7 +241,7 @@ bool test_sav_encode_decode(mem_t* encoded) {
 // Partly based on https://github.com/RayCarrot/RayCarrot.Rayman/blob/3bf249b64da4254c03fa49a15bb9d5691ddfce66/RayCarrot.Rayman/Encoder/Rayman12PCSaveDataEncoder.cs
 void load_sav(u8 which_save) {
 	char filename[512];
-	snprintf(filename, 512, "data\\RAYMAN%d.SAV", which_save);
+	snprintf(filename, 512, "RAYMAN%d.SAV", which_save);
 	mem_t* encoded = read_entire_file(filename);
 	if (encoded) {
 #ifdef NEED_SAV_ENCODE_DECODE_TEST
@@ -307,7 +307,7 @@ void write_save_file(u8 which_save) {
 	
 	
 	char filename[512];
-	_snprintf(filename, 512, "data\\RAYMAN%d_.SAV", which_save);
+	_snprintf(filename, 512, "RAYMAN%d_.SAV", which_save);
 	// stub: writing out to a temporary file for encryption
 
 	FILE* fp = fopen(filename, "wb");

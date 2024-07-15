@@ -155,7 +155,7 @@ void load_world(const char* filename) {
 				mem_read(&anim_desc, mem, sizeof(anim_desc));
 
 				// Need to seek to the specified offset later from the current position in the stream.
-				u16 frame_table_cursor = mem->cursor + anim_desc.frame_table_offset;
+				u16 frame_table_cursor = mem->cursor + anim_desc.layers_per_frame;
 
 				i32 layer_count = anim_desc.layers_per_frame * anim_desc.frame_count;
 				for (i32 layer_index = 0; layer_index < layer_count; ++layer_index) {
@@ -272,7 +272,7 @@ u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte) {
 
 void load_snd8b(u8** sound_buffer, i32 sound_set) {
 	// Load sound header
-	mem_t* mem = read_entire_file("data\\SNDH8B.DAT");
+	mem_t* mem = read_entire_file("SNDH8B.DAT");
 	if (!mem) fatal_error();
 
 	snd8b_file_info_t* header_info = &sndh8b_info[sound_set];
@@ -295,7 +295,7 @@ void load_snd8b(u8** sound_buffer, i32 sound_set) {
 	*sound_buffer = (u8*)temp;
 	
 
-	FILE* fp = fopen("data\\SNDD8B.DAT", "rb");
+	FILE* fp = open_data_file("SNDD8B.DAT");
 	if (!fp) fatal_error();
 
 	fseek(fp, data_info->offset, SEEK_SET);
@@ -617,8 +617,9 @@ void do_ubisoft_intro() {
 
 }
 
-
+//35CC4
 void do_big_ray_animation() {
+	load_big_ray();
 	image_t background = load_vignet_pcx(12);
 	copy_full_image_to_draw_buffer(&background);
 	current_source_palette = *background.pal;

@@ -8,6 +8,7 @@ typedef int i32;
 typedef unsigned __int64 u64;
 typedef __int64 i64;
 
+#define COUNT(array) (sizeof(array) / sizeof((array)[0]))
 #ifndef MIN
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #endif

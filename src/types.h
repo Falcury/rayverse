@@ -271,14 +271,16 @@ struct sprite_desc_t {
 	u8 unknown[3];
 };
 
-struct anim_desc_t {
+/*struct anim_desc_t {
 	u8 layers_per_frame;
 	u8 unknown1;
 	u8 frame_count;
 	u8 unknown2;
 	u32 unknown3;
 	u16 frame_table_offset; // equals 4 * (layers_per_frame * frame_count + 1)
-};
+	u16 frame_count;
+};*/
+
 
 struct anim_layer_t {
 	u8 mirrored;
@@ -293,6 +295,14 @@ struct anim_frame_t {
 	u8 unk_width;
 	u8 unk_height;
 };
+
+struct anim_desc_t {
+	u8* layers;
+	u8* anim_layers_or_frames;
+	u16 layers_per_frame;
+	u16 frame_count;
+};
+
 
 struct pcx_header_t {
 	u8 header_byte; // always 0x0A
@@ -316,10 +326,50 @@ struct pcx_header_t {
 };
 
 
+struct sprite_group_t {
+	sprite_desc_t* DES0; // ImgDescriptorsPointer
+	anim_desc_t* DES4; // AnimDescriptorsPointer
+	u8* DES8_block; // ImageBufferPointer
+	eta_t** ETA;
+	u32 field_10;
+	u32 field_14;
+	u32 field_18;
+	u32 field_1C;
+	u32 field_20;
+	u32 field_24;
+	u32 size_in_bytes; // field_28
+	u32 field_2C;
+	u32 field_30;
+	u32 field_34;
+	u32 field_38;
+	u32 field_3C;
+	u32 field_40;
+	u16 sprite_desc_count;
+	u16 field_46;
+	u32 field_48;
+	u32 field_4C;
+	u32 field_50;
+	u32 field_54;
+	u32 field_58;
+	u32 field_5C;
+	u32 field_60;
+	u32 field_64;
+	u32 field_68;
+	u32 field_6C;
+	u32 field_70;
+	u32 field_74;
+	u32 field_78;
+	u32 field_7C;
+	u8 anim_desc_count;
+	u8 unk_81[3];
+};
+
+
+
 #pragma pack(pop)
 
 
-struct vignetinfo_t {
+struct archive_header_t {
 	i32 offset;
 	i32 size;
 	u8 xor_byte;

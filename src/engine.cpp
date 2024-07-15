@@ -49,9 +49,9 @@ void game_init_sound(game_sound_buffer_t* sound, i32 samples_per_second) {
 }
 
 void game_init(game_state_t* game) {
-	//load_level("data\\PCMAP\\JUNGLE\\RAY1.LEV");
-	//load_world("data\\PCMAP\\RAY1.WLD");
-	load_language_txt("data\\RAY.LNG");
+	//load_level("PCMAP\\JUNGLE\\RAY1.LEV");
+	//load_world("PCMAP\\RAY1.WLD");
+	load_language_txt("RAY.LNG");
 	load_snd8b(&snd8b_data, 2);
 	load_sav(1);
 	ubisoft_logo_image = load_vignet_pcx(29); //load_ubisoft_logo();

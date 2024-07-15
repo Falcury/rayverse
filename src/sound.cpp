@@ -54,8 +54,13 @@ ogg_t open_cd_vorbis(i32 track_number) {
 	ogg_t result = {0};
 	if (track_number >= 2 && track_number <= 20) {
 		char filename[512];
-		snprintf(filename, sizeof(filename), "data/Music/rayman%02d.ogg", track_number);
+		snprintf(filename, sizeof(filename), "Music_/rayman%02d.ogg", track_number);
 		mem_t* mem = read_entire_file(filename);
+		if (!mem) {
+			// Try to find a Music directory one level up (for GOG Rayman Forever version)
+			snprintf(filename, sizeof(filename), "../Music/rayman%02d.ogg", track_number);
+			mem = read_entire_file(filename);
+		}
 		if (mem) {
 			int error = 0;
 			stb_vorbis* decoder = stb_vorbis_open_memory(mem->data, mem->len, &error, NULL);

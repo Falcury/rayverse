@@ -1,13 +1,21 @@
 
 
-
+FILE* open_data_file(const char* filename) {
+	FILE* fp = fopen(filename, "rb");
+	if (!fp) {
+		char data_path[256];
+		snprintf(data_path, 256, "data\\%s", filename);
+		fp = fopen(data_path, "rb");
+	}
+	return fp;
+}
 
 image_t load_vignet_pcx(u32 resource_id) {
 	ASSERT(sizeof(pcx_header_t) == 128);
-	FILE* fp = fopen("data\\VIGNET.DAT", "rb");
+	FILE* fp = open_data_file("VIGNET.DAT");
 	image_t image = {};
 	if (fp) {
-		vignetinfo_t* info = vignetinfos + resource_id;
+		archive_header_t* info = vignetinfos + resource_id;
 		fseek(fp, info->offset, 0);
 
 		u8* pcx_buf = (u8*) malloc(info->size);
@@ -93,9 +101,9 @@ image_t load_vignet_pcx(u32 resource_id) {
 
 
 void load_vignet_palette(u32 resource_id, rgb_palette_t* palette) {
-	FILE* fp = fopen("data\\VIGNET.DAT", "rb");
+	FILE* fp = open_data_file("VIGNET.DAT");
 	if (fp) {
-		vignetinfo_t* info = vignetinfos + resource_id;
+		archive_header_t* info = vignetinfos + resource_id;
 		i32 read_offset = info->offset + info->size - 0x300;
 		fseek(fp, read_offset, 0);
 		fread(palette, 0x300, 1, fp);
@@ -117,6 +125,75 @@ void load_vignet_palette(u32 resource_id, rgb_palette_t* palette) {
 void load_plan2_in_vignet(void* buffer, u32 resource_id)  {
 	//stop_cd();
 	image_t image = load_vignet_pcx(resource_id);
+}
+
+sprite_group_t global_sprite_groups[16];
+u16 num_sprite_groups;
+eta_t** global_eta_block[16];
+
+//46078
+void load_big_ray() {
+	FILE* fp = open_data_file("PCMAP\\BRAY.DAT");
+	if (fp) {
+		sprite_group_t* sprite_group = global_sprite_groups + num_sprite_groups;
+		u32 sprite_group_size = 0;
+		fread(&sprite_group_size, 4, 1, fp);
+		sprite_group->size_in_bytes = sprite_group_size;
+		u8* DES8_buffer = (u8*)malloc(sprite_group_size);
+		fread(DES8_buffer, sprite_group_size, 1, fp);
+		for (u32 i = 0; i < sprite_group_size; ++i) {
+			DES8_buffer[i] ^= 0x8F;
+		}
+		sprite_group->DES8_block = DES8_buffer;
+
+		fread(&sprite_group->sprite_desc_count, 2, 1, fp);
+		ASSERT(sizeof(sprite_desc_t) == 12);
+		u8* DES_buffer = (u8*)malloc(sprite_group->sprite_desc_count * sizeof(sprite_desc_t));
+		fread(DES_buffer, sizeof(sprite_desc_t), sprite_group->sprite_desc_count, fp);
+		sprite_group->DES0 = (sprite_desc_t*)DES_buffer;
+
+		fread(&sprite_group->anim_desc_count, 1, 1, fp);
+		sprite_group->DES4 = (anim_desc_t*)calloc(sprite_group->anim_desc_count, sizeof(anim_desc_t));
+		for (i32 i = 0; i < sprite_group->anim_desc_count; ++i) {
+			anim_desc_t* anim_desc = sprite_group->DES4 + i;
+			fread(&anim_desc->layers_per_frame, 2, 1, fp);
+			fread(&anim_desc->frame_count, 2, 1, fp);
+			i32 field_4 = 0;
+			fread(&field_4, 4, 1, fp); // ptr field, but might be -1
+//			anim_desc->anim_layers_or_frames = (u8*)field_4;
+			u16 layer_table_size = 0;
+			fread(&layer_table_size, 2, 1, fp);
+			anim_desc->layers = (u8*)malloc(layer_table_size);
+			fread(anim_desc->layers, 1, layer_table_size, fp);
+			if (field_4 != -1) {
+				anim_desc->anim_layers_or_frames = (u8*)malloc(anim_desc->frame_count * 4);
+				fread(anim_desc->anim_layers_or_frames, 4, anim_desc->frame_count, fp);
+			}
+		}
+		fread(&num_eta_blocks, 1, 1, fp);
+		ASSERT(num_eta_blocks < COUNT(global_eta_block));
+		ASSERT(sizeof(eta_t) == 8);
+		for (i32 i = 0; i < num_eta_blocks; ++i) {
+			u8 num_eta_groups = 0;
+			fread(&num_eta_groups, 1, 1, fp);
+			global_eta_block[i] = (eta_t**)calloc(num_eta_groups, sizeof(eta_t*));
+			for (i32 j = 0; j < num_eta_groups; ++j) {
+				u8 num_eta_entries = 0;
+				fread(&num_eta_entries, 1, 1, fp);
+				global_eta_block[i][j] = (eta_t*)calloc(num_eta_entries, sizeof(eta_t));
+				fread(global_eta_block[i][j], sizeof(eta_t), num_eta_entries, fp);
+			}
+
+		}
+
+		// TODO: copy sprite_group and eta_block to a separate copy (ray_sprite_group?)
+		++num_sprite_groups;
+
+		fclose(fp);
+
+	}
+	//sub_7FA70(filename);
+	//sub_6BAE0();
 }
 
 
