@@ -9,6 +9,8 @@ void advance_frame();
 void wait_frames(i32 n_frames);
 void copy_full_image_contents(image_t* dest, image_t* source);
 void copy_full_image_to_draw_buffer(image_t* image);
+void copy_full_image_to_background_buffer(image_t* image); // TODO: keep or change?
+void clrscr();
 void destroy_image(image_t* image);
 
 // platform routines

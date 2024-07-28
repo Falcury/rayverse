@@ -10,22 +10,122 @@ ogg_t ogg_cd_track;
 bool is_ogg_playing;
 bool is_ogg_finished;
 
+eta_t** global_eta_block[100]; //CCE48
+
+draw_func_t* curr_obj_draw_proc; //CD10C
+void* draw_flocon_1_normal_etx; //CD110
+void* dword_CD114; //CD114
+draw_func_t* curr_obj_draw_proc_flipped; //CD118
+
 // 0xCEF47
 u8 plan0_num_pcx[10];
 // 0xC7F88
 rgb_palette_t color_palettes[3];
+u32 flocon_tab; //CD8BC
+u32 map_time; //CD8C0
+u32 time_left; //CD8C4
 
 // 0xCCDF0
-event_t* event_bodies;
+obj_t* obj_bodies;
 // 0xCCDF4
-u16 event_count;
+u16 obj_count;
 
 // 0xCE634
 u32 background_DES;
 // 0xCF81E
 u16 bosses_beaten;
-// 0xCF886
-u16 rayman_obj_id_; //?
+
+// 0xCE638
+u16 level_width_tiles;
+// 0xCE63A
+u16 level_height_tiles;
+// 0xCE63C
+u32 level_tile_count;
+// 0xCE640
+maptile_t* level_tiles;
+
+
+// 0xCE650
+obj_t ray;
+
+// 0xCE6DC
+obj_t* rayman_fist;
+// 0xCE6EC
+obj_t rayman_tiny;
+// 0xCE770
+fist_t rayfist;
+// 0xCE774
+u16 word_CE774;
+// 0xCE776
+u16 word_CE776;
+// 0xCE778
+u16 word_CE778;
+// 0xCE77A
+u16 word_CE77A;
+// 0xCE77C
+u8 fist_state;
+// 0xCE77D
+u8 byte_CE77D;
+// 0xCE77E
+u8 is_fist_thrown;
+// 0xCE77F
+u8 fist_hit_strength;
+// 0xCE780
+u8 byte_CE780;
+// 0xCE781
+u8 byte_CE781;
+obj_t bigray; //CE784
+
+
+// 0xCEF52
+player_t player;
+// 0xCEF5B
+u8 ray_max_hitp;
+// 0xCF81A
+u16 skills;
+
+i16 proj_center_y; //CF836
+i16 proj_center_x; //CF838
+u16 current_map_location; //CF83A
+u16 word_CF83C; //CF83C
+u16 word_CF868; //CF868
+u16 ray_clic; //CF840
+u16 id_obj_grabbed; //CF842
+u16 word_CF844; //CF844
+u16 id_cling_pow; //CF846
+u16 ray_between_clic; //CF848
+i16 boss_y_to_reach; //CF84A
+u16 screen_trembling3; //CF84C
+u16 screen_trembling2; //CF84E
+i16 boss_x_to_reach; //CF850
+u16 screen_trembling; //CF852
+i16 scroll_start_y; //CF854
+i16 boss_scroll_start_y; //CF856
+i16 boss_scroll_start_x; //CF858
+i16 boss_scroll_end_x; //CF85A
+i16 boss_scroll_end_y; //CF85C
+i16 scroll_end_y; //CF85E
+i16 ray_zdc_x; //CF860
+i16 ray_zdc_h; //CF862
+i16 ray_zdc_w; //CF864
+u16 decalage_en_cours; //CF866
+i16 ray_mode; //CF868
+i16 remote_ray_x_to_reach; //CF86A
+i16 scroll_start_x; //CF86E
+i16 ray_wind_force; //CF870
+i16 scroll_end_x; //CF872
+i16 weather_wind; //CF874
+i16 ray_zdc_y; //CF876
+u16 mst_scroll_obj_id; //CF878
+u16 num_scroll_obj; //CF87A
+i16 curr_level_number; //CF87C
+u16 word_CF87E; //CF87E
+i16 new_level; //CF880
+u16 water_obj_id; //CF882
+i16 ymapmax; //CF884
+u16 reduced_rayman_id; //CF886
+u16 fee_obj_id; //CF888
+u16 word_CF88A; //CF88A
 i16 curr_world; // 0xCF88C
 u16 pierre_acorde_obj_id; // CF88E
 u16 xmapmap; //CF890
@@ -79,78 +179,98 @@ i16 skops_beam_x; //CF8EE
 i16 skops_beam_y; //CF8F0
 u16 word_CF8F2; //CF8F2
 u16 word_CF8F4; //CF8F4
-// 0xCF894
-u16 some_obj_id_related_to_sound_; //?
-// 0xCE638
-u16 level_width_tiles;
-// 0xCE63A
-u16 level_height_tiles;
-// 0xCE63C
-u32 level_tile_count;
-// 0xCE640
-maptile_t* level_tiles;
-
-
-// 0xCE650
-event_t ray;
-
-// 0xCE6DC
-event_t* rayman_fist;
-// 0xCE6EC
-event_t rayman_tiny;
-// 0xCE770
-fist_t rayfist;
-// 0xCE774
-u16 word_CE774;
-// 0xCE776
-u16 word_CE776;
-// 0xCE778
-u16 word_CE778;
-// 0xCE77A
-u16 word_CE77A;
-// 0xCE77C
-u8 fist_state;
-// 0xCE77D
-u8 byte_CE77D;
-// 0xCE77E
-u8 is_fist_thrown;
-// 0xCE77F
-u8 fist_hit_strength;
-// 0xCE780
-u8 byte_CE780;
-// 0xCE781
-u8 byte_CE781;
-
-// 0xCEF52
-player_t player;
-// 0xCEF5B
-u8 ray_max_hitp;
-// 0xCF81A
-u16 skills;
-// 0xCF83A
-u16 current_map_location;
-// 0xCF83C
-u16 word_CF83C;
-// 0xCF868
-u16 word_CF868;
 
 // 0xCF89E
 u16 level_width;
 
-// 0xCFA17
-u8 is_sound_available;
-// 0x0CFA18
-u8 is_background_clearing_needed;
-// 0xCFA1A
-u8 is_background_available;
 
 // 0xCF8A6
 u16 level_height;
-// 0xCFA3B
-u8 continues;
-// 0xCFA53
-u8 byte_CFA53;
 
+u8 horloge[25]; //CF9F5
+u8 windows_version_major; //CFA0E
+u8 windows_version_minor; //CFA0F
+u8 is_master_mode; //CFA10
+u8 byte_CFA11; //CFA11
+u8 windows_version; //CFA12
+u8 son_limite; //CFA13
+u8 byte_CFA14; //CFA14
+u8 byte_CFA15; //CFA15
+u8 byte_CFA16; //CFA16
+u8 is_sound_available; //CFA17
+u8 is_background_clearing_needed; //CFA18
+u8 byte_CFA19; //CFA19
+u8 is_background_available; //CFA1A
+u8 byte_CFA1B; //CFA1B
+u8 cfg_24_default_01; //CFA1C
+u8 something_with_cfg_25_default_00_joy; //CFA1D (?)
+u8 cfg_25_default_00; //CFA1E
+u8 cfg_diff_scrolling_enabled; //CFA1F
+u8 vesa_mode; //CFA20
+u8 byte_CFA21; //CFA21
+u8 background_image_index; //CFA22
+u8 is_joypad_mode; //CFA23
+u8 type_fndscr_x; //CFA24
+u8 cfg_15_default_03; //CFA25
+u8 cpu_type; //CFA26
+u8 byte_CFA27; //CFA27
+u8 world_unk_offset_7_always_DA; //CFA28
+u8 byte_CFA29; //CFA29
+u8 byte_CFA2A; //CFA2A
+u8 world_unk_offset_6; //CFA2B
+u8 is_limited_mode; //CFA2C
+u8 byte_CFA2D; //CFA2D
+u8 byte_CFA2E; //CFA2E
+u8 byte_CFA2F; //CFA2F
+u8 byte_CFA30; //CFA30
+u8 byte_CFA31; //CFA31
+u8 is_zoom_effect_available; //CFA32
+u8 is_normal_mode_available; //CFA33
+u8 byte_CFA34; //CFA34
+u8 cfg_language; //CFA35
+u8 is_demo_mode; //CFA36
+u8 menu_etape; //CFA37
+u8 byte_CFA38; //CFA38
+u8 need_quit; //CFA39
+u8 byte_CFA3A; //CFA3A
+u8 continues; //CFA3B
+u8 byte_CFA3C; //CFA3C
+u8 is_save_available; //CFA3D
+u8 byte_CFA3E; //CFA3E
+u8 byte_CFA3F; //CFA3F
+u8 proc_exit; //CFA40
+u8 byte_CFA41; //CFA41
+u8 byte_CFA42; //CFA42
+u8 byte_CFA53; //CFA53
+u8 byte_CFA43; //CFA43
+u8 vignet_to_display; //CFA44
+u8 byte_CFA45; //CFA45
+u8 is_game_won; //CFA46 (?)
+u8 byte_CFA47; //CFA47
+u8 byte_CFA48; //CFA48
+u8 byte_CFA49; //CFA49
+u8 byte_CFA4A; //CFA4A (?)
+u8 need_skip_timer; //CFA4B (?)
+u8 normal_mode_frequency; //CFA4C
+u8 saved_current_pal; //CFA4D
+u8 byte_CFA4E; //CFA4E
+u8 confirmation_dialog_result; //CFA4F
+u8 is_cd_music_active; //CFA50
+u8 input_mode; //CFA51
+u8 is_paused; //CFA52
+u8 in_the_world_map; //CFA53
+u8 ray_on_poelle; //CFA54
+u8 nb_wiz_collected; //CFA55
+u8 bonus_tings_to_get; //CFA56
+u8 byte_CFA57; //CFA57
+u8 byte_CFA58; //CFA58
+u8 byte_CFA59; //CFA59
+u8 byte_CFA5A; //CFA5A
+u8 byte_CFA5B; //CFA5B
+u8 fin_continue; //CFA5C
+u8 byte_CFA5D; //CFA5D
+u8 ray_inertia; //CFA5E
+u8 byte_CFA5F; //CFA5F
 u8 saved_map_location; // 0xCFA60
 u8 byte_CFA61; // 0xCFA61
 u8 byte_CFA62; // 0xCFA62
@@ -318,7 +438,10 @@ medaillion_t medaillions[24] = {
 u8 snd8b_headers[0x800];
 u8* snd8b_data;
 
-// vignet
+
+i32 saved_sprite_width; //92144
+
+//9215C
 archive_header_t vignetinfos[75] = {
 		{0, 42275, 5, 253}, // 0
 		{42275, 36462, 145, 81}, // 1

@@ -1,10 +1,10 @@
 
 
 // sub_71E44
-i16 get_sound_to_interrupt(i32 event_index) {
+i16 get_sound_to_interrupt(i32 obj_id) {
 	i32 i = 0;
 	for (; i < 20; ++i) {
-		if (voice_obj_ids[i] == event_index) break;
+		if (voice_obj_ids[i] == obj_id) break;
 	}
 	if (i == 20) {
 		while (i > 0) {
@@ -17,29 +17,29 @@ i16 get_sound_to_interrupt(i32 event_index) {
 
 
 // sub_71FC8
-void sub_71FC8(i32 event_index) {
+void sub_71FC8(i32 obj_id) {
 	// stub
 }
 
 // sub_71F6C
-bool sub_71F6C(i32 event_index, i32 sound_id) {
+bool sub_71F6C(i32 obj_id, i32 sound_id) {
 	// stub
 	return false;
 }
 
 // sub_7228C
-void play_sound(u16 sound_id, i32 event_index) {
+void play_sound(u16 sound_id, i32 obj_id) {
 	if (is_sound_available) {
-		if ((ray.scale != 0 && event_index == rayman_obj_id_) || event_index == some_obj_id_related_to_sound_) {
-			event_index = -1;
+		if ((ray.scale != 0 && obj_id == reduced_rayman_id) || obj_id == rayman_obj_id) {
+			obj_id = -1;
 		}
-		if (event_index == -1 && sound_id != 15) {
+		if (obj_id == -1 && sound_id != 15) {
 			word_E5750 = 0;
 		}
-		i32 sound_to_interrupt = get_sound_to_interrupt(event_index);
+		i32 sound_to_interrupt = get_sound_to_interrupt(obj_id);
 		if (sound_to_interrupt != sound_id && !(sound_flags[sound_to_interrupt] & 8)) {
-			sub_71FC8(event_index);
-			i16 unk = sub_71F6C(event_index, sound_to_interrupt);
+			sub_71FC8(obj_id);
+			i16 unk = sub_71F6C(obj_id, sound_to_interrupt);
 			if (unk >= 0) {
 
 			}

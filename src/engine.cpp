@@ -33,11 +33,23 @@ void destroy_image(image_t* image) {
 void copy_full_image_contents(image_t* dest, image_t* source) {
 	ASSERT(dest->width == source->width && dest->height == source->height && dest->memory_size == source->memory_size);
 	memcpy(dest->memory, source->memory, source->memory_size);
-	*dest->pal = *source->pal;
+	*dest->pal = *source->pal; //copy full palette by value
 }
 
 void copy_full_image_to_draw_buffer(image_t* image) {
 	copy_full_image_contents(&global_game->draw_buffer, image);
+}
+
+void copy_full_image_to_background_buffer(image_t* image) {
+	copy_full_image_contents(&global_game->draw_buffer_bg, image);
+}
+
+//3CDF8
+void clrscr() {
+	image_t* dest = &global_game->draw_buffer;
+	image_t* source = &global_game->draw_buffer_bg;
+	ASSERT(dest->width == source->width && dest->height == source->height && dest->memory_size == source->memory_size);
+	memcpy(dest->memory, source->memory, source->memory_size);
 }
 
 image_t ubisoft_logo_image;
@@ -60,6 +72,7 @@ void game_init(game_state_t* game) {
 	is_ogg_playing = true;
 
 	game->draw_buffer = create_palettized_image(320, 200);
+	game->draw_buffer_bg = create_palettized_image(320, 200);
 
 	game->initialized = true;
 	global_game = game;

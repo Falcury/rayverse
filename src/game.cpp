@@ -1,16 +1,16 @@
 
-static inline eta_t* get_eta(event_t* event) {
-	return &event->ETA[event->etat][0][event->subetat];
+static inline eta_t* get_eta(obj_t* obj) {
+	return &obj->ETA[obj->etat][obj->subetat];
 }
 
-#define facing_right(event) ((event)->flags & event_flags_8_dir_right)
+#define obj_flipped(obj) ((obj)->flags & obj_flags_8_flipped)
 
-static inline void set_facing_right(event_t* event) {
-	event->flags |= event_flags_8_dir_right;
+static inline void obj_set_flipped(obj_t* obj) {
+	obj->flags |= obj_flags_8_flipped;
 }
 
-static inline void set_facing_left(event_t* event) {
-	event->flags &= ~event_flags_8_dir_right;
+static inline void obj_set_not_flipped(obj_t* obj) {
+	obj->flags &= ~obj_flags_8_flipped;
 }
 
 // sub_1a3f0
@@ -316,35 +316,35 @@ void load_snd8b(u8** sound_buffer, i32 sound_set) {
 
 
 // sub_1D808
-void set_subetat(event_t* event, u8 subetat) {
-	event->change_anim_mode = 1;
-	event->subetat = subetat;
+void set_subetat(obj_t* obj, u8 subetat) {
+	obj->change_anim_mode = 1;
+	obj->subetat = subetat;
 }
 
 // sub_1D810
-void set_etat(event_t* event, u8 etat) {
-	event->change_anim_mode = 1;
-	event->etat = etat;
+void set_etat(obj_t* obj, u8 etat) {
+	obj->change_anim_mode = 1;
+	obj->etat = etat;
 }
 
 // sub_1D818
-void set_event_state(event_t* event, u8 etat, u8 subetat) {
-	event->change_anim_mode = 1;
-	event->etat = etat;
-	event->subetat = subetat;
+void set_obj_state(obj_t* obj, u8 etat, u8 subetat) {
+	obj->change_anim_mode = 1;
+	obj->etat = etat;
+	obj->subetat = subetat;
 }
 
 
 
 // sub_55EE4
 // (?)
-void update_x_momentum(event_t* event) {
-	u8 anim_index = event->anim_index;
+void update_x_momentum(obj_t* obj) {
+	u8 anim_index = obj->anim_index;
 	// some unknown stuff
 	// STUB
 	if (1) {
-		eta_t* eta = &event->ETA[event->etat][0][event->subetat];
-		if (event->flags & event_flags_8_dir_right) {
+		eta_t* eta = get_eta(obj);
+		if (obj->flags & obj_flags_8_flipped) {
 
 		}
 
@@ -361,7 +361,7 @@ u8 get_tile_type(i32 tile_x, i32 tile_y) {
 }
 
 // sub_24F60
-u8 sub_24F60(event_t* event, i32 unk) {
+u8 sub_24F60(obj_t* obj, i32 unk) {
 	return 0; // stub
 }
 
@@ -371,7 +371,7 @@ void ray_hurt() {
 }
 
 // sub_2DBDC
-void ray_hit(bool put_above_solid_tiles, event_t* other_event) {
+void ray_hit(bool put_above_solid_tiles, obj_t* other_obj) {
 	if (put_above_solid_tiles) {
 		ray_hurt();
 		i32 tile_x = (ray.xpos + ray.offset_bx) / 16;
@@ -385,56 +385,56 @@ void ray_hit(bool put_above_solid_tiles, event_t* other_event) {
 		}
 	}
 	if (ray.etat == 6) {
-		set_event_state(&ray, 6, 8);
+		set_obj_state(&ray, 6, 8);
 		ray.yspeed = 0;
 		ray.xspeed = 0;
 		byte_CE780 = 0;
-	} else if (ray.flags & event_flags_4_switched_on) {
+	} else if (ray.flags & obj_flags_4_switched_on) {
 		if (!(ray.etat == 3 && (ray.subetat == 22 || ray.subetat == 32)) &&
 		    !(ray.etat == 2 && ray.subetat == 31)
 	    ) {
 			if ((get_eta(&ray)->interaction_flags & 0x40) && (tile_flags[sub_24F60(&ray, 2)] & 0x10)) {
-				set_event_state(&ray, 0, 61);
+				set_obj_state(&ray, 0, 61);
 			} else {
-				set_event_state(&ray, 2, 8);
+				set_obj_state(&ray, 2, 8);
 			}
 			word_CF83C = 0;
 			if (ray.etat == 0 && ray.subetat == 61) {
-				ray.xspeed = (ray.flags & event_flags_8_dir_right) ? -2 : 2;
+				ray.xspeed = (ray.flags & obj_flags_8_flipped) ? -2 : 2;
 				ray.yspeed = -3;
 			} else {
-				if (other_event != NULL) {
+				if (other_obj != NULL) {
 					i32 bump_direction = -1;
-					if (other_event->type == event_180_mr_sax_chasing) {
+					if (other_obj->type == obj_180_mr_sax_chasing) {
 						//bump_direction = sub_778CC();
-					} else if (other_event->type == event_150_mr_skops) {
+					} else if (other_obj->type == obj_150_mr_skops) {
 						//bump_direction = sub_79688();
-					} else if (other_event->type == event_198_mr_stone_chase) {
+					} else if (other_obj->type == obj_198_mr_stone_chase) {
 						bump_direction = 1;
-					} else if (other_event->type == event_200) {
+					} else if (other_obj->type == obj_200) {
 						bump_direction = -1;
-					} else if (other_event->type == event_100_moth) {
-						bump_direction = (other_event->flags & event_flags_8_dir_right) ? 1 : -1;
-					} else if (other_event->type == event_120_red_drummer) {
+					} else if (other_obj->type == obj_100_moth) {
+						bump_direction = (other_obj->flags & obj_flags_8_flipped) ? 1 : -1;
+					} else if (other_obj->type == obj_120_red_drummer) {
 						// bump_direction = sub_2008C(other_event);
-					} else if (other_event->type == event_187_viking_mama) {
+					} else if (other_obj->type == obj_187_viking_mama) {
 						// bump_direction = sub_6628C(other_event);
-					} else if (other_event->type == event_209_mr_dark_flame_left) {
+					} else if (other_obj->type == obj_209_mr_dark_flame_left) {
 						bump_direction = 1;
-					} else if (other_event->type == event_210_mr_dark_flame_right) {
+					} else if (other_obj->type == obj_210_mr_dark_flame_right) {
 						bump_direction = -1;
 					} else {
-						i32 xspeed_delta = other_event->xspeed - ray.xspeed;
+						i32 xspeed_delta = other_obj->xspeed - ray.xspeed;
 						if (xspeed_delta == 0) {
-							bump_direction = (ray.flags & event_flags_8_dir_right) ? 1 : -1;
+							bump_direction = (ray.flags & obj_flags_8_flipped) ? 1 : -1;
 						} else {
 							bump_direction = xspeed_delta > 0 ? 1 : -1;
 						}
 					}
 					i32 bump_speed;
-					if (obj_type_flags[other_event->type] & obj_type_flags_bit_10_fast_bump) {
+					if (obj_type_flags[other_obj->type] & obj_type_flags_bit_10_fast_bump) {
 						bump_speed = 5;
-					} else if (other_event->type == event_180_mr_sax_chasing) {
+					} else if (other_obj->type == obj_180_mr_sax_chasing) {
 						bump_speed = 4;
 					} else {
 						bump_speed = 2;
@@ -454,33 +454,33 @@ void ray_hit(bool put_above_solid_tiles, event_t* other_event) {
 
 // Command system
 
-void script_goto_label(event_t* event, u8 unk1, u8 unk2) {
+void script_goto_label(obj_t* obj, u8 unk1, u8 unk2) {
 	// stub
 }
 
 // sub_2F44C
-void do_cmd_up(event_t* event) {
-	if (event->etat == 1) {
-		event->xspeed = 0;
-		event->yspeed = 0;
-		set_event_state(event, 0, 0);
+void do_cmd_up(obj_t* obj) {
+	if (obj->etat == 1) {
+		obj->xspeed = 0;
+		obj->yspeed = 0;
+		set_obj_state(obj, 0, 0);
 	} else {
 		
-		if (!(event->type == event_10_piranha && event->etat == 0 && event->subetat == 0)) {
-			event->yspeed = 0;
+		if (!(obj->type == obj_10_piranha && obj->etat == 0 && obj->subetat == 0)) {
+			obj->yspeed = 0;
 		}
 	}
 }
 
 // sub_2F594
-void do_cmd_3_4(event_t* event) {
-	if (event->type == event_1_platform) {
+void do_cmd_3_4(obj_t* event) {
+	if (event->type == obj_1_platform) {
 		if (event->command == cmd_3_down) {
 			event->yspeed = -2;
 		} else if (event->command == cmd_4) {
 			event->yspeed = 2;
 		}
-	} else if (event->type == event_10_piranha) {
+	} else if (event->type == obj_10_piranha) {
 		if (event->etat == 0 && event->subetat == 0) {
 			if (event->command == cmd_3_down) {
 				event->yspeed = -2;
@@ -488,7 +488,7 @@ void do_cmd_3_4(event_t* event) {
 				event->yspeed = 2;
 			}
 		}
-	} else if (event->type == event_24) {
+	} else if (event->type == obj_24) {
 		// This procedure is only called for commands 3 and 4, so, not sure why we are checking for command 2 here?
 		if (event->command != cmd_2_up) {
 			--event->command_count;
@@ -510,18 +510,13 @@ void do_cmd_3_4(event_t* event) {
 }
 
 // sub_2F63C
-void sub_2F63C(event_t* event) {
-	if (event->type == event_0_livingstone && event->etat == 1 && event->subetat == 11) {
+void sub_2F63C(obj_t* event) {
+	if (event->type == obj_0_livingstone && event->etat == 1 && event->subetat == 11) {
 		event->flags &= ~0x10;
 	}
 }
 
-// sub_3CB54
-void enter_scene(void* scene_func) {
-	//stub
-}
-
-rgb_palette_t current_source_palette;
+rgb_palette_t fade_source_palette;
 u8 fade_mode; //CFA87 (?)
 u16 fade_temp[256*3];
 u16 fade_speed; //CF7EA
@@ -582,7 +577,7 @@ void fade_out(u32 speed, rgb_palette_t* palette) {
 		advance_frame();
 		do_fade_step(palette, global_game->draw_buffer.pal);
 	}
-
+	advance_frame();
 }
 
 
@@ -590,13 +585,13 @@ void ubisoft_logo_loop(i32 par_0, i32 par_1, i32 par_2) {
 	start_fade_in(2);
 	wait_frames(5);
 	for (i32 i = 0; i < par_0; ++i) {
-		do_fade_step(&current_source_palette, global_game->draw_buffer.pal);
+		do_fade_step(&fade_source_palette, global_game->draw_buffer.pal);
 		advance_frame();
 	}
 	while (is_ogg_playing) {
 		advance_frame();
 	}
-	fade_out(2, &current_source_palette);
+	fade_out(2, &fade_source_palette);
 	wait_frames(1);
 }
 
@@ -608,7 +603,7 @@ void start_basic_fade_in() {
 void do_ubisoft_intro() {
 	image_t ubisoft_logo = load_vignet_pcx(29);
 	copy_full_image_to_draw_buffer(&ubisoft_logo);
-	current_source_palette = *ubisoft_logo.pal;
+	fade_source_palette = *ubisoft_logo.pal;
 	destroy_image(&ubisoft_logo);
 	start_basic_fade_in();
 	play_cd_track(12); // CD track 12: Intro music - "Ubisoft Presents"
@@ -617,26 +612,464 @@ void do_ubisoft_intro() {
 
 }
 
+i32 screen_xmin = 8;
+i32 screen_xmax = 312;
+i32 screen_ymin = 0;
+i32 screen_ymax = 200;
+
+//16194
+void set_default_sprite_clipping() {
+	screen_xmin = 8;
+	screen_xmax = 312;
+	screen_ymin = 0;
+	screen_ymax = 200;
+}
+
+//1626D
+bool clip_sprite_on_screen(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** image_data) {
+	saved_sprite_width = proj_size->x;
+	if (*proj_x < screen_xmin) {
+		i32 x_left_of_screen = -(*proj_x - screen_xmin);
+		if (proj_size->x <= x_left_of_screen) {
+			return false;
+		} else {
+			x_left_of_screen &= 0xFFFF;
+			proj_size->x -= (u8) x_left_of_screen;
+			*proj_x = screen_xmin;
+			*image_data += x_left_of_screen;
+		}
+	}
+	i32 proj_right = *proj_x + proj_size->x;
+	if (proj_right > screen_xmax) {
+		if (*proj_x >= screen_xmax) {
+			return false;
+		} else {
+			proj_size->x = screen_xmax - *proj_x;
+		}
+	}
+	if (*proj_y < screen_ymin) {
+		if (*proj_y + proj_size->y < screen_ymin) {
+			return false;
+		} else {
+			i32 y_above_screen = -(*proj_y - screen_ymin);
+			y_above_screen &= 0xFFFF;
+			proj_size->y -= (u8) y_above_screen;
+			*image_data += saved_sprite_width * y_above_screen;
+			*proj_y = screen_ymin;
+		}
+	}
+	i32 proj_bottom = *proj_y + proj_size->y;
+	if (proj_bottom > screen_ymax) {
+		if (*proj_y >= screen_ymax) {
+			return false;
+		} else {
+			proj_size->y = screen_ymax - *proj_y;
+			return true;
+		}
+	} else {
+		return true;
+	}
+}
+
+//16A9D
+void draw_simple(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
+	if (clip_sprite_on_screen(&proj_x, &proj_y, &proj_size, &image_data) && proj_size.x > 0) {
+		u8* draw_pos = draw_buffer->memory + proj_y * draw_buffer->width /*320*/ + proj_x;
+		u8* draw_end = draw_pos + proj_size.y * draw_buffer->width;
+		ASSERT(draw_pos >= draw_buffer->memory && draw_pos < draw_buffer->memory + draw_buffer->memory_size);
+		ASSERT(draw_end >= draw_buffer->memory && draw_end < draw_buffer->memory + draw_buffer->memory_size);
+		i32 sprite_width = saved_sprite_width; // this was saved in clip_sprite_on_screen()
+		u8* sprite_pos = image_data;
+		while (draw_pos < draw_end) {
+			for (i32 i = 0; i < proj_size.x; ++i) {
+				u8 c = sprite_pos[i];
+				if (c != 0) {
+					draw_pos[i] = c;
+				}
+			}
+			sprite_pos += sprite_width;
+			draw_pos += draw_buffer->width;
+		}
+	}
+}
+
+//16B88
+void draw_simple_flipped(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
+	if (clip_sprite_on_screen(&proj_x, &proj_y, &proj_size, &image_data) && proj_size.x > 0) {
+		u8* draw_pos = draw_buffer->memory + proj_y * draw_buffer->width /*320*/ + proj_x;
+		u8* draw_end = draw_pos + proj_size.y * draw_buffer->width;
+		ASSERT(draw_pos >= draw_buffer->memory && draw_pos < draw_buffer->memory + draw_buffer->memory_size);
+		ASSERT(draw_end >= draw_buffer->memory && draw_end < draw_buffer->memory + draw_buffer->memory_size);
+		i32 sprite_width = saved_sprite_width; // this was saved in clip_sprite_on_screen()
+		u8* sprite_pos = image_data;
+		while (draw_pos < draw_end) {
+			for (i32 i = 0; i < proj_size.x; ++i) {
+				u8 c = sprite_pos[i];
+				if (c != 0) {
+					draw_pos[proj_size.x-i-1] = c; // reverse order (flipped)
+				}
+			}
+			sprite_pos += sprite_width;
+			draw_pos += draw_buffer->width;
+		}
+	}
+}
+
+//16A24
+void sub_16A24(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
+	//stub
+}
+
+//16B08
+void sub_16B08(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
+	//stub
+}
+
+//55498
+void horloges(u32 ticks) {
+	for (i32 i = 0; i < 25; ++i) {
+		horloge[i] += 1;
+		if (horloge[i] >= i) {
+			horloge[i] = 0;
+		}
+	}
+	map_time += ticks;
+}
+
+//1D570
+i32 get_proj_dist(i32 scale, i32 outer_dim) {
+	//NOTE: needs checking
+	if (zoom_mode == 0) {
+		return outer_dim;
+	} else {
+		i32 temp = ((256*256) / (scale + 256)) * (outer_dim);
+		return (temp / 256);
+	}
+}
+
+//1D5D8
+i32 get_proj_x(i32 scale, i32 par_1) {
+	//NOTE: needs checking
+	i32 temp = ((256*256) / (scale + 256)) * (par_1 - proj_center_x);
+	return ((temp / 256) + proj_center_x);
+}
+
+//1D614
+i32 get_proj_y(i32 scale, i32 par_1) {
+	//NOTE: needs checking
+	i32 temp = ((256*256) / (scale + 256)) * (par_1 - proj_center_y);
+	return ((temp / 256) + proj_center_y);
+}
+
+
+
+//18CE8
+void display2(obj_t* obj) {
+	anim_desc_t* anim = obj->animations + obj->anim_index;
+	u16 layers_per_frame = anim->layers_per_frame & 0x3FFF;
+	anim_layer_t* layer = anim->layers + (obj->anim_frame * layers_per_frame);
+	for (i32 layer_index = 0; layer_index < layers_per_frame; ++layer_index) {
+		i32 proj_y = get_proj_y(obj->scale, layer->y + obj->screen_y);
+		if (layer->sprite_index != 0) {
+			sprite_desc_t* sprite = obj->sprites + layer->sprite_index;
+			if (sprite->unk_index != 0) {
+				i32 x;
+				if (obj->flags & obj_flags_8_flipped) {
+					if (obj->scale == 256 && layer_index == 5 && obj->anim_index >= 14 && obj->anim_index <= 16) {
+						x = -16;
+					} else {
+						x = 0;
+					}
+					x += obj->offset_bx * 2 - layer->x - sprite->outer_width + obj->screen_x;
+				} else {
+					x = layer->x + obj->screen_x;
+				}
+
+				draw_func_t* draw_func = NULL;
+				if ((obj->flags & obj_flags_8_flipped) ^ layer->mirrored) {
+					draw_func = curr_obj_draw_proc_flipped;
+				} else {
+					draw_func = curr_obj_draw_proc;
+				}
+
+				i32 proj_x = get_proj_x(obj->scale, x);
+				i32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
+				i32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
+				vec2b_t proj_size = {(u8)proj_width, (u8)proj_height};
+				u8 sprite_field_A = sprite->field_A >> 4;
+
+				u8* image_data = obj->image_atlas + sprite->offset_in_atlas;
+
+				draw_func(proj_x /*eax*/, sprite_field_A /*edx*/, proj_y /*ebx*/, proj_size /*ecx*/, /*edi*/ &global_game->draw_buffer, image_data /*esi*/);
+
+			}
+		}
+
+		++layer;
+	}
+
+}
+
+//55EE4
+void set_x_speed(obj_t* obj) {
+	i32 xspeed = 0;
+	anim_desc_t* anim = obj->animations + obj->anim_index;
+	u8 horloge_index = ((anim->layers_per_frame & 0xC000) >> 14) + 1;
+	if (horloge[horloge_index] == 0) {
+		eta_t* eta = get_eta(obj);
+		if (obj->flags & obj_flags_8_flipped) {
+			xspeed = eta->right_speed * horloge_index;
+		} else {
+			xspeed = eta->left_speed * horloge_index;
+		}
+		if (obj->type == obj_23_rayman && (skills & skills_0x200_tiny)) {
+			xspeed /= 2;
+		}
+	}
+	obj->xspeed = (i16)xspeed;
+}
+
+//567AC
+void do_anim(obj_t* obj) {
+	i32 prev_anim_frame = obj->anim_frame;
+	i32 prev_anim_index = obj->anim_index;
+	eta_t* eta = get_eta(obj);
+	anim_desc_t* anim = obj->animations + obj->anim_index;
+	u8 anim_speed = eta->anim_speed & 15;
+	if (anim_speed != 0 && horloge[anim_speed] == 0) {
+		if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
+			--obj->anim_frame;
+		} else {
+			++obj->anim_frame;
+		}
+	}
+	obj->anim_index = eta->anim_index;
+	anim = obj->animations + obj->anim_index;
+	if ((obj->change_anim_mode == 1 && obj->anim_index != prev_anim_index) || obj->change_anim_mode == 2) {
+		if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
+			obj->anim_frame = anim->frame_count - 1;
+		} else {
+			obj->anim_frame = 0;
+		}
+		if (obj->is_active != 0) {
+			play_sound(eta->sound_index, obj->obj_index);
+		}
+	}
+	if (obj->anim_frame >= anim->frame_count || obj->anim_frame == 255) {
+		// animation ended
+		obj->etat = eta->subetat;
+		obj->subetat = eta->subetat;
+		eta = get_eta(obj);
+		obj->anim_index = eta->anim_index;
+		anim = obj->animations + obj->anim_index;
+		if ((obj->type == obj_23_rayman && (ray_old_etat == 2 || ray_old_etat == 6)) ||
+		    (obj->subetat == 61 && ray_old_subetat == 61 && ray_old_etat == 0)) {
+			if (ray.timer > 60 && !(skills & skills_0x8000_squashed)) {
+				ray.timer = 60;
+			}
+		}
+		if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
+			obj->anim_frame = anim->frame_count - 1;
+		} else {
+			obj->anim_frame = 0;
+		}
+		if (obj->is_active != 0) {
+			play_sound(eta->sound_index, obj->obj_index);
+		}
+	}
+	obj->change_anim_mode = 0;
+	if (obj->flags & obj_flags_0x20_follow_enabled) {
+		//calc_follow_sprite_speed(); //STUB
+	}
+	u8 anim_changed_bit = 0;
+	if (obj->anim_frame != prev_anim_frame || obj->anim_index != prev_anim_index) {
+		anim_changed_bit = 1;
+	}
+	obj->flags &= ~obj_flags_0x80_anim_changed;
+	obj->flags |= (anim_changed_bit << 7);
+
+}
+
+//1D074 - original name: EOA
+bool end_of_animation(obj_t* obj) {
+	eta_t* eta = get_eta(obj);
+	bool on_last_frame;
+	if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
+		on_last_frame = (obj->anim_frame == 0);
+	} else {
+		anim_desc_t* anim = obj->animations + obj->anim_index;
+		on_last_frame = (obj->anim_frame == anim->frame_count - 1);
+	}
+	if (horloge[eta->anim_speed & 15] == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//6B1EC
+void init_loader_anim() {
+	bigray.offset_bx = 200;
+	bigray.offset_by = 240;
+	bigray.screen_y = -72;
+	bigray.screen_x = 120;
+	bigray.etat = 1;
+	bigray.subetat = 0;
+	bigray.command = 0;
+	bigray.flags &= ~obj_flags_8_flipped;
+}
+
+//6B258
+void animate_bray() {
+	eta_t* eta = get_eta(&bigray);
+	bigray.xspeed = 0;
+	if ((eta->anim_speed & 15) != 0 && (horloge[eta->anim_speed] == 0)) {
+		set_x_speed(&bigray);
+	}
+	bigray.screen_x += bigray.xspeed;
+	if (proc_exit == 1) {
+		proc_exit = 0;
+		bigray.command = 5;
+		set_obj_state(&bigray, 0, 2);
+		bigray.timer = 2;
+		bigray.flags &= ~obj_flags_8_flipped;
+		bigray.screen_x = 160 - bigray.offset_bx - 16;
+	}
+
+	if (bigray.command <= 5) {
+		switch(bigray.command) {
+			default: break;
+			case 0: {
+				if (bigray.screen_x + bigray.offset_bx < -100) {
+					++bigray.command;
+					set_obj_state(&bigray, 1, 1);
+					bigray.screen_x = (-bigray.offset_bx) - 60;
+					bigray.flags |= obj_flags_8_flipped;
+					do_anim(&bigray);
+				} else {
+					do_anim(&bigray);
+				}
+			} break;
+			case 1: {
+				if (bigray.screen_x + bigray.offset_bx > 400) {
+					++bigray.command;
+					set_obj_state(&bigray, 1, 2);
+					bigray.anim_frame = 0;
+					bigray.screen_x = 350 - bigray.offset_bx;
+					bigray.flags &= ~obj_flags_8_flipped;
+					do_anim(&bigray);
+				} else {
+					do_anim(&bigray);
+				}
+			} break;
+			case 2: {
+				if (end_of_animation(&bigray)) {
+					++bigray.command;
+					set_obj_state(&bigray, 1, 3);
+					bigray.screen_x = -60 - bigray.offset_bx;
+					bigray.flags |= obj_flags_8_flipped;
+					do_anim(&bigray);
+				} else {
+					do_anim(&bigray);
+				}
+			} break;
+			case 3: {
+				if (bigray.etat == 0 && bigray.subetat == 0) {
+					++bigray.command;
+					do_anim(&bigray);
+				} else {
+					do_anim(&bigray);
+				}
+			} break;
+			case 4: {
+				if (bigray.screen_x + bigray.offset_bx > 400) {
+					++bigray.command;
+					set_obj_state(&bigray, 0, 1);
+					bigray.screen_x = 160 - bigray.offset_bx - 16;
+					bigray.flags &= ~obj_flags_8_flipped;
+					do_anim(&bigray);
+				} else {
+					do_anim(&bigray);
+				}
+			} break;
+			case 5: {
+				if (bigray.etat == 0 && bigray.subetat == 2) {
+					if (bigray.timer == 0) {
+						proc_exit = 1;
+					} else {
+						--bigray.timer;
+					}
+					do_anim(&bigray);
+				} else {
+					do_anim(&bigray);
+				}
+			} break;
+		}
+	}
+}
+
+
+i16 bray_scene_func(u32 par_0) {
+	//readinput();
+	bool valid_button_pressed = false; //stub
+	if (valid_button_pressed) {
+		proc_exit = true;
+	}
+	horloges(1);
+	//sub_1CF94()
+	clrscr();
+	display2(&bigray);
+	animate_bray();
+	if (proc_exit && nb_fade == 0) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+//38400
+i16 dummy_scene_func(u32 par_0) {
+	return 1;
+}
+
+// sub_3CB54
+void synchro_loop(scene_func_t scene_func) {
+	bool scene_ended = false;
+	do {
+		advance_frame();
+		do_fade_step(&fade_source_palette, global_game->draw_buffer.pal);
+		u32 timer = 0;
+		scene_ended = scene_func(timer);
+	} while(!scene_ended);
+}
+
+
 //35CC4
 void do_big_ray_animation() {
 	load_big_ray();
 	image_t background = load_vignet_pcx(12);
-	copy_full_image_to_draw_buffer(&background);
-	current_source_palette = *background.pal;
+	copy_full_image_to_background_buffer(&background);
+	clrscr();
+	fade_source_palette = *background.pal;
 	destroy_image(&background);
 	start_basic_fade_in();
 	play_cd_track(19); // Menu music - "World Map"
-
+	init_loader_anim();
+	curr_obj_draw_proc = draw_simple;
+	curr_obj_draw_proc_flipped = draw_simple_flipped;
+	synchro_loop(bray_scene_func);
+	curr_obj_draw_proc = sub_16A24;
+	curr_obj_draw_proc_flipped = sub_16B08;
 
 	u16 steps = nb_fade;
 	for (i32 i = 0; i < steps; ++i) {
-		do_fade_step(&current_source_palette, global_game->draw_buffer.pal);
+		do_fade_step(&fade_source_palette, global_game->draw_buffer.pal);
 		advance_frame();
 	}
 	while (is_ogg_playing) {
 		advance_frame();
 	}
-	fade_out(2, &current_source_palette);
+	fade_out(2, &fade_source_palette);
 	wait_frames(600);
 
 
