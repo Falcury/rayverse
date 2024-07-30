@@ -608,8 +608,6 @@ void do_ubisoft_intro() {
 	start_basic_fade_in();
 	play_cd_track(12); // CD track 12: Intro music - "Ubisoft Presents"
 	ubisoft_logo_loop(60, -1, 8);
-
-
 }
 
 i32 screen_xmin = 8;
@@ -623,6 +621,22 @@ void set_default_sprite_clipping() {
 	screen_xmax = 312;
 	screen_ymin = 0;
 	screen_ymax = 200;
+}
+
+//161FA
+void set_sprite_clipping(i32 xmin, i32 xmax, i32 ymin, i32 ymax) {
+	if (xmin < 0) xmin = 0;
+	if (xmin > 320) xmin = 320;
+	screen_xmin = xmin;
+	if (xmax < 0) xmax = 0;
+	if (xmax > 320) xmax = 320;
+	screen_xmax = xmax;
+	if (ymin < 0) ymin = 0;
+	if (ymin > 200) ymin = 200;
+	screen_ymin = ymin;
+	if (ymax < 0) ymax = 0;
+	if (ymax > 200) ymax = 200;
+	screen_ymax = ymax;
 }
 
 //1626D
@@ -645,6 +659,52 @@ bool clip_sprite_on_screen(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** im
 			return false;
 		} else {
 			proj_size->x = screen_xmax - *proj_x;
+		}
+	}
+	if (*proj_y < screen_ymin) {
+		if (*proj_y + proj_size->y < screen_ymin) {
+			return false;
+		} else {
+			i32 y_above_screen = -(*proj_y - screen_ymin);
+			y_above_screen &= 0xFFFF;
+			proj_size->y -= (u8) y_above_screen;
+			*image_data += saved_sprite_width * y_above_screen;
+			*proj_y = screen_ymin;
+		}
+	}
+	i32 proj_bottom = *proj_y + proj_size->y;
+	if (proj_bottom > screen_ymax) {
+		if (*proj_y >= screen_ymax) {
+			return false;
+		} else {
+			proj_size->y = screen_ymax - *proj_y;
+			return true;
+		}
+	} else {
+		return true;
+	}
+}
+
+//16323
+bool clip_sprite_on_screen_flipped(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** image_data) {
+	saved_sprite_width = proj_size->x;
+	if (*proj_x < screen_xmin) {
+		i32 x_left_of_screen = -(*proj_x - screen_xmin);
+		if (proj_size->x <= x_left_of_screen) {
+			return false;
+		} else {
+			x_left_of_screen &= 0xFFFF;
+			proj_size->x -= (u8) x_left_of_screen;
+			*proj_x = screen_xmin;
+		}
+	}
+	i32 proj_right = *proj_x + proj_size->x;
+	if (proj_right > screen_xmax) {
+		if (*proj_x >= screen_xmax) {
+			return false;
+		} else {
+			proj_size->x = screen_xmax - *proj_x;
+			*image_data += saved_sprite_width - proj_size->x;
 		}
 	}
 	if (*proj_y < screen_ymin) {
@@ -695,7 +755,7 @@ void draw_simple(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*eb
 
 //16B88
 void draw_simple_flipped(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
-	if (clip_sprite_on_screen(&proj_x, &proj_y, &proj_size, &image_data) && proj_size.x > 0) {
+	if (clip_sprite_on_screen_flipped(&proj_x, &proj_y, &proj_size, &image_data) && proj_size.x > 0) {
 		u8* draw_pos = draw_buffer->memory + proj_y * draw_buffer->width /*320*/ + proj_x;
 		u8* draw_end = draw_pos + proj_size.y * draw_buffer->width;
 		ASSERT(draw_pos >= draw_buffer->memory && draw_pos < draw_buffer->memory + draw_buffer->memory_size);
@@ -857,8 +917,8 @@ void do_anim(obj_t* obj) {
 	}
 	if (obj->anim_frame >= anim->frame_count || obj->anim_frame == 255) {
 		// animation ended
-		obj->etat = eta->subetat;
-		obj->subetat = eta->subetat;
+		obj->etat = eta->next_etat;
+		obj->subetat = eta->next_subetat;
 		eta = get_eta(obj);
 		obj->anim_index = eta->anim_index;
 		anim = obj->animations + obj->anim_index;
@@ -900,7 +960,7 @@ bool end_of_animation(obj_t* obj) {
 		anim_desc_t* anim = obj->animations + obj->anim_index;
 		on_last_frame = (obj->anim_frame == anim->frame_count - 1);
 	}
-	if (horloge[eta->anim_speed & 15] == 0) {
+	if (on_last_frame && horloge[eta->anim_speed & 15] == 0) {
 		return true;
 	} else {
 		return false;
@@ -1080,6 +1140,8 @@ void do_big_ray_intro() {
 }
 
 void rayman_main() {
+	set_sprite_clipping(0, 320, 0, 200);
+	wait_frames(10); // added
 	do_ubisoft_intro();
 	do_big_ray_animation();
 }

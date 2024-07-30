@@ -113,10 +113,11 @@ struct app_state_t {
 	i32 client_height;
 	bool running;
 	bool vsync_enabled;
-	float target_game_hz;
+	i64 target_game_hz;
 	float target_seconds_per_frame;
 	game_state_t game;
 	i64 flip_clock;
+	i64 frame_clock;
 };
 
 
@@ -128,8 +129,8 @@ struct eta_t {
 	i8 right_speed;
 	i8 left_speed;
 	u8 anim_index;
-	u8 etat;
-	u8 subetat;
+	u8 next_etat;
+	u8 next_subetat;
 	u8 anim_speed;
 	u8 sound_index;
 	u8 interaction_flags;

@@ -290,8 +290,8 @@ int main(int argc, char* argv[])
 		monitor_refresh_hz = 60;
 	}
 
-	app_state->target_game_hz = 60.0f;
-	app_state->target_seconds_per_frame = 1.0f / app_state->target_game_hz;
+	app_state->target_game_hz = 60;
+	app_state->target_seconds_per_frame = 1.0f / (float)app_state->target_game_hz;
 
 
 	// Initialize DirectSound.
