@@ -36,6 +36,8 @@
 #include "render.cpp"
 
 #include "misc_source.cpp"
+#include "vignet.cpp"
+#include "bray.cpp"
 #include "sound.cpp"
 #include "save.cpp"
 #include "game.cpp"

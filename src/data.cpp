@@ -4,6 +4,15 @@
 app_state_t global_app_state;
 game_state_t* global_game;
 
+
+obj_t global_sprite_groups[16]; // used in load_big_ray()
+u16 num_sprite_groups;
+
+rgb_palette_t fade_source_palette;
+u8 fade_mode; //CFA87 (?)
+u16 fade_temp[256*3];
+u16 fade_speed; //CF7EA
+
 // engine.cpp
 
 ogg_t ogg_cd_track;

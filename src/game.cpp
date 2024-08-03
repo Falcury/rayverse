@@ -1,17 +1,5 @@
 
-static inline eta_t* get_eta(obj_t* obj) {
-	return &obj->ETA[obj->etat][obj->subetat];
-}
 
-#define obj_flipped(obj) ((obj)->flags & obj_flags_8_flipped)
-
-static inline void obj_set_flipped(obj_t* obj) {
-	obj->flags |= obj_flags_8_flipped;
-}
-
-static inline void obj_set_not_flipped(obj_t* obj) {
-	obj->flags &= ~obj_flags_8_flipped;
-}
 
 // sub_1a3f0
 void display_in_game_text(const char* text, int unknown1, int x, int y, int unknown2) {
@@ -516,10 +504,7 @@ void sub_2F63C(obj_t* event) {
 	}
 }
 
-rgb_palette_t fade_source_palette;
-u8 fade_mode; //CFA87 (?)
-u16 fade_temp[256*3];
-u16 fade_speed; //CF7EA
+
 
 
 void do_fade_step(rgb_palette_t* source_pal, rgb_palette_t* dest_pal) {
@@ -580,6 +565,10 @@ void fade_out(u32 speed, rgb_palette_t* palette) {
 	advance_frame();
 }
 
+void start_basic_fade_in() {
+	start_fade_in(2);
+}
+
 
 void ubisoft_logo_loop(i32 par_0, i32 par_1, i32 par_2) {
 	start_fade_in(2);
@@ -595,12 +584,10 @@ void ubisoft_logo_loop(i32 par_0, i32 par_1, i32 par_2) {
 	wait_frames(1);
 }
 
-void start_basic_fade_in() {
-	start_fade_in(2);
-}
+
 
 //71B34
-void do_ubisoft_intro() {
+void DO_UBI_LOGO() {
 	image_t ubisoft_logo = load_vignet_pcx(29);
 	copy_full_image_to_draw_buffer(&ubisoft_logo);
 	fade_source_palette = *ubisoft_logo.pal;
@@ -624,7 +611,7 @@ void set_default_sprite_clipping() {
 }
 
 //161FA
-void set_sprite_clipping(i32 xmin, i32 xmax, i32 ymin, i32 ymax) {
+void sprite_clipping(i32 xmin, i32 xmax, i32 ymin, i32 ymax) {
 	if (xmin < 0) xmin = 0;
 	if (xmin > 320) xmin = 320;
 	screen_xmin = xmin;
@@ -967,125 +954,7 @@ bool end_of_animation(obj_t* obj) {
 	}
 }
 
-//6B1EC
-void init_loader_anim() {
-	bigray.offset_bx = 200;
-	bigray.offset_by = 240;
-	bigray.screen_y = -72;
-	bigray.screen_x = 120;
-	bigray.etat = 1;
-	bigray.subetat = 0;
-	bigray.command = 0;
-	bigray.flags &= ~obj_flags_8_flipped;
-}
 
-//6B258
-void DO_LOADER_ANIM() {
-	eta_t* eta = get_eta(&bigray);
-	bigray.xspeed = 0;
-	if ((eta->anim_speed & 15) != 0 && (horloge[eta->anim_speed] == 0)) {
-		set_x_speed(&bigray);
-	}
-	bigray.screen_x += bigray.xspeed;
-	if (proc_exit == 1) {
-		proc_exit = 0;
-		bigray.command = 5;
-		set_obj_state(&bigray, 0, 2);
-		bigray.timer = 2;
-		bigray.flags &= ~obj_flags_8_flipped;
-		bigray.screen_x = 160 - bigray.offset_bx - 16;
-	}
-
-	if (bigray.command <= 5) {
-		switch(bigray.command) {
-			default: break;
-			case 0: {
-				if (bigray.screen_x + bigray.offset_bx < -100) {
-					++bigray.command;
-					set_obj_state(&bigray, 1, 1);
-					bigray.screen_x = (-bigray.offset_bx) - 60;
-					bigray.flags |= obj_flags_8_flipped;
-					do_anim(&bigray);
-				} else {
-					do_anim(&bigray);
-				}
-			} break;
-			case 1: {
-				if (bigray.screen_x + bigray.offset_bx > 400) {
-					++bigray.command;
-					set_obj_state(&bigray, 1, 2);
-					bigray.anim_frame = 0;
-					bigray.screen_x = 350 - bigray.offset_bx;
-					bigray.flags &= ~obj_flags_8_flipped;
-					do_anim(&bigray);
-				} else {
-					do_anim(&bigray);
-				}
-			} break;
-			case 2: {
-				if (bigray.etat == 0 && bigray.subetat == 0) {
-					++bigray.command;
-					do_anim(&bigray);
-				} else {
-					do_anim(&bigray);
-				}
-			} break;
-			case 3: {
-				if (end_of_animation(&bigray)) {
-					++bigray.command;
-					set_obj_state(&bigray, 1, 3);
-					bigray.screen_x = -60 - bigray.offset_bx;
-					bigray.flags |= obj_flags_8_flipped;
-					do_anim(&bigray);
-				} else {
-					do_anim(&bigray);
-				}
-			} break;
-			case 4: {
-				if (bigray.screen_x + bigray.offset_bx > 400) {
-					++bigray.command;
-					set_obj_state(&bigray, 0, 1);
-					bigray.screen_x = 160 - bigray.offset_bx - 16;
-					bigray.flags &= ~obj_flags_8_flipped;
-					do_anim(&bigray);
-				} else {
-					do_anim(&bigray);
-				}
-			} break;
-			case 5: {
-				if (bigray.etat == 0 && bigray.subetat == 2) {
-					if (bigray.timer == 0) {
-						proc_exit = 1;
-					} else {
-						--bigray.timer;
-					}
-					do_anim(&bigray);
-				} else {
-					do_anim(&bigray);
-				}
-			} break;
-		}
-	}
-}
-
-
-i16 loader_anim_prg(u32 par_0) {
-	//readinput();
-	bool valid_button_pressed = false; //stub
-	if (valid_button_pressed) {
-		proc_exit = true;
-	}
-	horloges(1);
-	//sub_1CF94()
-	clrscr();
-	display2(&bigray);
-	DO_LOADER_ANIM();
-	if (proc_exit && nb_fade == 0) {
-		return 1;
-	} else {
-		return 0;
-	}
-}
 
 //38400
 i16 dummy_scene_func(u32 par_0) {
@@ -1104,44 +973,13 @@ void synchro_loop(scene_func_t scene_func) {
 }
 
 
-//35CC4
-void do_big_ray_animation() {
-	load_big_ray();
-	image_t background = load_vignet_pcx(12);
-	copy_full_image_to_background_buffer(&background);
-	clrscr();
-	fade_source_palette = *background.pal;
-	destroy_image(&background);
-	start_basic_fade_in();
-	play_cd_track(19); // Menu music - "World Map"
-	init_loader_anim();
-	curr_obj_draw_proc = draw_simple;
-	curr_obj_draw_proc_flipped = draw_simple_flipped;
-	synchro_loop(loader_anim_prg);
-	curr_obj_draw_proc = sub_16A24;
-	curr_obj_draw_proc_flipped = sub_16B08;
 
-	u16 steps = nb_fade;
-	for (i32 i = 0; i < steps; ++i) {
-		do_fade_step(&fade_source_palette, global_game->draw_buffer.pal);
-		advance_frame();
-	}
-	while (is_ogg_playing) {
-		advance_frame();
-	}
-	fade_out(2, &fade_source_palette);
-	wait_frames(600);
-
-
-}
-
-void do_big_ray_intro() {
-	do_big_ray_animation();
-}
 
 void rayman_main() {
-	set_sprite_clipping(0, 320, 0, 200);
+	sprite_clipping(0, 320, 0, 200);
 	wait_frames(10); // added
-	do_ubisoft_intro();
-	do_big_ray_animation();
+	DO_UBI_LOGO();
+	DO_GROS_RAYMAN();
+	//LOAD_CONFIG(); // stub
+	//init_cheats(); // stub
 }

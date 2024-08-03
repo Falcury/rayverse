@@ -81,7 +81,7 @@ bool win32_init_opengl(app_state_t* app_state) {
 		GET_WGL_PROC(wglSwapIntervalEXT, PFNWGLSWAPINTERVALEXTPROC);
 		if (wglSwapIntervalEXT) {
 			wglSwapIntervalEXT(1);
-			printf("enabling vsync\n");
+//			printf("enabling vsync\n");
 			app_state->vsync_enabled = true;
 		}
 	}
