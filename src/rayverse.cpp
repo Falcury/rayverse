@@ -339,13 +339,19 @@ void win32_prepare_frame(app_state_t* app_state) {
 }
 
 void win32_end_frame(app_state_t* app_state) {
+	i64 frames_elapsed = 0;
+	i64 clocks_per_tick = performance_counter_frequency / app_state->target_game_hz;
+	while (frames_elapsed < 1) {
+		frames_elapsed = ((get_clock() / clocks_per_tick) - (app_state->frame_clock / clocks_per_tick));
+		Sleep(1);
+	}
+	app_state->frame_clock += clocks_per_tick * frames_elapsed;
+
 	opengl_upload_surface(app_state, app_state->active_surface, app_state->client_width, app_state->client_height);
 	win32_produce_sound_for_frame(app_state, &app_state->win32.sound_output, &app_state->game.sound_buffer, app_state->flip_clock);
 
 	SwapBuffers(wglGetCurrentDC());
 	app_state->flip_clock = get_clock();
-
-	//Sleep(1000);
 }
 
 void win32_advance_frame(app_state_t* app_state) {
