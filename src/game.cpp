@@ -980,7 +980,7 @@ void init_loader_anim() {
 }
 
 //6B258
-void animate_bray() {
+void DO_LOADER_ANIM() {
 	eta_t* eta = get_eta(&bigray);
 	bigray.xspeed = 0;
 	if ((eta->anim_speed & 15) != 0 && (horloge[eta->anim_speed] == 0)) {
@@ -1023,19 +1023,19 @@ void animate_bray() {
 				}
 			} break;
 			case 2: {
-				if (end_of_animation(&bigray)) {
+				if (bigray.etat == 0 && bigray.subetat == 0) {
 					++bigray.command;
-					set_obj_state(&bigray, 1, 3);
-					bigray.screen_x = -60 - bigray.offset_bx;
-					bigray.flags |= obj_flags_8_flipped;
 					do_anim(&bigray);
 				} else {
 					do_anim(&bigray);
 				}
 			} break;
 			case 3: {
-				if (bigray.etat == 0 && bigray.subetat == 0) {
+				if (end_of_animation(&bigray)) {
 					++bigray.command;
+					set_obj_state(&bigray, 1, 3);
+					bigray.screen_x = -60 - bigray.offset_bx;
+					bigray.flags |= obj_flags_8_flipped;
 					do_anim(&bigray);
 				} else {
 					do_anim(&bigray);
@@ -1069,7 +1069,7 @@ void animate_bray() {
 }
 
 
-i16 bray_scene_func(u32 par_0) {
+i16 loader_anim_prg(u32 par_0) {
 	//readinput();
 	bool valid_button_pressed = false; //stub
 	if (valid_button_pressed) {
@@ -1079,7 +1079,7 @@ i16 bray_scene_func(u32 par_0) {
 	//sub_1CF94()
 	clrscr();
 	display2(&bigray);
-	animate_bray();
+	DO_LOADER_ANIM();
 	if (proc_exit && nb_fade == 0) {
 		return 1;
 	} else {
@@ -1117,7 +1117,7 @@ void do_big_ray_animation() {
 	init_loader_anim();
 	curr_obj_draw_proc = draw_simple;
 	curr_obj_draw_proc_flipped = draw_simple_flipped;
-	synchro_loop(bray_scene_func);
+	synchro_loop(loader_anim_prg);
 	curr_obj_draw_proc = sub_16A24;
 	curr_obj_draw_proc_flipped = sub_16B08;
 
