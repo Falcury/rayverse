@@ -170,36 +170,60 @@ void load_world(const char* filename) {
 	}
 }
 
-struct language_info_t {
-	u32 file_offset;
-	u32 buffer_size;
-	u8 decoding_byte;
-	u8 checksum_byte;
-};
-
-language_info_t language_infos[] = {
-	{0, 0x108A, 0x30, 0xB4},
+archive_header_t language_infos[] = {
+	{0, 4234, 48, 180},      // English
+	{4234, 4713, 130, 161},  // French
+	{8947, 4903, 207, 92},   // German
+	{13850, 2511, 208, 192}, // ??
+	{16361, 2366, 149, 20},  // ??
 };
 
 char* language_buffer;
 
-void load_language_txt(const char* filename) {
+char* GetStringTxt(char* txt, char* out_buf) {
+	char* pos = txt;
+	char c = *pos;
+	if (c != ',') {
+		for (;;) {
+			c = *pos;
+			if (c == '*') {
+				break;
+			}
+			if (c >= ' ') {
+				*out_buf++ = c;
+			}
+			++pos;
+			if (*pos == ',') {
+				break;
+			}
+		}
+	}
+	if (*pos == '*') {
+		return NULL;
+	} else {
+		*out_buf = '\0';
+		return pos + 1;
+	}
+}
+
+void LoadLanguageTxt(i32 language_index) {
+	const char* filename = "RAY.LNG";
 	mem_t* mem = read_entire_file(filename);
 	if (mem) {
-		language_info_t* language = &language_infos[0];
-		language_buffer = (char*) malloc(language->buffer_size);
-		mem->cursor = language->file_offset;
-		i32 bytes_read = mem_read(language_buffer, mem, language->buffer_size);
-		if (bytes_read != (i32) language->buffer_size) {
+		archive_header_t* lng_archive_header = &language_infos[language_index]; // is language_index used here?
+		language_buffer = (char*) malloc(lng_archive_header->size);
+		mem->cursor = lng_archive_header->offset;
+		i32 bytes_read = mem_read(language_buffer, mem, lng_archive_header->size);
+		if (bytes_read != lng_archive_header->size) {
 			// error
 			exit(1);
 		}
 
 		// decode language txts
 		u8* buffer_pos = (u8*) language_buffer;
-		u8* buffer_end = (u8*) language_buffer + language->buffer_size;
-		u8 checksum_byte = language->checksum_byte;
-		u8 decoding_byte = language->decoding_byte;
+		u8* buffer_end = (u8*) language_buffer + lng_archive_header->size;
+		u8 checksum_byte = lng_archive_header->checksum_byte;
+		u8 decoding_byte = lng_archive_header->xor_byte;
 		for (; buffer_pos < buffer_end; ++buffer_pos) {
 			u8 c = *buffer_pos;
 			checksum_byte -= c;
@@ -207,10 +231,24 @@ void load_language_txt(const char* filename) {
 			*buffer_pos = c;
 		}
 
-		// dump to file
+		char* txt = language_buffer;
+		char* next_txt = txt;
+		for (i32 i = 0; next_txt != NULL; ++i) {
+			char temp_buffer[400];
+			next_txt = GetStringTxt(txt, temp_buffer);
+			if (next_txt != NULL) {
+				language_txt[i] = txt;
+				next_txt[-1] = '\0'; // zero-terminate txt
+				txt = next_txt + 2; // skip \r\n
+			}
+		}
+
+#if 0
+		// DEBUG: dump to file
 		FILE* fp = fopen("language_dump.txt", "wb");
-		fwrite(language_buffer, language->buffer_size, 1, fp);
+		fwrite(language_buffer, language->size, 1, fp);
 		fclose(fp);
+#endif
 
 	}
 }
@@ -972,14 +1010,79 @@ void synchro_loop(scene_func_t scene_func) {
 	} while(!scene_ended);
 }
 
+bool LoadOptionsOnDisk() {
+	mem_t* mem = read_entire_file("RAYMAN.CFG");
+	if (mem) {
+		if (mem->len != 0x84) {
+			return false;
+		}
+		mem_read(&language, mem, 1);
+		mem_read(&Port, mem, 4);
+		mem_read(&Irq, mem, 4);
+		mem_read(&Dma, mem, 4);
+		mem_read(&Param, mem, 4);
+		mem_read(&DeviceID, mem, 4);
+		mem_read(&NumCard, mem, 1);
+		mem_read(&KeyJump, mem, 2);
+		mem_read(&KeyWeapon, mem, 2);
+		mem_read(&KeyUnknown_default_02, mem, 2);
+		mem_read(&KeyAction, mem, 2);
+		mem_read(&cfg_music_enabled, mem, 2);
+		mem_read(&cfg_sound_volume, mem, 2);
+		mem_read(&is_stereo, mem, 2);
+		mem_read(&Mode_Pad, mem, 1);
+		mem_read(&Port_Pad, mem, 1);
+		mem_read(&xpadmax, mem, 2);
+		mem_read(&xpadmin, mem, 2);
+		mem_read(&ypadmax, mem, 2);
+		mem_read(&ypadmin, mem, 2);
+		mem_read(&xpadcentre, mem, 2);
+		mem_read(&ypadcentre, mem, 2);
+		for (i32 i = 0; i < 4; ++i) {
+			notbut[i] = 0;
+			mem_read(notbut + i, mem, 1);
+		}
+		for (i32 i = 0; i < 7; ++i) {
+			mem_read(key_table[i], mem, 1);
+		}
+		mem_read(&GameModeVideo, mem, 1);
+		mem_read(&P486, mem, 1);
+		mem_read(&SizeScreen, mem, 1);
+		if (Frequence != 70) {
+			mem_read(&Frequence, mem, 1);
+		} else {
+			mem_read(&fixon, mem, 1); // in effect, skips this byte
+		}
+		mem_read(&fixon, mem, 1);
+		mem_read(&BackgroundOptionOn, mem, 1);
+		mem_read(&ScrollDiffOn, mem, 1);
+		mem_read(&tRefRam2VramNormalFix, mem, 16);
+		mem_read(&tRefRam2VramNormal, mem, 16);
+		mem_read(&tRefTransFondNormal, mem, 16);
+		mem_read(&tRefSpriteNormal, mem, 4);
+		mem_read(&tRefRam2VramX, mem, 4);
+		mem_read(&tRefVram2VramX, mem, 4);
+		mem_read(&tRefSpriteX, mem, 4);
 
+		free(mem);
+		return true;
+	} else {
+		return false;
+	}
+}
 
+void LOAD_CONFIG() {
+	if (LoadOptionsOnDisk()) {
+		LoadLanguageTxt(0); // English
+		// stub
+	}
+}
 
 void rayman_main() {
 	sprite_clipping(0, 320, 0, 200);
 	wait_frames(10); // added
 	DO_UBI_LOGO();
 	DO_GROS_RAYMAN();
-	//LOAD_CONFIG(); // stub
+	LOAD_CONFIG(); // stub
 	//init_cheats(); // stub
 }
