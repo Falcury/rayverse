@@ -186,7 +186,7 @@ mem_t* compress_sav(mem_t* raw) {
 				window_update_bit_array >>= 1;
 			}
 			if (bytes_to_compress >= 8) {
-				for (i32 i = 0; i < 8; ++i) {
+				for (i = 0; i < 8; ++i) {
 					compr_big_window[best_big_window_index * 8 + i] = compr_window[i];
 				}
 			} else {
@@ -242,7 +242,7 @@ bool test_sav_encode_decode(mem_t* encoded) {
 void load_sav(u8 which_save) {
 	char filename[512];
 	snprintf(filename, 512, "RAYMAN%d.SAV", which_save);
-	mem_t* encoded = read_entire_file(filename);
+	mem_t* encoded = read_entire_file(filename, false);
 	if (encoded) {
 #ifdef NEED_SAV_ENCODE_DECODE_TEST
 		test_sav_encode_decode(encoded);

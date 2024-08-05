@@ -63,8 +63,8 @@ void game_init_sound(game_sound_buffer_t* sound, i32 samples_per_second) {
 void game_init(game_state_t* game) {
 	//load_level("PCMAP\\JUNGLE\\RAY1.LEV");
 	//load_world("PCMAP\\RAY1.WLD");
-	LoadLanguageTxt(0); // debug
-	load_snd8b(&snd8b_data, 2); // debug
+//	LoadLanguageTxt(0); // debug
+//	load_snd8b(&base_snd8b_data, 2); // debug
 	load_sav(1); // debug
 
 	game->draw_buffer = create_palettized_image(320, 200);

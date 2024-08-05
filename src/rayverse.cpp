@@ -61,6 +61,10 @@ float get_seconds_elapsed(i64 start, i64 end) {
 	return (float)(end - start) / (float)performance_counter_frequency;
 }
 
+void message_box(const char* message) {
+	MessageBoxA(global_app_state.win32.window, message, "Rayverse", MB_ICONERROR);
+}
+
 WINDOWPLACEMENT window_position = { sizeof(window_position) };
 void toggle_fullscreen(HWND window) {
 	LONG style = GetWindowLong(window, GWL_STYLE);
@@ -307,7 +311,6 @@ int main(int argc, char* argv[])
 	sound_output->secondary_buffer->Play(0, 0, DSBPLAY_LOOPING);
 
 	game_init_sound(&app_state->game.sound_buffer, (i32)sound_output->samples_per_second);
-
 
 	if (!app_state->game.initialized) {
 		game_init(&app_state->game);

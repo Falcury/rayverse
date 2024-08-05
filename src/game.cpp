@@ -17,7 +17,7 @@ struct wld_header_t {
 };
 
 void load_level(const char* filename) {
-	mem_t* mem = read_entire_file(filename);
+	mem_t* mem = read_entire_file(filename, true);
 	if (mem) {
 		//stream_t stream = mem_create_stream(mem);
 
@@ -89,7 +89,7 @@ void load_level(const char* filename) {
 }
 
 void load_world(const char* filename) {
-	mem_t* mem = read_entire_file(filename);
+	mem_t* mem = read_entire_file(filename, true);
 	if (mem) {
 		u16 background_width;
 		u16 background_height;
@@ -174,8 +174,8 @@ archive_header_t language_infos[] = {
 	{0, 4234, 48, 180},      // English
 	{4234, 4713, 130, 161},  // French
 	{8947, 4903, 207, 92},   // German
-	{13850, 2511, 208, 192}, // ??
-	{16361, 2366, 149, 20},  // ??
+	{13850, 2511, 208, 192}, // Japanese
+	{16361, 2366, 149, 20},  // Chinese
 };
 
 char* language_buffer;
@@ -207,8 +207,7 @@ char* GetStringTxt(char* txt, char* out_buf) {
 }
 
 void LoadLanguageTxt(i32 language_index) {
-	const char* filename = "RAY.LNG";
-	mem_t* mem = read_entire_file(filename);
+	mem_t* mem = read_entire_file("RAY.LNG", true);
 	if (mem) {
 		archive_header_t* lng_archive_header = &language_infos[language_index]; // is language_index used here?
 		language_buffer = (char*) malloc(lng_archive_header->size);
@@ -253,35 +252,6 @@ void LoadLanguageTxt(i32 language_index) {
 	}
 }
 
-struct snd8b_file_info_t {
-	u32 offset;
-	u32 size;
-	u8 encoding_byte;
-	u8 checksum_byte;
-	u8 unknown1;
-	u8 unknown2;
-};
-
-snd8b_file_info_t sndh8b_info[7] = {
-	{0,      0x0800, 0x4D, 0xC3, 0x00, 0x00},
-	{0x0800, 0x0800, 0xD9, 0xC1, 0x00, 0x00},
-	{0x1000, 0x0800, 0x24, 0x8E, 0x00, 0x00},
-	{0x1800, 0x0800, 0xFA, 0x16, 0x00, 0x00},
-	{0x2000, 0x0800, 0x67, 0x49, 0x00, 0x00},
-	{0x2800, 0x0800, 0xAB, 0xB7, 0x00, 0x00},
-	{0x3000, 0x0800, 0x63, 0xDE, 0x00, 0x00},
-};
-
-snd8b_file_info_t sndd8b_info[7] = {
-	{0,        0x01D140, 0xC0, 0x3C, 0x00, 0x00},
-	{0x01D140, 0x02224C, 0x94, 0x68, 0x00, 0x00},
-	{0x03F38C, 0x046DE8, 0x29, 0x95, 0x00, 0x00},
-	{0x086174, 0x03181C, 0xED, 0x17, 0x00, 0x00},
-	{0x0B7990, 0x030E98, 0x24, 0xB4, 0x00, 0x00},
-	{0x0E8828, 0x02F2F0, 0xF3, 0x3B, 0x00, 0x00},
-	{0x117B18, 0x02D588, 0xF8, 0x33, 0x00, 0x00}
-};
-
 
 // Decodes and verifies xor-encoded data
 u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte) {
@@ -294,52 +264,6 @@ u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte) {
 	}
 	return checksum_byte; // should be 0
 }
-
-
-void load_snd8b(u8** sound_buffer, i32 sound_set) {
-	// Load sound header
-	mem_t* mem = read_entire_file("SNDH8B.DAT");
-	if (!mem) fatal_error();
-
-	snd8b_file_info_t* header_info = &sndh8b_info[sound_set];
-
-	mem_seek(mem, header_info->offset);
-	mem_read(snd8b_headers, mem, header_info->size); // always 0x800 bytes
-
-	u8 checksum = decode_xor(snd8b_headers, header_info->size, header_info->encoding_byte, header_info->checksum_byte);
-	if (checksum != 0) {
-		printf("[warning] load_snd8b(): incorrect checksum for SNDH8B.DAT\n");
-	}
-
-	free(mem);
-
-	// Load sound data
-	snd8b_file_info_t* data_info = &sndd8b_info[sound_set];
-	size_t sound_size = data_info->size;
-	void* temp = realloc(*sound_buffer, sound_size);
-	if (!temp) fatal_error();
-	*sound_buffer = (u8*)temp;
-	
-
-	FILE* fp = open_data_file("SNDD8B.DAT");
-	if (!fp) fatal_error();
-
-	fseek(fp, data_info->offset, SEEK_SET);
-	size_t bytes_read = fread(*sound_buffer, 1, sound_size, fp);
-	if (bytes_read != data_info->size) fatal_error();
-
-	fclose(fp);
-
-	checksum = decode_xor(*sound_buffer, (u32)sound_size, data_info->encoding_byte, data_info->checksum_byte);
-	if (checksum != 0) {
-		printf("[warning] load_snd8b(): incorrect checksum for SNDD8B.DAT\n");
-	}
-
-
-}
-
-
-
 
 // sub_1D808
 void set_subetat(obj_t* obj, u8 subetat) {
@@ -1011,7 +935,7 @@ void synchro_loop(scene_func_t scene_func) {
 }
 
 bool LoadOptionsOnDisk() {
-	mem_t* mem = read_entire_file("RAYMAN.CFG");
+	mem_t* mem = read_entire_file("RAYMAN.CFG", true);
 	if (mem) {
 		if (mem->len != 0x84) {
 			return false;
@@ -1071,9 +995,40 @@ bool LoadOptionsOnDisk() {
 	}
 }
 
+//41AF0
+void POINTEUR_BOUTONS_OPTIONS_BIS() {
+	// stub
+}
+
+//49388
 void LOAD_CONFIG() {
 	if (LoadOptionsOnDisk()) {
 		LoadLanguageTxt(0); // English
+		if (xpadmax == -1) {
+			GameModeVideo = 1;
+			P486 = 0;
+		}
+		if (is_background_available == 2) {
+			GameModeVideo = 1;
+			P486 = 1;
+		}
+		POINTEUR_BOUTONS_OPTIONS_BIS();
+
+		// STUB: this section seems to be related to sound card initialization
+		/*if (CarteSonAutorisee && DeviceID != 999) {
+			//SetPort(Port);
+			//SetIrq(Irq);
+			//SetDma(Dma);
+			//SetParam(Param);
+			//if (sub_3E780()) {} // seems to do something with locking memory regions (DOS protected mode stuff)
+
+		} else {
+			//SetDeviceID(DeviceID);
+			//CarteSonAutorisee = 0;
+		}*/
+
+		load_snd8b(&base_snd8b_data, 2);
+
 		// stub
 	}
 }

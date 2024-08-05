@@ -1,14 +1,5 @@
 
 
-FILE* open_data_file(const char* filename) {
-	FILE* fp = fopen(filename, "rb");
-	if (!fp) {
-		char data_path[256];
-		snprintf(data_path, 256, "data\\%s", filename);
-		fp = fopen(data_path, "rb");
-	}
-	return fp;
-}
 
 
 

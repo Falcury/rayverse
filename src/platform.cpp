@@ -1,4 +1,22 @@
-mem_t* read_entire_file(const char* filename) {
+
+
+FILE* open_data_file(const char* filename) {
+	FILE* fp = fopen(filename, "rb");
+	if (!fp) {
+		char data_path[256];
+		snprintf(data_path, 256, "data\\%s", filename);
+		fp = fopen(data_path, "rb");
+	}
+	if (!fp) {
+		char message[256];
+		snprintf(message, 256, "Error: couldn't locate %s\n", filename);
+		fprintf(stdout, "%s", message);
+		message_box(message);
+	}
+	return fp;
+}
+
+mem_t* read_entire_file(const char* filename, bool error_is_fatal) {
 	mem_t* result = NULL;
 	FILE* fp = fopen(filename, "rb");
 	if (fp) {
@@ -22,6 +40,12 @@ mem_t* read_entire_file(const char* filename) {
 			}
 		}
 		fclose(fp);
+	} else if (error_is_fatal) {
+		char message[256];
+		snprintf(message, 256, "Error: couldn't locate %s\n", filename);
+		fprintf(stdout, "%s", message);
+		message_box(message);
+		fatal_error();
 	}
 	return result;
 }
