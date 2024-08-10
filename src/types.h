@@ -51,8 +51,8 @@ struct game_sound_buffer_t {
 
 struct game_state_t {
 	bool initialized;
-	image_t draw_buffer;
-	image_t draw_buffer_bg;
+	image_t draw_buffer; // draw_buffer
+	image_t draw_buffer_bg; // PLAN3BIT
 	game_sound_buffer_t sound_buffer;
 };
 
@@ -194,7 +194,7 @@ struct x_texture_t {
 	u8 pixels[256]; // 16x16 array of color indices
 };
 
-struct sprite_desc_t {
+struct sprite_t {
 	u32 offset_in_atlas;
 	u8 unk_index;
 	u8 outer_width;
@@ -231,7 +231,7 @@ struct anim_frame_t {
 	u8 unk_height;
 };
 
-struct anim_desc_t {
+struct anim_t {
 	anim_layer_t* layers;
 	anim_frame_t* frames;
 	u16 layers_per_frame;
@@ -262,8 +262,8 @@ struct pcx_header_t {
 
 
 struct obj_t {
-	sprite_desc_t* sprites; // ImgDescriptorsPointer
-	anim_desc_t* animations; // AnimDescriptorsPointer
+	sprite_t* sprites; // ImgDescriptorsPointer
+	anim_t* animations; // AnimDescriptorsPointer
 	u8* image_atlas; // ImageBufferPointer
 	eta_t** ETA;
 	u32 commands; // 0x10 - ptr
@@ -294,7 +294,7 @@ struct obj_t {
 	u16 rayman_distance; //54
 	i16 iframes_timer; // timer (?)
 	u16 test_block_index;
-	u16 scale; // playing sound
+	u16 scale; // 5A
 	u16 zdc_meta; // ?
 	u16 active_timer;
 	u16 type;
@@ -332,6 +332,15 @@ struct obj_t {
 	u8 flags;
 	u8 field_82;
 	u8 field_83;
+};
+
+struct voice_t {
+	i16 field_0;
+	i16 field_2;
+	i16 field_4;
+	i16 sound_to_play; //?
+	i16 field_8;
+	i16 field_A;
 };
 
 

@@ -131,7 +131,7 @@ void load_world(const char* filename) {
 			mem_read(&sprite_count, mem, 2);
 
 			for (i32 sprite_index = 0; sprite_index < sprite_count; ++sprite_index) {
-				sprite_desc_t sprite_desc = {0};
+				sprite_t sprite_desc = {0};
 				mem_read(&sprite_desc, mem, sizeof(sprite_desc));
 			}
 
@@ -139,7 +139,7 @@ void load_world(const char* filename) {
 			mem_read(&anim_count, mem, 1);
 
 			for (i32 anim_index = 0; anim_index < anim_count; ++anim_index) {
-				anim_desc_t anim_desc = {0};
+				anim_t anim_desc = {0};
 				mem_read(&anim_desc, mem, sizeof(anim_desc));
 
 				// Need to seek to the specified offset later from the current position in the stream.
@@ -527,7 +527,8 @@ void fade_out(u32 speed, rgb_palette_t* palette) {
 	advance_frame();
 }
 
-void start_basic_fade_in() {
+//3CA8C
+void INIT_FADE_IN() {
 	start_fade_in(2);
 }
 
@@ -554,7 +555,7 @@ void DO_UBI_LOGO() {
 	copy_full_image_to_draw_buffer(&ubisoft_logo);
 	fade_source_palette = *ubisoft_logo.pal;
 	destroy_image(&ubisoft_logo);
-	start_basic_fade_in();
+	INIT_FADE_IN();
 	play_cd_track(12); // CD track 12: Intro music - "Ubisoft Presents"
 	ubisoft_logo_loop(60, -1, 8);
 }
@@ -774,13 +775,13 @@ i32 get_proj_y(i32 scale, i32 par_1) {
 
 //18CE8
 void display2(obj_t* obj) {
-	anim_desc_t* anim = obj->animations + obj->anim_index;
+	anim_t* anim = obj->animations + obj->anim_index;
 	u16 layers_per_frame = anim->layers_per_frame & 0x3FFF;
 	anim_layer_t* layer = anim->layers + (obj->anim_frame * layers_per_frame);
 	for (i32 layer_index = 0; layer_index < layers_per_frame; ++layer_index) {
 		i32 proj_y = get_proj_y(obj->scale, layer->y + obj->screen_y);
 		if (layer->sprite_index != 0) {
-			sprite_desc_t* sprite = obj->sprites + layer->sprite_index;
+			sprite_t* sprite = obj->sprites + layer->sprite_index;
 			if (sprite->unk_index != 0) {
 				i32 x;
 				if (obj->flags & obj_flags_8_flipped) {
@@ -822,7 +823,7 @@ void display2(obj_t* obj) {
 //55EE4
 void set_x_speed(obj_t* obj) {
 	i32 xspeed = 0;
-	anim_desc_t* anim = obj->animations + obj->anim_index;
+	anim_t* anim = obj->animations + obj->anim_index;
 	u8 horloge_index = ((anim->layers_per_frame & 0xC000) >> 14) + 1;
 	if (horloge[horloge_index] == 0) {
 		eta_t* eta = get_eta(obj);
@@ -843,7 +844,7 @@ void do_anim(obj_t* obj) {
 	i32 prev_anim_frame = obj->anim_frame;
 	i32 prev_anim_index = obj->anim_index;
 	eta_t* eta = get_eta(obj);
-	anim_desc_t* anim = obj->animations + obj->anim_index;
+	anim_t* anim = obj->animations + obj->anim_index;
 	u8 anim_speed = eta->anim_speed & 15;
 	if (anim_speed != 0 && horloge[anim_speed] == 0) {
 		if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
@@ -906,7 +907,7 @@ bool end_of_animation(obj_t* obj) {
 	if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
 		on_last_frame = (obj->anim_frame == 0);
 	} else {
-		anim_desc_t* anim = obj->animations + obj->anim_index;
+		anim_t* anim = obj->animations + obj->anim_index;
 		on_last_frame = (obj->anim_frame == anim->frame_count - 1);
 	}
 	if (on_last_frame && horloge[eta->anim_speed & 15] == 0) {
@@ -935,7 +936,7 @@ void synchro_loop(scene_func_t scene_func) {
 }
 
 bool LoadOptionsOnDisk() {
-	mem_t* mem = read_entire_file("RAYMAN.CFG", true);
+	mem_t* mem = read_entire_file("RAYMAN.CFG", false);
 	if (mem) {
 		if (mem->len != 0x84) {
 			return false;
@@ -947,13 +948,13 @@ bool LoadOptionsOnDisk() {
 		mem_read(&Param, mem, 4);
 		mem_read(&DeviceID, mem, 4);
 		mem_read(&NumCard, mem, 1);
-		mem_read(&KeyJump, mem, 2);
-		mem_read(&KeyWeapon, mem, 2);
-		mem_read(&KeyUnknown_default_02, mem, 2);
-		mem_read(&KeyAction, mem, 2);
-		mem_read(&cfg_music_enabled, mem, 2);
-		mem_read(&cfg_sound_volume, mem, 2);
-		mem_read(&is_stereo, mem, 2);
+		mem_read(&options_jeu_KeyJump, mem, 2);
+		mem_read(&options_jeu_KeyWeapon, mem, 2);
+		mem_read(&options_jeu_KeyUnknown_default_02, mem, 2);
+		mem_read(&options_jeu_KeyAction, mem, 2);
+		mem_read(&options_jeu_music_enabled, mem, 2); // 13 = default?
+		mem_read(&options_jeu_sound_volume, mem, 2); // 13 = default?
+		mem_read(&options_jeu_is_stereo, mem, 2);
 		mem_read(&Mode_Pad, mem, 1);
 		mem_read(&Port_Pad, mem, 1);
 		mem_read(&xpadmax, mem, 2);
@@ -1000,6 +1001,56 @@ void POINTEUR_BOUTONS_OPTIONS_BIS() {
 	// stub
 }
 
+
+//42790
+bool set_joy_input_funcs() {
+	//stub
+	return true;
+}
+
+//498A4
+void set_special_key_descriptions(const char** descriptions) {
+	descriptions[SC_BACKSPACE] = language_txt[212]; // backspace
+	descriptions[SC_TAB] = language_txt[213]; // tab
+	descriptions[SC_ENTER] = language_txt[214]; // return
+	descriptions[SC_CONTROL] = language_txt[210]; // ctrl
+	descriptions[SC_ALT] = language_txt[211]; // alt
+	descriptions[SC_SPACE] = language_txt[209]; // space
+	descriptions[SC_CAPSLOCK] = language_txt[215]; // caps lock
+	descriptions[SC_HOME] = language_txt[216]; // home
+	descriptions[SC_UP] = language_txt[205]; // up arrow
+	descriptions[SC_PAGEUP] = language_txt[217]; // page up
+	descriptions[SC_LEFT] = language_txt[204]; // left arrow
+	descriptions[SC_RIGHT] = language_txt[206]; // right arrow
+	descriptions[SC_END] = language_txt[218]; // end
+	descriptions[SC_DOWN] = language_txt[207]; // down arrow
+	descriptions[SC_PAGEDOWN] = language_txt[219]; // page down
+	descriptions[SC_INSERT] = language_txt[220]; // insert
+	descriptions[SC_DELETE] = language_txt[221]; // del
+}
+
+//49308
+void check_key_table() {
+	bool valid = true;
+	for (i32 i = 0; i < 7; ++i) {
+		u8 key = *(key_table[i]);
+		if (key > SC_DELETE || key_descriptions_qwerty[key] == 0 || key_descriptions_azerty[key] == 0) {
+			valid = false;
+			break; // added
+		}
+	}
+	if (!valid) {
+		// load defaults
+		*(key_table[0]) = SC_LEFT;
+		*(key_table[1]) = SC_UP;
+		*(key_table[2]) = SC_RIGHT;
+		*(key_table[3]) = SC_DOWN;
+		*(key_table[4]) = SC_CONTROL;
+		*(key_table[5]) = SC_ALT;
+		*(key_table[6]) = SC_X;
+	}
+}
+
 //49388
 void LOAD_CONFIG() {
 	if (LoadOptionsOnDisk()) {
@@ -1027,10 +1078,47 @@ void LOAD_CONFIG() {
 			//CarteSonAutorisee = 0;
 		}*/
 
-		load_snd8b(&base_snd8b_data, 2);
+		if (CarteSonAutorisee) {
+			load_snd8b(&base_snd8b_data, 2);
+			InitSnd();
+		}
+
+		if (set_joy_input_funcs()) {
+			// stub: init joypad
+		} else {
+			if (xpadmax == -1) {
+				xpadmax = 2;
+			}
+		}
 
 		// stub
+	} else {
+		// We didn't load a .cfg file -> load defaults
+		if (CarteSonAutorisee) {
+			load_snd8b(&base_snd8b_data, 2);
+			InitSnd();
+		}
+		if (set_joy_input_funcs()) {
+			//vignet_load_proc = load_vignet_12;
+			//sub_23F30();
+			//start_fade_out(2);
+			//do_calibrate_joystick_menu(); //stub
+		} else {
+			xpadmax = -2;
+		}
+		options_jeu_music_enabled = 2;
+		options_jeu_sound_volume = 18;
+		options_jeu_is_stereo = 1;
+		options_jeu_KeyJump = 1;
+		options_jeu_KeyWeapon = 0;
+		options_jeu_KeyAction = 2;
+		SetVolumeSound((options_jeu_sound_volume * 127) / 20);
+		GameModeVideo = 0;
 	}
+
+	set_special_key_descriptions(key_descriptions_azerty);
+	set_special_key_descriptions(key_descriptions_qwerty);
+	check_key_table();
 }
 
 void rayman_main() {
@@ -1038,6 +1126,11 @@ void rayman_main() {
 	wait_frames(10); // added
 	DO_UBI_LOGO();
 	DO_GROS_RAYMAN();
-	LOAD_CONFIG(); // stub
+	LOAD_CONFIG();
 	//init_cheats(); // stub
+
+	// let the music finish playing while the main menu is not implemented yet :(
+	while (is_ogg_playing) {
+		advance_frame();
+	}
 }

@@ -17,15 +17,15 @@ void load_big_ray() {
 		sprite_group->image_atlas = image_atlas;
 
 		fread(&sprite_group->sprites_count, 2, 1, fp);
-		ASSERT(sizeof(sprite_desc_t) == 12);
-		u8* sprite_buffer = (u8*)malloc(sprite_group->sprites_count * sizeof(sprite_desc_t));
-		fread(sprite_buffer, sizeof(sprite_desc_t), sprite_group->sprites_count, fp);
-		sprite_group->sprites = (sprite_desc_t*)sprite_buffer;
+		ASSERT(sizeof(sprite_t) == 12);
+		u8* sprite_buffer = (u8*)malloc(sprite_group->sprites_count * sizeof(sprite_t));
+		fread(sprite_buffer, sizeof(sprite_t), sprite_group->sprites_count, fp);
+		sprite_group->sprites = (sprite_t*)sprite_buffer;
 
 		fread(&sprite_group->anim_count, 1, 1, fp);
-		sprite_group->animations = (anim_desc_t*)calloc(sprite_group->anim_count, sizeof(anim_desc_t));
+		sprite_group->animations = (anim_t*)calloc(sprite_group->anim_count, sizeof(anim_t));
 		for (i32 i = 0; i < sprite_group->anim_count; ++i) {
-			anim_desc_t* anim_desc = sprite_group->animations + i;
+			anim_t* anim_desc = sprite_group->animations + i;
 			fread(&anim_desc->layers_per_frame, 2, 1, fp);
 			fread(&anim_desc->frame_count, 2, 1, fp);
 			i32 field_4 = 0;
@@ -186,15 +186,26 @@ i16 loader_anim_prg(u32 par_0) {
 	}
 }
 
-//35CC4
-void DO_GROS_RAYMAN() {
-	load_big_ray();
+//365E0
+void LOAD_SAVE_SCREEN() {
+	// (implementation changed a bit from the original, maybe revise later)
 	image_t background = load_vignet_pcx(12);
 	copy_full_image_to_background_buffer(&background);
 	clrscr();
 	fade_source_palette = *background.pal;
 	destroy_image(&background);
-	start_basic_fade_in();
+}
+
+//464BC
+void LOAD_ALL_FIX() {
+	//stub
+}
+
+//35CC4
+void DO_GROS_RAYMAN() {
+	load_big_ray();
+	LOAD_SAVE_SCREEN();
+	INIT_FADE_IN();
 	play_cd_track(19); // Menu music - "World Map"
 	init_loader_anim();
 	curr_obj_draw_proc = draw_simple;
@@ -202,18 +213,9 @@ void DO_GROS_RAYMAN() {
 	synchro_loop(loader_anim_prg);
 	curr_obj_draw_proc = sub_16A24;
 	curr_obj_draw_proc_flipped = sub_16B08;
-
-	u16 steps = nb_fade;
-	for (i32 i = 0; i < steps; ++i) {
-		do_fade_step(&fade_source_palette, global_game->draw_buffer.pal);
-		advance_frame();
-	}
-	while (is_ogg_playing) {
-		advance_frame();
-	}
+	LOAD_ALL_FIX();
 	fade_out(2, &fade_source_palette);
-	wait_frames(600);
-
-
+	//restore_palette();
+//	wait_frames(600);
 }
 

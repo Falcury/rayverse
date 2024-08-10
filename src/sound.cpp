@@ -70,19 +70,57 @@ void load_snd8b(u8** sound_buffer, i32 sound_set) {
 
 }
 
+//71C04
+void SetVolumeSound(i16 volume) {
+	Volume_Snd = volume;
+}
+
+//71DA4
+bool ray_env_stereo(i16 stereo) {
+	return stereo != 0;
+}
+
+//71D80
+void raj_env_sound(i16 volume) {
+	SetVolumeSound((volume * 127) / 20);
+}
+
+//71DA8
+bool InitSnd() {
+	if (CarteSonAutorisee) {
+		for (i32 i = 0; i < 20; ++i) {
+			stk_obj[i] = -2;
+			stk_snd[i] = 0;
+		}
+		pt_pile_snd = 0;
+		indice_snd_wiz = 0;
+		indice_ray_wait = 0;
+		indice_trz_wait = -2;
+		for (i32 i = 0; i < 32; ++i) {
+			voice_table[i].field_0 = -2;
+		}
+		raj_env_sound(18);
+		return ray_env_stereo(options_jeu_is_stereo);
+	} else {
+		return false;
+	}
+}
+
+
+
 // sub_71E44
 i16 get_sound_to_interrupt(i32 obj_id) {
 	i32 i = 0;
 	for (; i < 20; ++i) {
-		if (voice_obj_ids[i] == obj_id) break;
+		if (stk_obj[i] == obj_id) break;
 	}
 	if (i == 20) {
 		while (i > 0) {
 			--i;
-			if (sounds_playing[i] == 0) break;
+			if (stk_snd[i] == 0) break;
 		}
 	}
-	return sounds_playing[i];
+	return stk_snd[i];
 }
 
 
@@ -104,7 +142,7 @@ void play_sound(u16 sound_id, i32 obj_id) {
 			obj_id = -1;
 		}
 		if (obj_id == -1 && sound_id != 15) {
-			word_E5750 = 0;
+			indice_ray_wait = 0;
 		}
 		i32 sound_to_interrupt = get_sound_to_interrupt(obj_id);
 		if (sound_to_interrupt != sound_id && !(sound_flags[sound_to_interrupt] & 8)) {

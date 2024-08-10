@@ -65,6 +65,7 @@ void game_init(game_state_t* game) {
 	//load_world("PCMAP\\RAY1.WLD");
 //	LoadLanguageTxt(0); // debug
 //	load_snd8b(&base_snd8b_data, 2); // debug
+	CarteSonAutorisee = 1;
 	load_sav(1); // debug
 
 	game->draw_buffer = create_palettized_image(320, 200);

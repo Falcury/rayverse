@@ -21,15 +21,18 @@ bool is_ogg_finished;
 
 char* language_txt[304]; //C2B48
 
-i16 KeyJump; //C2F88 // TODO: check these names
-i16 KeyWeapon; //C2F8A
-i16 KeyUnknown_default_02; //C2F8C
-i16 KeyAction; //C2F8E
-i16 cfg_music_enabled; //C2F90
-i16 cfg_sound_volume; //C2F92
-i16 is_stereo; //C2F94
+i16 options_jeu_KeyJump; //C2F88 // TODO: check these names; create struct?
+i16 options_jeu_KeyWeapon; //C2F8A
+i16 options_jeu_KeyUnknown_default_02; //C2F8C
+i16 options_jeu_KeyAction; //C2F8E
+i16 options_jeu_music_enabled; //C2F90
+i16 options_jeu_sound_volume; //C2F92
+i16 options_jeu_is_stereo; //C2F94
 
 i16 notbut[4]; //C97F0
+
+obj_t* obj_bodies; //CCDF0
+u16 obj_count; //CCDF4
 
 eta_t** global_eta_block[100]; //CCE48
 
@@ -44,70 +47,38 @@ void* draw_flocon_1_normal_etx; //CD110
 void* dword_CD114; //CD114
 draw_func_t* curr_obj_draw_proc_flipped; //CD118
 
-// 0xCEF47
-u8 plan0_num_pcx[10];
-// 0xC7F88
-rgb_palette_t color_palettes[3];
+u8 plan0_num_pcx[10]; //CEF47
+rgb_palette_t color_palettes[3]; //C7F88
 u32 flocon_tab; //CD8BC
 u32 map_time; //CD8C0
 u32 time_left; //CD8C4
 
-// 0xCCDF0
-obj_t* obj_bodies;
-// 0xCCDF4
-u16 obj_count;
+u32 background_DES; //CE634
+u16 level_width_tiles; //CE638
+u16 level_height_tiles; //CE63A
+u32 level_tile_count; //CE63C
+maptile_t* level_tiles; //CE640
 
-// 0xCE634
-u32 background_DES;
-// 0xCF81E
-u16 bosses_beaten;
+obj_t ray; //CE650
 
-// 0xCE638
-u16 level_width_tiles;
-// 0xCE63A
-u16 level_height_tiles;
-// 0xCE63C
-u32 level_tile_count;
-// 0xCE640
-maptile_t* level_tiles;
-
-
-// 0xCE650
-obj_t ray;
-
-// 0xCE6DC
-obj_t* rayman_fist;
-// 0xCE6EC
-obj_t rayman_tiny;
-// 0xCE770
-fist_t rayfist;
-// 0xCE774
-u16 word_CE774;
-// 0xCE776
-u16 word_CE776;
-// 0xCE778
-u16 word_CE778;
-// 0xCE77A
-u16 word_CE77A;
-// 0xCE77C
-u8 fist_state;
-// 0xCE77D
-u8 byte_CE77D;
-// 0xCE77E
-u8 is_fist_thrown;
-// 0xCE77F
-u8 fist_hit_strength;
-// 0xCE780
-u8 byte_CE780;
-// 0xCE781
-u8 byte_CE781;
+obj_t* rayman_fist; //CE6DC
+obj_t rayman_tiny; //CE6EC
+fist_t rayfist; //CE770
+u16 word_CE774; //CE774
+u16 word_CE776; //CE776
+u16 word_CE778; //CE778
+u16 word_CE77A; //CE77A
+u8 fist_state; //CE77C
+u8 byte_CE77D; //CE77D
+u8 is_fist_thrown; //CE77E
+u8 fist_hit_strength; //CE77F
+u8 byte_CE780; //CE780
+u8 byte_CE781; //CE781
 obj_t bigray; //CE784
 
 
-// 0xCEF52
-player_t player;
-// 0xCEF5B
-u8 ray_max_hitp;
+player_t player; //CEF52
+u8 ray_max_hitp; //CEF5B
 
 i16 xpadmax; //CF748
 i16 ypadmax; //CF74A
@@ -116,8 +87,8 @@ i16 xpadcentre; //CF74E
 i16 xpadmin; //CF750
 i16 ypadmin; //CF752
 
-// 0xCF81A
-u16 skills;
+u16 skills; //CF81A
+u16 bosses_beaten; //CF81E
 
 i16 proj_center_y; //CF836
 i16 proj_center_x; //CF838
@@ -215,12 +186,9 @@ i16 skops_beam_y; //CF8F0
 u16 word_CF8F2; //CF8F2
 u16 word_CF8F4; //CF8F4
 
-// 0xCF89E
-u16 level_width;
+u16 level_width; //CF89E
 
-
-// 0xCF8A6
-u16 level_height;
+u16 level_height; //CF8A6
 
 u8 horloge[25]; //CF9F5
 u8 windows_version_major; //CFA0E
@@ -367,13 +335,6 @@ u8 life_becoz_wiz; //CFA99
 u8 byte_CFA9A; //CFA9A
 u8 byte_CFA9B; //CFA9B
 u8 num_eta_blocks; //CFA9C
-
-// 0xE5490
-i16 voice_obj_ids[20];
-// 0xE5750
-u16 word_E5750;
-// 0xE54B8
-i16 sounds_playing[20];
 
 
 // 0x9253C
@@ -657,4 +618,33 @@ u16 snd8b_offsets[128] = {
 		10935, 11585, 12274, 13003, 13777, 14596, 15464, 16384,
 		17358, 18390,
 };
+
+//96888
+const char* key_descriptions_azerty[128] = {
+		0, 0/*escape*/, "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", 0/*minus*/, 0/*equals*/, 0/*backspace*/,
+		0/*tab*/, "a", "z", "e", "r", "t", "y", "u", "i", "o", "p", 0/*leftbracket*/, 0/*rightbracket*/, 0/*enter*/,
+		0/*control*/, "q", "s,", "d", "f", "g", "h", "j", "k", "l", "m", 0/*quote*/, 0/*tilde*/, 0/*lshift*/, 0/*backslash*/,
+		"w", "x", "c", "v", "b", "n", "?", "."/*comma*/, ":", 0, 0/*slash*/, 0/*rshift*/,
+};
+//96A88
+const char* key_descriptions_qwerty[128] = {
+		0, 0/*escape*/, "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", 0/*minus*/, 0/*equals*/, 0/*backspace*/,
+		0/*tab*/, "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", 0/*leftbracket*/, 0/*rightbracket*/, 0/*enter*/,
+		0/*control*/, "a", "s,", "d", "f", "g", "h", "j", "k", "l", ":", 0/*quote*/, 0/*tilde*/, 0/*lshift*/, 0/*backslash*/,
+		"z", "x", "c", "v", "b", "n", "m", 0/*comma*/, ".", "?", 0/*slash*/, 0/*rshift*/,
+};
+
+i16 Volume_Snd; //97F64
+
+const char** key_descriptions; //E4CB0
+
+i16 stk_obj[20]; //E5490
+i16 stk_snd[20]; //E54B8
+
+voice_t voice_table[32]; //E55D0
+
+i16 indice_ray_wait; //E5750
+i16 indice_trz_wait; //E5754
+i16 pt_pile_snd; //E5756
+i16 indice_snd_wiz; //E575A
 
