@@ -167,17 +167,17 @@ struct player_t {
 };
 
 struct fist_t {
-	u32 field_0;
+	u32 field_0; // Fixed-point y pos value?
 	u16 field_4;
-	u16 field_6;
-	u16 field_8;
+	u16 speed_x;
+	u16 charge;
 	u16 field_A;
-	u8 fist_state;
-	u8 field_D;
-	u8 is_fist_thrown;
-	u8 hit_strength;
-	u8 field_10;
-	u8 field_11;
+	u8 poing_sub_etat; // Normal: 1,3,5, Gold: 8,10,12
+	u8 is_returning;
+	u8 is_active;
+	u8 damage;
+	u8 is_charging;
+	u8 is_doing_boum;
 	u8 field_12;
 	u8 field_13;
 };
@@ -283,7 +283,7 @@ struct obj_t {
 	i16 spawn_y;
 	i16 xspeed;
 	i16 yspeed;
-	i16 sprites_count;
+	i16 sprite_count;
 	i16 next_command_index;
 	i16 command_count;
 	i16 command_par2; // action (?) // command_par2?
@@ -328,10 +328,22 @@ struct obj_t {
 	u8 configuration; // 7D
 	u8 display_prio; // layer the obj sprites get drawn to, between 1 and 7; 0 means it doesn't get drawn
 	i8 timer;
-	i8 anim_count;
+	u8 anim_count;
 	u8 flags;
 	u8 field_82;
 	u8 field_83;
+};
+
+struct level_t {
+	obj_t* objects;
+	u16 nb_objects;
+};
+
+struct map_data_t {
+	i16 width;
+	i16 height;
+	i32 length;
+	u16* map;
 };
 
 struct voice_t {

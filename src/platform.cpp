@@ -1,4 +1,25 @@
 
+//7F7D0
+void init_memory(mem_t** mem, u32 capacity) {
+	size_t allocation_size = sizeof(mem_t) + capacity;
+	*mem = (mem_t*)calloc(1, allocation_size);
+	(*mem)->capacity = capacity;
+}
+
+//7F5B0
+u8* block_malloc(mem_t* mem, u32 size) {
+	i32 bytes_left = mem->capacity - mem->cursor;
+	if (bytes_left >= (i32)size) {
+		u8* data_at_cursor = mem->data + mem->cursor;
+		mem->cursor += size;
+		mem->len = MAX(mem->cursor, (i32)mem->len);
+		return data_at_cursor;
+	} else {
+		printf("Memory error in block_malloc\n");
+		fatal_error();
+		return NULL;
+	}
+}
 
 FILE* open_data_file(const char* filename) {
 	FILE* fp = fopen(filename, "rb");

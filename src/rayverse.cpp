@@ -323,13 +323,6 @@ int main(int argc, char* argv[])
 
 	global_app_state.running = true;
 	rayman_main();
-	while(app_state->running) {
-		win32_prepare_frame(app_state);
-		game_update_and_render(app_state);
-		win32_end_frame(app_state);
-	}
-
-	printf("Hello World!\n");
 	return 0;
 }
 

@@ -76,19 +76,6 @@ void game_init(game_state_t* game) {
 
 }
 
-void game_update_and_render(app_state_t* app_state) {
-	
-	game_state_t* game = &app_state->game;
-
-	rgb_t clear_color = { 0, 0, 0 };
-	render_clear(app_state->active_surface, clear_color);
-
-//	render_weird_gradient(app_state->active_surface, 0, 0);
-	copy_full_image_contents(&game->draw_buffer, &ubisoft_logo_image);
-	surface_blit_palettized_image(&game->draw_buffer, NULL, app_state->active_surface, NULL);
-
-}
-
 void advance_frame() {
 	app_state_t* app_state = &global_app_state;
 	game_state_t* game = &app_state->game;

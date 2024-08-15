@@ -4,10 +4,6 @@
 app_state_t global_app_state;
 game_state_t* global_game;
 
-
-obj_t global_sprite_groups[16]; // used in load_big_ray()
-u16 num_sprite_groups;
-
 rgb_palette_t fade_source_palette;
 u8 fade_mode; //CFA87 (?)
 u16 fade_temp[256*3];
@@ -34,13 +30,20 @@ i16 notbut[4]; //C97F0
 obj_t* obj_bodies; //CCDF0
 u16 obj_count; //CCDF4
 
-eta_t** global_eta_block[100]; //CCE48
+eta_t** loaded_eta[100]; //CCE48
 
 u32 Port; //CD040
 u32 DeviceID; //CD044
 u32 Irq; //CD048
 u32 Param; //CD04C
 u32 Dma; //CD050
+u32 texture_opaque_count; //CD054
+u32 texture_count; //CD058
+u32 RaymanExeSize; //CD05C
+
+u32 RaymanExeCheckSum2; //CD068
+u32 RaymanExeCheckSum3; //CD06C
+u32 RaymanExeCheckSum1; //CD070
 
 draw_func_t* curr_obj_draw_proc; //CD10C
 void* draw_flocon_1_normal_etx; //CD110
@@ -49,9 +52,24 @@ draw_func_t* curr_obj_draw_proc_flipped; //CD118
 
 u8 plan0_num_pcx[10]; //CEF47
 rgb_palette_t color_palettes[3]; //C7F88
+
+u32 TailleMainMemLevel; //CD844
+u32 TailleMainMemSprite; //CD848
+mem_t* main_mem_level; //CD84C
+mem_t* main_mem_sprite; //CD860
+
+u32 TailleMainMemTmp; //CD86C
+mem_t* main_mem_fix; //CD874
+mem_t* main_mem_world; //CD880
+u32 TailleMainMemFix; //CD898
+u32 TailleMainMemWorld; //CD89C
+mem_t* main_mem_tmp; //CD8A0
+
 u32 flocon_tab; //CD8BC
 u32 map_time; //CD8C0
 u32 time_left; //CD8C4
+
+obj_t mapobj[25]; //CD8CC
 
 u32 background_DES; //CE634
 u16 level_width_tiles; //CE638
@@ -62,7 +80,10 @@ maptile_t* level_tiles; //CE640
 obj_t ray; //CE650
 
 obj_t* rayman_fist; //CE6DC
-obj_t rayman_tiny; //CE6EC
+obj_t* alpha; //CE6E0
+u8* alpha_image_atlas; //CE6E4
+i16 alpha_sprite_count; //CE6E8
+obj_t div_obj; //CE6EC
 fist_t rayfist; //CE770
 u16 word_CE774; //CE774
 u16 word_CE776; //CE776
@@ -75,7 +96,12 @@ u8 fist_hit_strength; //CE77F
 u8 byte_CE780; //CE780
 u8 byte_CE781; //CE781
 obj_t bigray; //CE784
+obj_t raylittle; //CE808
 
+obj_t clockobj; //CED44
+obj_t* alpha2; //CEDC8
+u8* alpha2_image_atlas; //CEDCC
+i16 alpha2_sprite_count; //CEDD0
 
 player_t player; //CEF52
 u8 ray_max_hitp; //CEF5B
@@ -332,10 +358,17 @@ u8 skops_nb_lave; //CFA96
 u8 nb_trames_ecrase; //CFA97
 u8 byte_CFA98; //CFA98
 u8 life_becoz_wiz; //CFA99
-u8 byte_CFA9A; //CFA9A
-u8 byte_CFA9B; //CFA9B
-u8 num_eta_blocks; //CFA9C
+u8 nb_fix_eta; //CFA9A
+u8 nb_loaded_eta; //CFA9B
 
+
+u16 nb_des; //9251C
+u16 nb_fix_des; //9251E
+i16 dhspeed; //92520
+i16 dvspeed; //92522
+
+//92524
+u8 ecroule_rubis_order[24] = {2, 1, 3, 0, 4, 7, 6, 5, 1, 3, 2, 0, 4, 7, 6, 5, 4, 1, 3, 2, 0, 7, 6, 5};
 
 // 0x9253C
 u8 tile_flags[64] = {
@@ -347,8 +380,6 @@ u8 tile_flags[64] = {
 		0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, //50-59
 		0x20, 0x20, 0x20, 0x20, //60-63
 };
-
-
 
 // 0x9257C
 u32 obj_type_flags[262] = {
@@ -635,6 +666,8 @@ const char* key_descriptions_qwerty[128] = {
 };
 
 i16 Volume_Snd; //97F64
+
+obj_t wldobj[100]; //E0D18
 
 const char** key_descriptions; //E4CB0
 

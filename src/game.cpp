@@ -1121,7 +1121,24 @@ void LOAD_CONFIG() {
 	check_key_table();
 }
 
+//17F00
+void InitMemoryVariable() {
+	P486 = 0;
+	is_normal_mode_available = 1;
+	is_zoom_effect_available = 1;
+	CarteSonAutorisee = 1;
+	son_limite = 0;
+	is_background_clearing_needed = 1;
+	is_background_available = 1;
+	TailleMainMemTmp = 0x22000;
+	TailleMainMemWorld = 0xF4C00;
+	TailleMainMemLevel = 0x87C00;
+	TailleMainMemSprite = 0xDF400;
+	TailleMainMemFix = 0x4D800;
+}
+
 void rayman_main() {
+	InitMemoryVariable();
 	sprite_clipping(0, 320, 0, 200);
 	wait_frames(10); // added
 	DO_UBI_LOGO();
