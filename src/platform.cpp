@@ -21,18 +21,19 @@ u8* block_malloc(mem_t* mem, u32 size) {
 	}
 }
 
-FILE* open_data_file(const char* filename) {
+FILE* open_data_file(const char* filename, bool error_is_fatal) {
 	FILE* fp = fopen(filename, "rb");
 	if (!fp) {
 		char data_path[256];
-		snprintf(data_path, 256, "data\\%s", filename);
+		snprintf(data_path, 256, "data" PATH_SEP "%s", filename);
 		fp = fopen(data_path, "rb");
 	}
-	if (!fp) {
+	if (!fp && error_is_fatal) {
 		char message[256];
 		snprintf(message, 256, "Error: couldn't locate %s\n", filename);
 		fprintf(stdout, "%s", message);
 		message_box(message);
+        fatal_error();
 	}
 	return fp;
 }
@@ -40,6 +41,11 @@ FILE* open_data_file(const char* filename) {
 mem_t* read_entire_file(const char* filename, bool error_is_fatal) {
 	mem_t* result = NULL;
 	FILE* fp = fopen(filename, "rb");
+    if (!fp) {
+        char data_path[256];
+        snprintf(data_path, 256, "data" PATH_SEP "%s", filename);
+        fp = fopen(data_path, "rb");
+    }
 	if (fp) {
 		struct stat st;
 		if (fstat(fileno(fp), &st) == 0) {

@@ -52,8 +52,6 @@ void clrscr() {
 	memcpy(dest->memory, source->memory, source->memory_size);
 }
 
-image_t ubisoft_logo_image;
-
 void game_init_sound(game_sound_buffer_t* sound, i32 samples_per_second) {
 	// Prepare a sound buffer for the game code to write into.
 	sound->samples_per_second = samples_per_second;
@@ -82,7 +80,11 @@ void advance_frame() {
 	rgb_t clear_color = { 0, 0, 0 };
 	render_clear(app_state->active_surface, clear_color);
 	surface_blit_palettized_image(&game->draw_buffer, NULL, app_state->active_surface, NULL);
+#if _WIN32
 	win32_advance_frame(app_state);
+#else
+    linux_advance_frame(app_state);
+#endif
 }
 
 void wait_frames(i32 n_frames) {

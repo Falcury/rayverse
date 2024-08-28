@@ -58,17 +58,29 @@ struct game_state_t {
 
 
 // win32_sound.cpp
-
+#ifdef _WIN32
 struct win32_sound_output_t {
 	u32 samples_per_second;
 	u32 bytes_per_sample;
 	u32 secondary_buffer_size;
-	u32 running_sample_index;
+	u32 running_sample_index_for_writing;
 	u32 safety_bytes;
 	IDirectSound* dsound;
 	IDirectSoundBuffer* secondary_buffer;
 	bool is_valid;
 };
+#else
+struct linux_sound_output_t {
+    u32 samples_per_second;
+    u32 bytes_per_sample;
+    u32 secondary_buffer_size;
+    u8* secondary_buffer; // TODO: maybe remove this, if we keep using SDL_QueueAudio()?
+    i64 running_sample_index_for_writing;
+    i64 running_sample_index_for_reading;
+    u32 safety_bytes;
+    SDL_AudioDeviceID audio_device;
+};
+#endif
 
 struct ogg_t {
 	stb_vorbis* decoder;
@@ -79,12 +91,19 @@ struct ogg_t {
 
 // rayverse.cpp
 
+#ifdef _WIN32
 struct win32_state_t {
-	HWND window;
-	HINSTANCE instance;
-	HCURSOR cursor;
-	win32_sound_output_t sound_output;
+    HWND window;
+    HINSTANCE instance;
+    HCURSOR cursor;
+    win32_sound_output_t sound_output;
 };
+#else
+struct linux_state_t {
+    SDL_Window* window;
+    linux_sound_output_t sound_output;
+};
+#endif
 
 struct opengl_state_t {
 	GLuint screen_texture;
@@ -98,19 +117,25 @@ struct surface_t {
 	i32 bytes_per_pixel;
 	i32 width;
 	i32 height;
-	i32 width_pow2;
+	i32 width_pow2; // for compatibility with old graphics cards that only support power-of-2 size textures
 	i32 height_pow2;
 	i32 pitch;
 };
 
 struct app_state_t {
+#ifdef _WIN32
 	win32_state_t win32;
+#else
+    linux_state_t linux;
+#endif
 	opengl_state_t opengl;
 	surface_t offscreen_surface;
 	surface_t game_surface;
 	surface_t* active_surface;
 	i32 client_width;
 	i32 client_height;
+    float display_scale_factor;
+    float display_points_per_pixel;
 	bool running;
 	bool vsync_enabled;
 	i64 target_game_hz;
@@ -120,8 +145,6 @@ struct app_state_t {
 	i64 frame_clock;
 };
 
-
-// ray_engine.cpp
 
 #pragma pack(push,1)
 

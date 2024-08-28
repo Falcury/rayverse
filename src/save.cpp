@@ -307,7 +307,7 @@ void write_save_file(u8 which_save) {
 	
 	
 	char filename[512];
-	_snprintf(filename, 512, "RAYMAN%d_.SAV", which_save);
+	snprintf(filename, 512, "RAYMAN%d_.SAV", which_save);
 	// stub: writing out to a temporary file for encryption
 
 	FILE* fp = fopen(filename, "wb");

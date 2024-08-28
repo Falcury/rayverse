@@ -4,7 +4,7 @@
 //46078
 void load_big_ray(mem_t* buffer) {
 	// TODO: allocate from a memory pool (main_mem_tmp), so that it can be freed at once later
-	FILE* fp = open_data_file("PCMAP\\BRAY.DAT");
+	FILE* fp = open_data_file("PCMAP" PATH_SEP "BRAY.DAT", true);
 	if (fp) {
 		obj_t* sprite_group = wldobj + nb_des;
 		u32 sprite_group_size = 0;
@@ -202,7 +202,7 @@ void LOAD_ALL_FIX() {
 	init_memory(&main_mem_level, TailleMainMemLevel);
 	init_memory(&main_mem_world, TailleMainMemWorld);
 	init_memory(&main_mem_fix, TailleMainMemFix);
-	const char* filename = "PCMAP\\ALLFIX.DAT";
+	const char* filename = "PCMAP" PATH_SEP "ALLFIX.DAT";
 	mem_t* mem = read_entire_file(filename, true);
 	if (mem) {
 		mem_read(&nb_loaded_eta, mem, 1);

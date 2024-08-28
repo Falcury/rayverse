@@ -1,8 +1,14 @@
 
 // (win32) rayverse.cpp
+#ifdef _WIN32
 void win32_advance_frame(app_state_t* app_state);
 void win32_prepare_frame(app_state_t* app_state);
 void win32_end_frame(app_state_t* app_state);
+#else
+void linux_advance_frame(app_state_t* app_state);
+void linux_prepare_frame(app_state_t* app_state);
+void linux_end_frame(app_state_t* app_state);
+#endif
 void message_box(const char* message);
 
 // engine.cpp
@@ -12,6 +18,8 @@ void copy_full_image_contents(image_t* dest, image_t* source);
 void copy_full_image_to_draw_buffer(image_t* image);
 void copy_full_image_to_background_buffer(image_t* image); // TODO: keep or change?
 void clrscr();
+void game_init_sound(game_sound_buffer_t* sound, i32 samples_per_second);
+void game_init(game_state_t* game);
 void destroy_image(image_t* image);
 
 // platform routines
@@ -47,3 +55,4 @@ void draw_simple(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, 
 void draw_simple_flipped(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
 void sub_16A24(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
 void sub_16B08(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
+void rayman_main();

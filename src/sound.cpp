@@ -52,8 +52,7 @@ void load_snd8b(u8** sound_buffer, i32 sound_set) {
 	if (!temp) fatal_error();
 	*sound_buffer = (u8*)temp;
 
-
-	FILE* fp = open_data_file("SNDD8B.DAT");
+	FILE* fp = open_data_file("SNDD8B.DAT", true);
 	if (!fp) fatal_error();
 
 	fseek(fp, data_info->offset, SEEK_SET);

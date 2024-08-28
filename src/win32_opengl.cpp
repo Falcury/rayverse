@@ -106,6 +106,8 @@ void surface_resize(surface_t* surface, int width, int height) {
 	surface->width = width;
 	surface->height = height;
 	surface->bytes_per_pixel = 4;
+    // NOTE: we use OpenGL textures with a power-of-2 size here. This is for compatibility with old GPUs.
+    // (On Windows, you might want to run on old GPUs paired with Win9x.)
 	if (is_power_of_2((u32)width)) {
 		surface->width_pow2 = width;
 	} else {

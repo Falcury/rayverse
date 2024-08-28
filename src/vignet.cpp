@@ -1,7 +1,7 @@
 
 image_t load_vignet_pcx(u32 resource_id) {
 	ASSERT(sizeof(pcx_header_t) == 128);
-	FILE* fp = open_data_file("VIGNET.DAT");
+	FILE* fp = open_data_file("VIGNET.DAT", true);
 	image_t image = {};
 	if (fp) {
 		archive_header_t* info = vignetinfos + resource_id;
@@ -90,7 +90,7 @@ image_t load_vignet_pcx(u32 resource_id) {
 
 
 void load_vignet_palette(u32 resource_id, rgb_palette_t* palette) {
-	FILE* fp = open_data_file("VIGNET.DAT");
+	FILE* fp = open_data_file("VIGNET.DAT", true);
 	if (fp) {
 		archive_header_t* info = vignetinfos + resource_id;
 		i32 read_offset = info->offset + info->size - 0x300;
