@@ -48,7 +48,7 @@
 // Source files specific to Windows
 #include "win32_opengl.cpp"
 #include "win32_sound.cpp"
-#include win32_main.cpp
+#include "win32_main.cpp"
 #else
 // Source files specific to Linux / macOS
 #include "linux_opengl.cpp"

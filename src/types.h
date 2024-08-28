@@ -63,7 +63,7 @@ struct win32_sound_output_t {
 	u32 samples_per_second;
 	u32 bytes_per_sample;
 	u32 secondary_buffer_size;
-	u32 running_sample_index_for_writing;
+	u32 running_sample_index;
 	u32 safety_bytes;
 	IDirectSound* dsound;
 	IDirectSoundBuffer* secondary_buffer;
