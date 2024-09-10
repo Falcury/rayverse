@@ -65,14 +65,14 @@ static void linux_fill_sound_buffer(linux_sound_output_t* sound, game_sound_buff
 #endif
 
 
-static void linux_produce_sound_for_frame(app_state_t* app_state, linux_sound_output_t* sound, game_sound_buffer_t* game_sound_buffer, i64 flip_clock) {
+static void linux_produce_sound_for_frame(app_state_t* app_state, sdl_sound_output_t* sound, game_sound_buffer_t* game_sound_buffer, i64 flip_clock) {
 	u32 expected_sound_bytes_per_frame = (u32)((float)(sound->samples_per_second * sound->bytes_per_sample) / app_state->target_game_hz);
     // Determine how many audio samples we will ask the game to give us back.
     game_sound_buffer->sample_count = expected_sound_bytes_per_frame / sound->bytes_per_sample;
 
     game_get_sound_samples(game_sound_buffer);
 //    linux_fill_sound_buffer(sound, game_sound_buffer);
-    if (SDL_QueueAudio(app_state->linux.sound_output.audio_device, game_sound_buffer->samples, expected_sound_bytes_per_frame) < 0) {
+    if (SDL_QueueAudio(app_state->sdl.sound_output.audio_device, game_sound_buffer->samples, expected_sound_bytes_per_frame) < 0) {
         printf("Failed to SDL_QueueAudio: %s\n", SDL_GetError());
     }
 }

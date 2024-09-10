@@ -20,7 +20,7 @@ void linux_sleep(u32 ms) {
 }
 
 void message_box(const char* message) {
-    SDL_ShowSimpleMessageBox(0, "Rayverse", message, global_app_state.linux.window);
+    SDL_ShowSimpleMessageBox(0, "Rayverse", message, global_app_state.sdl.window);
 }
 
 void toggle_fullscreen(SDL_Window* window) {
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
     window_flags |= SDL_WINDOW_ALLOW_HIGHDPI;
     SDL_Window* window = SDL_CreateWindow("Rayverse", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desired_window_width, desired_window_height, window_flags);
 //    g_window = window;
-    app_state->linux.window = window;
+    app_state->sdl.window = window;
 
     {
         i32 gl_w, gl_h;
@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
     app_state->target_game_hz = 60;
     app_state->target_seconds_per_frame = 1.0f / (float)app_state->target_game_hz;
 
-    linux_sound_output_t* sound_output = &app_state->linux.sound_output;
+    sdl_sound_output_t* sound_output = &app_state->sdl.sound_output;
     sound_output->samples_per_second = 44100;
     sound_output->bytes_per_sample = sizeof(i16) * 2;
     sound_output->secondary_buffer_size = sound_output->samples_per_second * sound_output->bytes_per_sample; // 1 second
@@ -119,8 +119,8 @@ int main(int argc, char** argv) {
         printf("Failed to open Audio Device: %s\n", SDL_GetError());
         return 1;
     }
-    app_state->linux.sound_output.audio_device = dev;
-    SDL_PauseAudioDevice(app_state->linux.sound_output.audio_device, 0);
+    app_state->sdl.sound_output.audio_device = dev;
+    SDL_PauseAudioDevice(app_state->sdl.sound_output.audio_device, 0);
 
     game_init_sound(&app_state->game.sound_buffer, (i32)sound_output->samples_per_second);
 
@@ -131,12 +131,12 @@ int main(int argc, char** argv) {
     app_state->flip_clock = get_clock();
 
     global_app_state.running = true;
-    rayman_main();
+    PcMain();
     return 0;
 }
 
 void linux_prepare_frame(app_state_t* app_state) {
-    process_input(app_state->linux.window);
+    process_input(app_state->sdl.window);
 
     glDrawBuffer(GL_BACK);
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
@@ -156,11 +156,11 @@ void linux_end_frame(app_state_t* app_state) {
     app_state->frame_clock += ns_per_tick * frames_elapsed;
 
     i32 gl_w, gl_h;
-    SDL_GL_GetDrawableSize(app_state->linux.window, &gl_w, &gl_h);
+    SDL_GL_GetDrawableSize(app_state->sdl.window, &gl_w, &gl_h);
     opengl_upload_surface(app_state, app_state->active_surface, gl_w, gl_h);
-    linux_produce_sound_for_frame(app_state, &app_state->linux.sound_output, &app_state->game.sound_buffer, app_state->flip_clock);
+    linux_produce_sound_for_frame(app_state, &app_state->sdl.sound_output, &app_state->game.sound_buffer, app_state->flip_clock);
 
-    SDL_GL_SwapWindow(app_state->linux.window);
+    SDL_GL_SwapWindow(app_state->sdl.window);
     app_state->flip_clock = get_clock();
 }
 

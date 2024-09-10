@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <math.h>
+#include <time.h>
 
 
 #ifdef _MSC_VER

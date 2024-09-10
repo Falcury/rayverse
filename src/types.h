@@ -70,11 +70,11 @@ struct win32_sound_output_t {
 	bool is_valid;
 };
 #else
-struct linux_sound_output_t {
+struct sdl_sound_output_t {
     u32 samples_per_second;
     u32 bytes_per_sample;
     u32 secondary_buffer_size;
-    u8* secondary_buffer; // TODO: maybe remove this, if we keep using SDL_QueueAudio()?
+    u8* secondary_buffer; // TODO: fix this instead of keep using SDL_QueueAudio()
     i64 running_sample_index_for_writing;
     i64 running_sample_index_for_reading;
     u32 safety_bytes;
@@ -99,9 +99,9 @@ struct win32_state_t {
     win32_sound_output_t sound_output;
 };
 #else
-struct linux_state_t {
+struct sdl_state_t {
     SDL_Window* window;
-    linux_sound_output_t sound_output;
+    sdl_sound_output_t sound_output;
 };
 #endif
 
@@ -126,7 +126,7 @@ struct app_state_t {
 #ifdef _WIN32
 	win32_state_t win32;
 #else
-    linux_state_t linux;
+    sdl_state_t sdl;
 #endif
 	opengl_state_t opengl;
 	surface_t offscreen_surface;

@@ -133,8 +133,8 @@ void init_draw_normalized_quad() {
 
 bool linux_init_opengl(app_state_t* app_state) {
 
-    SDL_GLContext gl_context = SDL_GL_CreateContext(app_state->linux.window);
-    SDL_GL_MakeCurrent(app_state->linux.window, gl_context);
+    SDL_GLContext gl_context = SDL_GL_CreateContext(app_state->sdl.window);
+    SDL_GL_MakeCurrent(app_state->sdl.window, gl_context);
 
 //    char* version_string = (char*)glGetString(GL_VERSION);
 //    printf("OpenGL supported version: %s\n", version_string);
