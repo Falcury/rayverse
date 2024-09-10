@@ -273,7 +273,7 @@ int main(int argc, char** argv) {
 	app_state->flip_clock = get_clock();
 
 	global_app_state.running = true;
-	rayman_main();
+	PcMain();
 	return 0;
 }
 

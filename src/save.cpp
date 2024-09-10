@@ -7,10 +7,10 @@ u8 bonus_completed_data[24];
 // sub_742E0
 void set_medaillion_saved_data() {
 	for (i32 i = 0; i < 24; ++i) {
-		medaillion_t* medaillion = medaillions + i;
-		u8 unlocked_bit = medaillion->status & 1;
-		u8 status_flag_4_bit = (medaillion->status & 4) >> 2;
-		u8 save_byte = (unlocked_bit) | (status_flag_4_bit << 1) | ((medaillion->cages & 7) << 2);
+		medaillion_t* medaillion = t_world_info + i;
+		u8 unlocked_bit = medaillion->state & 1;
+		u8 status_flag_4_bit = (medaillion->state & 4) >> 2;
+		u8 save_byte = (unlocked_bit) | (status_flag_4_bit << 1) | ((medaillion->nb_cages & 7) << 2);
 		medaillion_saved_data[i] = save_byte;
 	}
 }
@@ -254,18 +254,18 @@ void load_sav(u8 which_save) {
 		free(compressed);
 
 		mem_read(save_names[which_save-1], raw, 4);
-		mem_read(&continues, raw, 1);
+		mem_read(&nb_continue, raw, 1);
 		mem_read(medaillion_saved_data, raw, 24);
 		mem_read(&skills, raw, 2);
-		mem_read(&rayfist, raw, 20);
+		mem_read(&poing, raw, 20);
 		mem_read(&player, raw, 10);
 		mem_read(&ray.hitp, raw, 1);
 		mem_read(collected_events_data, raw, 2592);
 		mem_read(bonus_completed_data, raw, 24);
-		u16 map_location = byte_CFA53 ? current_map_location : saved_map_location;
+		u16 map_location = byte_CFA53 ? num_world_choice : world_index;
 		// Note: Game bug: saved_map_location is only 1 byte, but we are writing/reading 2 bytes,
 		mem_read(&map_location, raw, 2);
-		mem_read(&bosses_beaten, raw, 2);
+		mem_read(&finBossLevel, raw, 2);
 		free(raw);
 
 	}
@@ -273,7 +273,7 @@ void load_sav(u8 which_save) {
 }
 
 // sub_74400
-void write_save_file(u8 which_save) {
+void SaveGameOnDisk(u8 which_save) {
 	if (!(which_save >= 1 && which_save <= 3)) {
 		return; // out of bounds
 	}
@@ -286,18 +286,18 @@ void write_save_file(u8 which_save) {
 	//set_medaillion_saved_data();
 	
 	mem_write(save_names[which_save-1], raw, 4);
-	mem_write(&continues, raw, 1);
+	mem_write(&nb_continue, raw, 1);
 	mem_write(medaillion_saved_data, raw, 24);
 	mem_write(&skills, raw, 2);
-	mem_write(&rayfist, raw, 20);
+	mem_write(&poing, raw, 20);
 	mem_write(&player, raw, 10);
 	mem_write(&ray.hitp, raw, 1);
 	mem_write(collected_events_data, raw, 2592);
 	mem_write(bonus_completed_data, raw, 24);
-	u16 map_location = byte_CFA53 ? current_map_location : saved_map_location;
+	u16 map_location = byte_CFA53 ? num_world_choice : world_index;
 	// Note: Game bug: saved_map_location is only 1 byte, but we are writing/reading 2 bytes,
 	mem_write(&map_location, raw, 2);
-	mem_write(&bosses_beaten, raw, 2);
+	mem_write(&finBossLevel, raw, 2);
 	raw->cursor = 0;
 
 	mem_t* compressed = compress_sav(raw);
@@ -323,7 +323,7 @@ void write_save_file(u8 which_save) {
 void reset_items_and_bosses() {
 	memset(collected_events_data, 0, 2592);
 	memset(bonus_completed_data, 0, 24);
-	bosses_beaten = 0;
+	finBossLevel = 0;
 
 	for (i32 i = 0; i < 24; ++i) {
 		medaillion_saved_data[i] &= ~(7 << 2);

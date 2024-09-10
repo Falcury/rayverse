@@ -17,7 +17,7 @@ bool is_ogg_finished;
 
 char* language_txt[304]; //C2B48
 
-i16 options_jeu_KeyJump; //C2F88 // TODO: check these names; create struct?
+i16 options_jeu_KeyJump; //C2F88 // TODO: check these names; create struct or array?
 i16 options_jeu_KeyWeapon; //C2F8A
 i16 options_jeu_KeyUnknown_default_02; //C2F8C
 i16 options_jeu_KeyAction; //C2F8E
@@ -26,31 +26,82 @@ i16 options_jeu_sound_volume; //C2F92
 i16 options_jeu_is_stereo; //C2F94
 
 i16 notbut[4]; //C97F0
-
-obj_t* obj_bodies; //CCDF0
-u16 obj_count; //CCDF4
-
+level_t level; //CCDF0
+level_t level_obj; //CCDFC
+u8 ecroule_rubis_list[8]; //CCE00
+u8 saveobj[64]; //CCE08
 eta_t** loaded_eta[100]; //CCE48
-
+i32 idle_ticks; //CCFD8
+char rayman_path[100]; //CCFDC
 u32 Port; //CD040
 u32 DeviceID; //CD044
 u32 Irq; //CD048
 u32 Param; //CD04C
 u32 Dma; //CD050
-u32 texture_opaque_count; //CD054
-u32 texture_count; //CD058
+u32 nb_blocks_plein; //CD054
+u32 nb_total_blocks; //CD058
 u32 RaymanExeSize; //CD05C
-
+i32 Bloc_lim_W2_Aff; //CD060
+i32 Bloc_lim_W1_Aff; //CD064
 u32 RaymanExeCheckSum2; //CD068
 u32 RaymanExeCheckSum3; //CD06C
 u32 RaymanExeCheckSum1; //CD070
-
-draw_func_t* curr_obj_draw_proc; //CD10C
-void* draw_flocon_1_normal_etx; //CD110
+i32 Bloc_lim_H2_Glob; //CD074
+i32 Bloc_lim_H1_Glob; //CD078
+i32 Bloc_lim_W2_Glob; //CD07C
+i32 Bloc_lim_W1_Glob; //CD080
+i32 Bloc_lim_H2_Aff; //CD084
+i32 Bloc_lim_H1_Aff; //CD088
+i32 TailleStageNameLevel; //CD08C
+i32 CouleurStageNameLevel; //CD090
+i32 TailleStageNameWorld; //CD094
+i32 Bloc_lim_W2; //CD098
+i32 Bloc_lim_W1; //CD09C
+i32 Bloc_lim_H2; //CD0A0
+i32 Bloc_lim_H1; //CD0A4
+i32 CouleurStageNameWorld; //CD0A8
+i32 HauteurJumelle; //CD0AC
+i32 LargeurJumelle; //CD0B0
+i32 JumelleZoomAmp; //CD0B4
+void* drawflocon6NormalETX; //CD0B8
+void* drawflocon7NormalETX; //CD0BC
+i32 JumellePosY; //CD0C0
+i32 JumellePosX; //CD0C4
+i32 JumelleZoomDef; //CD0C8
+i32 LongueurStageNameWorld; //CD0CC
+i32 LongueurStageNameLevel; //CD0D0
+void* drawpluie7NormalETX; //CD0D4
+void* drawpluie4NormalETX; //CD0D8
+i32 JumelleYMin; //CD0DC
+void* drawpluie5NormalETX; //CD0E0
+i32 JumelleXMin; //CD0E4
+void* drawflocon4NormalETX; //CD0E8
+i32 RayonJumelle; //CD0EC
+void* drawpluie6NormalETX; //CD0F0
+void* dword_CD0F4; //CD0F4
+void* DrawSpriteColorNormalEtX; //CD0F8
+i32 dword_CD0FC; //CD0FC
+void* fplotNormalETX; //CD100
+void* drawflocon5NormalETX; //CD104
+void* drawflocon2NormalETX; //CD108
+draw_func_t* DrawSpriteNormalEtX; //CD10C
+void* drawflocon1NormalETX; //CD110
 void* dword_CD114; //CD114
-draw_func_t* curr_obj_draw_proc_flipped; //CD118
+draw_func_t* DrawSpriteFlipNormalEtX; //CD118
+void* dword_CD11C; //CD11C
+void* Swap_And_Test_Joystick; //CD120
+void* Copy_Plan0_To_Buf; //CD124
+void* DrawBufferNormalIni; //CD128
+void* drawflocon3NormalETX; //CD12C
+u8* EffetBufferNormal; //CD130
+i32 TempsDemo; //CD134
+u8* DrawBufferNormal; //CD138
+void* anim_func; //CD13C
+char* save_ray[3]; //CD794
 
-u8 plan0_num_pcx[10]; //CEF47
+options_t options; //CD7A4
+u8* draw_buffer; //CD7B8
+
 rgb_palette_t color_palettes[3]; //C7F88
 
 u32 TailleMainMemLevel; //CD844
@@ -72,29 +123,17 @@ u32 time_left; //CD8C4
 obj_t mapobj[25]; //CD8CC
 
 u32 background_DES; //CE634
-u16 level_width_tiles; //CE638
-u16 level_height_tiles; //CE63A
-u32 level_tile_count; //CE63C
-maptile_t* level_tiles; //CE640
-
+map_data_t mp; //CE638
+u32 dword_CE644; //CE644
+u32 dword_CE648; //CE648
 obj_t ray; //CE650
 
-obj_t* rayman_fist; //CE6DC
+obj_t* poing_obj; //CE6DC
 obj_t* alpha; //CE6E0
 u8* alpha_image_atlas; //CE6E4
 i16 alpha_sprite_count; //CE6E8
 obj_t div_obj; //CE6EC
-fist_t rayfist; //CE770
-u16 word_CE774; //CE774
-u16 word_CE776; //CE776
-u16 word_CE778; //CE778
-u16 word_CE77A; //CE77A
-u8 fist_state; //CE77C
-u8 byte_CE77D; //CE77D
-u8 is_fist_thrown; //CE77E
-u8 fist_hit_strength; //CE77F
-u8 byte_CE780; //CE780
-u8 byte_CE781; //CE781
+poing_t poing; //CE770
 obj_t bigray; //CE784
 obj_t raylittle; //CE808
 
@@ -102,8 +141,14 @@ obj_t clockobj; //CED44
 obj_t* alpha2; //CEDC8
 u8* alpha2_image_atlas; //CEDCC
 i16 alpha2_sprite_count; //CEDD0
+obj_t rms; //CEDD4
+u8* link_init; //CEE58
+obj_t raytmp; //CEE5C
+u8 skops_lave_obj[20]; //CEEE0
+i32 pixels_enfonce; //CEEF4
 
-player_t player; //CEF52
+u8 plan0_num_pcx[10]; //CEF47
+status_bar_t player; //CEF52
 u8 ray_max_hitp; //CEF5B
 
 i16 xpadmax; //CF748
@@ -114,28 +159,31 @@ i16 xpadmin; //CF750
 i16 ypadmin; //CF752
 
 u16 skills; //CF81A
-u16 bosses_beaten; //CF81E
+u16 finBossLevel; //CF81E
 
-i16 proj_center_y; //CF836
-i16 proj_center_x; //CF838
-u16 current_map_location; //CF83A
-u16 word_CF83C; //CF83C
-u16 word_CF868; //CF868
+i16 id_cling_old; //CF830
+i16 ywldmapsave; //CF832
+i16 xwldmapsave; //CF834
+i16 PROJ_CENTER_Y; //CF836
+i16 PROJ_CENTER_X; //CF838
+u16 num_world_choice; //CF83A
+u16 ray_speed_inv; //CF83C
+u16 ymapinit; //CF83E
 u16 ray_clic; //CF840
 u16 id_obj_grabbed; //CF842
-u16 word_CF844; //CF844
-u16 id_cling_pow; //CF846
+u16 xmapinit; //CF844
+u16 id_Cling_pow; //CF846
 u16 ray_between_clic; //CF848
-i16 boss_y_to_reach; //CF84A
+i16 bossYToReach; //CF84A
 u16 screen_trembling3; //CF84C
 u16 screen_trembling2; //CF84E
-i16 boss_x_to_reach; //CF850
+i16 bossXToReach; //CF850
 u16 screen_trembling; //CF852
 i16 scroll_start_y; //CF854
-i16 boss_scroll_start_y; //CF856
-i16 boss_scroll_start_x; //CF858
-i16 boss_scroll_end_x; //CF85A
-i16 boss_scroll_end_y; //CF85C
+i16 bossScrollStartY; //CF856
+i16 bossScrollStartX; //CF858
+i16 bossScrollEndX; //CF85A
+i16 bossScrollEndY; //CF85C
 i16 scroll_end_y; //CF85E
 i16 ray_zdc_x; //CF860
 i16 ray_zdc_h; //CF862
@@ -198,7 +246,7 @@ u16 ray_old_subetat; //CF8D4
 u16 moskitosaxo_obj_id; //CF8D6
 u16 moskitomama_right_obj_id; //CF8D8
 u16 nb_fade; //CF8DA
-u16 skops_last_action; //CF8DC
+u16 sko_last_action; //CF8DC
 u16 skops_beam_on; //CF8DE
 i16 skops_final_y; //CF8E0
 i16 skops_final_x; //CF8E2
@@ -207,14 +255,12 @@ i16 skops_beam_speed; //CF8E6
 i16 skops_beam_ds; //CF8E8
 i16 skops_beam_dy; //CF8EA
 u16 rubis_list_calculated; //CF8EC
-i16 skops_beam_x; //CF8EE
-i16 skops_beam_y; //CF8F0
+i16 sko_rayon_x; //CF8EE
+i16 sko_rayon_y; //CF8F0
 u16 word_CF8F2; //CF8F2
 u16 word_CF8F4; //CF8F4
 
-u16 level_width; //CF89E
 
-u16 level_height; //CF8A6
 
 u8 horloge[25]; //CF9F5
 u8 windows_version_major; //CFA0E
@@ -229,19 +275,19 @@ u8 byte_CFA16; //CFA16
 u8 CarteSonAutorisee; //CFA17
 u8 is_background_clearing_needed; //CFA18
 u8 byte_CFA19; //CFA19
-u8 is_background_available; //CFA1A
+u8 FondAutorise; //CFA1A // background available
 u8 byte_CFA1B; //CFA1B
 u8 Mode_Pad; //CFA1C
 u8 something_with_cfg_25_default_00_joy; //CFA1D (?)
 u8 Port_Pad; //CFA1E
 u8 ScrollDiffOn; //CFA1F
 u8 P486; //CFA20
-u8 byte_CFA21; //CFA21
-u8 background_image_index; //CFA22
+u8 type_fnd; //CFA21
+u8 no_fnd; //CFA22
 u8 is_joypad_mode; //CFA23
-u8 type_fndscr_x; //CFA24
+u8 type_fndscrX; //CFA24
 u8 NumCard; //CFA25
-u8 cpu_type; //CFA26
+u8 TheProcesseur; //CFA26
 u8 byte_CFA27; //CFA27
 u8 world_unk_offset_7_always_DA; //CFA28
 u8 byte_CFA29; //CFA29
@@ -253,28 +299,28 @@ u8 byte_CFA2E; //CFA2E
 u8 byte_CFA2F; //CFA2F
 u8 byte_CFA30; //CFA30
 u8 byte_CFA31; //CFA31
-u8 is_zoom_effect_available; //CFA32
-u8 is_normal_mode_available; //CFA33
-u8 byte_CFA34; //CFA34
+u8 JumelleEffectAutorise; //CFA32 // zoom effect available
+u8 NormalModeAutorise; //CFA33    // normal mode available
+u8 first_credit; //CFA34
 u8 language; //CFA35
 u8 ModeDemo; //CFA36
-u8 menu_etape; //CFA37
+u8 menuEtape; //CFA37
 u8 byte_CFA38; //CFA38
-u8 need_quit; //CFA39
-u8 byte_CFA3A; //CFA3A
-u8 continues; //CFA3B
+u8 MENU_RETURN; //CFA39
+u8 last_credit; //CFA3A
+u8 nb_continue; //CFA3B
 u8 byte_CFA3C; //CFA3C
-u8 is_save_available; //CFA3D
+u8 NBRE_SAVE; //CFA3D
 u8 byte_CFA3E; //CFA3E
 u8 byte_CFA3F; //CFA3F
-u8 proc_exit; //CFA40
+u8 PROC_EXIT; //CFA40
 u8 byte_CFA41; //CFA41
 u8 byte_CFA42; //CFA42
 u8 byte_CFA53; //CFA53
 u8 byte_CFA43; //CFA43
 u8 vignet_to_display; //CFA44
 u8 byte_CFA45; //CFA45
-u8 is_game_won; //CFA46 (?)
+u8 You_Win; //CFA46 (?)
 u8 byte_CFA47; //CFA47
 u8 byte_CFA48; //CFA48
 u8 byte_CFA49; //CFA49
@@ -287,10 +333,10 @@ u8 confirmation_dialog_result; //CFA4F
 u8 MusicCdActive; //CFA50
 u8 input_mode; //CFA51
 u8 is_paused; //CFA52
-u8 in_the_world_map; //CFA53
+u8 dans_la_map_monde; //CFA53
 u8 ray_on_poelle; //CFA54
 u8 nb_wiz_collected; //CFA55
-u8 bonus_tings_to_get; //CFA56
+u8 nb_wiz; //CFA56
 u8 byte_CFA57; //CFA57
 u8 byte_CFA58; //CFA58
 u8 byte_CFA59; //CFA59
@@ -300,7 +346,7 @@ u8 fin_continue; //CFA5C
 u8 byte_CFA5D; //CFA5D
 u8 ray_inertia; //CFA5E
 u8 byte_CFA5F; //CFA5F
-u8 saved_map_location; // 0xCFA60
+u8 world_index; // 0xCFA60
 u8 byte_CFA61; // 0xCFA61
 u8 byte_CFA62; // 0xCFA62
 u8 zoom_mode; // 0xCFA63
@@ -434,31 +480,31 @@ u8 sound_flags[256] = {
 		0x03, 0x03, 0x07, 0x07, 0x04, 0x1B, 0x04, 0x07, 0x07, 0x07, 0x03, 0x03, 0x03, 0x03, 0x07, 0x07, // 240-255
 };
 
-medaillion_t medaillions[24] = {
-		{29,  264, 18, 0,  0,  1,  1, 0, 1, 1,  2, 0, 0, 0, 0xBFEA8}, // 0: Pink Plant Woods
-		{100, 254, 2,  1,  0,  4,  0, 0, 1, 5,  0, 0, 0, 0, 0xBFEA8}, // 1: Anguish Lagoon
-		{90,  212, 2,  1,  3,  2,  0, 0, 1, 9,  2, 0, 0, 0, 0xBFEA8}, // 2: Swamps of Forgetfulness
-		{47,  200, 3,  3,  3,  2,  0, 0, 1, 12, 1, 0, 0, 0, 0xBFEA8}, // 3: Moskito's Nest
-		{180, 215, 5,  19, 1,  4,  0, 0, 2, 1,  2, 0, 0, 0, 0xBFEA8}, // 4: Bongo Hills
-		{185, 175, 8,  4,  6,  8,  0, 0, 2, 7,  0, 0, 0, 0, 0xBFEA8}, // 5: Allegro Presto
-		{135, 160, 20, 6,  7,  5,  0, 0, 2, 12, 2, 0, 0, 0, 0xBFEA8}, // 6: Gong Heights
-		{91,  143, 7,  7,  7,  6,  0, 0, 2, 14, 3, 0, 0, 0, 0xBFEA8}, // 7: Mr Sax's Hullaballoo
-		{212, 133, 9,  5,  5,  8,  0, 0, 3, 1,  1, 0, 0, 0, 0xBFEA8}, // 8: Twilight Gulch
-		{209, 92,  21, 8,  9,  10, 0, 0, 3, 3,  0, 0, 0, 0, 0xBFEA8}, // 9: The Hard Rocks
-		{257, 80,  10, 11,  9, 10, 0, 0, 3, 6,  1, 0, 0, 0, 0xBFEA8}, // 10: Mr Stone's Peaks
-		{234, 235, 10, 11, 11, 12, 0, 0, 4, 1,  1, 0, 0, 0, 0xBFEA8}, // 11: Eraser Plains
-		{278, 190, 13, 11, 11, 12, 0, 0, 4, 5,  5, 0, 0, 0, 0xBFEA8}, // 12: Pencil Pentathlon
-		{290, 145, 22, 12, 13, 14, 0, 0, 4, 8,  1, 0, 0, 0, 0xBFEA8}, // 13: Space Mama's Crater
-		{335, 180, 13, 15, 13, 14, 0, 0, 5, 1,  0, 0, 0, 0, 0xBFEA8}, // 14: Crystal Palace
-		{312, 228, 14, 23, 15, 16, 0, 0, 5, 3,  5, 0, 0, 0, 0xBFEA8}, // 15: Eat at Joe's
-		{360, 220, 17, 16, 15, 16, 0, 0, 5, 9,  2, 0, 0, 0, 0xBFEA8}, // 16: Mr Skops' Stalactites
-		{357, 80,  17, 16, 17, 17, 0, 0, 6, 1,  2, 0, 0, 0, 0xBFEA8}, // 17: Mr Dark's Dare
-		{10,  212, 18, 0,  18, 18, 0, 0, 7, 20, 5, 0, 0, 0, 0xBFEA8}, // 18: Save Game (Jungle)
-		{182, 266, 4,  19, 19, 19, 0, 0, 7, 20, 3, 0, 0, 0, 0xBFEA8}, // 19: Save Game (Music 1)
-		{145, 97,  20, 6,  20, 20, 0, 0, 7, 20, 0, 0, 0, 0, 0xBFEA8}, // 20: Save Game (Music 2)
-		{190, 45,  21, 9,  21, 21, 0, 0, 7, 20, 2, 0, 0, 0, 0xBFEA8}, // 21: Save Game (Mountain)
-		{276, 115, 22, 13, 22, 22, 0, 0, 7, 20, 1, 0, 0, 0, 0xBFEA8}, // 22: Save Game (Picture)
-		{306, 267, 15, 23, 23, 23, 0, 0, 7, 20, 1, 0, 0, 0, 0xBFEA8}, // 23: Save Game (Cave)
+medaillion_t t_world_info[24] = {
+		{29,  264, 18, 0,  0,  1,  1, 0, 1, 1,  2, 0, 0, 0, (char*)0xBFEA8}, // 0: Pink Plant Woods
+		{100, 254, 2,  1,  0,  4,  0, 0, 1, 5,  0, 0, 0, 0, (char*)0xBFEA8}, // 1: Anguish Lagoon
+		{90,  212, 2,  1,  3,  2,  0, 0, 1, 9,  2, 0, 0, 0, (char*)0xBFEA8}, // 2: Swamps of Forgetfulness
+		{47,  200, 3,  3,  3,  2,  0, 0, 1, 12, 1, 0, 0, 0, (char*)0xBFEA8}, // 3: Moskito's Nest
+		{180, 215, 5,  19, 1,  4,  0, 0, 2, 1,  2, 0, 0, 0, (char*)0xBFEA8}, // 4: Bongo Hills
+		{185, 175, 8,  4,  6,  8,  0, 0, 2, 7,  0, 0, 0, 0, (char*)0xBFEA8}, // 5: Allegro Presto
+		{135, 160, 20, 6,  7,  5,  0, 0, 2, 12, 2, 0, 0, 0, (char*)0xBFEA8}, // 6: Gong Heights
+		{91,  143, 7,  7,  7,  6,  0, 0, 2, 14, 3, 0, 0, 0, (char*)0xBFEA8}, // 7: Mr Sax's Hullaballoo
+		{212, 133, 9,  5,  5,  8,  0, 0, 3, 1,  1, 0, 0, 0, (char*)0xBFEA8}, // 8: Twilight Gulch
+		{209, 92,  21, 8,  9,  10, 0, 0, 3, 3,  0, 0, 0, 0, (char*)0xBFEA8}, // 9: The Hard Rocks
+		{257, 80,  10, 11,  9, 10, 0, 0, 3, 6,  1, 0, 0, 0, (char*)0xBFEA8}, // 10: Mr Stone's Peaks
+		{234, 235, 10, 11, 11, 12, 0, 0, 4, 1,  1, 0, 0, 0, (char*)0xBFEA8}, // 11: Eraser Plains
+		{278, 190, 13, 11, 11, 12, 0, 0, 4, 5,  5, 0, 0, 0, (char*)0xBFEA8}, // 12: Pencil Pentathlon
+		{290, 145, 22, 12, 13, 14, 0, 0, 4, 8,  1, 0, 0, 0, (char*)0xBFEA8}, // 13: Space Mama's Crater
+		{335, 180, 13, 15, 13, 14, 0, 0, 5, 1,  0, 0, 0, 0, (char*)0xBFEA8}, // 14: Crystal Palace
+		{312, 228, 14, 23, 15, 16, 0, 0, 5, 3,  5, 0, 0, 0, (char*)0xBFEA8}, // 15: Eat at Joe's
+		{360, 220, 17, 16, 15, 16, 0, 0, 5, 9,  2, 0, 0, 0, (char*)0xBFEA8}, // 16: Mr Skops' Stalactites
+		{357, 80,  17, 16, 17, 17, 0, 0, 6, 1,  2, 0, 0, 0, (char*)0xBFEA8}, // 17: Mr Dark's Dare
+		{10,  212, 18, 0,  18, 18, 0, 0, 7, 20, 5, 0, 0, 0, (char*)0xBFEA8}, // 18: Save Game (Jungle)
+		{182, 266, 4,  19, 19, 19, 0, 0, 7, 20, 3, 0, 0, 0, (char*)0xBFEA8}, // 19: Save Game (Music 1)
+		{145, 97,  20, 6,  20, 20, 0, 0, 7, 20, 0, 0, 0, 0, (char*)0xBFEA8}, // 20: Save Game (Music 2)
+		{190, 45,  21, 9,  21, 21, 0, 0, 7, 20, 2, 0, 0, 0, (char*)0xBFEA8}, // 21: Save Game (Mountain)
+		{276, 115, 22, 13, 22, 22, 0, 0, 7, 20, 1, 0, 0, 0, (char*)0xBFEA8}, // 22: Save Game (Picture)
+		{306, 267, 15, 23, 23, 23, 0, 0, 7, 20, 1, 0, 0, 0, (char*)0xBFEA8}, // 23: Save Game (Cave)
 };
 
 // sound

@@ -72,8 +72,8 @@ void init_loader_anim() {
 	bigray.offset_by = 240;
 	bigray.screen_y = -72;
 	bigray.screen_x = 120;
-	bigray.etat = 1;
-	bigray.subetat = 0;
+	bigray.main_etat = 1;
+	bigray.sub_etat = 0;
 	bigray.command = 0;
 	bigray.flags &= ~obj_flags_8_flipped;
 }
@@ -83,13 +83,13 @@ void DO_LOADER_ANIM() {
 	eta_t* eta = get_eta(&bigray);
 	bigray.xspeed = 0;
 	if ((eta->anim_speed & 15) != 0 && (horloge[eta->anim_speed] == 0)) {
-		set_x_speed(&bigray);
+		SET_X_SPEED(&bigray);
 	}
 	bigray.screen_x += bigray.xspeed;
-	if (proc_exit == 1) {
-		proc_exit = 0;
+	if (PROC_EXIT == 1) {
+		PROC_EXIT = 0;
 		bigray.command = 5;
-		set_obj_state(&bigray, 0, 2);
+		set_main_and_sub_etat(&bigray, 0, 2);
 		bigray.timer = 2;
 		bigray.flags &= ~obj_flags_8_flipped;
 		bigray.screen_x = 160 - bigray.offset_bx - 16;
@@ -101,66 +101,66 @@ void DO_LOADER_ANIM() {
 			case 0: {
 				if (bigray.screen_x + bigray.offset_bx < -100) {
 					++bigray.command;
-					set_obj_state(&bigray, 1, 1);
+					set_main_and_sub_etat(&bigray, 1, 1);
 					bigray.screen_x = (-bigray.offset_bx) - 60;
 					bigray.flags |= obj_flags_8_flipped;
-					do_anim(&bigray);
+					DO_ANIM(&bigray);
 				} else {
-					do_anim(&bigray);
+					DO_ANIM(&bigray);
 				}
 			} break;
 			case 1: {
 				if (bigray.screen_x + bigray.offset_bx > 400) {
 					++bigray.command;
-					set_obj_state(&bigray, 1, 2);
+					set_main_and_sub_etat(&bigray, 1, 2);
 					bigray.anim_frame = 0;
 					bigray.screen_x = 350 - bigray.offset_bx;
 					bigray.flags &= ~obj_flags_8_flipped;
-					do_anim(&bigray);
+					DO_ANIM(&bigray);
 				} else {
-					do_anim(&bigray);
+					DO_ANIM(&bigray);
 				}
 			} break;
 			case 2: {
-				if (bigray.etat == 0 && bigray.subetat == 0) {
+				if (bigray.main_etat == 0 && bigray.sub_etat == 0) {
 					++bigray.command;
-					do_anim(&bigray);
+					DO_ANIM(&bigray);
 				} else {
-					do_anim(&bigray);
+					DO_ANIM(&bigray);
 				}
 			} break;
 			case 3: {
-				if (end_of_animation(&bigray)) {
+				if (EOA(&bigray)) {
 					++bigray.command;
-					set_obj_state(&bigray, 1, 3);
+					set_main_and_sub_etat(&bigray, 1, 3);
 					bigray.screen_x = -60 - bigray.offset_bx;
 					bigray.flags |= obj_flags_8_flipped;
-					do_anim(&bigray);
+					DO_ANIM(&bigray);
 				} else {
-					do_anim(&bigray);
+					DO_ANIM(&bigray);
 				}
 			} break;
 			case 4: {
 				if (bigray.screen_x + bigray.offset_bx > 400) {
 					++bigray.command;
-					set_obj_state(&bigray, 0, 1);
+					set_main_and_sub_etat(&bigray, 0, 1);
 					bigray.screen_x = 160 - bigray.offset_bx - 16;
 					bigray.flags &= ~obj_flags_8_flipped;
-					do_anim(&bigray);
+					DO_ANIM(&bigray);
 				} else {
-					do_anim(&bigray);
+					DO_ANIM(&bigray);
 				}
 			} break;
 			case 5: {
-				if (bigray.etat == 0 && bigray.subetat == 2) {
+				if (bigray.main_etat == 0 && bigray.sub_etat == 2) {
 					if (bigray.timer == 0) {
-						proc_exit = 1;
+						PROC_EXIT = 1;
 					} else {
 						--bigray.timer;
 					}
-					do_anim(&bigray);
+					DO_ANIM(&bigray);
 				} else {
-					do_anim(&bigray);
+					DO_ANIM(&bigray);
 				}
 			} break;
 		}
@@ -172,14 +172,14 @@ i16 loader_anim_prg(u32 par_0) {
 	//readinput();
 	bool valid_button_pressed = false; //stub
 	if (valid_button_pressed) {
-		proc_exit = true;
+		PROC_EXIT = true;
 	}
 	horloges(1);
 	//sub_1CF94()
 	clrscr();
 	display2(&bigray);
 	DO_LOADER_ANIM();
-	if (proc_exit && nb_fade == 0) {
+	if (PROC_EXIT && nb_fade == 0) {
 		return 1;
 	} else {
 		return 0;
@@ -336,11 +336,11 @@ void DO_GROS_RAYMAN() {
 	INIT_FADE_IN();
 	play_cd_track(19); // Menu music - "World Map"
 	init_loader_anim();
-	curr_obj_draw_proc = draw_simple;
-	curr_obj_draw_proc_flipped = draw_simple_flipped;
-	synchro_loop(loader_anim_prg);
-	curr_obj_draw_proc = sub_16A24;
-	curr_obj_draw_proc_flipped = sub_16B08;
+	DrawSpriteNormalEtX = DrawSpriteNormal256;
+	DrawSpriteFlipNormalEtX = DrawSpriteFlipNormal256;
+	SYNCHRO_LOOP(loader_anim_prg);
+	DrawSpriteNormalEtX = DrawSpriteNormal;
+	DrawSpriteFlipNormalEtX = DrawSpriteFlipNormal;
 	free(main_mem_tmp);
 	LOAD_ALL_FIX();
 	fade_out(2, &fade_source_palette);

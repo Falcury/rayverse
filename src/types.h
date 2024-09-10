@@ -162,55 +162,44 @@ struct eta_t {
 struct medaillion_t {
 	u16 xpos;
 	u16 ypos;
-	u8 field_4;
-	u8 field_5;
-	u8 field_6;
-	u8 field_7;
-	u8 status;
-	u8 cages;
+	u8 index_up;
+	u8 index_down;
+	u8 index_left;
+	u8 index_right;
+	u8 state;
+	u8 nb_cages;
 	u8 world;
-	u8 start_level;
+	u8 level;
 	u8 color;
 	u8 field_D;
 	u8 field_E;
 	u8 field_F;
-	u32 text;
+	char* text;
 };
 
-struct player_t {
+struct status_bar_t {
 	u16 lives;
-	u8 field_2;
-	u8 field_3;
-	u8 field_4;
-	u8 field_5;
-	u8 tings;
-	u8 field_7;
-	u8 field_8;
+	u8 lives_digits[2];
+	u8 hp_sprites[2];
+	u8 num_wiz;
+	u8 wiz_digits[2];
 	u8 max_hitp;
 };
 
-struct fist_t {
+struct poing_t {
 	u32 field_0; // Fixed-point y pos value?
 	u16 field_4;
 	u16 speed_x;
 	u16 charge;
 	u16 field_A;
-	u8 poing_sub_etat; // Normal: 1,3,5, Gold: 8,10,12
+	u8 sub_etat; // Normal: 1,3,5, Gold: 8,10,12
 	u8 is_returning;
 	u8 is_active;
 	u8 damage;
 	u8 is_charging;
-	u8 is_doing_boum;
+	u8 is_boum;
 	u8 field_12;
 	u8 field_13;
-};
-
-struct maptile_t {
-	u16 texture_id;
-	u8 tile_type;
-	u8 field_3;
-	u8 transparency;
-	u8 field_5;
 };
 
 struct x_texture_t {
@@ -331,8 +320,8 @@ struct obj_t {
 	u8 offset_by;
 	u8 anim_index;
 	u8 anim_frame;
-	u8 subetat; // 6C
-	u8 etat; // 6D
+	u8 sub_etat; // 6C
+	u8 main_etat; // 6D
 	u8 spawn_subetat; // 6E
 	u8 spawn_etat; // 6F
 	u8 command; // 70
@@ -362,11 +351,19 @@ struct level_t {
 	u16 nb_objects;
 };
 
+struct map_tile_t {
+	u16 texture_id;
+	u8 tile_type;
+	u8 field_3;
+	u8 transparency;
+	u8 field_5;
+};
+
 struct map_data_t {
 	i16 width;
 	i16 height;
 	i32 length;
-	u16* map;
+	map_tile_t* map;
 };
 
 struct voice_t {
@@ -378,6 +375,65 @@ struct voice_t {
 	i16 field_A;
 };
 
+struct options_t {
+	i16 field_0;
+	i16 field_2;
+	i16 SizeScreen;
+	i16 Frequence;
+	i16 fixon;
+	i16 BackgroundOn;
+	i16 ScrollDiffOn;
+	i16 field_E; //unused?
+	i16 field_10; //unused?
+	i16 field_12; //unused?
+};
+
+struct options_jeu_t {
+	void* func_0;
+	void* func_4;
+	void* func_8;
+	void* func_C;
+	u16 jump;
+	u16 fist;
+	u16 field_14;
+	u16 action;
+	u16 music_enabled;
+	u16 sound_volume;
+	u16 is_stereo;
+};
+
+struct record_t {
+	i32 current_offset;
+	i32 repeat_length;
+	i32 repeat_index;
+	i32 length;
+	u8* data;
+	u8 is_recording;
+	u8 is_playing;
+	u8 is_finished;
+};
+
+struct save_state_t {
+	i32 triggered_objects[8];
+	i16 nb_floc[8];
+	i16 vent_x;
+	i16 vent_y;
+	i16 x_map;
+	i16 y_map;
+	u8 time;
+	u8 field_39; //maybe part of i16?
+	i16 ray_x_pos;
+	i16 ray_y_pos;
+	i16 ray_screen_x;
+	i16 ray_screen_y;
+	u16 ray_flip_x;
+	i16 save_obj_id;
+	i16 save_obj_x_pos;
+	i16 save_obj_y_pos;
+	u8 link_init[256];
+	// stub
+
+};
 
 #pragma pack(pop)
 

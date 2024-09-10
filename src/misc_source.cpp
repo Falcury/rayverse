@@ -4,7 +4,7 @@
 
 
 static inline eta_t* get_eta(obj_t* obj) {
-	return &obj->ETA[obj->etat][obj->subetat];
+	return &obj->ETA[obj->main_etat][obj->sub_etat];
 }
 
 #define obj_flipped(obj) ((obj)->flags & obj_flags_8_flipped)

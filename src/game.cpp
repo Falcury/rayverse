@@ -26,15 +26,15 @@ void load_level(const char* filename) {
 		u32 texture_block_offset;	
 		mem_read(&event_block_offset, mem, 4);
 		mem_read(&texture_block_offset, mem, 4);
-		mem_read(&level_width_tiles, mem, 2);
-		mem_read(&level_height_tiles, mem, 2);
+		mem_read(&mp.width, mem, 2);
+		mem_read(&mp.height, mem, 2);
 		mem_read(color_palettes, mem, sizeof(color_palettes));
 		mem_read(&active_palette, mem, 1);
 
 		// Map
-		level_tile_count = level_width_tiles * level_height_tiles;
-		maptile_t* tiles = (maptile_t*) malloc(level_tile_count * sizeof(maptile_t));
-		mem_read(tiles, mem, level_tile_count * sizeof(maptile_t));
+		mp.length = mp.width * mp.height;
+		map_tile_t* tiles = (map_tile_t*) malloc(mp.length * sizeof(map_tile_t));
+		mem_read(tiles, mem, mp.length * sizeof(map_tile_t));
 
 		u8 background_image_static;
 		u8 background_image_scrolling;
@@ -266,90 +266,74 @@ u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte) {
 }
 
 // sub_1D808
-void set_subetat(obj_t* obj, u8 subetat) {
+void set_subetat(obj_t* obj, u8 sub_etat) {
 	obj->change_anim_mode = 1;
-	obj->subetat = subetat;
+	obj->sub_etat = sub_etat;
 }
 
 // sub_1D810
-void set_etat(obj_t* obj, u8 etat) {
+void set_main_etat(obj_t* obj, u8 etat) {
 	obj->change_anim_mode = 1;
-	obj->etat = etat;
+	obj->main_etat = etat;
 }
 
 // sub_1D818
-void set_obj_state(obj_t* obj, u8 etat, u8 subetat) {
+void set_main_and_sub_etat(obj_t* obj, u8 etat, u8 sub_etat) {
 	obj->change_anim_mode = 1;
-	obj->etat = etat;
-	obj->subetat = subetat;
+	obj->main_etat = etat;
+	obj->sub_etat = sub_etat;
 }
 
-
-
-// sub_55EE4
-// (?)
-void update_x_momentum(obj_t* obj) {
-	u8 anim_index = obj->anim_index;
-	// some unknown stuff
-	// STUB
-	if (1) {
-		eta_t* eta = get_eta(obj);
-		if (obj->flags & obj_flags_8_flipped) {
-
-		}
-
-	}
-}
 
 // sub_1E588
-u8 get_tile_type(i32 tile_x, i32 tile_y) {
-	if (tile_x >= 0 && tile_x <= (level_width_tiles - 1) && tile_y >= 0 && tile_y <= (level_height_tiles - 1)) {
-		return level_tiles[tile_y * level_width_tiles + tile_x].tile_type;
+u8 BTYP(i32 tile_x, i32 tile_y) {
+	if (tile_x >= 0 && tile_x <= (mp.width - 1) && tile_y >= 0 && tile_y <= (mp.height - 1)) {
+		return mp.map[tile_y * mp.width + tile_x].tile_type;
 	} else {
 		return 0;
 	}
 }
 
 // sub_24F60
-u8 sub_24F60(obj_t* obj, i32 unk) {
+u8 calc_typ_trav(obj_t* obj, i32 unk) {
 	return 0; // stub
 }
 
 // sub_70408
-void ray_hurt() {
+void RAY_HURT() {
 
 }
 
 // sub_2DBDC
-void ray_hit(bool put_above_solid_tiles, obj_t* other_obj) {
+void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
 	if (put_above_solid_tiles) {
-		ray_hurt();
+		RAY_HURT();
 		i32 tile_x = (ray.xpos + ray.offset_bx) / 16;
 		for (;;) {
 			i32 tile_y = (ray.ypos + ray.offset_by) / 16;
-			if (get_tile_type(tile_x, tile_y) != 10) {
+			if (BTYP(tile_x, tile_y) != 10) {
 				--ray.ypos;
 			} else {
 				break;
 			}
 		}
 	}
-	if (ray.etat == 6) {
-		set_obj_state(&ray, 6, 8);
+	if (ray.main_etat == 6) {
+		set_main_and_sub_etat(&ray, 6, 8);
 		ray.yspeed = 0;
 		ray.xspeed = 0;
-		byte_CE780 = 0;
+		poing.is_charging = 0;
 	} else if (ray.flags & obj_flags_4_switched_on) {
-		if (!(ray.etat == 3 && (ray.subetat == 22 || ray.subetat == 32)) &&
-		    !(ray.etat == 2 && ray.subetat == 31)
+		if (!(ray.main_etat == 3 && (ray.sub_etat == 22 || ray.sub_etat == 32)) &&
+		    !(ray.main_etat == 2 && ray.sub_etat == 31)
 	    ) {
-			if ((get_eta(&ray)->interaction_flags & 0x40) && (tile_flags[sub_24F60(&ray, 2)] & 0x10)) {
-				set_obj_state(&ray, 0, 61);
+			if ((get_eta(&ray)->interaction_flags & 0x40) && (tile_flags[calc_typ_trav(&ray, 2)] & 0x10)) {
+				set_main_and_sub_etat(&ray, 0, 61);
 			} else {
-				set_obj_state(&ray, 2, 8);
+				set_main_and_sub_etat(&ray, 2, 8);
 			}
-			word_CF83C = 0;
-			if (ray.etat == 0 && ray.subetat == 61) {
+			ray_speed_inv = 0;
+			if (ray.main_etat == 0 && ray.sub_etat == 61) {
 				ray.xspeed = (ray.flags & obj_flags_8_flipped) ? -2 : 2;
 				ray.yspeed = -3;
 			} else {
@@ -410,13 +394,13 @@ void script_goto_label(obj_t* obj, u8 unk1, u8 unk2) {
 
 // sub_2F44C
 void do_cmd_up(obj_t* obj) {
-	if (obj->etat == 1) {
+	if (obj->main_etat == 1) {
 		obj->xspeed = 0;
 		obj->yspeed = 0;
-		set_obj_state(obj, 0, 0);
+		set_main_and_sub_etat(obj, 0, 0);
 	} else {
 		
-		if (!(obj->type == obj_10_piranha && obj->etat == 0 && obj->subetat == 0)) {
+		if (!(obj->type == obj_10_piranha && obj->main_etat == 0 && obj->sub_etat == 0)) {
 			obj->yspeed = 0;
 		}
 	}
@@ -431,7 +415,7 @@ void do_cmd_3_4(obj_t* event) {
 			event->yspeed = 2;
 		}
 	} else if (event->type == obj_10_piranha) {
-		if (event->etat == 0 && event->subetat == 0) {
+		if (event->main_etat == 0 && event->sub_etat == 0) {
 			if (event->command == cmd_3_down) {
 				event->yspeed = -2;
 			} else {
@@ -460,8 +444,8 @@ void do_cmd_3_4(obj_t* event) {
 }
 
 // sub_2F63C
-void sub_2F63C(obj_t* event) {
-	if (event->type == obj_0_livingstone && event->etat == 1 && event->subetat == 11) {
+void special_pour_liv(obj_t* event) {
+	if (event->type == obj_0_livingstone && event->main_etat == 1 && event->sub_etat == 11) {
 		event->flags &= ~0x10;
 	}
 }
@@ -469,7 +453,7 @@ void sub_2F63C(obj_t* event) {
 
 
 
-void do_fade_step(rgb_palette_t* source_pal, rgb_palette_t* dest_pal) {
+void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal) {
 	if (nb_fade > 0) {
 		--nb_fade;
 		if (fade_mode == 1) {
@@ -522,7 +506,7 @@ void fade_out(u32 speed, rgb_palette_t* palette) {
 	u16 steps = nb_fade;
 	for (i32 i = 0; i < steps; ++i) {
 		advance_frame();
-		do_fade_step(palette, global_game->draw_buffer.pal);
+		do_fade(palette, global_game->draw_buffer.pal);
 	}
 	advance_frame();
 }
@@ -537,7 +521,7 @@ void ubisoft_logo_loop(i32 par_0, i32 par_1, i32 par_2) {
 	start_fade_in(2);
 	wait_frames(5);
 	for (i32 i = 0; i < par_0; ++i) {
-		do_fade_step(&fade_source_palette, global_game->draw_buffer.pal);
+		do_fade(&fade_source_palette, global_game->draw_buffer.pal);
 		advance_frame();
 	}
 	while (is_ogg_playing) {
@@ -682,7 +666,7 @@ bool clip_sprite_on_screen_flipped(i32* proj_x, i32* proj_y, vec2b_t* proj_size,
 }
 
 //16A9D
-void draw_simple(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
+void DrawSpriteNormal256(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
 	if (clip_sprite_on_screen(&proj_x, &proj_y, &proj_size, &image_data) && proj_size.x > 0) {
 		u8* draw_pos = draw_buffer->memory + proj_y * draw_buffer->width /*320*/ + proj_x;
 		u8* draw_end = draw_pos + proj_size.y * draw_buffer->width;
@@ -704,7 +688,7 @@ void draw_simple(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*eb
 }
 
 //16B88
-void draw_simple_flipped(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
+void DrawSpriteFlipNormal256(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
 	if (clip_sprite_on_screen_flipped(&proj_x, &proj_y, &proj_size, &image_data) && proj_size.x > 0) {
 		u8* draw_pos = draw_buffer->memory + proj_y * draw_buffer->width /*320*/ + proj_x;
 		u8* draw_end = draw_pos + proj_size.y * draw_buffer->width;
@@ -726,12 +710,12 @@ void draw_simple_flipped(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 pro
 }
 
 //16A24
-void sub_16A24(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
+void DrawSpriteNormal(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
 	//stub
 }
 
 //16B08
-void sub_16B08(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
+void DrawSpriteFlipNormal(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
 	//stub
 }
 
@@ -760,15 +744,15 @@ i32 get_proj_dist(i32 scale, i32 outer_dim) {
 //1D5D8
 i32 get_proj_x(i32 scale, i32 par_1) {
 	//NOTE: needs checking
-	i32 temp = ((256*256) / (scale + 256)) * (par_1 - proj_center_x);
-	return ((temp / 256) + proj_center_x);
+	i32 temp = ((256*256) / (scale + 256)) * (par_1 - PROJ_CENTER_X);
+	return ((temp / 256) + PROJ_CENTER_X);
 }
 
 //1D614
 i32 get_proj_y(i32 scale, i32 par_1) {
 	//NOTE: needs checking
-	i32 temp = ((256*256) / (scale + 256)) * (par_1 - proj_center_y);
-	return ((temp / 256) + proj_center_y);
+	i32 temp = ((256*256) / (scale + 256)) * (par_1 - PROJ_CENTER_Y);
+	return ((temp / 256) + PROJ_CENTER_Y);
 }
 
 
@@ -797,9 +781,9 @@ void display2(obj_t* obj) {
 
 				draw_func_t* draw_func = NULL;
 				if ((obj->flags & obj_flags_8_flipped) ^ layer->mirrored) {
-					draw_func = curr_obj_draw_proc_flipped;
+					draw_func = DrawSpriteFlipNormalEtX;
 				} else {
-					draw_func = curr_obj_draw_proc;
+					draw_func = DrawSpriteNormalEtX;
 				}
 
 				i32 proj_x = get_proj_x(obj->scale, x);
@@ -821,7 +805,7 @@ void display2(obj_t* obj) {
 }
 
 //55EE4
-void set_x_speed(obj_t* obj) {
+void SET_X_SPEED(obj_t* obj) {
 	i32 xspeed = 0;
 	anim_t* anim = obj->animations + obj->anim_index;
 	u8 horloge_index = ((anim->layers_per_frame & 0xC000) >> 14) + 1;
@@ -840,7 +824,7 @@ void set_x_speed(obj_t* obj) {
 }
 
 //567AC
-void do_anim(obj_t* obj) {
+void DO_ANIM(obj_t* obj) {
 	i32 prev_anim_frame = obj->anim_frame;
 	i32 prev_anim_index = obj->anim_index;
 	eta_t* eta = get_eta(obj);
@@ -867,13 +851,13 @@ void do_anim(obj_t* obj) {
 	}
 	if (obj->anim_frame >= anim->frame_count || obj->anim_frame == 255) {
 		// animation ended
-		obj->etat = eta->next_etat;
-		obj->subetat = eta->next_subetat;
+		obj->main_etat = eta->next_etat;
+		obj->sub_etat = eta->next_subetat;
 		eta = get_eta(obj);
 		obj->anim_index = eta->anim_index;
 		anim = obj->animations + obj->anim_index;
 		if ((obj->type == obj_23_rayman && (ray_old_etat == 2 || ray_old_etat == 6)) ||
-		    (obj->subetat == 61 && ray_old_subetat == 61 && ray_old_etat == 0)) {
+		    (obj->sub_etat == 61 && ray_old_subetat == 61 && ray_old_etat == 0)) {
 			if (ray.timer > 60 && !(skills & skills_0x8000_squashed)) {
 				ray.timer = 60;
 			}
@@ -900,8 +884,8 @@ void do_anim(obj_t* obj) {
 
 }
 
-//1D074 - original name: EOA
-bool end_of_animation(obj_t* obj) {
+//1D074
+bool EOA(obj_t* obj) {
 	eta_t* eta = get_eta(obj);
 	bool on_last_frame;
 	if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
@@ -924,17 +908,18 @@ i16 dummy_scene_func(u32 par_0) {
 	return 1;
 }
 
-// sub_3CB54
-void synchro_loop(scene_func_t scene_func) {
+//3CB54
+void SYNCHRO_LOOP(scene_func_t scene_func) {
 	bool scene_ended = false;
 	do {
 		advance_frame();
-		do_fade_step(&fade_source_palette, global_game->draw_buffer.pal);
+		do_fade(&fade_source_palette, global_game->draw_buffer.pal);
 		u32 timer = 0;
 		scene_ended = scene_func(timer);
 	} while(!scene_ended);
 }
 
+//75268
 bool LoadOptionsOnDisk() {
 	mem_t* mem = read_entire_file("RAYMAN.CFG", false);
 	if (mem) {
@@ -1059,7 +1044,7 @@ void LOAD_CONFIG() {
 			GameModeVideo = 1;
 			P486 = 0;
 		}
-		if (is_background_available == 2) {
+		if (FondAutorise == 2) {
 			GameModeVideo = 1;
 			P486 = 1;
 		}
@@ -1079,7 +1064,7 @@ void LOAD_CONFIG() {
 		}*/
 
 		if (CarteSonAutorisee) {
-			load_snd8b(&base_snd8b_data, 2);
+			LoadBnkFile(&base_snd8b_data, 2);
 			InitSnd();
 		}
 
@@ -1095,7 +1080,7 @@ void LOAD_CONFIG() {
 	} else {
 		// We didn't load a .cfg file -> load defaults
 		if (CarteSonAutorisee) {
-			load_snd8b(&base_snd8b_data, 2);
+			LoadBnkFile(&base_snd8b_data, 2);
 			InitSnd();
 		}
 		if (set_joy_input_funcs()) {
@@ -1124,12 +1109,12 @@ void LOAD_CONFIG() {
 //17F00
 void InitMemoryVariable() {
 	P486 = 0;
-	is_normal_mode_available = 1;
-	is_zoom_effect_available = 1;
+	NormalModeAutorise = 1;
+	JumelleEffectAutorise = 1;
 	CarteSonAutorisee = 1;
 	son_limite = 0;
 	is_background_clearing_needed = 1;
-	is_background_available = 1;
+	FondAutorise = 1;
 	TailleMainMemTmp = 0x22000;
 	TailleMainMemWorld = 0xF4C00;
 	TailleMainMemLevel = 0x87C00;
@@ -1137,7 +1122,8 @@ void InitMemoryVariable() {
 	TailleMainMemFix = 0x4D800;
 }
 
-void rayman_main() {
+//18420
+void PcMain() {
 	InitMemoryVariable();
 	sprite_clipping(0, 320, 0, 200);
 	wait_frames(10); // added
@@ -1145,6 +1131,8 @@ void rayman_main() {
 	DO_GROS_RAYMAN();
 	LOAD_CONFIG();
 	//init_cheats(); // stub
+
+	NBRE_SAVE = 3;
 
 	// let the music finish playing while the main menu is not implemented yet :(
 	while (is_ogg_playing) {

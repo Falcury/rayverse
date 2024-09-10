@@ -28,7 +28,7 @@ snd8b_file_info_t sndd8b_info[7] = {
 		{0x117B18, 0x02D588, 0xF8, 0x33, 0x00, 0x00}
 };
 
-void load_snd8b(u8** sound_buffer, i32 sound_set) {
+void LoadBnkFile(u8** sound_buffer, i32 sound_set) {
 	// Load sound header
 	mem_t* mem = read_entire_file("SNDH8B.DAT", true);
 	if (!mem) fatal_error();
@@ -40,7 +40,7 @@ void load_snd8b(u8** sound_buffer, i32 sound_set) {
 
 	u8 checksum = decode_xor(base_snd8b_headers, header_info->size, header_info->encoding_byte, header_info->checksum_byte);
 	if (checksum != 0) {
-		printf("[warning] load_snd8b(): incorrect checksum for SNDH8B.DAT\n");
+		printf("[warning] LoadBnkFile(): incorrect checksum for SNDH8B.DAT\n");
 	}
 
 	free(mem);
@@ -63,7 +63,7 @@ void load_snd8b(u8** sound_buffer, i32 sound_set) {
 
 	checksum = decode_xor(*sound_buffer, (u32)sound_size, data_info->encoding_byte, data_info->checksum_byte);
 	if (checksum != 0) {
-		printf("[warning] load_snd8b(): incorrect checksum for SNDD8B.DAT\n");
+		printf("[warning] LoadBnkFile(): incorrect checksum for SNDD8B.DAT\n");
 	}
 
 
