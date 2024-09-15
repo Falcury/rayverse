@@ -730,6 +730,12 @@ void horloges(u32 ticks) {
 	map_time += ticks;
 }
 
+//1D560
+void set_proj_center(i16 x, i16 y) {
+	PROJ_CENTER_X = x;
+	PROJ_CENTER_Y = y;
+}
+
 //1D570
 i32 get_proj_dist(i32 scale, i32 outer_dim) {
 	//NOTE: needs checking
@@ -816,7 +822,7 @@ void SET_X_SPEED(obj_t* obj) {
 		} else {
 			xspeed = eta->left_speed * horloge_index;
 		}
-		if (obj->type == obj_23_rayman && (skills & skills_0x200_tiny)) {
+		if (obj->type == obj_23_rayman && (RayEvts & skills_0x200_tiny)) {
 			xspeed /= 2;
 		}
 	}
@@ -858,7 +864,7 @@ void DO_ANIM(obj_t* obj) {
 		anim = obj->animations + obj->anim_index;
 		if ((obj->type == obj_23_rayman && (ray_old_etat == 2 || ray_old_etat == 6)) ||
 		    (obj->sub_etat == 61 && ray_old_subetat == 61 && ray_old_etat == 0)) {
-			if (ray.timer > 60 && !(skills & skills_0x8000_squashed)) {
+			if (ray.timer > 60 && !(RayEvts & skills_0x8000_squashed)) {
 				ray.timer = 60;
 			}
 		}
@@ -1122,6 +1128,220 @@ void InitMemoryVariable() {
 	TailleMainMemFix = 0x4D800;
 }
 
+//554EC
+void init_allowed_time() {
+	for (i32 i = 0; i < 192; ++i) {
+		allowed_time[i] = -2;
+	}
+	i16* allowed_time_world = allowed_time;
+	allowed_time_world[17] = 30; //magician (swinging plums)
+	allowed_time_world[18] = 45; //magician (flower platforms)
+	allowed_time_world[19] = 25; //magician (grass platforms)
+	allowed_time_world[20] = 35; //magician (low flower platforms)
+	allowed_time_world += 32;
+	allowed_time_world[16] = 40; //magician (slippery platforms)
+	allowed_time_world[17] = 25; //magician (rotating platforms)
+	allowed_time_world += 32;
+	allowed_time_world[11] = 45; //magician (disappearing clouds)
+	allowed_time_world[12] = 20; //magician (bouncing clouds)
+	allowed_time_world += 32;
+	allowed_time_world[11] = 35; //magician (parkour)
+	allowed_time_world[12] = 50; //magician (bouncy erasers)
+	allowed_time_world += 32;
+	allowed_time_world[11] = 35; //magician (ring parkour)
+}
+
+//23B8C
+void init_bonus_perfect() {
+	for (i32 i = 0; i < 24; ++i) {
+		bonus_perfect[i] = 0;
+	}
+}
+
+//1F880
+void init_finBossLevel() {
+	finBossLevel &= 0xF000;
+}
+
+//25BB0
+i32 blocs1_empty(i32 a1, i32 a2) {
+	return a2 + 1;
+}
+
+//25BB4
+i32 blocs1_right_45(i32 a1, i32 a2) {
+	return 15 - a1;
+}
+
+//25BC0
+i32 blocs1_left_45(i32 a1, i32 a2) {
+	return a1;
+}
+
+//25BC4
+i32 blocs1_right1_30(i32 a1, i32 a2) {
+	return 15 - (a1 >> 1);
+}
+
+//25BD4
+i32 blocs1_right2_30(i32 a1, i32 a2) {
+	return 7 - (a1 >> 1);
+}
+
+//25BE4
+i32 blocs1_left1_30(i32 a1, i32 a2) {
+	return a1 >> 1;
+}
+
+//25BE8
+i32 blocs1_left2_30(i32 a1, i32 a2) {
+	return (a1 >> 1) + 8;
+}
+
+//25BF8
+i32 blocs2_empty(i32 a1, i32 a2) {
+	return 16;
+}
+
+//25BF0
+i32 blocs3_empty(i32 a1, i32 a2) {
+	return a2;
+}
+#define blocs1_liane blocs3_empty
+
+//25BF4
+i32 blocs4_empty(i32 a1, i32 a2) {
+	return 0;
+}
+#define blocs1_hor blocs4_empty
+
+//25C7C
+void init_calcbloc_func() {
+	for (i32 i = 0; i < 31; ++i) {
+		switch(i) {
+			default: {
+				calcbloc1[i] = blocs1_empty;
+				calcbloc2[i] = blocs2_empty;
+				calcblocfloor[i] = blocs3_empty;
+				calcblocrecal[i] = blocs4_empty;
+			} break;
+			case 2:
+			case 18: {
+				calcbloc1[i] = blocs1_right_45;
+				calcbloc2[i] = blocs1_right_45;
+				calcblocfloor[i] = blocs1_right_45;
+				calcblocrecal[i] = blocs1_right_45;
+			} break;
+			case 3:
+			case 19: {
+				calcbloc1[i] = blocs1_left_45;
+				calcbloc2[i] = blocs1_left_45;
+				calcblocfloor[i] = blocs1_left_45;
+				calcblocrecal[i] = blocs1_left_45;
+			} break;
+			case 4:
+			case 20: {
+				calcbloc1[i] = blocs1_right1_30;
+				calcbloc2[i] = blocs1_right1_30;
+				calcblocfloor[i] = blocs1_right1_30;
+				calcblocrecal[i] = blocs1_right1_30;
+			} break;
+			case 5:
+			case 21: {
+				calcbloc1[i] = blocs1_right2_30;
+				calcbloc2[i] = blocs1_right2_30;
+				calcblocfloor[i] = blocs1_right2_30;
+				calcblocrecal[i] = blocs1_right2_30;
+			} break;
+			case 6:
+			case 22: {
+				calcbloc1[i] = blocs1_left1_30;
+				calcbloc2[i] = blocs1_left1_30;
+				calcblocfloor[i] = blocs1_left1_30;
+				calcblocrecal[i] = blocs1_left1_30;
+			} break;
+			case 7:
+			case 23: {
+				calcbloc1[i] = blocs1_left2_30;
+				calcbloc2[i] = blocs1_left2_30;
+				calcblocfloor[i] = blocs1_left2_30;
+				calcblocrecal[i] = blocs1_left2_30;
+			} break;
+			case 9:
+			case 14:
+			case 15:
+			case 30: {
+				calcbloc1[i] = blocs1_hor;
+				calcbloc2[i] = blocs1_hor;
+				calcblocfloor[i] = blocs1_hor;
+				calcblocrecal[i] = blocs1_hor;
+			} break;
+			case 12: {
+				calcbloc1[i] = blocs1_liane;
+				calcbloc2[i] = blocs2_empty;
+				calcblocfloor[i] = blocs3_empty;
+				calcblocrecal[i] = blocs4_empty;
+			}
+		}
+	}
+}
+
+//59900
+void INIT_RAY_BEGIN() {
+	RayEvts &= 0x0248;
+	ray_max_hitp = 2;
+	status_bar.num_wiz = 0;
+	fin_continue = 0;
+	ray.flags &= ~obj_flags_1;
+}
+
+//6BF60
+i16 myRand(i16 max) {
+	i32 r = RandomIndex + 1;
+	if (r >= 256) {
+		r = 0;
+	}
+	RandomIndex = r;
+	return RandArray[r] % (max + 1);
+}
+
+//5A5B4
+void INIT_MOTEUR_BEGIN() {
+	init_allowed_time();
+	init_bonus_perfect();
+	init_calcbloc_func();
+	new_level = 1;
+	new_world = 1;
+	status_bar.lives = 3;
+	ray.hitp = 2;
+	gele = 0;
+	departlevel = 1;
+	poing.sub_etat = 1;
+	nb_continue = 9;
+	You_Win = 0;
+	set_proj_center(160, 170);
+	INIT_RAY_BEGIN();
+	scroll_x = -1;
+	scroll_y = -1;
+	special_ray_mov_win_x_left = 0;
+	special_ray_mov_win_x_right = 0;
+	fin_de_rayman = 0;
+	NumDemo = myRand(5);
+	if (DemoRecordWorld[NumDemo] == 5 && DemoRecordMap[NumDemo] == 10) {
+		++NumDemo;
+		if (NumDemo == COUNT(DemoRecordWorld)) {
+			NumDemo = 0;
+		}
+	}
+	First_Hit = 1;
+	First_Menu = 1;
+	time_left = -2;
+	life_becoz_wiz = 0;
+	dontdoit = 0;
+	RunTimeDemo = 1800;
+}
+
+
 //18420
 void PcMain() {
 	InitMemoryVariable();
@@ -1138,4 +1358,6 @@ void PcMain() {
 	while (is_ogg_playing) {
 		advance_frame();
 	}
+
+	INIT_MOTEUR_BEGIN();
 }

@@ -256,13 +256,13 @@ void load_sav(u8 which_save) {
 		mem_read(save_names[which_save-1], raw, 4);
 		mem_read(&nb_continue, raw, 1);
 		mem_read(medaillion_saved_data, raw, 24);
-		mem_read(&skills, raw, 2);
+		mem_read(&RayEvts, raw, 2);
 		mem_read(&poing, raw, 20);
-		mem_read(&player, raw, 10);
+		mem_read(&status_bar, raw, 10);
 		mem_read(&ray.hitp, raw, 1);
 		mem_read(collected_events_data, raw, 2592);
 		mem_read(bonus_completed_data, raw, 24);
-		u16 map_location = byte_CFA53 ? num_world_choice : world_index;
+		u16 map_location = dans_la_map_monde ? num_world_choice : world_index;
 		// Note: Game bug: saved_map_location is only 1 byte, but we are writing/reading 2 bytes,
 		mem_read(&map_location, raw, 2);
 		mem_read(&finBossLevel, raw, 2);
@@ -288,13 +288,13 @@ void SaveGameOnDisk(u8 which_save) {
 	mem_write(save_names[which_save-1], raw, 4);
 	mem_write(&nb_continue, raw, 1);
 	mem_write(medaillion_saved_data, raw, 24);
-	mem_write(&skills, raw, 2);
+	mem_write(&RayEvts, raw, 2);
 	mem_write(&poing, raw, 20);
-	mem_write(&player, raw, 10);
+	mem_write(&status_bar, raw, 10);
 	mem_write(&ray.hitp, raw, 1);
 	mem_write(collected_events_data, raw, 2592);
 	mem_write(bonus_completed_data, raw, 24);
-	u16 map_location = byte_CFA53 ? num_world_choice : world_index;
+	u16 map_location = dans_la_map_monde ? num_world_choice : world_index;
 	// Note: Game bug: saved_map_location is only 1 byte, but we are writing/reading 2 bytes,
 	mem_write(&map_location, raw, 2);
 	mem_write(&finBossLevel, raw, 2);

@@ -15,6 +15,18 @@ ogg_t ogg_cd_track;
 bool is_ogg_playing;
 bool is_ogg_finished;
 
+i32 VitesseYStageNameLevel[30]; //C2248
+i32 VitesseXStageNameWorld[30]; //C22C0
+i32 VitesseXStageNameLevel[30]; //C2338
+i32 PositionYStageNameWorld[50]; //C23B0
+i32 VitesseYStageNameWorld[30]; //C2478
+i32 PositionXStageNameLevel[50]; //C24F0
+i32 PositionXStageNameWorld[50]; //C25B8
+i32 PositionYStageNameLevel [50]; //C2680
+calcbloc_func_t* calcblocrecal[64]; //C2748
+calcbloc_func_t* calcbloc1[64]; //C2848
+calcbloc_func_t* calcbloc2[64]; //C2948
+calcbloc_func_t* calcblocfloor[64]; //C2A48
 char* language_txt[304]; //C2B48
 
 i16 options_jeu_KeyJump; //C2F88 // TODO: check these names; create struct or array?
@@ -26,6 +38,11 @@ i16 options_jeu_sound_volume; //C2F92
 i16 options_jeu_is_stereo; //C2F94
 
 i16 notbut[4]; //C97F0
+
+u8 save_zone[2592]; //CAFA0
+i16 allowed_time[192]; //CB9C0
+u8 bonus_perfect[24]; //CBB40
+
 level_t level; //CCDF0
 level_t level_obj; //CCDFC
 u8 ecroule_rubis_list[8]; //CCE00
@@ -148,17 +165,53 @@ u8 skops_lave_obj[20]; //CEEE0
 i32 pixels_enfonce; //CEEF4
 
 u8 plan0_num_pcx[10]; //CEF47
-status_bar_t player; //CEF52
+status_bar_t status_bar; //CEF52
 u8 ray_max_hitp; //CEF5B
 
+i16 numero_palette_special; //CF740
+i16 ProchainEclair; //CF742
+i16 joyy0; //CF744
+i16 joyx0; //CF746
 i16 xpadmax; //CF748
 i16 ypadmax; //CF74A
 i16 ypadcentre; //CF74C
 i16 xpadcentre; //CF74E
 i16 xpadmin; //CF750
 i16 ypadmin; //CF752
+i16 option_exit; //CF754
+i16 LEFT_MAP_BORDER; //CF756
+i16 xmapmaxini; //CF758
+i16 RIGHT_MAP_BORDER; //CF75A
+i16 ymapmaxini; //CF75C
+i16 HeightNworld; //CF75E
+i16 WidthNworld; //CF760
+u16 SauveRayEvtsDemo; //CF762
+i16 nb_credits_lines; //CF764
+i16 snd_flag_medaillon; //CF766
+i16 RunTimeDemo; //CF768
+i16 NumDemo; //CF76A
+i16 animation_attente; //CF76C
+i16 basex; //CF76E
+i16 compteur_clignote; //CF772
+i16 compteur_attente; //CF774
+i16 sortie_save; //CF776
+i16 realisation_effectuee; //CF778
+i16 delai_stereo; //CF77A
+i16 selection_effectuee; //CF77C
+i16 repetition; //CF77E
+i16 vignet_joe_affichee; //CF780
+i16 clignotement; //CF782
+i16 fin_saisie_nom; //CF784
+i16 joe_exp_probleme; //CF786
+i16 fichier_existant; //CF788
+i16 compteur; //CF78A
+i16 position; //CF78C
+i16 sortie_options; //CF78E
+i16 affiche_bon_ecran; //CF790
+i16 delai_barre; //CF792
+i16 max_compteur; //CF794
 
-u16 skills; //CF81A
+u16 RayEvts; //CF81A
 u16 finBossLevel; //CF81E
 
 i16 id_cling_old; //CF830
@@ -312,97 +365,96 @@ u8 nb_continue; //CFA3B
 u8 byte_CFA3C; //CFA3C
 u8 NBRE_SAVE; //CFA3D
 u8 byte_CFA3E; //CFA3E
-u8 byte_CFA3F; //CFA3F
+u8 nouvelle_partie; //CFA3F
 u8 PROC_EXIT; //CFA40
-u8 byte_CFA41; //CFA41
-u8 byte_CFA42; //CFA42
-u8 byte_CFA53; //CFA53
-u8 byte_CFA43; //CFA43
+u8 First_Hit; //CFA41
+u8 First_Menu; //CFA42
+u8 dontdoit; //CFA43
 u8 vignet_to_display; //CFA44
-u8 byte_CFA45; //CFA45
+u8 chemin_percent; //CFA45
 u8 You_Win; //CFA46 (?)
-u8 byte_CFA47; //CFA47
-u8 byte_CFA48; //CFA48
-u8 byte_CFA49; //CFA49
-u8 byte_CFA4A; //CFA4A (?)
+u8 display_Vignet; //CFA47
+u8 colour; //CFA48
+u8 rayOnMsWasThere; //CFA49
+u8 freeze; //CFA4A (?)
 u8 need_skip_timer; //CFA4B (?)
-u8 normal_mode_frequency; //CFA4C
+u8 VGA_FREQ; //CFA4C
 u8 saved_current_pal; //CFA4D
-u8 byte_CFA4E; //CFA4E
-u8 confirmation_dialog_result; //CFA4F
+u8 use_sync; //CFA4E
+u8 pos_YN; //CFA4F
 u8 MusicCdActive; //CFA50
 u8 input_mode; //CFA51
-u8 is_paused; //CFA52
+u8 in_pause; //CFA52
 u8 dans_la_map_monde; //CFA53
 u8 ray_on_poelle; //CFA54
 u8 nb_wiz_collected; //CFA55
 u8 nb_wiz; //CFA56
-u8 byte_CFA57; //CFA57
-u8 byte_CFA58; //CFA58
+u8 is_fee; //CFA57
+u8 new_txt_fee; //CFA58
 u8 byte_CFA59; //CFA59
-u8 byte_CFA5A; //CFA5A
-u8 byte_CFA5B; //CFA5B
+u8 dir_on_wldmap; //CFA5A
+u8 Nb_total_cages; //CFA5B
 u8 fin_continue; //CFA5C
-u8 byte_CFA5D; //CFA5D
+u8 display_txt_fee; //CFA5D
 u8 ray_inertia; //CFA5E
-u8 byte_CFA5F; //CFA5F
+u8 old_num_world; //CFA5F
 u8 world_index; // 0xCFA60
-u8 byte_CFA61; // 0xCFA61
-u8 byte_CFA62; // 0xCFA62
+u8 ALL_WORLD; // 0xCFA61
+u8 gele; // 0xCFA62
 u8 zoom_mode; // 0xCFA63
-u8 boss_reaching_accuracy_x; // CFA64
-u8 boss_reaching_accuracy_y; // CFA65
+u8 bossReachingAccuracyX; // CFA64
+u8 bossReachingAccuracyY; // CFA65
 u8 lidol_to_allocate; // CFA66
-u8 save_current_boss_action; //CFA67
-u8 scroll_locked; //CFA68
-u8 save_boss_encounter; //CFA69
-u8 boss_reaching_timer; //CFA6A
+u8 saveCurrentBossAction; //CFA67
+u8 scrollLocked; //CFA68
+u8 saveBossEncounter; //CFA69
+u8 bossReachingTimer; //CFA6A
 u8 boss_safe_timer; //CFA6B
-u8 current_boss_action_is_over; //CFA6C
+u8 currentBossActionIsOver; //CFA6C
 u8 byte_CFA6D; //CFA6D
-u8 boss_encounter; //CFA6E
-u8 current_boss_action; //CFA6F
+u8 bossEncounter; //CFA6E
+u8 currentBossAction; //CFA6F
 u8 gerbe; //CFA70
-u8 byte_CFA71; //CFA71
+u8 first_boss_meet; //CFA71
 u8 ray_last_ground_btyp; //CFA72
 u8 ray_mode_speed; //CFA73
-u8 byte_CFA74; //CFA74
+u8 fin_de_rayman; //CFA74
 u8 ray_superhelico_bis; //CFA75
 u8 fin_boss; //CFA76
 u8 ray_in_fee_zone; //CFA77
-u8 boss_dead; //CFA78
+u8 boss_mort; //CFA78
 u8 byte_CFA79; //CFA79
 u8 fin_du_jeu; //CFA7A
-u8 is_ray_drowning; //CFA7B
-u8 byte_CFA7C; //CFA7C
+u8 ray_se_noie; //CFA7B
+u8 hand_btyp; //CFA7C
 u8 button_released; //CFA7D
 u8 dead_time; //CFA7E
-u8 byte_CFA7F; //CFA7F
-u8 byte_CFA80; //CFA80
+u8 hand_btypg; //CFA7F
+u8 hand_btypd; //CFA80
 u8 nb_cymbal_in_map; //CFA81
 u8 current_pal_id; //CFA82
 u8 active_palette; //CFA83
 u8 pal_id_at_wizard; //CFA84
 u8 save_save; //CFA85
-u8 new_ms; //CFA86
+u8 NewMs; //CFA86
 u8 fade; //CFA87
-u8 is_dark_rayman_active; // (?) CFA88
-u8 text_dark2_affiche; //CFA89
-u8 byte_CFA8A; //CFA8A
+u8 ray_stack_is_full; // (?) CFA88
+u8 TextDark2_Affiche; //CFA89
+u8 black_pos_in_stack; //CFA8A
 u8 ray_pos_in_stack; //CFA8B
 u8 in_air_because_hit; //CFA8C
 u8 dark_phase; //CFA8D
-u8 is_boss_there; //CFA8E
+u8 IsBossThere; //CFA8E
 u8 skops_enfonce_enable; //CFA8F
-u8 byte_CFA90; //CFA90
+u8 WaitForAnim; //CFA90
 u8 ecroule_plat_index; //CFA91
 u8 byte_CFA92; //CFA92
-u8 byte_CFA93; //CFA93
-u8 boss_timer; // (?) CFA94
-u8 byte_CFA95; //CFA95
+u8 FinAnim; //CFA93
+u8 Phase; // (?) CFA94
+u8 WaitForFinAtan; //CFA95
 u8 skops_nb_lave; //CFA96
 u8 nb_trames_ecrase; //CFA97
-u8 byte_CFA98; //CFA98
+u8 RaymanDansUneMapDuJeu; //CFA98
 u8 life_becoz_wiz; //CFA99
 u8 nb_fix_eta; //CFA9A
 u8 nb_loaded_eta; //CFA9B
@@ -458,6 +510,34 @@ u32 obj_type_flags[262] = {
 		0x12060008, 0x12060008, 0x0206C008, 0x42229019, 0x02028000, 0x42038000, 0x02038000, 0x42029009, 0x4202A004,
 		0x02020008, 0x42020004, 0x42020004, 0x42020004, 0x02038000, 0x02038000, 0x4203B001, 0x0203B000, 0x02038800,
 		0x02038000, 0x02038000, 0x02038000,
+};
+
+//97344
+i16 RandArray[256] = {
+		4, 343, 34, 364, 222, 549, 200, 717, 972, 281, 454,
+		111, 714, 577, 42, 169, 835, 701, 782, 847, 982, 224,
+		437, 975, 859, 945, 830, 461, 619, 677, 614, 562, 737,
+		116, 415, 124, 687, 486, 502, 577, 352, 889, 270, 184,
+		433, 711, 167, 551, 660, 638, 3, 806, 275, 472, 395,
+		385, 595, 617, 286, 174, 824, 302, 341, 418, 246, 423,
+		55, 505, 1007, 1, 419, 71, 75, 260, 998, 363, 414, 201,
+		201, 216, 255, 776, 910, 927, 753, 472, 544, 36, 133,
+		469, 495, 611, 259, 117, 718, 664, 907, 896, 43, 566,
+		522, 635, 789, 259, 222, 241, 343, 579, 136, 628, 31,
+		971, 217, 827, 644, 732, 749, 565, 585, 172, 340, 890,
+		844, 629, 976, 1015, 1005, 755, 522, 302, 735, 292,
+		655, 504, 179, 572, 393, 793, 398, 666, 130, 148, 344,
+		941, 670, 664, 726, 671, 677, 738, 1021, 431, 575, 385,
+		1007, 15, 964, 463, 243, 559, 506, 641, 724, 597, 808,
+		442, 3, 855, 733, 1010, 468, 361, 961, 659, 578, 715,
+		228, 317, 919, 73, 980, 627, 83, 867, 744, 690, 947,
+		505, 292, 697, 317, 363, 773, 1000, 943, 250, 420, 935,
+		429, 346, 907, 149, 148, 330, 155, 639, 972, 275, 102,
+		1003, 251, 221, 87, 540, 898, 926, 271, 629, 915, 671,
+		85, 528, 842, 868, 756, 628, 560, 997, 1006, 65, 375,
+		747, 99, 697, 346, 118, 388, 258, 516, 20, 1020, 1,
+		84, 253, 555, 432, 225, 470, 149, 209, 425, 9, 475,
+		466, 186, 10,
 };
 
 // 0x97544
@@ -646,13 +726,14 @@ u8 DemoRecord[1500] = {
 		0, 0, 0, 0, 0, 0, 0,
 };
 
-u16 DemoRecordSize[6] = {154, 192, 200, 172, 200, 120}; //95E04
-u16 DemoRecordWorld[6] = {2, 3, 4, 5, 1, 5}; //95E10
-u16 DemoRecordMap[6] = {7, 7, 1, 4, 9, 10}; //95E1C
+i16 DemoRecordSize[6] = {154, 192, 200, 172, 200, 120}; //95E04
+i16 DemoRecordWorld[6] = {2, 3, 4, 5, 1, 5}; //95E10
+i16 DemoRecordMap[6] = {7, 7, 1, 4, 9, 10}; //95E1C
 
 u8 ModeVideoActuel = 255; //95E2C
 u8 GameModeVideo = 255; //95E2D
-
+i32 JumAmpDefMul = 0; //95E30
+i32 JumAmpDefPlus = 0; //95E34
 u8 key_right = SC_RIGHT; //95E38
 u8 key_up = SC_UP; //95E39
 u8 key_left = SC_LEFT; //95E3A
@@ -717,6 +798,7 @@ obj_t wldobj[100]; //E0D18
 
 const char** key_descriptions; //E4CB0
 
+i32 RandomIndex; //E548C
 i16 stk_obj[20]; //E5490
 i16 stk_snd[20]; //E54B8
 
