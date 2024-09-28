@@ -473,7 +473,7 @@ void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal) {
 		}
 		for (i32 i = 0; i < 256*3; ++i) {
 			u16 temp = fade_temp[i] >> 6;
-			((u8*)(dest_pal->colors))[i] = temp;
+			((u8*)(dest_pal->colors))[i] = (u8)temp;
 		}
 		// (apply palette)
 		if (nb_fade == 0) {
@@ -916,7 +916,7 @@ i16 dummy_scene_func(u32 par_0) {
 
 //3CB54
 void SYNCHRO_LOOP(scene_func_t scene_func) {
-	bool scene_ended = false;
+	i16 scene_ended = 0;
 	do {
 		advance_frame();
 		do_fade(&fade_source_palette, global_game->draw_buffer.pal);

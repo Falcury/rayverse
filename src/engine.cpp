@@ -8,7 +8,7 @@ void win32_print_current_directory() {
 */
 
 image_t create_palettized_image(i32 width, i32 height) {
-	image_t result = {};
+	image_t result = {0};
 	memset(&result, 0, sizeof(result));
 	result.width = width;
 	result.height = height;

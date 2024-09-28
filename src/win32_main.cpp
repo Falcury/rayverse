@@ -21,6 +21,17 @@ WINDOWPLACEMENT window_position = { sizeof(window_position) };
 void toggle_fullscreen(HWND window) {
 	LONG style = GetWindowLong(window, GWL_STYLE);
 	if (style & WS_OVERLAPPEDWINDOW) {
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+		i32 screen_width = GetSystemMetrics(SM_CXSCREEN);
+		i32 screen_height = GetSystemMetrics(SM_CYSCREEN);
+		if (GetWindowPlacement(window, &window_position)) {
+			SetWindowLong(window, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW);
+			// See: https://stackoverflow.com/questions/23145217/flickering-when-borderless-window-and-desktop-dimensions-are-the-same
+			// Why????
+			SetWindowPos(window, HWND_TOP, 0, 0, screen_width +1, screen_height+1, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+		}
+		
+#else
 		MONITORINFO monitor_info = {};
 		monitor_info.cbSize = sizeof(monitor_info);
 		if (GetWindowPlacement(window, &window_position) &&
@@ -34,11 +45,23 @@ void toggle_fullscreen(HWND window) {
 			             monitor_info.rcMonitor.bottom - monitor_info.rcMonitor.top,
 			             SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
 		}
+#endif
+		
 	} else {
 		SetWindowLong(window, GWL_STYLE, style | WS_OVERLAPPEDWINDOW);
 		SetWindowPlacement(window, &window_position);
 		SetWindowPos(window, 0, 0, 0, 0, 0,
 		             SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+		// On Windows 98, the taskbar might need repainting after returning from fullscreen
+		OSVERSIONINFOA versioninfo = {0};
+		versioninfo.dwOSVersionInfoSize = sizeof(versioninfo);
+		GetVersionEx(&versioninfo);
+		if (versioninfo.dwMajorVersion < 5) {
+			HWND hwnd_taskbar = FindWindow("Shell_TrayWnd", NULL);
+			ShowWindow(hwnd_taskbar, SW_HIDE);
+			ShowWindow(hwnd_taskbar, SW_SHOW);
+			SetActiveWindow(window);
+		}
 	}
 }
 

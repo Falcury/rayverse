@@ -16,7 +16,7 @@ void set_medaillion_saved_data() {
 }
 
 // http://graphics.stanford.edu/~seander/bithacks.html#ReverseByteWith32Bits
-u8 bit_reverse(u8 b) {
+u8 bit_reverse_u8(u8 b) {
 	b = (u8)(((b * 0x0802LU & 0x22110LU) | (b * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16);
 	return b;
 }
@@ -53,7 +53,7 @@ mem_t* sav_xor_stream(mem_t* source, u8* checksum_result) {
 		u8 byte = 0;
 		mem_read(&byte, source, 1);
 
-		byte ^= bit_reverse(compr_incremental_xor) ^ 0xB9;
+		byte ^= bit_reverse_u8(compr_incremental_xor) ^ 0xB9;
 		++compr_incremental_xor; // N.B. intentional overflow happens at 0xFF
 
 		checksum -= byte; // underflow

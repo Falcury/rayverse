@@ -29,6 +29,7 @@
 #ifdef _MSC_VER
 #if _MSC_VER < 1900
 #define snprintf _snprintf
+#define for if(0); else for // prevent error C2374: multiple initialization in for loops
 #endif
 #endif
 

@@ -2,7 +2,7 @@
 image_t load_vignet_pcx(u32 resource_id) {
 	ASSERT(sizeof(pcx_header_t) == 128);
 	FILE* fp = open_data_file("VIGNET.DAT", true);
-	image_t image = {};
+	image_t image = {0};
 	if (fp) {
 		archive_header_t* info = vignetinfos + resource_id;
 		fseek(fp, info->offset, 0);

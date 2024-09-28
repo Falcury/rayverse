@@ -1,6 +1,6 @@
 
 
-#define FUNC_DIRECT_SOUND_CREATE(name) HRESULT WINAPI name(LPCGUID lpGUID, LPDIRECTSOUND *ppDS, LPUNKNOWN pUnkOuter)
+#define FUNC_DIRECT_SOUND_CREATE(name) HRESULT WINAPI name(LPGUID lpGUID, LPDIRECTSOUND *ppDS, LPUNKNOWN pUnkOuter)
 typedef FUNC_DIRECT_SOUND_CREATE(Func_DirectSoundCreate);
 
 
@@ -13,7 +13,7 @@ static void win32_init_dsound(HWND window, win32_sound_output_t* sound) {
 				GetProcAddress(dsound_library, "DirectSoundCreate");
 		if (DirectSoundCreate != NULL && SUCCEEDED(DirectSoundCreate(NULL, &sound->dsound, NULL))) {
 
-			WAVEFORMATEX waveformat = {};
+			WAVEFORMATEX waveformat = {0};
 			waveformat.wFormatTag = WAVE_FORMAT_PCM;
 			waveformat.nChannels = 2;
 			waveformat.wBitsPerSample = 16;
@@ -24,7 +24,7 @@ static void win32_init_dsound(HWND window, win32_sound_output_t* sound) {
 
 			if (SUCCEEDED(sound->dsound->SetCooperativeLevel(window, DSSCL_PRIORITY))) {
 				// "create" a primary buffer
-				DSBUFFERDESC buffer_description = {};
+				DSBUFFERDESC buffer_description = {0};
 				buffer_description.dwSize = sizeof(buffer_description);
 				buffer_description.dwFlags = DSBCAPS_PRIMARYBUFFER; // TODO: DSBCAPS_GLOBALFOCUS?
 				IDirectSoundBuffer* primary_buffer;
@@ -44,7 +44,7 @@ static void win32_init_dsound(HWND window, win32_sound_output_t* sound) {
 			}
 
 			// "create" a secondary buffer
-			DSBUFFERDESC secondary_buffer_description = {};
+			DSBUFFERDESC secondary_buffer_description = {0};
 			secondary_buffer_description.dwSize = sizeof(secondary_buffer_description);
 			secondary_buffer_description.dwFlags = DSBCAPS_GETCURRENTPOSITION2;
 			secondary_buffer_description.dwBufferBytes = sound->secondary_buffer_size;
