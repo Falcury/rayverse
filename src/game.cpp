@@ -687,6 +687,16 @@ void DrawSpriteNormal256(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 pro
 	}
 }
 
+//16A24
+void DrawSpriteNormal(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
+	//stub
+}
+
+//16B08
+void DrawSpriteFlipNormal(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
+	//stub
+}
+
 //16B88
 void DrawSpriteFlipNormal256(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
 	if (clip_sprite_on_screen_flipped(&proj_x, &proj_y, &proj_size, &image_data) && proj_size.x > 0) {
@@ -709,13 +719,8 @@ void DrawSpriteFlipNormal256(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32
 	}
 }
 
-//16A24
-void DrawSpriteNormal(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
-	//stub
-}
-
-//16B08
-void DrawSpriteFlipNormal(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
+//16BEA
+void DrawSpriteColorNormal(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/) {
 	//stub
 }
 
@@ -822,7 +827,7 @@ void SET_X_SPEED(obj_t* obj) {
 		} else {
 			xspeed = eta->left_speed * horloge_index;
 		}
-		if (obj->type == obj_23_rayman && (RayEvts & skills_0x200_tiny)) {
+		if (obj->type == obj_23_rayman && (RayEvts & rayevts_0x200_tiny)) {
 			xspeed /= 2;
 		}
 	}
@@ -864,7 +869,7 @@ void DO_ANIM(obj_t* obj) {
 		anim = obj->animations + obj->anim_index;
 		if ((obj->type == obj_23_rayman && (ray_old_etat == 2 || ray_old_etat == 6)) ||
 		    (obj->sub_etat == 61 && ray_old_subetat == 61 && ray_old_etat == 0)) {
-			if (ray.timer > 60 && !(RayEvts & skills_0x8000_squashed)) {
+			if (ray.timer > 60 && !(RayEvts & rayevts_0x8000_squashed)) {
 				ray.timer = 60;
 			}
 		}
@@ -994,7 +999,7 @@ void POINTEUR_BOUTONS_OPTIONS_BIS() {
 
 
 //42790
-bool set_joy_input_funcs() {
+bool JoystickPresent() {
 	//stub
 	return true;
 }
@@ -1074,7 +1079,7 @@ void LOAD_CONFIG() {
 			InitSnd();
 		}
 
-		if (set_joy_input_funcs()) {
+		if (JoystickPresent()) {
 			// stub: init joypad
 		} else {
 			if (xpadmax == -1) {
@@ -1089,7 +1094,7 @@ void LOAD_CONFIG() {
 			LoadBnkFile(&base_snd8b_data, 2);
 			InitSnd();
 		}
-		if (set_joy_input_funcs()) {
+		if (JoystickPresent()) {
 			//vignet_load_proc = load_vignet_12;
 			//sub_23F30();
 			//start_fade_out(2);
@@ -1116,7 +1121,7 @@ void LOAD_CONFIG() {
 void InitMemoryVariable() {
 	P486 = 0;
 	NormalModeAutorise = 1;
-	JumelleEffectAutorise = 1;
+	JumelleEffetAutorise = 1;
 	CarteSonAutorisee = 1;
 	son_limite = 0;
 	is_background_clearing_needed = 1;
@@ -1288,7 +1293,7 @@ void init_calcbloc_func() {
 
 //59900
 void INIT_RAY_BEGIN() {
-	RayEvts &= 0x0248;
+	RayEvts &= (rayevts_8_super_helico | rayevts_0x40_magicseed | rayevts_0x200_tiny); // reset skills
 	ray_max_hitp = 2;
 	status_bar.num_wiz = 0;
 	fin_continue = 0;
@@ -1341,12 +1346,176 @@ void INIT_MOTEUR_BEGIN() {
 	RunTimeDemo = 1800;
 }
 
+//3D9D4
+void InitTextMode() {
+	//textmode();
+	ModeVideoActuel = 255;
+}
+
+//4368C
+i32 ChangeJumelleVariable() {
+	LargeurJumelle = (7 * RayonJumelle) / 2;
+	i32 var1 = LargeurJumelle / 2;
+	JumelleXMin = JumellePosX - var1;
+	i32 result = ((2 * RayonJumelle) / 2);
+	JumelleYMin = JumellePosY - result;
+	scroll_start_x = (i16)(LargeurJumelle + 2);
+	scroll_start_y = (i16)(result + 2);
+	scroll_end_x = (i16)(WidthNworld - var1 - 4);
+	HauteurJumelle = 2 * RayonJumelle;
+	scroll_end_y = (i16)(HeightNworld - result - 4);
+	return result;
+}
+
+//437FC
+i16 PrepareJumelleZoom() {
+	return 0;
+	//stub
+}
+
+//43038
+i16 DefaultJumelleVariable() {
+	if (JumelleEffetAutorise) {
+		JumelleZoomActif = 1;
+	} else {
+		JumelleZoomActif = 0;
+	}
+	ChangeJumelleSizeOK = 3;
+	RayonJumelle = 25;
+	LargeurJumelle = 87;
+	HauteurJumelle = 50;
+	JumellePosX = 160;
+	JumellePosY = 100;
+	PositionJumelleX16 = 2560;
+	PositionJumelleY16 = 1600;
+	ModeAutoJumelle = 0;
+	PositionStageNameCalcule = 0;
+	i16 result = (i16)ChangeJumelleVariable();
+	if (JumelleEffetAutorise) {
+		JumelleZoomAmp = -26 * RayonJumelle + 32150;
+		result = PrepareJumelleZoom();
+	}
+	return result;
+}
+
+//42EC4
+i16 InitMatriceJumelle() {
+	DistPointX = (i32*)calloc(161, sizeof(i32));
+	DistPointY = (i32*)calloc(65, sizeof(i32));
+	ExpPoint = (i32*)calloc(5120, sizeof(i32));
+	JumelleZoomDef = (i32*)calloc(29025, sizeof(i32));
+	if (JumelleEffetAutorise) {
+		if (DistPointX && DistPointY && ExpPoint && JumelleZoomDef) {
+			for (i32 y = 0; y < 65; ++y) {
+				DistPointY[y] = y * y;
+			}
+			// NOTE: the for loop for X is inside the Y loop in the original (probably a bug?)
+			for (i32 x = 0; x < 161; ++x) {
+				DistPointX[x] = x * x;
+			}
+			for (i32 i = 0; i < 5120; ++i) {
+				ExpPoint[i] = (i32)(expf((float)(-i) / 1024.0f ) * 65536.0f);
+			}
+		} else {
+			if (DistPointX) {
+				free(DistPointX);
+			}
+			if (DistPointY) {
+				free(DistPointY);
+			}
+			if (ExpPoint) {
+				free(ExpPoint);
+			}
+			if (JumelleZoomDef) {
+				free(JumelleZoomDef);
+			}
+			JumelleEffetAutorise = 0;
+			fatal_error();
+		}
+	}
+	return DefaultJumelleVariable();
+}
+
+//145F1
+void select_display_buffer(u8* buffer) {
+	//stub
+}
+
+//3D9E4
+void InitModeNormalWithFrequency(u8 freq) {
+	if (ModeVideoActuel == 255) {
+		//InitFirstModeVideo();
+		//GetVideoRegister()
+	}
+	if (ModeVideoActuel != 0) {
+		//InitModeNormal();
+		memset(DrawBufferNormal, 0, 320 * 200);
+		memset(DisplayBufferNormal, 0, 320 * 200);
+		//set_vga_frequency();
+		ModeVideoActuel = 0;
+		//dword_CD0F4 = sub_16A18;
+		//dword_CD114 = sub_16AFC;
+		DrawSpriteColorNormalEtX = DrawSpriteColorNormal;
+		//dword_CD11C = (int)sub_16C89;
+		draw_buffer = DrawBufferNormal;
+		DrawSpriteFlipNormalEtX = DrawSpriteFlipNormal;
+		DrawSpriteNormalEtX = DrawSpriteNormal;
+//		drawflocon1NormalETX = draw_flocon1_Normal;
+//		drawflocon2NormalETX = draw_flocon2_Normal;
+//		drawflocon3NormalETX = draw_flocon3_Normal;
+//		drawflocon4NormalETX = draw_flocon4_Normal;
+//		drawflocon5NormalETX = draw_flocon5_Normal;
+//		drawflocon6NormalETX = draw_flocon6_Normal;
+//		drawflocon7NormalETX = draw_flocon7_Normal;
+//		drawpluie4NormalETX = draw_pluie4_Normal;
+//		drawpluie6NormalETX = draw_pluie6_Normal;
+//		drawpluie5NormalETX = draw_pluie5_Normal;
+//		drawpluie7NormalETX = draw_pluie7_Normal;
+//		fplotNormalETX = fplot_Normal;
+	}
+}
+
+//16EAA
+void set_speaker_on() {
+	//stub
+}
+
+//3622C
+void FIRST_INIT() {
+	init_memory(&temp_mem_buf, TailleMainMemTmp); // NOTE: need to figure out when (if ever) this gets freed?
+	InitTextMode();
+	freeze = 0;
+	record.is_recording = 0;
+	record.is_playing = 0;
+	gele = 0;
+	JoystickPresent();
+	word_E0CD0 = 3; // inlined sub_4212C()
+	DrawBufferNormal = (u8*)malloc(64064);
+	EffetBufferNormal = (u8*)malloc(128000);
+	if (!DrawBufferNormal || !EffetBufferNormal) {
+		fatal_error();
+	}
+	InitMatriceJumelle();
+	if (Frequence == 70) {
+		VGA_FREQ = Frequence;
+	} else {
+		VGA_FREQ = 60;
+	}
+	InitModeNormalWithFrequency(VGA_FREQ);
+	use_sync = 1;
+	set_speaker_on();
+	//sub_35F70();
+	path_has_changed = 0;
+}
+
 
 //18420
 void PcMain() {
 	InitMemoryVariable();
 	sprite_clipping(0, 320, 0, 200);
 	wait_frames(10); // added
+	INIT_MOTEUR_BEGIN();
+	FIRST_INIT();
 	DO_UBI_LOGO();
 	DO_GROS_RAYMAN();
 	LOAD_CONFIG();
@@ -1358,6 +1527,4 @@ void PcMain() {
 	while (is_ogg_playing) {
 		advance_frame();
 	}
-
-	INIT_MOTEUR_BEGIN();
 }

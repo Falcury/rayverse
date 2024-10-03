@@ -328,10 +328,6 @@ void LOAD_ALL_FIX() {
 	}
 }
 
-//3622C
-void FIRST_INIT() {
-	
-}
 
 //35CC4
 void DO_GROS_RAYMAN() {

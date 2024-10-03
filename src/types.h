@@ -718,17 +718,22 @@ enum obj_type_enum {
 	obj_261_edu_roadsign					= 261,
 };
 
-enum skills_enum {
-	skills_1_punch   = 1,
-	skills_2_hang    = 2,
-	skills_4_copter  = 4,
-	skills_8_supercopter  = 8,
-	skills_0x40_magicseed  = 0x40,
-	skills_0x80_grab  = 0x80,
-	skills_0x100_run  = 0x100,
-	skills_0x200_tiny  = 0x200,
-	skills_0x400_firefly  = 0x400,
-	skills_0x8000_squashed = 0x8000,
+// NOTE: change to bitfield?
+enum rayevts_enum {
+	rayevts_1_poing   = 1,
+	rayevts_2_hang    = 2,
+	rayevts_4_helico  = 4,
+	rayevts_8_super_helico  = 8,
+	rayevts_0x10_handstand_dash  = 0x10,
+	rayevts_0x20_handstand  = 0x20,
+	rayevts_0x40_magicseed  = 0x40,
+	rayevts_0x80_grab  = 0x80,
+	rayevts_0x100_run  = 0x100,
+	rayevts_0x200_tiny  = 0x200,
+	rayevts_0x400_firefly  = 0x400,
+	rayevts_0x800_force_run  = 0x800, // and 0x1000 (2-bit value?)
+	rayevts_0x2000_reverse  = 0x2000, // and 0x4000 (2-bit value?)
+	rayevts_0x8000_squashed = 0x8000,
 };
 
 

@@ -7,7 +7,6 @@ game_state_t* global_game;
 rgb_palette_t fade_source_palette;
 u8 fade_mode; //CFA87 (?)
 u16 fade_temp[256*3];
-u16 fade_speed; //CF7EA
 
 // engine.cpp
 
@@ -40,6 +39,9 @@ i16 options_jeu_is_stereo; //C2F94
 i16 notbut[4]; //C97F0
 
 u8 save_zone[2592]; //CAFA0
+record_t record; //CAF50
+i16 tot_nb_flocs[8]; //CAF68
+i16 floc_ind; //CAF78
 i16 allowed_time[192]; //CB9C0
 u8 bonus_perfect[24]; //CBB40
 
@@ -84,7 +86,7 @@ void* drawflocon6NormalETX; //CD0B8
 void* drawflocon7NormalETX; //CD0BC
 i32 JumellePosY; //CD0C0
 i32 JumellePosX; //CD0C4
-i32 JumelleZoomDef; //CD0C8
+i32* JumelleZoomDef; //CD0C8
 i32 LongueurStageNameWorld; //CD0CC
 i32 LongueurStageNameLevel; //CD0D0
 void* drawpluie7NormalETX; //CD0D4
@@ -96,7 +98,7 @@ void* drawflocon4NormalETX; //CD0E8
 i32 RayonJumelle; //CD0EC
 void* drawpluie6NormalETX; //CD0F0
 void* dword_CD0F4; //CD0F4
-void* DrawSpriteColorNormalEtX; //CD0F8
+draw_func_t* DrawSpriteColorNormalEtX; //CD0F8
 i32 dword_CD0FC; //CD0FC
 void* fplotNormalETX; //CD100
 void* drawflocon5NormalETX; //CD104
@@ -132,6 +134,7 @@ mem_t* main_mem_world; //CD880
 u32 TailleMainMemFix; //CD898
 u32 TailleMainMemWorld; //CD89C
 mem_t* main_mem_tmp; //CD8A0
+mem_t* temp_mem_buf; //CD88C
 
 u32 flocon_tab; //CD8BC
 u32 map_time; //CD8C0
@@ -210,10 +213,80 @@ i16 sortie_options; //CF78E
 i16 affiche_bon_ecran; //CF790
 i16 delai_barre; //CF792
 i16 max_compteur; //CF794
-
+i16 prise_branchee; //CF796
+i16 max_sound; //CF798
+i16 delai_repetition; //CF79A
+i16 ecart_barre; //CF79C
+i16 word_CF79E; //CF79E
+i16 action; //CF7A2
+i16 nbre_options; //CF7A4
+i16 positiony2; //CF7A6
+i16 old_x_luc; //CF7A8
+i16 positionx2; //CF7AA
+i16 debut_titre; //CF7AC
+i16 old_y_luc; //CF7AE
+i16 choix_menu; //CF7B0
+i16 ADDLUCLIP; //CF7B2
+i16 ecarty; //CF7B4
+i16 ecartx; //CF7B6
+i16 debut_sortie; //CF7B8
+i16 ecart_options; //CF7BA
+i16 fichier_selectionne; //CF7BC
+i16 positiony; //CF7BE
+i16 positionx; //CF7C0
+i16 fichier_a_copier; //CF7C2
+i16 debut_options; //CF7C4
+i16 rayon_luciole; //CF7C6
+i16 x_luc; //CF7C8
+i16 y_luc; //CF7CA
+i16 coeffktxt; //CF7CC
+i16 y_main_luc; //CF7CE
+i16 x_main_luc; //CF7D0
+i16 vx_luc; //CF7D2
+i16 n_ray; //CF7D4
+i16 vy_luc; //CF7D6
+i16 ktxtenx; //CF7D8
+i16 ktxteny; //CF7DA
+i16 rotationtxt; //CF7DC
+i16 plan0_width; //CF7DE
+i16 yp0; //CF7E0
+i16 plan2_height; //CF7E2
+i16 plan0_height; //CF7E4
+i16 word_CF7E6; //CF7E6
+i16 display_mode; //CF7E8
+i16 fade_speed; //CF7EA
+i16 word_CF7EE; //CF7EE
+i16 word_CF7F0; //CF7F0
+i16 joy_buttonB1; //CF7F2
+i16 joy_buttonB2; //CF7F4
+i16 joy_buttonA1; //CF7F6
+i16 joy_buttonA2; //CF7F8
+i16 SNSEQ_list_ptr; //CF7FA
+i16 current_star; //CF7FC
+i16 SNSEQ_ptr; //CF7FE
+i16 SNSEQ_no; //CF800
+i16 MapAvecPluieOuNeige; //CF802
+i16 skops_ecroule_plat; //CF804
+i16 bonus_map; //CF806
+i16 bateau_obj_id; //CF808
+i16 sko_nb_hit; //CF80A
+i16 mama_pirate_obj_id; //CF80C
+i16 sko_nb_frap; //CF80E
+i16 loop_time; //CF810
+i16 bat_nb_frap; //CF812
+i16 cb_ball_obj_id; //CF814
+i16 sko_phase; //CF816
+u16 SauveRayEvts; //CF818
 u16 RayEvts; //CF81A
 u16 finBossLevel; //CF81E
-
+i16 bloc_lim_H2; //CF820
+i16 png_or_fee_id; //CF822
+i16 loop_nb_trames; //CF824
+i16 loop_timing; //CF826
+i16 VENT_Y; //CF828
+i16 VENT_X; //CF82A
+i16 id_Cling_1up; //CF82C
+i16 num_level_choice; //CF82E
 i16 id_cling_old; //CF830
 i16 ywldmapsave; //CF832
 i16 xwldmapsave; //CF834
@@ -310,8 +383,8 @@ i16 skops_beam_dy; //CF8EA
 u16 rubis_list_calculated; //CF8EC
 i16 sko_rayon_x; //CF8EE
 i16 sko_rayon_y; //CF8F0
-u16 word_CF8F2; //CF8F2
-u16 word_CF8F4; //CF8F4
+u16 path_has_changed; //CF8F2
+u16 inter_select; //CF8F4
 
 
 
@@ -347,18 +420,18 @@ u8 byte_CFA29; //CFA29
 u8 byte_CFA2A; //CFA2A
 u8 world_unk_offset_6; //CFA2B
 u8 is_limited_mode; //CFA2C
-u8 byte_CFA2D; //CFA2D
-u8 byte_CFA2E; //CFA2E
-u8 byte_CFA2F; //CFA2F
-u8 byte_CFA30; //CFA30
-u8 byte_CFA31; //CFA31
-u8 JumelleEffectAutorise; //CFA32 // zoom effect available
+u8 PositionStageNameCalcule; //CFA2D
+u8 ModeAutoJumelle; //CFA2E
+u8 ChangeJumelleSizeOK; //CFA2F
+u8 JumelleZoomActif; //CFA30
+u8 ParamZoomChange; //CFA31
+u8 JumelleEffetAutorise; //CFA32 // zoom effect available
 u8 NormalModeAutorise; //CFA33    // normal mode available
 u8 first_credit; //CFA34
 u8 language; //CFA35
 u8 ModeDemo; //CFA36
 u8 menuEtape; //CFA37
-u8 byte_CFA38; //CFA38
+u8 MENU_SUITE; //CFA38
 u8 MENU_RETURN; //CFA39
 u8 last_credit; //CFA3A
 u8 nb_continue; //CFA3B
@@ -729,7 +802,7 @@ u8 DemoRecord[1500] = {
 i16 DemoRecordSize[6] = {154, 192, 200, 172, 200, 120}; //95E04
 i16 DemoRecordWorld[6] = {2, 3, 4, 5, 1, 5}; //95E10
 i16 DemoRecordMap[6] = {7, 7, 1, 4, 9, 10}; //95E1C
-
+u8* DisplayBufferNormal = NULL; //95E28 // initialized to 0xA0000 (= VGA video memory)
 u8 ModeVideoActuel = 255; //95E2C
 u8 GameModeVideo = 255; //95E2D
 i32 JumAmpDefMul = 0; //95E30
@@ -759,6 +832,11 @@ u16 tRefSpriteNormal[2] = {255, 255}; //95EA0
 u16 tRefRam2VramX[2] = {255, 255}; //95EA4
 u16 tRefVram2VramX[2] = {255, 255}; //95EA8
 u16 tRefSpriteX[2] = {255, 255}; //95EAC
+u8 ExitMenu = 0; //95EB0
+u8 ReInitPlasma = 0; //95EB1
+u8 Main_Control = 0; //95EB2
+i16 During_The_Menu = 1; //95EB4
+u8 OptionMusicCdActive = 1; //95EB6
 
 //966B8
 u16 snd8b_offsets[128] = {
@@ -794,6 +872,34 @@ const char* key_descriptions_qwerty[128] = {
 
 i16 Volume_Snd; //97F64
 
+i16 PosArYToon2; //E0BF4
+i16 PosArXToon2; //E0BF6
+i16 PosArYToon1; //E0BF8
+i16 PosArXToon1; //E0BFA
+i16 flamme_droite_id; //E0BFC
+i16 XText; //E0BFE
+
+i16 joy_rec_left; //E0CCE
+i16 word_E0CD0; //E0CD0
+i16 word_E0CD2; //E0CD2
+i16 word_E0CD4; //E0CD4
+i16 word_E0CD6; //E0CD6
+i16 word_E0CD8; //E0CD8
+i32 PositionJumelleDemandeY; //E0CDC
+i32 PositionJumelleDemandeX; //E0CE0
+i32 PositionJumelleY16; //E0CE4
+i32 PositionJumelleX16; //E0CE8
+i32 Xmap16; //E0CEC
+i32 Ymap16; //E0CF0
+i32 ModeAutoPosXJumelle; //E0CF4
+i32 ModeAutoPosYJumelle; //E0CF8
+i32 ModeAutoJumelleZoomAmp; //E0CFC
+i32 ModeAutoRayonJumelle; //E0D00
+i32* DistPointY; //E0D04
+i32* DistPointX; //E0D08
+i32 CompteurJumelle; //E0D0C
+i32* ExpPoint; //E0D10
+i32 dword_E0D14; //E0D14
 obj_t wldobj[100]; //E0D18
 
 const char** key_descriptions; //E4CB0
