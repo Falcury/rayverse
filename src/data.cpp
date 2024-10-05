@@ -292,19 +292,19 @@ i16 ywldmapsave; //CF832
 i16 xwldmapsave; //CF834
 i16 PROJ_CENTER_Y; //CF836
 i16 PROJ_CENTER_X; //CF838
-u16 num_world_choice; //CF83A
-u16 ray_speed_inv; //CF83C
-u16 ymapinit; //CF83E
-u16 ray_clic; //CF840
-u16 id_obj_grabbed; //CF842
-u16 xmapinit; //CF844
-u16 id_Cling_pow; //CF846
-u16 ray_between_clic; //CF848
+i16 num_world_choice; //CF83A
+i16 ray_speed_inv; //CF83C
+i16 ymapinit; //CF83E
+i16 ray_clic; //CF840
+i16 id_obj_grabbed; //CF842
+i16 xmapinit; //CF844
+i16 id_Cling_pow; //CF846
+i16 ray_between_clic; //CF848
 i16 bossYToReach; //CF84A
-u16 screen_trembling3; //CF84C
-u16 screen_trembling2; //CF84E
+i16 screen_trembling3; //CF84C
+i16 screen_trembling2; //CF84E
 i16 bossXToReach; //CF850
-u16 screen_trembling; //CF852
+i16 screen_trembling; //CF852
 i16 scroll_start_y; //CF854
 i16 bossScrollStartY; //CF856
 i16 bossScrollStartX; //CF858
@@ -324,7 +324,7 @@ i16 weather_wind; //CF874
 i16 ray_zdc_y; //CF876
 u16 mst_scroll_obj_id; //CF878
 u16 num_scroll_obj; //CF87A
-i16 curr_level_number; //CF87C
+i16 num_level; //CF87C
 u16 word_CF87E; //CF87E
 i16 new_level; //CF880
 u16 water_obj_id; //CF882
@@ -332,7 +332,7 @@ i16 ymapmax; //CF884
 u16 reduced_rayman_id; //CF886
 u16 fee_obj_id; //CF888
 u16 word_CF88A; //CF88A
-i16 curr_world; // 0xCF88C
+i16 num_world; // 0xCF88C
 u16 pierre_acorde_obj_id; // CF88E
 u16 xmapmap; //CF890
 u16 new_world; // 0xCF892
@@ -394,7 +394,7 @@ u8 windows_version_minor; //CFA0F
 u8 is_master_mode; //CFA10
 u8 byte_CFA11; //CFA11
 u8 windows_version; //CFA12
-u8 son_limite; //CFA13
+u8 SonLimite; //CFA13
 u8 byte_CFA14; //CFA14
 u8 byte_CFA15; //CFA15
 u8 byte_CFA16; //CFA16
@@ -531,6 +531,8 @@ u8 RaymanDansUneMapDuJeu; //CFA98
 u8 life_becoz_wiz; //CFA99
 u8 nb_fix_eta; //CFA9A
 u8 nb_loaded_eta; //CFA9B
+u8 byte_CFA9C; //CFA9C
+i32 CompteurTrameAudio; //CFAA0
 
 
 u16 nb_des; //9251C
@@ -837,6 +839,9 @@ u8 ReInitPlasma = 0; //95EB1
 u8 Main_Control = 0; //95EB2
 i16 During_The_Menu = 1; //95EB4
 u8 OptionMusicCdActive = 1; //95EB6
+
+u8 casse_brique_active = 0; //962B8
+u8 CasseBriqueON = 0; //962B9
 
 //966B8
 u16 snd8b_offsets[128] = {

@@ -87,7 +87,7 @@ void advance_frame() {
 #endif
 }
 
-void wait_frames(i32 n_frames) {
+void WaitNSynchro(i32 n_frames) {
 	for (i32 i = 0; i < n_frames; ++i) {
 		advance_frame();
 	}

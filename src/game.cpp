@@ -519,7 +519,7 @@ void INIT_FADE_IN() {
 
 void ubisoft_logo_loop(i32 par_0, i32 par_1, i32 par_2) {
 	start_fade_in(2);
-	wait_frames(5);
+	WaitNSynchro(5);
 	for (i32 i = 0; i < par_0; ++i) {
 		do_fade(&fade_source_palette, global_game->draw_buffer.pal);
 		advance_frame();
@@ -528,7 +528,7 @@ void ubisoft_logo_loop(i32 par_0, i32 par_1, i32 par_2) {
 		advance_frame();
 	}
 	fade_out(2, &fade_source_palette);
-	wait_frames(1);
+	WaitNSynchro(1);
 }
 
 
@@ -544,74 +544,74 @@ void DO_UBI_LOGO() {
 	ubisoft_logo_loop(60, -1, 8);
 }
 
-i32 screen_xmin = 8;
-i32 screen_xmax = 312;
-i32 screen_ymin = 0;
-i32 screen_ymax = 200;
+i32 XMIN = 8;
+i32 XMAX = 312;
+i32 YMIN = 0;
+i32 YMAX = 200;
 
 //16194
-void set_default_sprite_clipping() {
-	screen_xmin = 8;
-	screen_xmax = 312;
-	screen_ymin = 0;
-	screen_ymax = 200;
+void default_sprite_clipping() {
+	XMIN = 8;
+	XMAX = 312;
+	YMIN = 0;
+	YMAX = 200;
 }
 
 //161FA
 void sprite_clipping(i32 xmin, i32 xmax, i32 ymin, i32 ymax) {
 	if (xmin < 0) xmin = 0;
 	if (xmin > 320) xmin = 320;
-	screen_xmin = xmin;
+	XMIN = xmin;
 	if (xmax < 0) xmax = 0;
 	if (xmax > 320) xmax = 320;
-	screen_xmax = xmax;
+	XMAX = xmax;
 	if (ymin < 0) ymin = 0;
 	if (ymin > 200) ymin = 200;
-	screen_ymin = ymin;
+	YMIN = ymin;
 	if (ymax < 0) ymax = 0;
 	if (ymax > 200) ymax = 200;
-	screen_ymax = ymax;
+	YMAX = ymax;
 }
 
 //1626D
 bool clip_sprite_on_screen(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** image_data) {
 	saved_sprite_width = proj_size->x;
-	if (*proj_x < screen_xmin) {
-		i32 x_left_of_screen = -(*proj_x - screen_xmin);
+	if (*proj_x < XMIN) {
+		i32 x_left_of_screen = -(*proj_x - XMIN);
 		if (proj_size->x <= x_left_of_screen) {
 			return false;
 		} else {
 			x_left_of_screen &= 0xFFFF;
 			proj_size->x -= (u8) x_left_of_screen;
-			*proj_x = screen_xmin;
+			*proj_x = XMIN;
 			*image_data += x_left_of_screen;
 		}
 	}
 	i32 proj_right = *proj_x + proj_size->x;
-	if (proj_right > screen_xmax) {
-		if (*proj_x >= screen_xmax) {
+	if (proj_right > XMAX) {
+		if (*proj_x >= XMAX) {
 			return false;
 		} else {
-			proj_size->x = screen_xmax - *proj_x;
+			proj_size->x = XMAX - *proj_x;
 		}
 	}
-	if (*proj_y < screen_ymin) {
-		if (*proj_y + proj_size->y < screen_ymin) {
+	if (*proj_y < YMIN) {
+		if (*proj_y + proj_size->y < YMIN) {
 			return false;
 		} else {
-			i32 y_above_screen = -(*proj_y - screen_ymin);
+			i32 y_above_screen = -(*proj_y - YMIN);
 			y_above_screen &= 0xFFFF;
 			proj_size->y -= (u8) y_above_screen;
 			*image_data += saved_sprite_width * y_above_screen;
-			*proj_y = screen_ymin;
+			*proj_y = YMIN;
 		}
 	}
 	i32 proj_bottom = *proj_y + proj_size->y;
-	if (proj_bottom > screen_ymax) {
-		if (*proj_y >= screen_ymax) {
+	if (proj_bottom > YMAX) {
+		if (*proj_y >= YMAX) {
 			return false;
 		} else {
-			proj_size->y = screen_ymax - *proj_y;
+			proj_size->y = YMAX - *proj_y;
 			return true;
 		}
 	} else {
@@ -622,42 +622,42 @@ bool clip_sprite_on_screen(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** im
 //16323
 bool clip_sprite_on_screen_flipped(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** image_data) {
 	saved_sprite_width = proj_size->x;
-	if (*proj_x < screen_xmin) {
-		i32 x_left_of_screen = -(*proj_x - screen_xmin);
+	if (*proj_x < XMIN) {
+		i32 x_left_of_screen = -(*proj_x - XMIN);
 		if (proj_size->x <= x_left_of_screen) {
 			return false;
 		} else {
 			x_left_of_screen &= 0xFFFF;
 			proj_size->x -= (u8) x_left_of_screen;
-			*proj_x = screen_xmin;
+			*proj_x = XMIN;
 		}
 	}
 	i32 proj_right = *proj_x + proj_size->x;
-	if (proj_right > screen_xmax) {
-		if (*proj_x >= screen_xmax) {
+	if (proj_right > XMAX) {
+		if (*proj_x >= XMAX) {
 			return false;
 		} else {
-			proj_size->x = screen_xmax - *proj_x;
+			proj_size->x = XMAX - *proj_x;
 			*image_data += saved_sprite_width - proj_size->x;
 		}
 	}
-	if (*proj_y < screen_ymin) {
-		if (*proj_y + proj_size->y < screen_ymin) {
+	if (*proj_y < YMIN) {
+		if (*proj_y + proj_size->y < YMIN) {
 			return false;
 		} else {
-			i32 y_above_screen = -(*proj_y - screen_ymin);
+			i32 y_above_screen = -(*proj_y - YMIN);
 			y_above_screen &= 0xFFFF;
 			proj_size->y -= (u8) y_above_screen;
 			*image_data += saved_sprite_width * y_above_screen;
-			*proj_y = screen_ymin;
+			*proj_y = YMIN;
 		}
 	}
 	i32 proj_bottom = *proj_y + proj_size->y;
-	if (proj_bottom > screen_ymax) {
-		if (*proj_y >= screen_ymax) {
+	if (proj_bottom > YMAX) {
+		if (*proj_y >= YMAX) {
 			return false;
 		} else {
-			proj_size->y = screen_ymax - *proj_y;
+			proj_size->y = YMAX - *proj_y;
 			return true;
 		}
 	} else {
@@ -813,6 +813,14 @@ void display2(obj_t* obj) {
 		++layer;
 	}
 
+}
+
+//5C9F0
+void set_default_Bloc_clipping() {
+	Bloc_lim_H1 = 0;
+	Bloc_lim_H2 = 200;
+	Bloc_lim_W1 = 4;
+	Bloc_lim_W2 = 320;
 }
 
 //55EE4
@@ -1123,7 +1131,7 @@ void InitMemoryVariable() {
 	NormalModeAutorise = 1;
 	JumelleEffetAutorise = 1;
 	CarteSonAutorisee = 1;
-	son_limite = 0;
+	SonLimite = 0;
 	is_background_clearing_needed = 1;
 	FondAutorise = 1;
 	TailleMainMemTmp = 0x22000;
@@ -1307,7 +1315,17 @@ i16 myRand(i16 max) {
 		r = 0;
 	}
 	RandomIndex = r;
-	return RandArray[r] % (max + 1);
+	return (i16)(RandArray[r] % (max + 1));
+}
+
+//6BF98
+void MakeMyRand() {
+	srand(time(NULL));
+	for (u32 i = 0; i < COUNT(RandArray); ++i) {
+		i16 r = (i16)(rand() & 0x7FFF); // original: and ah, 0EFh ; does not clear the sign bit, maybe a bug?
+		RandArray[i] = r;
+	}
+	RandomIndex = 0;
 }
 
 //5A5B4
@@ -1450,7 +1468,7 @@ void InitModeNormalWithFrequency(u8 freq) {
 	if (ModeVideoActuel != 0) {
 		//InitModeNormal();
 		memset(DrawBufferNormal, 0, 320 * 200);
-		memset(DisplayBufferNormal, 0, 320 * 200);
+//		memset(DisplayBufferNormal, 0, 320 * 200);
 		//set_vga_frequency();
 		ModeVideoActuel = 0;
 		//dword_CD0F4 = sub_16A18;
@@ -1508,12 +1526,34 @@ void FIRST_INIT() {
 	path_has_changed = 0;
 }
 
+//42134
+void readinput() {
+	// stub // get joystick input
+}
+
+//362E4
+void init_divers_level_PC(u8* a1) {
+	if (fin_du_jeu) {
+		return;
+	}
+	*a1 = 255;
+	readinput();
+	if (record.current_offset != 0 || record.is_playing || record.is_recording) {
+		return;
+	}
+	//sub_42490(&record);
+}
+
+//26A30
+u8 get_casse_brique_active() {
+	return casse_brique_active;
+}
 
 //18420
 void PcMain() {
 	InitMemoryVariable();
 	sprite_clipping(0, 320, 0, 200);
-	wait_frames(10); // added
+	WaitNSynchro(10); // added
 	INIT_MOTEUR_BEGIN();
 	FIRST_INIT();
 	DO_UBI_LOGO();
@@ -1523,8 +1563,75 @@ void PcMain() {
 
 	NBRE_SAVE = 3;
 
-	// let the music finish playing while the main menu is not implemented yet :(
+	/*// let the music finish playing while the main menu is not implemented yet :(
 	while (is_ogg_playing) {
 		advance_frame();
+	}*/
+
+	if (MusicCdActive) {
+		stop_cd();
 	}
+
+	u8 v1 = 0;
+
+	while (!fin_de_rayman) {
+		//DEPART_INIT_LOOP();
+		//INIT_WORLD_INFO();
+		set_default_Bloc_clipping();
+		//DO_NEW_MENUS();
+
+		if (!fin_de_rayman && !ModeDemo && Frequence == 70) {
+			//play_movie("intro.dat", 20);
+		}
+
+		if (fin_du_jeu || status_bar.lives < 0 || new_world == 0) {
+			//FIN_GAME_LOOP();
+			if (ModeDemo) {
+				//FinDemoJeu();
+			}
+			break;
+		}
+
+		MakeMyRand();
+		//SPECIAL_INIT();
+		default_sprite_clipping();
+		//DO_WORLD_MAP();
+		sprite_clipping(0, 320, 0, 200);
+		//DEPART_WORLD();
+		if (!SonLimite) {
+			LoadBnkWorld(num_world_choice);
+		}
+
+		while (!(fin_du_jeu || new_world == 0 || new_level == 0)) {
+			WaitNSynchro(5);
+			//speaker_enable();
+			//DEPART_LEVEL();
+			init_divers_level_PC(&v1);
+			if ((GameModeVideo == 0 && num_world == 6 && num_level == 4) || get_casse_brique_active()) {
+//				InitClipping();
+			}
+
+			//INIT_MOTEUR_LEVEL(new_level);
+			//init_fee();
+			//init_moustique();
+			//InitPaletteSpecialPC();
+		}
+
+
+		if (MusicCdActive) {
+			stop_cd();
+		}
+		//FIN_MAP_LOOP();
+		if (ModeDemo) {
+			fin_du_jeu = 1;
+		}
+	}
+
+	//DoEffectBloodOut();
+	if (CarteSonAutorisee) {
+		//stop_all_snd();
+		//DigiMusicDone();
+	}
+	//END_GAME();
+
 }

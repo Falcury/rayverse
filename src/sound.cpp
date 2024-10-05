@@ -198,10 +198,7 @@ void play_cd_track(i32 track_number) {
 	stop_ogg(&ogg_cd_track);
 	ogg_cd_track = open_cd_vorbis(track_number);
 	is_ogg_playing = true;
-}
-
-void stop_cd_music() {
-	is_ogg_playing = false;
+	MusicCdActive = true;
 }
 
 //float volume = 0.5f;
@@ -217,6 +214,7 @@ void play_ogg(game_sound_buffer_t* sound_buffer, ogg_t* ogg) {
 		if (samples_filled == 0) {
 			is_ogg_finished = true;
 			is_ogg_playing = false;
+			MusicCdActive = false;
 		}
 	}
 }
@@ -264,4 +262,21 @@ void game_get_sound_samples(game_sound_buffer_t* sound_buffer) {
 			i16 sample_value = 0;
 		}
 	}
+}
+
+//1CEE0
+void SetCompteurTrameAudio() {
+	CompteurTrameAudio = 0;
+}
+
+//1D028
+void stop_cd() {
+	MusicCdActive = 0;
+	SetCompteurTrameAudio();
+	is_ogg_playing = false;
+}
+
+//3EA00
+void LoadBnkWorld(i16 world) {
+	//stub
 }
