@@ -40,30 +40,30 @@
 #include "types.h"
 #include "proto.h"
 
-#include "data.cpp"
+#include "data.c"
 
-#include "intrinsics.cpp"
-#include "mathutil.cpp"
-#include "platform.cpp"
+#include "intrinsics.c"
+#include "mathutil.c"
+#include "platform.c"
 
 #ifdef _WIN32
 // Source files specific to Windows
-#include "win32_opengl.cpp"
-#include "win32_sound.cpp"
-#include "win32_main.cpp"
+#include "win32_opengl.c"
+#include "win32_sound.c"
+#include "win32_main.c"
 #else
 // Source files specific to Linux / macOS
-#include "linux_opengl.cpp"
-#include "linux_sound.cpp"
-#include "linux_main.cpp"
+#include "linux_opengl.c"
+#include "linux_sound.c"
+#include "linux_main.c"
 #endif
 
-#include "render.cpp"
-#include "misc_source.cpp"
-#include "vignet.cpp"
-#include "bray.cpp"
-#include "sound.cpp"
-#include "save.cpp"
-#include "game.cpp"
-#include "engine.cpp"
-#include "object.cpp"
+#include "render.c"
+#include "misc_source.c"
+#include "vignet.c"
+#include "bray.c"
+#include "sound.c"
+#include "save.c"
+#include "game.c"
+#include "engine.c"
+#include "object.c"

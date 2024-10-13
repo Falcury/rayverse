@@ -1,7 +1,7 @@
 
 
 i64 get_clock() {
-    struct timespec t = {};
+    struct timespec t = {0};
     clock_gettime(CLOCK_MONOTONIC, &t);
     return t.tv_nsec + 1000000000 * t.tv_sec;
 }
@@ -13,7 +13,7 @@ float get_seconds_elapsed(i64 start, i64 end) {
 }
 
 void linux_sleep(u32 ms) {
-    struct timespec tim = {}, tim2 = {};
+    struct timespec tim = {0}, tim2 = {0};
     tim.tv_sec = 0;
     tim.tv_nsec = ms * 1000000;
     nanosleep(&tim, &tim2);
@@ -106,14 +106,14 @@ int main(int argc, char** argv) {
     sound_output->secondary_buffer = (u8*)calloc(sound_output->bytes_per_sample, sound_output->samples_per_second);
     sound_output->safety_bytes = (u32)((float)(sound_output->samples_per_second * sound_output->bytes_per_sample) * app_state->target_seconds_per_frame * 0.3333f);
 
-    SDL_AudioSpec spec = {};
+    SDL_AudioSpec spec = {0};
     spec.format = AUDIO_S16;
     spec.channels = 2;
     spec.freq = 44100;
     spec.samples = 256;
     spec.callback = NULL;
 //    spec.callback = audio_callback;
-    SDL_AudioSpec obtained_spec = {};
+    SDL_AudioSpec obtained_spec = {0};
     SDL_AudioDeviceID dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained_spec, SDL_AUDIO_ALLOW_ANY_CHANGE);
     if (dev == 0) {
         printf("Failed to open Audio Device: %s\n", SDL_GetError());

@@ -1,32 +1,32 @@
 
 #pragma pack(push,1)
-struct vec2b_t {
+typedef struct vec2b_t {
 	u8 x, y;
-};
+} vec2b_t;
 
-struct rgb_t {
+typedef struct rgb_t {
 	u8 r, g, b;
-};
+} rgb_t;
 
-struct rgb_palette_t {
+typedef struct rgb_palette_t {
 	rgb_t colors[256];
-};
+} rgb_palette_t;
 #pragma pack(pop)
 
 // platform.cpp
 
 
-struct mem_t {
+typedef struct mem_t {
 	size_t len;
 	size_t capacity;
 	i32 cursor;
 	u8 data[1]; // allowed to extend beyond end of struct
-};
+} mem_t;
 
 
 // game.cpp
 
-struct image_t {
+typedef struct image_t {
 	u8* memory;
 	u32 memory_size;
 	rgb_palette_t* pal;
@@ -34,32 +34,32 @@ struct image_t {
 	i32 height;
 	bool pal_needs_free;
 	bool is_valid;
-};
+} image_t;
 
-struct rect_t {
+typedef struct rect_t {
 	i32 x;
 	i32 y;
 	i32 w;
 	i32 h;
-};
+} rect_t;
 
-struct game_sound_buffer_t {
+typedef struct game_sound_buffer_t {
 	i32 samples_per_second;
 	u32 sample_count;
 	i16* samples;
-};
+} game_sound_buffer_t;
 
-struct game_state_t {
+typedef struct game_state_t {
 	bool initialized;
 	image_t draw_buffer; // draw_buffer
 	image_t draw_buffer_bg; // PLAN3BIT
 	game_sound_buffer_t sound_buffer;
-};
+} game_state_t;
 
 
 // win32_sound.cpp
 #ifdef _WIN32
-struct win32_sound_output_t {
+typedef struct win32_sound_output_t {
 	u32 samples_per_second;
 	u32 bytes_per_sample;
 	u32 secondary_buffer_size;
@@ -68,9 +68,9 @@ struct win32_sound_output_t {
 	IDirectSound* dsound;
 	IDirectSoundBuffer* secondary_buffer;
 	bool is_valid;
-};
+} win32_sound_output_t;
 #else
-struct sdl_sound_output_t {
+typedef struct sdl_sound_output_t {
     u32 samples_per_second;
     u32 bytes_per_sample;
     u32 secondary_buffer_size;
@@ -79,39 +79,39 @@ struct sdl_sound_output_t {
     i64 running_sample_index_for_reading;
     u32 safety_bytes;
     SDL_AudioDeviceID audio_device;
-};
+} sdl_sound_output_t;
 #endif
 
-struct ogg_t {
+typedef struct ogg_t {
 	stb_vorbis* decoder;
 	mem_t* file;
 	u32 sample_count;
-};
+} ogg_t;
 
 
 // rayverse.cpp
 
 #ifdef _WIN32
-struct win32_state_t {
+typedef struct win32_state_t {
     HWND window;
     HINSTANCE instance;
     HCURSOR cursor;
     win32_sound_output_t sound_output;
-};
+} win32_state_t;
 #else
-struct sdl_state_t {
+typedef struct sdl_state_t {
     SDL_Window* window;
     sdl_sound_output_t sound_output;
-};
+} sdl_state_t;
 #endif
 
-struct opengl_state_t {
+typedef struct opengl_state_t {
 	GLuint screen_texture;
 	GLint max_texture_size;
-};
+} opengl_state_t;
 
 
-struct surface_t {
+typedef struct surface_t {
 	u8* memory;
 	u32 memory_size;
 	i32 bytes_per_pixel;
@@ -120,9 +120,9 @@ struct surface_t {
 	i32 width_pow2; // for compatibility with old graphics cards that only support power-of-2 size textures
 	i32 height_pow2;
 	i32 pitch;
-};
+} surface_t;
 
-struct app_state_t {
+typedef struct app_state_t {
 #ifdef _WIN32
 	win32_state_t win32;
 #else
@@ -143,12 +143,12 @@ struct app_state_t {
 	game_state_t game;
 	i64 flip_clock;
 	i64 frame_clock;
-};
+} app_state_t;
 
 
 #pragma pack(push,1)
 
-struct eta_t {
+typedef struct eta_t {
 	i8 right_speed;
 	i8 left_speed;
 	u8 anim_index;
@@ -157,9 +157,9 @@ struct eta_t {
 	u8 anim_speed;
 	u8 sound_index;
 	u8 interaction_flags;
-};
+} eta_t;
 
-struct medaillion_t {
+typedef struct medaillion_t {
 	u16 xpos;
 	u16 ypos;
 	u8 index_up;
@@ -175,18 +175,18 @@ struct medaillion_t {
 	u8 field_E;
 	u8 field_F;
 	char* text;
-};
+} medaillion_t;
 
-struct status_bar_t {
+typedef struct status_bar_t {
 	u16 lives;
 	u8 lives_digits[2];
 	u8 hp_sprites[2];
 	u8 num_wiz;
 	u8 wiz_digits[2];
 	u8 max_hitp;
-};
+} status_bar_t;
 
-struct poing_t {
+typedef struct poing_t {
 	u32 field_0; // Fixed-point y pos value?
 	u16 field_4;
 	u16 speed_x;
@@ -200,13 +200,13 @@ struct poing_t {
 	u8 is_boum;
 	u8 field_12;
 	u8 field_13;
-};
+} poing_t;
 
-struct x_texture_t {
+typedef struct x_texture_t {
 	u8 pixels[256]; // 16x16 array of color indices
-};
+} x_texture_t;
 
-struct sprite_t {
+typedef struct sprite_t {
 	u32 offset_in_atlas;
 	u8 unk_index;
 	u8 outer_width;
@@ -216,42 +216,30 @@ struct sprite_t {
 	u8 field_9;
 	u8 field_A;
 	u8 field_B;
-};
+} sprite_t;
 
-/*struct anim_desc_t {
-	u8 layers_per_frame;
-	u8 unknown1;
-	u8 frame_count;
-	u8 unknown2;
-	u32 unknown3;
-	u16 frame_table_offset; // equals 4 * (layers_per_frame * frame_count + 1)
-	u16 frame_count;
-};*/
-
-
-struct anim_layer_t {
+typedef struct anim_layer_t {
 	u8 mirrored;
 	u8 x;
 	u8 y;
 	u8 sprite_index;
-};
+} anim_layer_t;
 
-struct anim_frame_t {
+typedef struct anim_frame_t {
 	u8 unk_x;
 	u8 unk_y;
 	u8 unk_width;
 	u8 unk_height;
-};
+} anim_frame_t;
 
-struct anim_t {
+typedef struct anim_t {
 	anim_layer_t* layers;
 	anim_frame_t* frames;
 	u16 layers_per_frame;
 	u16 frame_count;
-};
+} anim_t;
 
-
-struct pcx_header_t {
+typedef struct pcx_header_t {
 	u8 header_byte; // always 0x0A
 	u8 software_version;
 	u8 encoding_method; //0=no encoding, 1=run-length encoding
@@ -270,10 +258,9 @@ struct pcx_header_t {
 	u16 source_hor_res;
 	u16 source_ver_res;
 	u8 reserved2[54];
-};
+} pcx_header_t;
 
-
-struct obj_t {
+typedef struct obj_t {
 	sprite_t* sprites; // ImgDescriptorsPointer
 	anim_t* animations; // AnimDescriptorsPointer
 	u8* image_atlas; // ImageBufferPointer
@@ -344,38 +331,38 @@ struct obj_t {
 	u8 flags;
 	u8 field_82;
 	u8 field_83;
-};
+} obj_t;
 
-struct level_t {
+typedef struct level_t {
 	obj_t* objects;
 	u16 nb_objects;
-};
+} level_t;
 
-struct map_tile_t {
+typedef struct map_tile_t {
 	u16 texture_id;
 	u8 tile_type;
 	u8 field_3;
 	u8 transparency;
 	u8 field_5;
-};
+} map_tile_t;
 
-struct map_data_t {
+typedef struct map_data_t {
 	i16 width;
 	i16 height;
 	i32 length;
 	map_tile_t* map;
-};
+} map_data_t;
 
-struct voice_t {
+typedef struct voice_t {
 	i16 field_0;
 	i16 field_2;
 	i16 field_4;
 	i16 sound_to_play; //?
 	i16 field_8;
 	i16 field_A;
-};
+} voice_t;
 
-struct options_t {
+typedef struct options_t {
 	i16 field_0;
 	i16 field_2;
 	i16 SizeScreen;
@@ -386,9 +373,9 @@ struct options_t {
 	i16 field_E; //unused?
 	i16 field_10; //unused?
 	i16 field_12; //unused?
-};
+} options_t;
 
-struct options_jeu_t {
+typedef struct options_jeu_t {
 	void* func_0;
 	void* func_4;
 	void* func_8;
@@ -400,9 +387,9 @@ struct options_jeu_t {
 	u16 music_enabled;
 	u16 sound_volume;
 	u16 is_stereo;
-};
+} options_jeu_t;
 
-struct record_t {
+typedef struct record_t {
 	i32 current_offset;
 	i32 repeat_length;
 	i32 repeat_index;
@@ -411,9 +398,9 @@ struct record_t {
 	u8 is_recording;
 	u8 is_playing;
 	u8 is_finished;
-};
+} record_t;
 
-struct save_state_t {
+typedef struct save_state_t {
 	i32 triggered_objects[8];
 	i16 nb_floc[8];
 	i16 vent_x;
@@ -433,24 +420,24 @@ struct save_state_t {
 	u8 link_init[256];
 	// stub
 
-};
+} save_state_t;
 
 #pragma pack(pop)
 
 
-struct archive_header_t {
+typedef struct archive_header_t {
 	i32 offset;
 	i32 size;
 	u8 xor_byte;
 	u8 checksum_byte;
-};
+} archive_header_t;
 
-struct event_cmd_t {
+typedef struct event_cmd_t {
 	u16 num_tokens;
 	u16 num_labels;
 	u8* tokens;
 	u16* labels;
-};
+} event_cmd_t;
 
 
 enum obj_type_enum {
@@ -895,7 +882,7 @@ enum obj_type_flags_enum {
 	obj_type_flags_bit_28                       = 1 << 28, // byte 3, 0x10
 	obj_type_flags_bit_29_link_requires_gendoor = 1 << 29, // byte 3, 0x20    Indicates if the object requires a gendoor in the link group to be valid
 	obj_type_flags_bit_30_no_link               = 1 << 30, // byte 3, 0x40    Indicates that the event can't be linked
-	obj_type_flags_bit_31                       = 1 << 31, // byte 3, 0x80
+	//obj_type_flags_bit_31                       = 1 << 31, // byte 3, 0x80
 };
 
 enum tile_flags_enum {
@@ -952,41 +939,6 @@ enum ETA_enum {
 	ETA_17_TRZ = 17,
 	ETA_18_BLK = 18,
 	ETA_19_RMS = 19,
-};
-
-enum ray_state_enum {
-	ray_state_0_0_anim_23_standing_idle = 0,
-	ray_state_0_1_anim_23_standing_idle = 1,
-	ray_state_0_2_anim_23_standing_idle = 2,
-	ray_state_0_3_anim_4_leaning_edge_forward = 3,
-	ray_state_0_4_anim_9_standing_on_hands = 4,
-	ray_state_0_5_anim_11_jumping_on_hands = 5,
-	ray_state_0_6_anim_12_jumping_on_hands = 6,
-	ray_state_0_7_anim_13_jumping_on_hands = 7,
-	ray_state_0_8_anim_20_landing = 8,
-	ray_state_0_9_anim_11_on_hands = 9,
-	ray_state_0_10_anim_12_on_hands = 10,
-	ray_state_0_11_anim_0_prepare_punch = 11,
-	ray_state_0_12_anim_1_build_up_punch = 12,
-	ray_state_0_13_anim_2_throw_punch = 13,
-	ray_state_0_14_anim_0_unk_cancel_punch = 14,
-	ray_state_0_15_anim_27_frozen = 15,
-	ray_state_0_16_anim_0_unk_idle = 16,
-	ray_state_0_17_anim_48_unk_pick_up_stand = 17,
-	ray_state_0_18_anim_5_stick_out_tongue = 18,
-	ray_state_0_19_anim_19_falling = 19,
-	ray_state_0_20_anim_53_prone_to_standing_on_hands = 20,
-	ray_state_0_21_anim_59_unk_yellow_spheres = 21,
-	ray_state_0_22_anim_59_unk_yellow_spheres = 22,
-	ray_state_0_23_anim_59_unk_yellow_spheres = 23,
-	ray_state_0_24_anim_59_unk_yellow_spheres = 24,
-	ray_state_0_25_anim_59_unk_yellow_spheres = 25,
-	ray_state_0_26_anim_59_unk_yellow_spheres = 26,
-	ray_state_0_27_anim_59_unk_yellow_spheres = 27,
-	ray_state_0_28_anim_59_unk_yellow_spheres = 28,
-	ray_state_0_29_anim_59_unk_yellow_spheres = 29,
-	ray_state_0_30_anim_59_unk_yellow_spheres = 30,
-	ray_state_0_31_anim_0_unk_idle = 31,
 };
 
 enum eta_flags_enum {

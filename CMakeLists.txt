@@ -7,11 +7,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
 if (NOT MSVC)
     set(GCC_WARN_OPTIONS "-Wall -Wpedantic -Wno-unused-variable -Wno-unused-but-set-variable")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_WARN_OPTIONS}")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${GCC_WARN_OPTIONS}")
 endif()
 
 set(SOURCE_FILES
-        src/rayverse.cpp
+        src/rayverse.c
         src/stb_vorbis.c
 )
 

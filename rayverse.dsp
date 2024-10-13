@@ -89,57 +89,57 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=.\bray.cpp
+SOURCE=.\bray.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\data.cpp
+SOURCE=.\data.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\engine.cpp
+SOURCE=.\engine.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\event.cpp
+SOURCE=.\event.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\game.cpp
+SOURCE=.\game.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\intrinsics.cpp
+SOURCE=.\intrinsics.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\mathutil.cpp
+SOURCE=.\mathutil.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\misc_source.cpp
+SOURCE=.\misc_source.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\object.cpp
+SOURCE=.\object.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\platform.cpp
+SOURCE=.\platform.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\rayverse.cpp
+SOURCE=.\rayverse.c
 
 !IF  "$(CFG)" == "rayverse - Win32 Release"
 
@@ -152,17 +152,17 @@ SOURCE=.\rayverse.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\render.cpp
+SOURCE=.\render.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\save.cpp
+SOURCE=.\save.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\sound.cpp
+SOURCE=.\sound.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
@@ -171,7 +171,7 @@ SOURCE=.\stb_vorbis.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\StdAfx.cpp
+SOURCE=.\StdAfx.c
 # End Source File
 # Begin Source File
 
@@ -180,22 +180,22 @@ SOURCE=.\StdAfx.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\vignet.cpp
+SOURCE=.\vignet.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\win32_main.cpp
+SOURCE=.\win32_main.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\win32_opengl.cpp
+SOURCE=.\win32_opengl.c
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\win32_sound.cpp
+SOURCE=.\win32_sound.c
 # PROP Exclude_From_Build 1
 # End Source File
 # End Group

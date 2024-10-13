@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 typedef int bool32;
 typedef unsigned char u8;
 typedef char i8;
