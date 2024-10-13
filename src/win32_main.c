@@ -32,7 +32,7 @@ void toggle_fullscreen(HWND window) {
 		}
 		
 #else
-		MONITORINFO monitor_info = {};
+		MONITORINFO monitor_info = {0};
 		monitor_info.cbSize = sizeof(monitor_info);
 		if (GetWindowPlacement(window, &window_position) &&
 		    GetMonitorInfo(MonitorFromWindow(window, MONITOR_DEFAULTTOPRIMARY), &monitor_info))
@@ -282,7 +282,7 @@ int main(int argc, char** argv) {
 	sound_output->safety_bytes = (u32)((float)(sound_output->samples_per_second * sound_output->bytes_per_sample) * app_state->target_seconds_per_frame * 0.3333f);
 	win32_init_dsound(app_state->win32.window, sound_output);
 	win32_clear_sound_buffer(sound_output);
-	sound_output->secondary_buffer->Play(0, 0, DSBPLAY_LOOPING);
+	sound_output->secondary_buffer->lpVtbl->Play(sound_output->secondary_buffer, 0, 0, DSBPLAY_LOOPING);
 
 	game_init_sound(&app_state->game.sound_buffer, (i32)sound_output->samples_per_second);
 

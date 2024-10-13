@@ -22,7 +22,7 @@ static void win32_init_dsound(HWND window, win32_sound_output_t* sound) {
 			waveformat.nAvgBytesPerSec = waveformat.nSamplesPerSec * waveformat.nBlockAlign;
 			waveformat.cbSize = 0;
 
-			if (SUCCEEDED(sound->dsound->SetCooperativeLevel(window, DSSCL_PRIORITY))) {
+			if (SUCCEEDED(sound->dsound->lpVtbl->SetCooperativeLevel(sound->dsound, window, DSSCL_PRIORITY))) {
 				// "create" a primary buffer
 				DSBUFFERDESC buffer_description = {0};
 				buffer_description.dwSize = sizeof(buffer_description);
@@ -31,8 +31,8 @@ static void win32_init_dsound(HWND window, win32_sound_output_t* sound) {
 
 				// NOTE: this is NOT a true buffer, just a handle to the actual sound device
 				// so that we can set the correct waveformat!
-				if (SUCCEEDED(sound->dsound->CreateSoundBuffer(&buffer_description, &primary_buffer, 0))) {
-					if (SUCCEEDED(primary_buffer->SetFormat(&waveformat))) {
+				if (SUCCEEDED(sound->dsound->lpVtbl->CreateSoundBuffer(sound->dsound, &buffer_description, &primary_buffer, 0))) {
+					if (SUCCEEDED(primary_buffer->lpVtbl->SetFormat(primary_buffer, &waveformat))) {
 						OutputDebugStringA("Primary buffer format was set\n");
 					} else {
 						// TODO: diagnostic
@@ -50,7 +50,7 @@ static void win32_init_dsound(HWND window, win32_sound_output_t* sound) {
 			secondary_buffer_description.dwBufferBytes = sound->secondary_buffer_size;
 			secondary_buffer_description.lpwfxFormat = &waveformat;
 
-			if (SUCCEEDED(sound->dsound->CreateSoundBuffer(&secondary_buffer_description, &sound->secondary_buffer, 0))) {
+			if (SUCCEEDED(sound->dsound->lpVtbl->CreateSoundBuffer(sound->dsound, &secondary_buffer_description, &sound->secondary_buffer, 0))) {
 				OutputDebugStringA("Secondary buffer format was created successfully\n");
 			}
 
@@ -70,7 +70,7 @@ static void win32_clear_sound_buffer(win32_sound_output_t* sound) {
 	DWORD region1_size;
 	VOID* region2;
 	DWORD region2_size;
-	if (FAILED(sound->secondary_buffer->Lock(0, sound->secondary_buffer_size,
+	if (FAILED(sound->secondary_buffer->lpVtbl->Lock(sound->secondary_buffer, 0, sound->secondary_buffer_size,
 	                                         &region1, &region1_size,
 	                                         &region2, &region2_size, 0))) {
 		// TODO: diagnostics - could not lock the buffer
@@ -88,7 +88,7 @@ static void win32_clear_sound_buffer(win32_sound_output_t* sound) {
 			*dest_byte++ = 0;
 		}
 #endif
-		sound->secondary_buffer->Unlock(region1, region1_size, region2, region2_size);
+		sound->secondary_buffer->lpVtbl->Unlock(sound->secondary_buffer, region1, region1_size, region2, region2_size);
 	}
 }
 
@@ -98,7 +98,7 @@ static void win32_fill_sound_buffer(win32_sound_output_t* sound, DWORD byte_to_l
 	VOID* region2;
 	DWORD region2_size;
 
-	if (FAILED(sound->secondary_buffer->Lock(byte_to_lock, bytes_to_write,
+	if (FAILED(sound->secondary_buffer->lpVtbl->Lock(sound->secondary_buffer, byte_to_lock, bytes_to_write,
 	                                         &region1, &region1_size,
 	                                         &region2, &region2_size, 0))) {
 		// TODO: diagnostics - could not lock the buffer
@@ -125,7 +125,7 @@ static void win32_fill_sound_buffer(win32_sound_output_t* sound, DWORD byte_to_l
 			++sound->running_sample_index;
 		}
 
-		sound->secondary_buffer->Unlock(region1, region1_size, region2, region2_size);
+		sound->secondary_buffer->lpVtbl->Unlock(sound->secondary_buffer, region1, region1_size, region2, region2_size);
 	}
 }
 
@@ -137,7 +137,7 @@ static void win32_produce_sound_for_frame(app_state_t* app_state, win32_sound_ou
 	DWORD play_cursor;
 	DWORD write_cursor;
 
-	if (sound->secondary_buffer->GetCurrentPosition(&play_cursor, &write_cursor) == DS_OK) {
+	if (sound->secondary_buffer->lpVtbl->GetCurrentPosition(sound->secondary_buffer, &play_cursor, &write_cursor) == DS_OK) {
 
 		/*
 		We define a safety value that is the number of samples we think
