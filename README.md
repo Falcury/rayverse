@@ -7,7 +7,8 @@ The aim is to provide a drop-in replacement for the original executable RAYMAN.E
 
 ### Windows
 For modern Windows platforms, you can build Rayverse using CMake in combination with your preferred toolchain, either MinGW-w64 or MSVC (e.g. using Visual Studio).
-To build with Windows 9x compatbility, you can use Visual C++ 6.0 with the project file `rayverse.dsp`.
+
+To build with Windows 9x compatibility, you can use Visual C++ 6.0 with the project file `rayverse.dsp`.
 
 ### Linux / macOS
 The following dependencies are required to be installed: SDL2 (on Linux and macOS), GLEW (Linux only).
@@ -21,7 +22,7 @@ cmake --build build
 ## Special thanks
 
 Main collaborators on this project:
-* **[RayCarrot](https://github.com/RayCarrot)**: many insights on the inner workings of the game; author of the [BinarySerializer](https://github.com/BinarySerializer/BinarySerializer),
+* **[RayCarrot](https://github.com/RayCarrot)**: many insights on the inner workings of the game; author of the [BinarySerializer](https://github.com/BinarySerializer/BinarySerializer.Ray1),
   [Rayman Control Panel](https://github.com/RayCarrot/RayCarrot.RCP.Metro), [Ray1Map](https://github.com/BinarySerializer/Ray1Map) 
   and [Ray1Editor](https://github.com/RayCarrot/RayCarrot.Ray1Editor) projects, among others.
 * **[fuerchter](https://github.com/fuerchter)**: author of the matching decompilation of Rayman for PS1 project, see [rayman-ps1-decomp](https://github.com/fuerchter/rayman-ps1-decomp)
