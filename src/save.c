@@ -7,7 +7,7 @@ u8 bonus_completed_data[24];
 // sub_742E0
 void set_medaillion_saved_data() {
 	for (i32 i = 0; i < 24; ++i) {
-		medaillion_t* medaillion = t_world_info + i;
+		world_info_t* medaillion = t_world_info + i;
 		u8 unlocked_bit = medaillion->state & 1;
 		u8 status_flag_4_bit = (medaillion->state & 4) >> 2;
 		u8 save_byte = (unlocked_bit) | (status_flag_4_bit << 1) | ((medaillion->nb_cages & 7) << 2);
@@ -329,5 +329,63 @@ void reset_items_and_bosses() {
 		medaillion_saved_data[i] &= ~(7 << 2);
 	}
 
+}
+
+//73B80
+void doneGameSave() {
+	save1.is_just_saved = 0;
+}
+
+//73B8C
+void saveGameState(obj_t* save_obj, save_state_t* save_state) {
+	save_state->status_bar_tings = status_bar.num_wiz;
+	save_state->x_map = xmap;
+	save_state->y_map = ymap;
+	save_state->ray_x_pos = (i16)ray.xpos;
+	save_state->ray_y_pos = (i16)ray.ypos;
+	save_state->ray_screen_x = ray.screen_x;
+	save_state->ray_screen_y = ray.screen_y;
+	save_state->ray_flip_x = (ray.flags & obj_flags_8_flipped) != 0;
+	save_state->rayevts_reverse = ((rayevts_t*)(&RayEvts))->reverse;
+	save_state->rayevts_super_helico = ((rayevts_t*)(&RayEvts))->super_helico;
+	save_state->rayevts_poing = ((rayevts_t*)(&RayEvts))->poing;
+	if (save_obj) {
+		save_state->save_obj_id = save_obj->obj_index;
+		save_state->save_obj_x_pos = (i16)save_obj->xpos;
+		save_state->save_obj_y_pos = (i16)save_obj->ypos;
+		save_state->save_obj_detect_zone = save_obj->detect_zone;
+		save_state->save_obj_flag_1 = save_obj->flags & obj_flags_1;
+	} else {
+		save_state->save_obj_id = -1;
+	}
+	memcpy(save_state->link_init, link_init, level.nb_objects * sizeof(u16));
+	for (i32 i = 0; i < 5; ++i) {
+		save_state->ray_coll_btype[i] = ray.coll_btype[i];
+	}
+	save_state->ray_anim_index = ray.anim_index;
+	save_state->ray_anim_frame = ray.anim_frame;
+	save_state->ray_main_etat = ray.main_etat;
+	save_state->ray_sub_etat = ray.sub_etat;
+	for (i32 i = 0; i < 8; ++i) {
+		save_state->nb_floc[i] = nb_floc[i];
+	}
+	save_state->vent_x = VENT_X;
+	save_state->vent_y = VENT_Y;
+	save_state->poing_sub_etat = poing.sub_etat;
+	for (i32 obj_id = 0; obj_id < level.nb_objects; ++obj_id) {
+		obj_t* obj = level.objects + obj_id;
+		if (obj->type == obj_141_snow || obj->type == obj_164_gendoor || obj->type == obj_179_pencil_pointing_down_wave || obj->type == obj_242_pencil_pointing_up_wave) {
+			u32 bit = 1 << (obj_id & 0x1F);
+			u32 index = obj_id >> 5;
+			if (obj->flags & obj_flags_4_triggered) {
+				save_state->triggered_objects[index] |= bit;
+			} else {
+				save_state->triggered_objects[index] &= ~bit;
+			}
+		}
+	}
+	save_state->is_just_saved = 1; // NOTE: not yet sure what this does exactly; variable name is provisional...
+	save_state->dead_time = dead_time;
+	save_state->current_pal_id = current_pal_id;
 }
 

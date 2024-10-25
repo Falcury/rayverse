@@ -64,6 +64,7 @@
 #include "bray.c"
 #include "sound.c"
 #include "save.c"
+#include "world_map.c"
 #include "game.c"
 #include "engine.c"
 #include "object.c"

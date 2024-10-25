@@ -159,7 +159,7 @@ typedef struct eta_t {
 	u8 interaction_flags;
 } eta_t;
 
-typedef struct medaillion_t {
+typedef struct world_info_t {
 	u16 xpos;
 	u16 ypos;
 	u8 index_up;
@@ -175,7 +175,7 @@ typedef struct medaillion_t {
 	u8 field_E;
 	u8 field_F;
 	char* text;
-} medaillion_t;
+} world_info_t;
 
 typedef struct status_bar_t {
 	u16 lives;
@@ -263,18 +263,18 @@ typedef struct pcx_header_t {
 typedef struct obj_t {
 	sprite_t* sprites; // ImgDescriptorsPointer
 	anim_t* animations; // AnimDescriptorsPointer
-	u8* image_atlas; // ImageBufferPointer
-	eta_t** ETA;
-	u32 commands; // 0x10 - ptr
-	u32 command_labels; // 0x14 - ptr
-	u32 cmd_stored_contexts; // 0x18 - ptr?
+	u8* img_buffer; // ImageBufferPointer
+	eta_t** eta;
+	u8* cmds;
+	u8* cmd_labels;
+	u8* cmd_contexts;
 	u32 field_1C; // 0x1C
 	u32 link_has_gendoor; // 0x20 - ?
 	i32 is_active;
 	i32 xpos;
 	i32 ypos;
 	u32 field_30;
-	u16 obj_index;
+	i16 obj_index;
 	i16 screen_x;
 	i16 screen_y;
 	u16 field_3A;
@@ -282,9 +282,9 @@ typedef struct obj_t {
 	i16 spawn_y;
 	i16 xspeed;
 	i16 yspeed;
-	i16 sprite_count;
+	i16 nb_sprites;
 	i16 next_command_index;
-	i16 command_count;
+	i16 nb_cmd;
 	i16 command_par2; // action (?) // command_par2?
 	u16 follow_y;
 	u16 follow_x;
@@ -297,11 +297,7 @@ typedef struct obj_t {
 	u16 zdc_meta; // ?
 	u16 active_timer;
 	u16 type;
-	u8 coll_tile_0; // some_tile_type (?)
-	u8 coll_tile_1;
-	u8 coll_tile_2;
-	u8 coll_tile_3;
-	u8 field_66;
+	u8 coll_btype[5];
 	u8 field_67;
 	u8 offset_bx;
 	u8 offset_by;
@@ -401,25 +397,36 @@ typedef struct record_t {
 } record_t;
 
 typedef struct save_state_t {
-	i32 triggered_objects[8];
-	i16 nb_floc[8];
-	i16 vent_x;
-	i16 vent_y;
-	i16 x_map;
-	i16 y_map;
-	u8 time;
-	u8 field_39; //maybe part of i16?
-	i16 ray_x_pos;
-	i16 ray_y_pos;
-	i16 ray_screen_x;
-	i16 ray_screen_y;
-	u16 ray_flip_x;
-	i16 save_obj_id;
-	i16 save_obj_x_pos;
-	i16 save_obj_y_pos;
-	u8 link_init[256];
-	// stub
-
+	u32 triggered_objects[8]; // 0
+	i16 nb_floc[8]; // 0x20
+	i16 vent_x; // 0x30
+	i16 vent_y; // 0x32
+	i16 x_map; // 0x34
+	i16 y_map; // 0x36
+	i16 ray_x_pos; //0x38
+	i16 ray_y_pos; //0x3A
+	i16 ray_screen_x; //0x3C
+	i16 ray_screen_y; //0x3E
+	u16 ray_flip_x; //0x40
+	i16 save_obj_id; //0x42
+	i16 save_obj_x_pos; //0x44
+	i16 save_obj_y_pos; //0x46
+	u16 link_init[256]; //0x48
+	u8 save_obj_detect_zone; //0x248
+	u8 save_obj_flag_1;
+	u8 ray_coll_btype[5];
+	u8 ray_anim_index;
+	u8 ray_anim_frame;
+	u8 ray_main_etat;
+	u8 ray_sub_etat;
+	u8 poing_sub_etat;
+	u8 rayevts_reverse;
+	u8 rayevts_super_helico;
+	u8 rayevts_poing;
+	u8 current_pal_id;
+	u8 dead_time;
+	u8 is_just_saved;
+	u8 status_bar_tings;
 } save_state_t;
 
 #pragma pack(pop)
@@ -723,6 +730,23 @@ enum rayevts_enum {
 	rayevts_0x8000_squashed = 0x8000,
 };
 
+typedef struct rayevts_t {
+	u8 poing : 1;               //1
+	u8 hang : 1;                //2
+	u8 helico : 1;              //4
+	u8 super_helico : 1;        //8
+	u8 handstand_dash : 1;      //0x10
+	u8 handstand : 1;           //0x20
+	u8 magicseed : 1;           //0x40
+	u8 grab : 1;                //0x80
+	u8 run : 1;                 //0x100
+	u8 tiny : 1;                //0x200
+	u8 firefly : 1;             //0x400
+	u8 force_run : 2;           //0x800 and 0x1000
+	u8 reverse : 2;             //0x2000 and 0x4000
+	u8 squashed : 1;            //0x8000
+} rayevts_t;
+
 
 enum world_enum {
 	world_0_none     = 0,
@@ -840,7 +864,7 @@ enum sound_enum {
 enum event_flags_enum {
 	obj_flags_1 = 1,
 	obj_flags_2 = 2,
-	obj_flags_4_switched_on = 4,
+	obj_flags_4_triggered = 4,
 	obj_flags_8_flipped = 8,
 	obj_flags_0x10 = 0x10,
 	obj_flags_0x20_follow_enabled = 0x20,

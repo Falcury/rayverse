@@ -15,12 +15,12 @@ void load_big_ray(mem_t* buffer) {
 		for (u32 i = 0; i < sprite_group_size; ++i) {
 			image_atlas[i] ^= 0x8F;
 		}
-		sprite_group->image_atlas = image_atlas;
+		sprite_group->img_buffer = image_atlas;
 
-		fread(&sprite_group->sprite_count, 2, 1, fp);
+		fread(&sprite_group->nb_sprites, 2, 1, fp);
 		ASSERT(sizeof(sprite_t) == 12);
-		u8* sprite_buffer = block_malloc(buffer, sprite_group->sprite_count * sizeof(sprite_t));
-		fread(sprite_buffer, sizeof(sprite_t), sprite_group->sprite_count, fp);
+		u8* sprite_buffer = block_malloc(buffer, sprite_group->nb_sprites * sizeof(sprite_t));
+		fread(sprite_buffer, sizeof(sprite_t), sprite_group->nb_sprites, fp);
 		sprite_group->sprites = (sprite_t*)sprite_buffer;
 
 		fread(&sprite_group->anim_count, 1, 1, fp);
@@ -55,7 +55,7 @@ void load_big_ray(mem_t* buffer) {
 				fread(loaded_eta[i][j], sizeof(eta_t), num_eta_entries, fp);
 			}
 		}
-		sprite_group->ETA = loaded_eta[0];
+		sprite_group->eta = loaded_eta[0];
 		bigray = *sprite_group; // instantiates the bigray object?
 		++nb_des;
 
@@ -229,9 +229,9 @@ void LOAD_ALL_FIX() {
 			i32 eta_ptr_value = 0;
 			mem_read(&eta_ptr_value, mem, 4);
 			if (eta_ptr_value == -1) {
-				obj->ETA = NULL;
+				obj->eta = NULL;
 			} else {
-				obj->ETA = loaded_eta[des_index];
+				obj->eta = loaded_eta[des_index];
 			}
 
 			mem_read(&RaymanExeSize, mem, 4);
@@ -255,13 +255,13 @@ void LOAD_ALL_FIX() {
 				printf("%s : File integrity fault.\n", filename);
 				fatal_error();
 			}
-			obj->image_atlas = image_atlas;
+			obj->img_buffer = image_atlas;
 
 			mem_read(&RaymanExeCheckSum2, mem, 4);
-			mem_read(&obj->sprite_count, mem, 2);
+			mem_read(&obj->nb_sprites, mem, 2);
 			ASSERT(sizeof(sprite_t) == 12);
-			u8* sprite_buffer = block_malloc(main_mem_fix, obj->sprite_count * sizeof(sprite_t));
-			mem_read(sprite_buffer, mem, sizeof(sprite_t) * obj->sprite_count);
+			u8* sprite_buffer = block_malloc(main_mem_fix, obj->nb_sprites * sizeof(sprite_t));
+			mem_read(sprite_buffer, mem, sizeof(sprite_t) * obj->nb_sprites);
 			obj->sprites = (sprite_t*)sprite_buffer;
 
 			mem_read(&obj->anim_count, mem, 1);
@@ -292,19 +292,19 @@ void LOAD_ALL_FIX() {
 
 		mem_read(&des_index, mem, 4);
 		alpha = wldobj + des_index;
-		alpha_image_atlas = alpha->image_atlas;
-		alpha_sprite_count = alpha->sprite_count;
+		alpha_image_atlas = alpha->img_buffer;
+		alpha_sprite_count = alpha->nb_sprites;
 
 		mem_read(&des_index, mem, 4);
 		alpha2 = wldobj + des_index;
-		alpha2_image_atlas = alpha2->image_atlas;
-		alpha2_sprite_count = alpha2->sprite_count;
+		alpha2_image_atlas = alpha2->img_buffer;
+		alpha2_sprite_count = alpha2->nb_sprites;
 
 		mem_read(&des_index, mem, 4);
 		obj_t* obj = wldobj + des_index;
 		raylittle.sprites = obj->sprites;
-		raylittle.image_atlas = obj->image_atlas;
-		raylittle.sprite_count = obj->sprite_count;
+		raylittle.img_buffer = obj->img_buffer;
+		raylittle.nb_sprites = obj->nb_sprites;
 
 		mem_read(&des_index, mem, 4);
 		obj = wldobj + des_index;
@@ -312,10 +312,10 @@ void LOAD_ALL_FIX() {
 			obj_t* m = mapobj + i;
 			m->sprites = obj->sprites;
 			m->animations = obj->animations;
-			m->image_atlas = obj->image_atlas;
-			m->sprite_count = obj->sprite_count;
+			m->img_buffer = obj->img_buffer;
+			m->nb_sprites = obj->nb_sprites;
 			m->anim_count = obj->anim_count;
-			m->ETA = obj->ETA;
+			m->eta = obj->eta;
 		}
 
 		mem_read(&des_index, mem, 4);

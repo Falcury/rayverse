@@ -38,10 +38,16 @@ i16 options_jeu_is_stereo; //C2F94
 
 i16 notbut[4]; //C97F0
 
-u8 save_zone[2592]; //CAFA0
+i16 invpx0[8]; //CAE90
+i16 invpy200[8]; //CAEA0
+i16 nb_floc[8]; //CAEB0
+i16 invpx320[8]; //CAEC0
+i16 SNSEQ_len[64]; //CAED0
 record_t record; //CAF50
 i16 tot_nb_flocs[8]; //CAF68
 i16 floc_ind; //CAF78
+
+u8 save_zone[2592]; //CAFA0
 i16 allowed_time[192]; //CB9C0
 u8 bonus_perfect[24]; //CBB40
 
@@ -156,13 +162,14 @@ obj_t div_obj; //CE6EC
 poing_t poing; //CE770
 obj_t bigray; //CE784
 obj_t raylittle; //CE808
-
+save_state_t save1; //CE88C
+save_state_t save2; //CEAE8
 obj_t clockobj; //CED44
 obj_t* alpha2; //CEDC8
 u8* alpha2_image_atlas; //CEDCC
 i16 alpha2_sprite_count; //CEDD0
 obj_t rms; //CEDD4
-u8* link_init; //CEE58
+u16* link_init; //CEE58
 obj_t raytmp; //CEE5C
 u8 skops_lave_obj[20]; //CEEE0
 i32 pixels_enfonce; //CEEF4
@@ -587,6 +594,44 @@ u32 obj_type_flags[262] = {
 		0x02038000, 0x02038000, 0x02038000,
 };
 
+//94D18
+u8 angle_tab[65] = {
+		128, 126, 125, 124, 122, 121, 120, 119, 117, 116, 115,
+		114, 112, 111, 110, 109, 108, 106, 105, 104, 103, 102,
+		101, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88,
+		87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 78, 77, 76,
+		75, 74, 73, 73, 72, 71, 70, 70, 69, 68, 68, 67, 66,
+		65, 65, 64, 64
+};
+
+//94D5C
+world_info_t t_world_info[24] = {
+		{29,  264, 18, 0,  0,  1,  1, 0, 1, 1,  2, 0, 0, 0, (char*)0xBFEA8}, // 0: Pink Plant Woods
+		{100, 254, 2,  1,  0,  4,  0, 0, 1, 5,  0, 0, 0, 0, (char*)0xBFEA8}, // 1: Anguish Lagoon
+		{90,  212, 2,  1,  3,  2,  0, 0, 1, 9,  2, 0, 0, 0, (char*)0xBFEA8}, // 2: Swamps of Forgetfulness
+		{47,  200, 3,  3,  3,  2,  0, 0, 1, 12, 1, 0, 0, 0, (char*)0xBFEA8}, // 3: Moskito's Nest
+		{180, 215, 5,  19, 1,  4,  0, 0, 2, 1,  2, 0, 0, 0, (char*)0xBFEA8}, // 4: Bongo Hills
+		{185, 175, 8,  4,  6,  8,  0, 0, 2, 7,  0, 0, 0, 0, (char*)0xBFEA8}, // 5: Allegro Presto
+		{135, 160, 20, 6,  7,  5,  0, 0, 2, 12, 2, 0, 0, 0, (char*)0xBFEA8}, // 6: Gong Heights
+		{91,  143, 7,  7,  7,  6,  0, 0, 2, 14, 3, 0, 0, 0, (char*)0xBFEA8}, // 7: Mr Sax's Hullaballoo
+		{212, 133, 9,  5,  5,  8,  0, 0, 3, 1,  1, 0, 0, 0, (char*)0xBFEA8}, // 8: Twilight Gulch
+		{209, 92,  21, 8,  9,  10, 0, 0, 3, 3,  0, 0, 0, 0, (char*)0xBFEA8}, // 9: The Hard Rocks
+		{257, 80,  10, 11,  9, 10, 0, 0, 3, 6,  1, 0, 0, 0, (char*)0xBFEA8}, // 10: Mr Stone's Peaks
+		{234, 235, 10, 11, 11, 12, 0, 0, 4, 1,  1, 0, 0, 0, (char*)0xBFEA8}, // 11: Eraser Plains
+		{278, 190, 13, 11, 11, 12, 0, 0, 4, 5,  5, 0, 0, 0, (char*)0xBFEA8}, // 12: Pencil Pentathlon
+		{290, 145, 22, 12, 13, 14, 0, 0, 4, 8,  1, 0, 0, 0, (char*)0xBFEA8}, // 13: Space Mama's Crater
+		{335, 180, 13, 15, 13, 14, 0, 0, 5, 1,  0, 0, 0, 0, (char*)0xBFEA8}, // 14: Crystal Palace
+		{312, 228, 14, 23, 15, 16, 0, 0, 5, 3,  5, 0, 0, 0, (char*)0xBFEA8}, // 15: Eat at Joe's
+		{360, 220, 17, 16, 15, 16, 0, 0, 5, 9,  2, 0, 0, 0, (char*)0xBFEA8}, // 16: Mr Skops' Stalactites
+		{357, 80,  17, 16, 17, 17, 0, 0, 6, 1,  2, 0, 0, 0, (char*)0xBFEA8}, // 17: Mr Dark's Dare
+		{10,  212, 18, 0,  18, 18, 0, 0, 7, 20, 5, 0, 0, 0, (char*)0xBFEA8}, // 18: Save Game (Jungle)
+		{182, 266, 4,  19, 19, 19, 0, 0, 7, 20, 3, 0, 0, 0, (char*)0xBFEA8}, // 19: Save Game (Music 1)
+		{145, 97,  20, 6,  20, 20, 0, 0, 7, 20, 0, 0, 0, 0, (char*)0xBFEA8}, // 20: Save Game (Music 2)
+		{190, 45,  21, 9,  21, 21, 0, 0, 7, 20, 2, 0, 0, 0, (char*)0xBFEA8}, // 21: Save Game (Mountain)
+		{276, 115, 22, 13, 22, 22, 0, 0, 7, 20, 1, 0, 0, 0, (char*)0xBFEA8}, // 22: Save Game (Picture)
+		{306, 267, 15, 23, 23, 23, 0, 0, 7, 20, 1, 0, 0, 0, (char*)0xBFEA8}, // 23: Save Game (Cave)
+};
+
 //97344
 i16 RandArray[256] = {
 		4, 343, 34, 364, 222, 549, 200, 717, 972, 281, 454,
@@ -635,32 +680,7 @@ u8 sound_flags[256] = {
 		0x03, 0x03, 0x07, 0x07, 0x04, 0x1B, 0x04, 0x07, 0x07, 0x07, 0x03, 0x03, 0x03, 0x03, 0x07, 0x07, // 240-255
 };
 
-medaillion_t t_world_info[24] = {
-		{29,  264, 18, 0,  0,  1,  1, 0, 1, 1,  2, 0, 0, 0, (char*)0xBFEA8}, // 0: Pink Plant Woods
-		{100, 254, 2,  1,  0,  4,  0, 0, 1, 5,  0, 0, 0, 0, (char*)0xBFEA8}, // 1: Anguish Lagoon
-		{90,  212, 2,  1,  3,  2,  0, 0, 1, 9,  2, 0, 0, 0, (char*)0xBFEA8}, // 2: Swamps of Forgetfulness
-		{47,  200, 3,  3,  3,  2,  0, 0, 1, 12, 1, 0, 0, 0, (char*)0xBFEA8}, // 3: Moskito's Nest
-		{180, 215, 5,  19, 1,  4,  0, 0, 2, 1,  2, 0, 0, 0, (char*)0xBFEA8}, // 4: Bongo Hills
-		{185, 175, 8,  4,  6,  8,  0, 0, 2, 7,  0, 0, 0, 0, (char*)0xBFEA8}, // 5: Allegro Presto
-		{135, 160, 20, 6,  7,  5,  0, 0, 2, 12, 2, 0, 0, 0, (char*)0xBFEA8}, // 6: Gong Heights
-		{91,  143, 7,  7,  7,  6,  0, 0, 2, 14, 3, 0, 0, 0, (char*)0xBFEA8}, // 7: Mr Sax's Hullaballoo
-		{212, 133, 9,  5,  5,  8,  0, 0, 3, 1,  1, 0, 0, 0, (char*)0xBFEA8}, // 8: Twilight Gulch
-		{209, 92,  21, 8,  9,  10, 0, 0, 3, 3,  0, 0, 0, 0, (char*)0xBFEA8}, // 9: The Hard Rocks
-		{257, 80,  10, 11,  9, 10, 0, 0, 3, 6,  1, 0, 0, 0, (char*)0xBFEA8}, // 10: Mr Stone's Peaks
-		{234, 235, 10, 11, 11, 12, 0, 0, 4, 1,  1, 0, 0, 0, (char*)0xBFEA8}, // 11: Eraser Plains
-		{278, 190, 13, 11, 11, 12, 0, 0, 4, 5,  5, 0, 0, 0, (char*)0xBFEA8}, // 12: Pencil Pentathlon
-		{290, 145, 22, 12, 13, 14, 0, 0, 4, 8,  1, 0, 0, 0, (char*)0xBFEA8}, // 13: Space Mama's Crater
-		{335, 180, 13, 15, 13, 14, 0, 0, 5, 1,  0, 0, 0, 0, (char*)0xBFEA8}, // 14: Crystal Palace
-		{312, 228, 14, 23, 15, 16, 0, 0, 5, 3,  5, 0, 0, 0, (char*)0xBFEA8}, // 15: Eat at Joe's
-		{360, 220, 17, 16, 15, 16, 0, 0, 5, 9,  2, 0, 0, 0, (char*)0xBFEA8}, // 16: Mr Skops' Stalactites
-		{357, 80,  17, 16, 17, 17, 0, 0, 6, 1,  2, 0, 0, 0, (char*)0xBFEA8}, // 17: Mr Dark's Dare
-		{10,  212, 18, 0,  18, 18, 0, 0, 7, 20, 5, 0, 0, 0, (char*)0xBFEA8}, // 18: Save Game (Jungle)
-		{182, 266, 4,  19, 19, 19, 0, 0, 7, 20, 3, 0, 0, 0, (char*)0xBFEA8}, // 19: Save Game (Music 1)
-		{145, 97,  20, 6,  20, 20, 0, 0, 7, 20, 0, 0, 0, 0, (char*)0xBFEA8}, // 20: Save Game (Music 2)
-		{190, 45,  21, 9,  21, 21, 0, 0, 7, 20, 2, 0, 0, 0, (char*)0xBFEA8}, // 21: Save Game (Mountain)
-		{276, 115, 22, 13, 22, 22, 0, 0, 7, 20, 1, 0, 0, 0, (char*)0xBFEA8}, // 22: Save Game (Picture)
-		{306, 267, 15, 23, 23, 23, 0, 0, 7, 20, 1, 0, 0, 0, (char*)0xBFEA8}, // 23: Save Game (Cave)
-};
+
 
 // sound
 u8 base_snd8b_headers[0x800];

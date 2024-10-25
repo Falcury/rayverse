@@ -152,7 +152,7 @@ void DoPowerupRaymanCollision(obj_t* obj) {
 	if (ray.hitp > ray_max_hitp) {
 		ray.hitp = ray_max_hitp;
 	}
-	obj->flags &= ~obj_flags_4_switched_on;
+	obj->flags &= ~obj_flags_4_triggered;
 	play_sound(8, obj->obj_index);
 
 }
@@ -256,7 +256,7 @@ void DO_PYRANHA(obj_t* obj) {
 				}
 				obj->ypos = ymap + 200;
 				obj->is_active = 0;
-				obj->flags &= ~obj_flags_4_switched_on;
+				obj->flags &= ~obj_flags_4_triggered;
 				obj->timer = 0;
 				respawn = check_piranha_respawn(obj);
 			}
@@ -264,7 +264,7 @@ void DO_PYRANHA(obj_t* obj) {
 			if (y_offset_by < ymap) { //?
 				obj->ypos = ymap + 200;
 				obj->is_active = 0;
-				obj->flags &= ~obj_flags_4_switched_on;
+				obj->flags &= ~obj_flags_4_triggered;
 				respawn = check_piranha_respawn(obj);
 			}
 		}
@@ -341,9 +341,9 @@ void tentacle_spawn_enemy(obj_t* tentacle, i16 which_enemy, i32 xspeed, i32 yspe
 		if (((which_enemy == 1 && spawned->type == obj_0_livingstone) || (which_enemy == 2 && spawned->type == obj_9_small_livingstone))
 				&& spawned->spawn_x <= 0 && spawned->is_active == 0
 		) {
-			spawned->flags &= ~(obj_flags_4_switched_on | obj_flags_0x40);
+			spawned->flags &= ~(obj_flags_4_triggered | obj_flags_0x40);
 			spawned->is_active = 1;
-			spawned->flags |= obj_flags_4_switched_on; // Note: this does not make sense, this bit was cleared just before!
+			spawned->flags |= obj_flags_4_triggered; // Note: this does not make sense, this bit was cleared just before!
 			spawned->active_timer = 0;
 			spawned->field_30 = 1;
 			set_main_and_sub_etat(spawned, 2, 2); // thrown up in air

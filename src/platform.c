@@ -21,6 +21,11 @@ u8* block_malloc(mem_t* mem, u32 size) {
 	}
 }
 
+void block_free(mem_t* mem) {
+	mem->cursor = 0;
+	mem->len = 0;
+}
+
 FILE* open_data_file(const char* filename, bool error_is_fatal) {
 	FILE* fp = fopen(filename, "rb");
 	if (!fp) {

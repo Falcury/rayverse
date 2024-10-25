@@ -323,7 +323,7 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
 		ray.yspeed = 0;
 		ray.xspeed = 0;
 		poing.is_charging = 0;
-	} else if (ray.flags & obj_flags_4_switched_on) {
+	} else if (ray.flags & obj_flags_4_triggered) {
 		if (!(ray.main_etat == 3 && (ray.sub_etat == 22 || ray.sub_etat == 32)) &&
 		    !(ray.main_etat == 2 && ray.sub_etat == 31)
 	    ) {
@@ -425,8 +425,8 @@ void do_cmd_3_4(obj_t* event) {
 	} else if (event->type == obj_24) {
 		// This procedure is only called for commands 3 and 4, so, not sure why we are checking for command 2 here?
 		if (event->command != cmd_2_up) {
-			--event->command_count;
-			if (event->command_count <= 0) {
+			--event->nb_cmd;
+			if (event->nb_cmd <= 0) {
 				if (event->command == cmd_3_down) {
 					event->yspeed = -1;
 				} else if (event->command == cmd_4) {
@@ -434,7 +434,7 @@ void do_cmd_3_4(obj_t* event) {
 				}
 			} else {
 				event->yspeed = 0;
-				event->command_count = 0;
+				event->nb_cmd = 0;
 				event->command = cmd_2_up;
 				event->spawn_y = event->ypos;
 			}
@@ -803,7 +803,7 @@ void display2(obj_t* obj) {
 				vec2b_t proj_size = {(u8)proj_width, (u8)proj_height};
 				u8 sprite_field_A = sprite->field_A >> 4;
 
-				u8* image_data = obj->image_atlas + sprite->offset_in_atlas;
+				u8* image_data = obj->img_buffer + sprite->offset_in_atlas;
 
 				draw_func(proj_x /*eax*/, sprite_field_A /*edx*/, proj_y /*ebx*/, proj_size /*ecx*/, /*edi*/ &global_game->draw_buffer, image_data /*esi*/);
 
@@ -1549,6 +1549,31 @@ u8 get_casse_brique_active() {
 	return casse_brique_active;
 }
 
+//36D30
+void DEPART_INIT_LOOP() {
+	//nullsub
+}
+
+//36D34
+void FIN_GAME_LOOP() {
+	if (!fin_du_jeu) {
+		DEPART_INIT_LOOP();
+		return;
+	}
+	doneGameSave();
+	block_free(main_mem_world);
+	block_free(main_mem_sprite);
+}
+
+//6B550
+void SPECIAL_INIT() {
+	dark_phase = 0;
+	if (ray_on_poelle == 1) {
+		RayEvts = SauveRayEvts;
+		ray_on_poelle = 0;
+	}
+}
+
 //18420
 void PcMain() {
 	InitMemoryVariable();
@@ -1575,8 +1600,8 @@ void PcMain() {
 	u8 v1 = 0;
 
 	while (!fin_de_rayman) {
-		//DEPART_INIT_LOOP();
-		//INIT_WORLD_INFO();
+		DEPART_INIT_LOOP();
+		INIT_WORLD_INFO();
 		set_default_Bloc_clipping();
 		//DO_NEW_MENUS();
 
@@ -1593,7 +1618,7 @@ void PcMain() {
 		}
 
 		MakeMyRand();
-		//SPECIAL_INIT();
+		SPECIAL_INIT();
 		default_sprite_clipping();
 		//DO_WORLD_MAP();
 		sprite_clipping(0, 320, 0, 200);
