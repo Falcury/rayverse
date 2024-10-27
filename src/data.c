@@ -283,8 +283,8 @@ i16 loop_time; //CF810
 i16 bat_nb_frap; //CF812
 i16 cb_ball_obj_id; //CF814
 i16 sko_phase; //CF816
-u16 SauveRayEvts; //CF818
-u16 RayEvts; //CF81A
+rayevts_t SauveRayEvts; //CF818
+rayevts_t RayEvts; //CF81A
 u16 finBossLevel; //CF81E
 i16 bloc_lim_H2; //CF820
 i16 png_or_fee_id; //CF822

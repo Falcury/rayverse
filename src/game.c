@@ -835,7 +835,7 @@ void SET_X_SPEED(obj_t* obj) {
 		} else {
 			xspeed = eta->left_speed * horloge_index;
 		}
-		if (obj->type == obj_23_rayman && (RayEvts & rayevts_0x200_tiny)) {
+		if (obj->type == obj_23_rayman && RayEvts.tiny) {
 			xspeed /= 2;
 		}
 	}
@@ -877,7 +877,7 @@ void DO_ANIM(obj_t* obj) {
 		anim = obj->animations + obj->anim_index;
 		if ((obj->type == obj_23_rayman && (ray_old_etat == 2 || ray_old_etat == 6)) ||
 		    (obj->sub_etat == 61 && ray_old_subetat == 61 && ray_old_etat == 0)) {
-			if (ray.timer > 60 && !(RayEvts & rayevts_0x8000_squashed)) {
+			if (ray.timer > 60 && !RayEvts.squashed) {
 				ray.timer = 60;
 			}
 		}
@@ -1301,7 +1301,9 @@ void init_calcbloc_func() {
 
 //59900
 void INIT_RAY_BEGIN() {
-	RayEvts &= (rayevts_8_super_helico | rayevts_0x40_magicseed | rayevts_0x200_tiny); // reset skills
+	RayEvts.super_helico = 0;
+	RayEvts.magicseed = 0;
+	RayEvts.tiny = 0;
 	ray_max_hitp = 2;
 	status_bar.num_wiz = 0;
 	fin_continue = 0;

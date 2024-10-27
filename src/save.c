@@ -346,9 +346,9 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state) {
 	save_state->ray_screen_x = ray.screen_x;
 	save_state->ray_screen_y = ray.screen_y;
 	save_state->ray_flip_x = (ray.flags & obj_flags_8_flipped) != 0;
-	save_state->rayevts_reverse = ((rayevts_t*)(&RayEvts))->reverse;
-	save_state->rayevts_super_helico = ((rayevts_t*)(&RayEvts))->super_helico;
-	save_state->rayevts_poing = ((rayevts_t*)(&RayEvts))->poing;
+	save_state->rayevts_reverse = RayEvts.reverse;
+	save_state->rayevts_super_helico = RayEvts.super_helico;
+	save_state->rayevts_poing = RayEvts.poing;
 	if (save_obj) {
 		save_state->save_obj_id = save_obj->obj_index;
 		save_state->save_obj_x_pos = (i16)save_obj->xpos;
@@ -389,3 +389,109 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state) {
 	save_state->current_pal_id = current_pal_id;
 }
 
+//73DC4
+void restoreGameState(save_state_t* save_state) {
+    if (save_state->is_just_saved) {
+        if (RayEvts.tiny) {
+            ray = rms;
+        }
+        status_bar.num_wiz = save_state->status_bar_tings;
+        xmap = save_state->x_map;
+        ymap = save_state->y_map;
+        ray.xpos = save_state->ray_x_pos;
+        ray.ypos = save_state->ray_y_pos;
+        ray.screen_x = save_state->ray_screen_x;
+        ray.screen_y = save_state->ray_screen_y;
+        ray.flags &= ~obj_flags_8_flipped;
+        ray.flags |= obj_flags_8_flipped * (save_state->ray_flip_x & 1);
+        RayEvts.super_helico = save_state->rayevts_super_helico;
+        if (num_world == world_6_cake && num_level == 3) {
+            RayEvts.poing = save_state->rayevts_poing;
+            RayEvts.reverse = save_state->rayevts_reverse;
+        }
+        if (save_state->save_obj_id != -1) {
+            obj_t* save_obj = level.objects + save_state->save_obj_id;
+            save_obj->xpos = save_state->save_obj_x_pos;
+            save_obj->ypos = save_state->save_obj_y_pos;
+            save_obj->detect_zone = save_state->save_obj_detect_zone;
+            save_obj->flags &= ~obj_flags_1;
+            save_obj->flags |= obj_flags_1 * (save_state->save_obj_flag_1 & 1);
+        }
+        if (save_state == &save1) {
+            for (i32 i = 0; i < level.nb_objects; ++i) {
+                link_init[i] = save_state->link_init[i];
+                level.objects[i].link_has_gendoor = (link_init[i] != i);
+            }
+        }
+        for (i32 i = 0; i < 5; ++i) {
+            ray.coll_btype[i] = save_state->ray_coll_btype[i];
+        }
+        ray.anim_index = save_state->ray_anim_index;
+        ray.anim_frame = save_state->ray_anim_frame;
+        ray.main_etat = save_state->ray_main_etat;
+        ray.sub_etat = save_state->ray_sub_etat;
+        if (save_state == &save1) {
+            switch(save_state->poing_sub_etat) {
+                case 1: case 3: case 8: case 10: {
+                    save_state->poing_sub_etat = 1;
+                } break;
+                case 5: case 12: {
+                    save_state->poing_sub_etat = 3;
+                } break;
+            }
+        }
+        poing_obj->spawn_subetat = save_state->poing_sub_etat;
+        poing.sub_etat = save_state->poing_sub_etat;
+        dead_time = save_state->dead_time;
+        decalage_en_cours = 0;
+        ray_wind_force = 0;
+        for (i32 i = 0; i < 8; ++i) {
+            nb_floc[i] = save_state->nb_floc[i];
+        }
+        VENT_X = save_state->vent_x;
+        ray.xspeed = 0;
+        ray.yspeed = 0;
+        ray.iframes_timer = -1;
+        ray.is_active = 1;
+        VENT_Y = save_state->vent_y;
+        ray.flags |= obj_flags_4_triggered;
+        for (i32 obj_id = 0; obj_id < level.nb_objects; ++obj_id) {
+            obj_t* obj = level.objects + obj_id;
+            u16 type = obj->type;
+            if (type == obj_3_electoon
+                || type == obj_13_hunterbullet
+                || type == obj_15
+                || type == obj_59_opened_cage
+                || type == obj_36_stoneman_lava_ball
+                || type == obj_66_spider_dart
+                || type == obj_62_water_balloon
+                || type == obj_99_rayman_start_pos
+            ) {
+                obj->flags &= ~obj_flags_4_triggered;
+            } else {
+                if (type != obj_141_snow && type != obj_164_gendoor) {
+                    bool need_check_triggered;
+                    if (type == obj_179_pencil_pointing_down_wave || type == obj_242_pencil_pointing_up_wave) {
+                        obj->field_1C = 1;
+                        need_check_triggered = true;
+                    } else {
+                        need_check_triggered = false;
+                    }
+                    if (!need_check_triggered) {
+                        continue;
+                    }
+                }
+                if (((1 << (obj_id & 0x1F)) & (save_state->triggered_objects[obj_id >> 5])) == 0) {
+                    obj->flags &= ~obj_flags_4_triggered;
+                } else {
+                    obj->flags |= obj_flags_4_triggered;
+                }
+            }
+        }
+        gerbe = 0;
+        current_pal_id = save_state->current_pal_id + 1; // ?
+        //actualize_palette(save_state->current_pal_id); // stub
+
+
+	}
+}
