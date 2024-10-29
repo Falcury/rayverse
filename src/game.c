@@ -6,15 +6,6 @@ void display_in_game_text(const char* text, int unknown1, int x, int y, int unkn
 	// stub
 }
 
-struct wld_header_t {
-	u16 bg_width;
-	u16 bg_height;
-	u8 unk_data_table_count;
-	u8 unknown1;
-	u8 unknown2;
-
-
-};
 
 void load_level(const char* filename) {
 	mem_t* mem = read_entire_file(filename, true);
@@ -28,7 +19,7 @@ void load_level(const char* filename) {
 		mem_read(&texture_block_offset, mem, 4);
 		mem_read(&mp.width, mem, 2);
 		mem_read(&mp.height, mem, 2);
-		mem_read(color_palettes, mem, sizeof(color_palettes));
+		mem_read(rvb, mem, sizeof(rvb));
 		mem_read(&active_palette, mem, 1);
 
 		// Map
@@ -88,87 +79,6 @@ void load_level(const char* filename) {
 	}
 }
 
-void load_world(const char* filename) {
-	mem_t* mem = read_entire_file(filename, true);
-	if (mem) {
-		u16 background_width;
-		u16 background_height;
-		u8 plan0_num_pcx_count;
-		u8 video_bios_checksum;
-		u8 bios_checksum;
-
-		// Header block
-		mem_read(&background_width, mem, 2);
-		mem_read(&background_height, mem, 2);
-		mem_read(&plan0_num_pcx_count, mem, 1);
-		mem_read(&video_bios_checksum, mem, 1);
-		mem_read(&bios_checksum, mem, 1);
-
-		mem_read(plan0_num_pcx, mem, plan0_num_pcx_count);
-
-		for (i32 i = 0; i < plan0_num_pcx_count; ++i) {
-			plan0_num_pcx[i] ^= 0x15;
-		}
-
-
-		// Sprites block
-		u16 group_count;
-		mem_read(&group_count, mem, 2);
-
-		for (i32 group_index = 0; group_index < group_count; ++group_index) {
-			u8 need_clear_background;
-			u32 atlas_image_len;
-			mem_read(&need_clear_background, mem, 1);
-			mem_read(&atlas_image_len, mem, 4);
-
-			u8* atlas_pixels = (u8*) malloc(atlas_image_len);
-			mem_read(atlas_pixels, mem, atlas_image_len);
-
-			u8 atlas_image_checksum;
-			mem_read(&atlas_image_checksum, mem, 1);
-
-			u16 sprite_count;
-			mem_read(&sprite_count, mem, 2);
-
-			for (i32 sprite_index = 0; sprite_index < sprite_count; ++sprite_index) {
-				sprite_t sprite_desc = {0};
-				mem_read(&sprite_desc, mem, sizeof(sprite_desc));
-			}
-
-			u8 anim_count;
-			mem_read(&anim_count, mem, 1);
-
-			for (i32 anim_index = 0; anim_index < anim_count; ++anim_index) {
-				anim_t anim_desc = {0};
-				mem_read(&anim_desc, mem, sizeof(anim_desc));
-
-				// Need to seek to the specified offset later from the current position in the stream.
-				u16 frame_table_cursor = mem->cursor + anim_desc.layers_per_frame;
-
-				i32 layer_count = anim_desc.layers_per_frame * anim_desc.frame_count;
-				for (i32 layer_index = 0; layer_index < layer_count; ++layer_index) {
-					anim_layer_t layer = {0};
-					mem_read(&layer, mem, sizeof(layer));
-				}
-
-				mem->cursor = frame_table_cursor; // seek
-				for (i32 frame_index = 0; frame_index < anim_desc.frame_count; ++frame_index) {
-					anim_frame_t frame = {0};
-					mem_read(&frame, mem, sizeof(frame));
-				}
-
-			}
-
-		}
-
-		// ETA block
-
-
-		// to be continued...
-		
-
-	}
-}
 
 archive_header_t language_infos[] = {
 	{0, 4234, 48, 180},      // English
@@ -300,7 +210,7 @@ u8 calc_typ_trav(obj_t* obj, i32 unk) {
 }
 
 // sub_70408
-void RAY_HURT() {
+void RAY_HURT(void) {
 
 }
 
@@ -452,32 +362,32 @@ void special_pour_liv(obj_t* event) {
 
 
 
-
+//3C5CC
 void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal) {
 	if (nb_fade > 0) {
 		--nb_fade;
-		if (fade_mode == 1) {
+		if (fade == 1) {
 			for (i32 i = 0; i < 256*3; ++i) {
 				u8 c1 = ((u8*)(source_pal->colors))[i];
 				u32 temp = c1 << fade_speed;
-				fade_temp[i] += temp;
+                rvb_fade[i] += temp;
 			}
-		} else if (fade_mode == 2) {
+		} else if (fade == 2) {
 			for (i32 i = 0; i < 256*3; ++i) {
-				if (fade_temp[i] > 0) {
+				if (rvb_fade[i] > 0) {
 					u8 c1 = ((u8*)(source_pal->colors))[i];
 					u32 temp = c1 << fade_speed;
-					fade_temp[i] -= temp;
+                    rvb_fade[i] -= temp;
 				}
 			}
 		}
 		for (i32 i = 0; i < 256*3; ++i) {
-			u16 temp = fade_temp[i] >> 6;
+			u16 temp = rvb_fade[i] >> 6;
 			((u8*)(dest_pal->colors))[i] = (u8)temp;
 		}
 		// (apply palette)
 		if (nb_fade == 0) {
-			fade_mode |= 0x40;
+			fade |= 0x40;
 		}
 	}
 }
@@ -486,9 +396,9 @@ void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal) {
 void start_fade_in(u32 speed) {
 	// apply palette par_0?
 	nb_fade = 1 << (6 - speed);
-	fade_mode = 1; // fade in
+	fade = 1; // fade in
 	for (i32 i = 0; i < 256*3; ++i) {
-		fade_temp[i] = ((u8*)(global_game->draw_buffer.pal->colors))[i];
+        rvb_fade[i] = ((u8*)(global_game->draw_buffer.pal->colors))[i];
 	}
 	memset(global_game->draw_buffer.pal, 0, sizeof(rgb_palette_t));
 	fade_speed = speed;
@@ -497,7 +407,7 @@ void start_fade_in(u32 speed) {
 
 void start_fade_out(u32 speed) {
 	nb_fade = 1 << (6 - speed);
-	fade_mode = 2; // fade out
+	fade = 2; // fade out
 	fade_speed = speed;
 }
 
@@ -512,7 +422,7 @@ void fade_out(u32 speed, rgb_palette_t* palette) {
 }
 
 //3CA8C
-void INIT_FADE_IN() {
+void INIT_FADE_IN(void) {
 	start_fade_in(2);
 }
 
@@ -534,7 +444,7 @@ void ubisoft_logo_loop(i32 par_0, i32 par_1, i32 par_2) {
 
 
 //71B34
-void DO_UBI_LOGO() {
+void DO_UBI_LOGO(void) {
 	image_t ubisoft_logo = load_vignet_pcx(29);
 	copy_full_image_to_draw_buffer(&ubisoft_logo);
 	fade_source_palette = *ubisoft_logo.pal;
@@ -550,7 +460,7 @@ i32 YMIN = 0;
 i32 YMAX = 200;
 
 //16194
-void default_sprite_clipping() {
+void default_sprite_clipping(void) {
 	XMIN = 8;
 	XMAX = 312;
 	YMIN = 0;
@@ -816,7 +726,7 @@ void display2(obj_t* obj) {
 }
 
 //5C9F0
-void set_default_Bloc_clipping() {
+void set_default_Bloc_clipping(void) {
 	Bloc_lim_H1 = 0;
 	Bloc_lim_H2 = 200;
 	Bloc_lim_W1 = 4;
@@ -939,7 +849,7 @@ void SYNCHRO_LOOP(scene_func_t scene_func) {
 }
 
 //75268
-bool LoadOptionsOnDisk() {
+bool LoadOptionsOnDisk(void) {
 	mem_t* mem = read_entire_file("RAYMAN.CFG", false);
 	if (mem) {
 		if (mem->len != 0x84) {
@@ -1001,13 +911,13 @@ bool LoadOptionsOnDisk() {
 }
 
 //41AF0
-void POINTEUR_BOUTONS_OPTIONS_BIS() {
+void POINTEUR_BOUTONS_OPTIONS_BIS(void) {
 	// stub
 }
 
 
 //42790
-bool JoystickPresent() {
+bool JoystickPresent(void) {
 	//stub
 	return true;
 }
@@ -1034,7 +944,7 @@ void set_special_key_descriptions(const char** descriptions) {
 }
 
 //49308
-void check_key_table() {
+void check_key_table(void) {
 	bool valid = true;
 	for (i32 i = 0; i < 7; ++i) {
 		u8 key = *(key_table[i]);
@@ -1056,7 +966,7 @@ void check_key_table() {
 }
 
 //49388
-void LOAD_CONFIG() {
+void LOAD_CONFIG(void) {
 	if (LoadOptionsOnDisk()) {
 		LoadLanguageTxt(0); // English
 		if (xpadmax == -1) {
@@ -1126,7 +1036,7 @@ void LOAD_CONFIG() {
 }
 
 //17F00
-void InitMemoryVariable() {
+void InitMemoryVariable(void) {
 	P486 = 0;
 	NormalModeAutorise = 1;
 	JumelleEffetAutorise = 1;
@@ -1142,7 +1052,7 @@ void InitMemoryVariable() {
 }
 
 //554EC
-void init_allowed_time() {
+void init_allowed_time(void) {
 	for (i32 i = 0; i < 192; ++i) {
 		allowed_time[i] = -2;
 	}
@@ -1165,14 +1075,14 @@ void init_allowed_time() {
 }
 
 //23B8C
-void init_bonus_perfect() {
+void init_bonus_perfect(void) {
 	for (i32 i = 0; i < 24; ++i) {
 		bonus_perfect[i] = 0;
 	}
 }
 
 //1F880
-void init_finBossLevel() {
+void init_finBossLevel(void) {
 	finBossLevel &= 0xF000;
 }
 
@@ -1229,7 +1139,7 @@ i32 blocs4_empty(i32 a1, i32 a2) {
 #define blocs1_hor blocs4_empty
 
 //25C7C
-void init_calcbloc_func() {
+void init_calcbloc_func(void) {
 	for (i32 i = 0; i < 31; ++i) {
 		switch(i) {
 			default: {
@@ -1300,7 +1210,7 @@ void init_calcbloc_func() {
 }
 
 //59900
-void INIT_RAY_BEGIN() {
+void INIT_RAY_BEGIN(void) {
 	RayEvts.super_helico = 0;
 	RayEvts.magicseed = 0;
 	RayEvts.tiny = 0;
@@ -1321,7 +1231,7 @@ i16 myRand(i16 max) {
 }
 
 //6BF98
-void MakeMyRand() {
+void MakeMyRand(void) {
 	srand(time(NULL));
 	for (u32 i = 0; i < COUNT(RandArray); ++i) {
 		i16 r = (i16)(rand() & 0x7FFF); // original: and ah, 0EFh ; does not clear the sign bit, maybe a bug?
@@ -1331,7 +1241,7 @@ void MakeMyRand() {
 }
 
 //5A5B4
-void INIT_MOTEUR_BEGIN() {
+void INIT_MOTEUR_BEGIN(void) {
 	init_allowed_time();
 	init_bonus_perfect();
 	init_calcbloc_func();
@@ -1367,13 +1277,13 @@ void INIT_MOTEUR_BEGIN() {
 }
 
 //3D9D4
-void InitTextMode() {
+void InitTextMode(void) {
 	//textmode();
 	ModeVideoActuel = 255;
 }
 
 //4368C
-i32 ChangeJumelleVariable() {
+i32 ChangeJumelleVariable(void) {
 	LargeurJumelle = (7 * RayonJumelle) / 2;
 	i32 var1 = LargeurJumelle / 2;
 	JumelleXMin = JumellePosX - var1;
@@ -1388,13 +1298,13 @@ i32 ChangeJumelleVariable() {
 }
 
 //437FC
-i16 PrepareJumelleZoom() {
+i16 PrepareJumelleZoom(void) {
 	return 0;
 	//stub
 }
 
 //43038
-i16 DefaultJumelleVariable() {
+i16 DefaultJumelleVariable(void) {
 	if (JumelleEffetAutorise) {
 		JumelleZoomActif = 1;
 	} else {
@@ -1419,7 +1329,7 @@ i16 DefaultJumelleVariable() {
 }
 
 //42EC4
-i16 InitMatriceJumelle() {
+i16 InitMatriceJumelle(void) {
 	DistPointX = (i32*)calloc(161, sizeof(i32));
 	DistPointY = (i32*)calloc(65, sizeof(i32));
 	ExpPoint = (i32*)calloc(5120, sizeof(i32));
@@ -1496,12 +1406,12 @@ void InitModeNormalWithFrequency(u8 freq) {
 }
 
 //16EAA
-void set_speaker_on() {
+void set_speaker_on(void) {
 	//stub
 }
 
 //3622C
-void FIRST_INIT() {
+void FIRST_INIT(void) {
 	init_memory(&temp_mem_buf, TailleMainMemTmp); // NOTE: need to figure out when (if ever) this gets freed?
 	InitTextMode();
 	freeze = 0;
@@ -1529,7 +1439,7 @@ void FIRST_INIT() {
 }
 
 //42134
-void readinput() {
+void readinput(void) {
 	// stub // get joystick input
 }
 
@@ -1546,18 +1456,15 @@ void init_divers_level_PC(u8* a1) {
 	//sub_42490(&record);
 }
 
-//26A30
-u8 get_casse_brique_active() {
-	return casse_brique_active;
-}
+
 
 //36D30
-void DEPART_INIT_LOOP() {
+void DEPART_INIT_LOOP(void) {
 	//nullsub
 }
 
 //36D34
-void FIN_GAME_LOOP() {
+void FIN_GAME_LOOP(void) {
 	if (!fin_du_jeu) {
 		DEPART_INIT_LOOP();
 		return;
@@ -1567,8 +1474,13 @@ void FIN_GAME_LOOP() {
 	block_free(main_mem_sprite);
 }
 
+//36D8C
+void FIN_DEAD_LOOP(void) {
+    //nullsub
+}
+
 //6B550
-void SPECIAL_INIT() {
+void SPECIAL_INIT(void) {
 	dark_phase = 0;
 	if (ray_on_poelle == 1) {
 		RayEvts = SauveRayEvts;
@@ -1577,7 +1489,7 @@ void SPECIAL_INIT() {
 }
 
 //18420
-void PcMain() {
+void PcMain(void) {
 	InitMemoryVariable();
 	sprite_clipping(0, 320, 0, 200);
 	WaitNSynchro(10); // added
@@ -1590,10 +1502,10 @@ void PcMain() {
 
 	NBRE_SAVE = 3;
 
-	/*// let the music finish playing while the main menu is not implemented yet :(
+	// let the music finish playing while the main menu is not implemented yet :(
 	while (is_ogg_playing) {
 		advance_frame();
-	}*/
+	}
 
 	if (MusicCdActive) {
 		stop_cd();
@@ -1612,7 +1524,7 @@ void PcMain() {
 		}
 
 		if (fin_du_jeu || status_bar.lives < 0 || new_world == 0) {
-			//FIN_GAME_LOOP();
+			FIN_GAME_LOOP();
 			if (ModeDemo) {
 				//FinDemoJeu();
 			}
@@ -1642,6 +1554,10 @@ void PcMain() {
 			//init_fee();
 			//init_moustique();
 			//InitPaletteSpecialPC();
+
+            if (byte_CFA2A != 0) {
+                fade_out(2, &rvb_plan3);
+            }
 		}
 
 
