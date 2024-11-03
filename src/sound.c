@@ -77,7 +77,7 @@ void raj_env_sound(i16 volume) {
 }
 
 //71DA8
-bool InitSnd() {
+bool InitSnd(void) {
 	if (CarteSonAutorisee) {
 		for (i32 i = 0; i < 20; ++i) {
 			stk_obj[i] = -2;
@@ -257,12 +257,12 @@ void game_get_sound_samples(game_sound_buffer_t* sound_buffer) {
 }
 
 //1CEE0
-void SetCompteurTrameAudio() {
+void SetCompteurTrameAudio(void) {
 	CompteurTrameAudio = 0;
 }
 
 //1D028
-void stop_cd() {
+void stop_cd(void) {
 	MusicCdActive = 0;
 	SetCompteurTrameAudio();
 	is_ogg_playing = false;

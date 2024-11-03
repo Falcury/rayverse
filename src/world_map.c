@@ -164,9 +164,36 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
     }
 }
 
+// maybe move these to memory-related procedures?
 //36394
 void world_level(i32 world, char* filename) {
     snprintf(filename, 20, "RAY%d.WLD", world);
+}
+
+//7FB48
+void SpriteFixeOffset(mem_t* mem) {
+    OffsetSpriteFixe = mem->cursor;
+}
+
+//7FB60
+void SpriteWorldOffset(mem_t* mem) {
+    OffsetSpriteWorld = mem->cursor;
+}
+
+//7FB78
+void SpriteFixeBlocksFree(mem_t* mem) {
+    mem->cursor = OffsetSpriteFixe;
+}
+
+//7FB84
+void SpriteWorldBlocksFree(mem_t* mem) {
+    mem->cursor = OffsetSpriteWorld;
+}
+
+//5A6D8
+void INIT_MOTEUR_WORLD(void) {
+    new_world = 0;
+    new_level = 1;
 }
 
 //36880
@@ -200,7 +227,10 @@ void DEPART_WORLD(void) {
         block_free(main_mem_world);
         block_free(main_mem_sprite);
         world_level(num_world_choice, world_filename);
-        load_world(main_mem_world, main_mem_sprite);
+        load_world(main_mem_world, main_mem_sprite, world_filename);
+        SpriteWorldOffset(main_mem_sprite);
+        INIT_MOTEUR_WORLD();
+        //END_WORLD_VIGNET();
     }
 }
 

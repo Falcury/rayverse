@@ -5,7 +5,7 @@ u8 collected_events_data[2592];
 u8 bonus_completed_data[24];
 
 // sub_742E0
-void set_medaillion_saved_data() {
+void set_medaillion_saved_data(void) {
 	for (i32 i = 0; i < 24; ++i) {
 		world_info_t* medaillion = t_world_info + i;
 		u8 unlocked_bit = medaillion->state & 1;
@@ -320,7 +320,7 @@ void SaveGameOnDisk(u8 which_save) {
 }
 
 
-void reset_items_and_bosses() {
+void reset_items_and_bosses(void) {
 	memset(collected_events_data, 0, 2592);
 	memset(bonus_completed_data, 0, 24);
 	finBossLevel = 0;
@@ -332,7 +332,7 @@ void reset_items_and_bosses() {
 }
 
 //73B80
-void doneGameSave() {
+void doneGameSave(void) {
 	save1.is_just_saved = 0;
 }
 

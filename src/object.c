@@ -29,6 +29,48 @@ void calc_mov_on_bloc(obj_t* obj) {
 }
 
 
+//5720C
+void Drop_Atter(obj_t* obj) {
+    //stub
+}
+
+//57230
+void BadGuyAtter(obj_t* obj) {
+    //stub
+}
+
+//572C4
+void MiteAtter(obj_t* obj) {
+    //stub
+}
+
+//572F8
+void LidolPinkAtter(obj_t* obj) {
+    //stub
+}
+
+//57344
+void stoneDogAtter(obj_t* obj) {
+    //stub
+}
+
+//5736C
+void stoneDogBounces(obj_t* obj) {
+    //stub
+}
+
+//574B8
+void Spider_Atter(obj_t* obj) {
+    //stub
+}
+
+//574F4
+void Normal_Atter(obj_t* obj) {
+    //stub
+}
+
+
+
 // Generic obj procs
 
 // sub_2F658

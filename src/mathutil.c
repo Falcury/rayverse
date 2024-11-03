@@ -31,3 +31,50 @@ u32 next_power_of_2(u32 x) {
 	u32 result = 1 << (32 - clz(x - 1));
 	return result;
 }
+
+//5DEF0
+void set2bits(u32 x) {
+    //stub
+}
+
+//5DF24
+u32 read2bits(u32 x) {
+    return 0; //stub
+}
+
+//5DF58
+void setbit(u32 x) {
+    //stub
+}
+
+//5DF98
+u32 getbit(u32 x) {
+    return 0; //stub
+}
+
+//5DFC0
+i32 sine(i32 x) {
+    return 0; //stub
+}
+
+//5E000
+i32 cosine(i32 x) {
+    return 0; //stub
+}
+
+//5E03C
+i32 sinus_cosinus(i32 x) {
+    return 0; //stub
+}
+
+//5E10C
+i32 abs_cosinus(i32 x) {
+    return 0; //stub
+}
+
+//5E10C
+i32 abs_sinus_cosinus(i32 x) {
+    return 0; //stub
+}
+
+

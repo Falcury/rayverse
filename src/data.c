@@ -971,3 +971,5 @@ i16 indice_trz_wait; //E5754
 i16 pt_pile_snd; //E5756
 i16 indice_snd_wiz; //E575A
 
+i32 OffsetSpriteWorld; //E7470
+i32 OffsetSpriteFixe; //E7474
