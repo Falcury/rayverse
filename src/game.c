@@ -1042,7 +1042,7 @@ void InitMemoryVariable(void) {
 	JumelleEffetAutorise = 1;
 	CarteSonAutorisee = 1;
 	SonLimite = 0;
-	is_background_clearing_needed = 1;
+	ToutSpriteAutorise = 1;
 	FondAutorise = 1;
 	TailleMainMemTmp = 0x22000;
 	TailleMainMemWorld = 0xF4C00;
@@ -1528,7 +1528,7 @@ void PcMain(void) {
 			if (ModeDemo) {
 				//FinDemoJeu();
 			}
-			break;
+			continue;
 		}
 
 		MakeMyRand();
@@ -1536,7 +1536,7 @@ void PcMain(void) {
 		default_sprite_clipping();
 		//DO_WORLD_MAP();
 		sprite_clipping(0, 320, 0, 200);
-		//DEPART_WORLD();
+		DEPART_WORLD();
 		if (!SonLimite) {
 			LoadBnkWorld(num_world_choice);
 		}
@@ -1558,6 +1558,53 @@ void PcMain(void) {
             if (byte_CFA2A != 0) {
                 fade_out(2, &rvb_plan3);
             }
+
+            while(!(fin_du_jeu || new_level == 0 || new_world == 0)) {
+                WaitNSynchro(15);
+                //INIT_MOTEUR_DEAD();
+                //INIT_RAY_ON_MS();
+                //START_LEVEL_ANIM();
+                //BackgroundOn = IsBackgroundOn();
+                if (GameModeVideo == 0) {
+                    default_sprite_clipping();
+                    //InitModeXWithFrequency(VGA_FREQ);
+                    //set_frequency_mode(Frequence);
+                    //INIT_GAME_MODE_X(xmap, ymap);
+                    if (P486 == 1) {
+                        //sub_1268A(...);
+                    }
+                    During_The_Menu = 0;
+                    //DO_MAIN_LOOP_PC_X();
+                    During_The_Menu = 1;
+                } else {
+                    //InitClipping();
+                    InitModeNormalWithFrequency(VGA_FREQ);
+                    //set_frequency_mode(Frequence);
+                    //INIT_GAME_MODE_NORMAL();
+                    During_The_Menu = 0;
+                    //DO_MAIN_LOOP_PC_NORMAL();
+                    During_The_Menu = 1;
+                    //FIN_GAME_MODE_NORMAL();
+                }
+
+                if (CarteSonAutorisee) {
+                    //stop_all_snd();
+                }
+
+                InitModeNormalWithFrequency(VGA_FREQ);
+                sprite_clipping(0, 320, 0, 200);
+                //START_LEVEL_ANIM();
+                if (ExitMenu) {
+                    //INIT_CONTINUE();
+                } else {
+                    //DO_CONTINUE();
+                    //DO_VICTOIRE();
+                }
+                ExitMenu = 0;
+            }
+
+            //DONE_MOTEUR_LEVEL();
+            //FIN_DEAD_LOOP();
 		}
 
 
