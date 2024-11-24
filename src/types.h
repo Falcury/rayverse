@@ -329,6 +329,15 @@ typedef struct obj_t {
 	u8 field_83;
 } obj_t;
 
+typedef struct zdc_t {
+    i16 x_pos;
+    i16 y_pos;
+    u8 width;
+    u8 height;
+    u8 flags;
+    u8 sprite;
+} zdc_t;
+
 typedef struct level_t {
 	obj_t* objects;
 	u16 nb_objects;
@@ -428,6 +437,14 @@ typedef struct save_state_t {
 	u8 is_just_saved;
 	u8 status_bar_tings;
 } save_state_t;
+
+// TODO: check that this is right? seems to differ from PS1 sound table entries (4 bytes instead of 5; flags separate?)
+typedef struct sound_table_entry_t {
+    u8 note;
+    u8 prog;
+    u8 tone;
+    u8 volume;
+} sound_table_entry_t;
 
 #pragma pack(pop)
 

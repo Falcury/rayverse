@@ -1,4 +1,15 @@
 
+//71B80
+u8 snd_sqrt_table[128] = {
+        40,  46,  51,  55,  60,  64,  67,  70,  72,  74,  77,  80,  83,  86,  89,  91,
+        93,  95,  96,  98,  101, 104, 107, 109, 111, 113, 115, 117, 120, 122, 124, 125,
+        127, 129, 131, 133, 135, 137, 138, 140, 142, 144, 145, 147, 149, 150, 152, 153,
+        155, 156, 158, 160, 161, 163, 164, 166, 167, 168, 170, 171, 173, 174, 176, 177,
+        178, 180, 181, 182, 184, 185, 186, 187, 189, 190, 191, 193, 194, 195, 196, 198,
+        199, 200, 201, 202, 203, 205, 206, 207, 208, 210, 211, 212, 213, 214, 215, 217,
+        218, 219, 220, 222, 223, 224, 225, 226, 227, 229, 230, 231, 232, 233, 234, 235,
+        236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251,
+};
 
 archive_header_t sndh8b_info[7] = {
 		{0,      0x0800, 0x4D, 0xC3},
@@ -61,91 +72,10 @@ void LoadBnkFile(u8** sound_buffer, i32 sound_set) {
 
 }
 
-//71C04
-void SetVolumeSound(i16 volume) {
-	Volume_Snd = volume;
-}
-
-//71DA4
-bool ray_env_stereo(i16 stereo) {
-	return stereo != 0;
-}
-
-//71D80
-void raj_env_sound(i16 volume) {
-	SetVolumeSound((volume * 127) / 20);
-}
-
-//71DA8
-bool InitSnd(void) {
-	if (CarteSonAutorisee) {
-		for (i32 i = 0; i < 20; ++i) {
-			stk_obj[i] = -2;
-			stk_snd[i] = 0;
-		}
-		pt_pile_snd = 0;
-		indice_snd_wiz = 0;
-		indice_ray_wait = 0;
-		indice_trz_wait = -2;
-		for (i32 i = 0; i < 32; ++i) {
-			voice_table[i].field_0 = -2;
-		}
-		raj_env_sound(18);
-		return ray_env_stereo(options_jeu_is_stereo);
-	} else {
-		return false;
-	}
-}
 
 
 
-// sub_71E44
-i16 get_sound_to_interrupt(i32 obj_id) {
-	i32 i = 0;
-	for (; i < 20; ++i) {
-		if (stk_obj[i] == obj_id) break;
-	}
-	if (i == 20) {
-		while (i > 0) {
-			--i;
-			if (stk_snd[i] == 0) break;
-		}
-	}
-	return stk_snd[i];
-}
 
-
-// sub_71FC8
-void sub_71FC8(i32 obj_id) {
-	// stub
-}
-
-// sub_71F6C
-bool sub_71F6C(i32 obj_id, i32 sound_id) {
-	// stub
-	return false;
-}
-
-// sub_7228C
-void play_sound(u16 sound_id, i32 obj_id) {
-	if (CarteSonAutorisee) {
-		if ((ray.scale != 0 && obj_id == reduced_rayman_id) || obj_id == rayman_obj_id) {
-			obj_id = -1;
-		}
-		if (obj_id == -1 && sound_id != 15) {
-			indice_ray_wait = 0;
-		}
-		i32 sound_to_interrupt = get_sound_to_interrupt(obj_id);
-		if (sound_to_interrupt != sound_id && !(sound_flags[sound_to_interrupt] & 8)) {
-			sub_71FC8(obj_id);
-			i16 unk = sub_71F6C(obj_id, sound_to_interrupt);
-			if (unk >= 0) {
-
-			}
-			// stub
-		}
-	}
-}
 
 
 
@@ -271,4 +201,219 @@ void stop_cd(void) {
 //3EA00
 void LoadBnkWorld(i16 world) {
 	//stub
+}
+
+//71C00
+void manage_snd_event(void) {
+    //nullsub
+}
+
+//71C04
+void SetVolumeSound(i16 volume) {
+    Volume_Snd = volume;
+}
+
+//71C10
+void stop_all_snd(void) {
+    //stub
+}
+
+//71C40
+void stop_ray_snd(void) {
+    //stub; unused in the PC version
+}
+
+//71CA8
+u8 get_pan_snd(obj_t* obj) {
+    return 0; //stub
+}
+
+//71CEC
+i32 get_vol_snd(obj_t* obj) {
+    return 0; //stub
+}
+
+//71D80
+void raj_env_sound(i16 volume) {
+    SetVolumeSound((volume * 127) / 20);
+}
+
+//71DA0
+void raj_env_audio(void) {
+    //nullsub
+}
+
+//71DA4
+bool ray_env_stereo(i16 stereo) {
+    return stereo != 0;
+}
+
+//71DA8
+bool InitSnd(void) {
+    if (CarteSonAutorisee) {
+        for (i32 i = 0; i < 20; ++i) {
+            stk_obj[i] = -2;
+            stk_snd[i] = 0;
+        }
+        pt_pile_snd = 0;
+        indice_snd_wiz = 0;
+        indice_ray_wait = 0;
+        indice_trz_wait = -2;
+        for (i32 i = 0; i < 32; ++i) {
+            voice_table[i].field_0 = -2;
+        }
+        raj_env_sound(18);
+        return ray_env_stereo(options_jeu_is_stereo);
+    } else {
+        return false;
+    }
+}
+
+//71E44
+i16 last_snd(i32 obj_id) {
+    i32 i = 0;
+    for (; i < 20; ++i) {
+        if (stk_obj[i] == obj_id) break;
+    }
+    if (i == 20) {
+        while (i > 0) {
+            --i;
+            if (stk_snd[i] == 0) break;
+        }
+    }
+    return stk_snd[i];
+}
+
+//71EA0
+i32 get_pile_obj(i32 a1) {
+    return 0; //stub
+}
+
+//71EF4
+i32 get_voice_obj(i32 a1) {
+    return 0; //stub
+}
+
+//71F30
+i32 get_voice_snd(i32 a1) {
+    return 0; //stub; unused in the PC version
+}
+
+//71F6C
+i16 get_voice_obj_snd(i16 obj_id, i16 sound_id) {
+    return 0; //stub
+}
+
+//71FC8
+void erase_pile_snd(i16 obj_id) {
+    //stub
+}
+
+//720B8
+void nettoie_pile_snd(void) {
+    //stub
+}
+
+//721C4
+void erase_voice_table(i32 a1) {
+
+}
+
+//72200
+i32 snd_in_pile_snd(i16 a1) {
+    return 0; //stub
+}
+
+//72254
+i32 vol_r(i16 a1, i16 a2) {
+    i32 result = (a1 * snd_sqrt_table[a2]) >> 8;
+    return result;
+}
+
+//7226C
+i32 vol_l(i16 a1, i16 a2) {
+    i32 result = (a1 * snd_sqrt_table[127 - a2]) >> 8;
+    return result;
+}
+
+//7228C
+void PlaySnd(u16 sound_id, i16 obj_id) {
+    if (CarteSonAutorisee) {
+        if ((ray.scale != 0 && obj_id == reduced_rayman_id) || obj_id == rayman_obj_id) {
+            obj_id = -1;
+        }
+        if (obj_id == -1 && sound_id != 15) {
+            indice_ray_wait = 0;
+        }
+        i16 sound_to_interrupt = last_snd(obj_id);
+        if (sound_to_interrupt != sound_id && !(sound_flags[sound_to_interrupt] & 8)) {
+            erase_pile_snd(obj_id);
+            i16 voice_obj_snd = get_voice_obj_snd(obj_id, sound_to_interrupt);
+            if (voice_obj_snd >= 0) {
+                // stub
+            }
+            // stub
+        }
+    }
+}
+
+//72960
+void PlaySnd_old(u16 sound_id) {
+    //stub
+}
+
+//72A1C
+void setvol(i16 obj_id) {
+    //stub
+}
+
+//72E74
+void setpan(i16 obj_id) {
+    //stub
+}
+
+//72F38
+void manage_snd(void) {
+    //stub
+}
+
+//730DC
+void mute_snd_bouclant(void) {
+    //stub
+}
+
+//73138
+void mute_snd(void) {
+    //stub
+}
+
+//73164
+void start_freeze_snd(void) {
+    mute_snd();
+    was_in_freeze = 1;
+}
+
+//73178
+void stop_freeze_snd(void) {
+    was_in_freeze = 0;
+}
+
+//7319C
+void PlayTchatchVignette(i32 a1) {
+    //stub
+}
+
+//73204
+void TestCdLoop(void) {
+    //stub
+}
+
+//73384
+void InitMusic(void) {
+    //stub
+}
+
+//733BC
+void DoneMusic(void) {
+    //stub
 }

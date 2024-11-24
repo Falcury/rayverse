@@ -1,4 +1,53 @@
 
+//2B2D0
+i32 get_nb_zdc(obj_t* obj) {
+    return obj->zdc_meta >> 11;
+}
+
+//2B2E0
+i32 get_zdc_index(obj_t* obj) {
+    return (i32)(obj->zdc_meta & 7);
+}
+
+//2B2E8
+zdc_t* get_zdc(obj_t* obj, i32 a2) {
+    return zdc_tab + get_zdc_index(obj) + a2;
+}
+
+//2B308
+i32 in_coll_sprite_list(obj_t* obj, i16 a2) {
+    //stub
+    return 0;
+}
+
+//2B430
+i32 inter_box(i16 box1_x, i16 box1_y, i16 box1_width, i16 box1_height, i16 box2_x, i16 box2_y, i16 box2_width, i16 box2_height) {
+    i32 temp1 = box1_x - box2_width;
+    i32 temp2 = box1_y - box2_height;
+    if (box2_x < temp1 || box2_y < temp2) {
+        return 0;
+    }
+    i32 temp3 = temp1 + (box1_width + box2_width);
+    if (box2_x <= temp3 && box2_width <= (box1_height + box2_height) + temp2) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+//2B48C
+void GET_OBJ_ZDC(obj_t* obj) {
+    switch(obj->type) {
+        case obj_2_energypoint:
+        case obj_8_plum1:
+        case obj_134_plum2:
+        case obj_167_plum3: {
+            //GET_ANIM_POS(obj, ..)
+        } break;
+
+        //stub
+    }
+}
 
 // sub_1EB80
 void obj_hurt(obj_t* target) {
@@ -150,7 +199,7 @@ void DoBadGuy1PoingCollision(obj_t* obj, u16 unk) {
 	if (obj->hitp != 0) {
 		obj->yspeed = -4;
 		set_main_and_sub_etat(obj, 2, (get_eta(obj)->interaction_flags & 0x40) ? 10 : 2);
-		play_sound(28, obj->obj_index);
+        PlaySnd(28, obj->obj_index);
 	} else {
 		obj->yspeed = -8;
 		set_main_and_sub_etat(obj, 0, (get_eta(obj)->interaction_flags & 0x40) ? 6 : 3);
@@ -195,7 +244,7 @@ void DoPowerupRaymanCollision(obj_t* obj) {
 		ray.hitp = ray_max_hitp;
 	}
 	obj->flags &= ~obj_flags_4_triggered;
-	play_sound(8, obj->obj_index);
+    PlaySnd(8, obj->obj_index);
 
 }
 

@@ -209,11 +209,6 @@ u8 calc_typ_trav(obj_t* obj, i32 unk) {
 	return 0; // stub
 }
 
-// sub_70408
-void RAY_HURT(void) {
-
-}
-
 // sub_2DBDC
 void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
 	if (put_above_solid_tiles) {
@@ -426,8 +421,8 @@ void INIT_FADE_IN(void) {
 	start_fade_in(2);
 }
 
-
-void ubisoft_logo_loop(i32 par_0, i32 par_1, i32 par_2) {
+//71940
+void updateLogo(i32 par_0, i32 par_1, i32 par_2) {
 	start_fade_in(2);
 	WaitNSynchro(5);
 	for (i32 i = 0; i < par_0; ++i) {
@@ -451,7 +446,7 @@ void DO_UBI_LOGO(void) {
 	destroy_image(&ubisoft_logo);
 	INIT_FADE_IN();
 	play_cd_track(12); // CD track 12: Intro music - "Ubisoft Presents"
-	ubisoft_logo_loop(60, -1, 8);
+    updateLogo(60, -1, 8);
 }
 
 i32 XMIN = 8;
@@ -775,7 +770,7 @@ void DO_ANIM(obj_t* obj) {
 			obj->anim_frame = 0;
 		}
 		if (obj->is_active != 0) {
-			play_sound(eta->sound_index, obj->obj_index);
+            PlaySnd(eta->sound_index, obj->obj_index);
 		}
 	}
 	if (obj->anim_frame >= anim->frame_count || obj->anim_frame == 255) {
@@ -797,7 +792,7 @@ void DO_ANIM(obj_t* obj) {
 			obj->anim_frame = 0;
 		}
 		if (obj->is_active != 0) {
-			play_sound(eta->sound_index, obj->obj_index);
+            PlaySnd(eta->sound_index, obj->obj_index);
 		}
 	}
 	obj->change_anim_mode = 0;
