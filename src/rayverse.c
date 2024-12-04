@@ -73,4 +73,8 @@
 #include "moskito.c"
 #include "saxo.c"
 #include "space_mama.c"
+#include "skops.c"
+#include "stoneman.c"
+#include "trumpet.c"
+#include "ufo.c"
 

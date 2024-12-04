@@ -1503,5 +1503,10 @@ i16 indice_trz_wait; //E5754
 i16 pt_pile_snd; //E5756
 i16 indice_snd_wiz; //E575A
 
+i16 NbBande; //E744A
+i16 Num_Fond; //E744C
+i32 skops_screen_tremble; //E7450
+i16 PosLave_Y; //E7454
+
 i32 OffsetSpriteWorld; //E7470
 i32 OffsetSpriteFixe; //E7474
