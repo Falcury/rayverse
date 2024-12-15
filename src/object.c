@@ -172,9 +172,9 @@ void ObjectUTurnDefault(obj_t* obj) {
 void DoBadGuy1PoingCollision(obj_t* obj, u16 unk) {
 	obj_hurt(obj);
 	if (poing_obj->xspeed > 0) {
-		script_goto_label(obj, 3, 1);
+        skipToLabel(obj, 3, 1);
 	} else if (poing_obj->xspeed < 0) {
-		script_goto_label(obj, 2, 1);
+        skipToLabel(obj, 2, 1);
 	}
 	obj->xspeed = 0;
 	obj->ypos -= 2;
@@ -196,7 +196,7 @@ void DoBudGuy1RaymanZDD(obj_t* obj) {
 				obj->xspeed = 0;
 				obj->yspeed = 0;
 				set_main_and_sub_etat(obj, 0, 2);
-				script_goto_label(obj, (obj->flags & obj_flags_8_flipped) ? 8 : 7, 1);
+                skipToLabel(obj, (obj->flags & obj_flags_8_flipped) ? 8 : 7, 1);
 			}
 		}
 	}
@@ -231,19 +231,6 @@ void DoPowerupRaymanCollision(obj_t* obj) {
 }
 
 
-// Event 3: Electoon
-
-// sub_291B4
-void DO_ONE_PINK_CMD(obj_t* obj) {
-	// stub
-}
-
-// sub_2937C
-void DoLidolPinkRaymanZDD(obj_t* obj) {
-	if (get_eta(obj)->interaction_flags & 1) {
-		script_goto_label(obj, 0, 1);
-	}
-}
 
 // Event 5: Bonus magician
 
@@ -269,7 +256,7 @@ void DoBadGuy23PoingCollision(obj_t* obj, u16 unk) {
 		obj_hurt(obj);
 		if (obj->hitp == 0) {
 			set_main_and_sub_etat(obj, 0, 3);
-			script_goto_label(obj, 2, 1);
+            skipToLabel(obj, 2, 1);
 			obj->ypos -= 2;
 			obj->flags &= ~obj_flags_0x10;
 		} else {
@@ -285,7 +272,7 @@ void DoBadGuy23RaymanZDD(obj_t* obj) {
 	} else if ((obj->main_etat == 0 && obj->sub_etat == 0) || (obj->main_etat == 1 && obj->sub_etat == 0)) {
 		set_main_and_sub_etat(obj, 1, 11);
 		obj->flags &= ~obj_flags_0x10;
-		script_goto_label(obj, obj_flipped(obj) ? 3 : 2, 1);
+        skipToLabel(obj, obj_flipped(obj) ? 3 : 2, 1);
 	}
 }
 
@@ -497,7 +484,7 @@ void DO_TEN_COMMAND(obj_t* obj) {
 	} else if (obj->main_etat == 1) {
 		if (obj->phase != 0) ++obj->timer;
 		if (obj->timer >= -2) {
-			script_goto_label(obj, 2, 1);
+            skipToLabel(obj, 2, 1);
 		}
 		SET_X_SPEED(obj);
 		calc_mov_on_bloc(obj);

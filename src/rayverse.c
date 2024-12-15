@@ -59,8 +59,14 @@
 #endif
 
 #include "render.c"
-#include "basic.c"
 #include "misc_source.c"
+#include "basic.c"
+#include "bat.c"
+#include "bbmont.c"
+#include "blacktoon.c"
+#include "blocs.c"
+#include "breakout.c"
+#include "cage.c"
 #include "vignet.c"
 #include "bray.c"
 #include "sound.c"

@@ -1,9 +1,4 @@
 
-//26A30
-u8 get_casse_brique_active(void) {
-    return casse_brique_active;
-}
-
 //47BB0
 u8* allocate_PLAN0(mem_t* mem_world, i32 width, i32 height) {
     u8* buffer1;
