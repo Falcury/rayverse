@@ -59,6 +59,7 @@
 #endif
 
 #include "render.c"
+#include "basic.c"
 #include "misc_source.c"
 #include "vignet.c"
 #include "bray.c"

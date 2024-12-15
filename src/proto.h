@@ -11,7 +11,13 @@ void linux_end_frame(app_state_t* app_state);
 #endif
 void message_box(const char* message);
 
-// engine.cpp
+// basic.c
+void set_subetat(obj_t* obj, u8 sub_etat);
+void set_main_etat(obj_t* obj, u8 etat);
+void set_main_and_sub_etat(obj_t* obj, u8 etat, u8 sub_etat);
+
+
+// engine.c
 void advance_frame(void);
 void WaitNSynchro(i32 n_frames);
 void copy_full_image_contents(image_t* dest, image_t* source);
@@ -37,9 +43,7 @@ void RAY_HURT(void);
 
 // game.c
 u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte);
-void set_subetat(obj_t* obj, u8 sub_etat);
-void set_main_etat(obj_t* obj, u8 etat);
-void set_main_and_sub_etat(obj_t* obj, u8 etat, u8 sub_etat);
+
 void horloges(u32 ticks);
 i32 get_proj_dist(i32 scale, i32 outer_dim);
 i32 get_proj_x(i32 scale, i32 par_1);

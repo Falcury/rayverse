@@ -175,34 +175,6 @@ u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte) {
 	return checksum_byte; // should be 0
 }
 
-// sub_1D808
-void set_subetat(obj_t* obj, u8 sub_etat) {
-	obj->change_anim_mode = 1;
-	obj->sub_etat = sub_etat;
-}
-
-// sub_1D810
-void set_main_etat(obj_t* obj, u8 etat) {
-	obj->change_anim_mode = 1;
-	obj->main_etat = etat;
-}
-
-// sub_1D818
-void set_main_and_sub_etat(obj_t* obj, u8 etat, u8 sub_etat) {
-	obj->change_anim_mode = 1;
-	obj->main_etat = etat;
-	obj->sub_etat = sub_etat;
-}
-
-
-// sub_1E588
-u8 BTYP(i32 tile_x, i32 tile_y) {
-	if (tile_x >= 0 && tile_x <= (mp.width - 1) && tile_y >= 0 && tile_y <= (mp.height - 1)) {
-		return mp.map[tile_y * mp.width + tile_x].tile_type;
-	} else {
-		return 0;
-	}
-}
 
 // sub_24F60
 u8 calc_typ_trav(obj_t* obj, i32 unk) {
@@ -1074,11 +1046,6 @@ void init_bonus_perfect(void) {
 	for (i32 i = 0; i < 24; ++i) {
 		bonus_perfect[i] = 0;
 	}
-}
-
-//1F880
-void init_finBossLevel(void) {
-	finBossLevel &= 0xF000;
 }
 
 //25BB0

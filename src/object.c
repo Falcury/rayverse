@@ -49,27 +49,9 @@ void GET_OBJ_ZDC(obj_t* obj) {
     }
 }
 
-// sub_1EB80
-void obj_hurt(obj_t* target) {
-	if (poing.damage > target->hitp) {
-		target->hitp = 0;
-	} else {
-		target->hitp -= poing.damage;
-	}
-}
-
 // sub_7B628
 void DO_NOVA(obj_t* obj) {
 	// stub
-}
-
-// sub_1DFB8
-void calc_obj_dir(obj_t* obj) {
-	if (ray.xpos + ray.offset_bx > obj->xpos + obj->offset_bx) {
-		obj->flags |= obj_flags_8_flipped;
-	} else {
-		obj->flags &= ~obj_flags_8_flipped;
-	}
 }
 
 // sub_25820

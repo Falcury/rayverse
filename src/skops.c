@@ -107,7 +107,7 @@ void DO_SKO_HIT(obj_t* obj) {
 
 //7A338
 i16 Get_PosLave_Y(void) {
-
+    return 0; //stub
 }
 
 
