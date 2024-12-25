@@ -316,7 +316,7 @@ void nettoie_pile_snd(void) {
 
 //721C4
 void erase_voice_table(i32 a1) {
-
+    //stub
 }
 
 //72200

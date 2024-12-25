@@ -1,64 +1,8 @@
 
-//2B2D0
-i32 get_nb_zdc(obj_t* obj) {
-    return obj->zdc_meta >> 11;
-}
-
-//2B2E0
-i32 get_zdc_index(obj_t* obj) {
-    return (i32)(obj->zdc_meta & 7);
-}
-
-//2B2E8
-zdc_t* get_zdc(obj_t* obj, i32 a2) {
-    return zdc_tab + get_zdc_index(obj) + a2;
-}
-
-//2B308
-i32 in_coll_sprite_list(obj_t* obj, i16 a2) {
-    //stub
-    return 0;
-}
-
-//2B430
-i32 inter_box(i16 box1_x, i16 box1_y, i16 box1_width, i16 box1_height, i16 box2_x, i16 box2_y, i16 box2_width, i16 box2_height) {
-    i32 temp1 = box1_x - box2_width;
-    i32 temp2 = box1_y - box2_height;
-    if (box2_x < temp1 || box2_y < temp2) {
-        return 0;
-    }
-    i32 temp3 = temp1 + (box1_width + box2_width);
-    if (box2_x <= temp3 && box2_width <= (box1_height + box2_height) + temp2) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
-//2B48C
-void GET_OBJ_ZDC(obj_t* obj) {
-    switch(obj->type) {
-        case obj_2_energypoint:
-        case obj_8_plum1:
-        case obj_134_plum2:
-        case obj_167_plum3: {
-            //GET_ANIM_POS(obj, ..)
-        } break;
-
-        //stub
-    }
-}
-
 // sub_7B628
 void DO_NOVA(obj_t* obj) {
 	// stub
 }
-
-// sub_25820
-void calc_mov_on_bloc(obj_t* obj) {
-	// stub (?)
-}
-
 
 //5720C
 void Drop_Atter(obj_t* obj) {
@@ -104,61 +48,12 @@ void Normal_Atter(obj_t* obj) {
 
 // Generic obj procs
 
-// sub_2F658
-void DO_ONE_CMD(obj_t* obj) {
-	special_pour_liv(obj);
-	u8 cmd = obj->command;
-	u8 etat = obj->main_etat;
-	if (cmd == cmd_0_left || cmd == cmd_1_right) {
-		if (cmd == cmd_0_left) {
-			obj->flags &= ~obj_flags_8_flipped;
-		} else {
-			obj->flags |= obj_flags_8_flipped;
-		}
-		if (etat == 1) {
-			// stub
-			SET_X_SPEED(obj);
-			calc_mov_on_bloc(obj);
-		} else if (etat == 2) {
-			SET_X_SPEED(obj);
-		} else if (etat == 0) {
-			//sub_2F488()
-		}
-	} else if (cmd == cmd_2_up) {
-		do_cmd_up(obj);
-	} else if (cmd == cmd_3_down || cmd == cmd_4) {
-		do_cmd_3_4(obj);
-	} else if (cmd == cmd_20_speed) {
-		obj->xspeed = obj->iframes_timer;
-		obj->yspeed = obj->command_par2;
-	}
-}
-
-void DoPoingCollisionDefault(obj_t* obj, u16 unk) {
-	// nop
-}
 
 void DoRaymanInZDDDefault(obj_t* obj) {
 	// nop
 }
 
-//2ED74
-void DoRaymanCollisionDefault(obj_t* obj) {
-	if ((obj_type_flags[obj->type] & obj_type_flags_bit_20) && get_eta(obj)->interaction_flags & 0x20) {
-		if (!(ray.main_etat == 3 && ray.sub_etat == 32)) {
-			i16 command_par3 = ray.iframes_timer;
-			if (command_par3 >= 60 || command_par3 == -1) {
-				RAY_HIT(0, obj);
-				ray.iframes_timer = command_par3;
-			} else {
-				RAY_HIT(1, obj);
-				if (!(ray_mode == 3 || ray_mode == 4)) {
-					ray.iframes_timer = 60;
-				}
-			}
-		}
-	}
-}
+
 
 // sub_612F0
 void ObjectUTurnDefault(obj_t* obj) {
@@ -241,12 +136,6 @@ void TEST_WIZARD(obj_t* obj) {
 
 // Event 6: Yin with pin
 // Event 7: Bouncing platform
-
-// sub_3167C
-void DoFallingObjPoingCollision(obj_t* obj, u16 unk) {
-	// stub
-}
-
 // Event 9: Small livingstone
 // Event 165: Small livingstone (aggressive/evil)
 
@@ -487,7 +376,7 @@ void DO_TEN_COMMAND(obj_t* obj) {
             skipToLabel(obj, 2, 1);
 		}
 		SET_X_SPEED(obj);
-		calc_mov_on_bloc(obj);
+        CALC_MOV_ON_BLOC(obj);
 	}
 }
 
@@ -503,11 +392,6 @@ void DoGeneBadGuyRaymanZDD(obj_t* obj) {
 
 //6309C
 void DO_PHOTOGRAPHE_CMD(obj_t* obj) {
-
-}
-
-//2F2FC
-void DO_MOVING_PLATFORM_COMMAND(obj_t* obj) {
 
 }
 
