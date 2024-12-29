@@ -25,11 +25,7 @@ void SpriteWorldBlocksFree(mem_t* mem) {
     mem->cursor = OffsetSpriteWorld;
 }
 
-//5A6D8
-void INIT_MOTEUR_WORLD(void) {
-    new_world = 0;
-    new_level = 1;
-}
+
 
 
 //69518

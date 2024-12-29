@@ -134,7 +134,7 @@ void DO_POING_COLLISION(void) {
 }
 
 //2D858
-void DoPoingCollisionDefault(obj_t* obj, u16 a2) {
+void DoPoingCollisionDefault(obj_t* obj, i16 a2) {
     //stub
 }
 
@@ -493,7 +493,7 @@ void DO_FALLING_OBJ_CMD(obj_t* obj) {
 }
 
 //3167C
-void DoFallingObjPoingCollision(obj_t* obj, u16 a2) {
+void DoFallingObjPoingCollision(obj_t* obj, i16 a2) {
     //stub
 }
 

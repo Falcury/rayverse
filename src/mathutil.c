@@ -52,13 +52,52 @@ u32 getbit(u32 x) {
     return 0; //stub
 }
 
+//5DFB8
+i32 reflexion(i32 a1, i32 a2) {
+    return 0; //stub
+}
+
+//inlined
+i16 ashl16(i16 x, u8 bits) {
+    i16 result = (i16)(x << bits);
+    return result;
+}
+
+//inlined
+i16 ashr16(i16 x, u8 bits) {
+    i16 result;
+    if (x < 0) {
+        result = (i16)-((-x) >> bits);
+    } else {
+        result = (i16)(x >> bits);
+    }
+    return result;
+}
+
+//inlined
+i32 ashl32(i32 x, u8 bits) {
+    i32 result = x << bits;
+    return result;
+}
+
+//inlined
+i32 ashr32(i32 x, u8 bits) {
+    i32 result;
+    if (x < 0) {
+        result = -((-x) >> bits);
+    } else {
+        result = x >> bits;
+    }
+    return result;
+}
+
 //5DFC0
-i32 sine(i32 x) {
+i32 sinus(i32 x) {
     return 0; //stub
 }
 
 //5E000
-i32 cosine(i32 x) {
+i32 cosinus(i32 x) {
     return 0; //stub
 }
 

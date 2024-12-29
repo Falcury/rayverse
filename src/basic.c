@@ -69,7 +69,8 @@ void OBJ_IN_ZONE(obj_t* obj) {
 
 //1E030
 void calc_obj_pos(obj_t* obj) {
-    //stub
+    obj->screen_y = obj->ypos - ymap;
+    obj->screen_x = obj->xpos - xmap + 8;
 }
 
 //1E05C

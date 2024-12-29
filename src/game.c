@@ -336,16 +336,7 @@ void DrawSpriteColorNormal(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 p
 	//stub
 }
 
-//55498
-void horloges(u32 ticks) {
-	for (i32 i = 0; i < 25; ++i) {
-		horloge[i] += 1;
-		if (horloge[i] >= i) {
-			horloge[i] = 0;
-		}
-	}
-	map_time += ticks;
-}
+
 
 //1D560
 void set_proj_center(i16 x, i16 y) {
@@ -427,93 +418,8 @@ void display2(obj_t* obj) {
 
 }
 
-//5C9F0
-void set_default_Bloc_clipping(void) {
-	Bloc_lim_H1 = 0;
-	Bloc_lim_H2 = 200;
-	Bloc_lim_W1 = 4;
-	Bloc_lim_W2 = 320;
-}
 
-//55EE4
-void SET_X_SPEED(obj_t* obj) {
-	i32 xspeed = 0;
-	anim_t* anim = obj->animations + obj->anim_index;
-	u8 horloge_index = ((anim->layers_per_frame & 0xC000) >> 14) + 1;
-	if (horloge[horloge_index] == 0) {
-		eta_t* eta = get_eta(obj);
-		if (obj->flags & obj_flags_8_flipped) {
-			xspeed = eta->right_speed * horloge_index;
-		} else {
-			xspeed = eta->left_speed * horloge_index;
-		}
-		if (obj->type == obj_23_rayman && RayEvts.tiny) {
-			xspeed /= 2;
-		}
-	}
-	obj->xspeed = (i16)xspeed;
-}
 
-//567AC
-void DO_ANIM(obj_t* obj) {
-	i32 prev_anim_frame = obj->anim_frame;
-	i32 prev_anim_index = obj->anim_index;
-	eta_t* eta = get_eta(obj);
-	anim_t* anim = obj->animations + obj->anim_index;
-	u8 anim_speed = eta->anim_speed & 15;
-	if (anim_speed != 0 && horloge[anim_speed] == 0) {
-		if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
-			--obj->anim_frame;
-		} else {
-			++obj->anim_frame;
-		}
-	}
-	obj->anim_index = eta->anim_index;
-	anim = obj->animations + obj->anim_index;
-	if ((obj->change_anim_mode == 1 && obj->anim_index != prev_anim_index) || obj->change_anim_mode == 2) {
-		if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
-			obj->anim_frame = anim->frame_count - 1;
-		} else {
-			obj->anim_frame = 0;
-		}
-		if (obj->is_active != 0) {
-            PlaySnd(eta->sound_index, obj->obj_index);
-		}
-	}
-	if (obj->anim_frame >= anim->frame_count || obj->anim_frame == 255) {
-		// animation ended
-		obj->main_etat = eta->next_etat;
-		obj->sub_etat = eta->next_subetat;
-		eta = get_eta(obj);
-		obj->anim_index = eta->anim_index;
-		anim = obj->animations + obj->anim_index;
-		if ((obj->type == obj_23_rayman && (ray_old_etat == 2 || ray_old_etat == 6)) ||
-		    (obj->sub_etat == 61 && ray_old_subetat == 61 && ray_old_etat == 0)) {
-			if (ray.timer > 60 && !RayEvts.squashed) {
-				ray.timer = 60;
-			}
-		}
-		if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
-			obj->anim_frame = anim->frame_count - 1;
-		} else {
-			obj->anim_frame = 0;
-		}
-		if (obj->is_active != 0) {
-            PlaySnd(eta->sound_index, obj->obj_index);
-		}
-	}
-	obj->change_anim_mode = 0;
-	if (obj->flags & obj_flags_0x20_follow_enabled) {
-		//calc_follow_sprite_speed(); //STUB
-	}
-	u8 anim_changed_bit = 0;
-	if (obj->anim_frame != prev_anim_frame || obj->anim_index != prev_anim_index) {
-		anim_changed_bit = 1;
-	}
-	obj->flags &= ~obj_flags_0x80_anim_changed;
-	obj->flags |= (anim_changed_bit << 7);
-
-}
 
 //1D074
 bool EOA(obj_t* obj) {
@@ -652,28 +558,6 @@ void InitMemoryVariable(void) {
 	TailleMainMemFix = 0x4D800;
 }
 
-//554EC
-void init_allowed_time(void) {
-	for (i32 i = 0; i < 192; ++i) {
-		allowed_time[i] = -2;
-	}
-	i16* allowed_time_world = allowed_time;
-	allowed_time_world[17] = 30; //magician (swinging plums)
-	allowed_time_world[18] = 45; //magician (flower platforms)
-	allowed_time_world[19] = 25; //magician (grass platforms)
-	allowed_time_world[20] = 35; //magician (low flower platforms)
-	allowed_time_world += 32;
-	allowed_time_world[16] = 40; //magician (slippery platforms)
-	allowed_time_world[17] = 25; //magician (rotating platforms)
-	allowed_time_world += 32;
-	allowed_time_world[11] = 45; //magician (disappearing clouds)
-	allowed_time_world[12] = 20; //magician (bouncing clouds)
-	allowed_time_world += 32;
-	allowed_time_world[11] = 35; //magician (parkour)
-	allowed_time_world[12] = 50; //magician (bouncy erasers)
-	allowed_time_world += 32;
-	allowed_time_world[11] = 35; //magician (ring parkour)
-}
 
 //23B8C
 void init_bonus_perfect(void) {
@@ -683,53 +567,6 @@ void init_bonus_perfect(void) {
 }
 
 
-//59900
-void INIT_RAY_BEGIN(void) {
-	RayEvts.super_helico = 0;
-	RayEvts.magicseed = 0;
-	RayEvts.tiny = 0;
-	ray_max_hitp = 2;
-	status_bar.num_wiz = 0;
-	fin_continue = 0;
-	ray.flags &= ~obj_flags_1;
-}
-
-
-//5A5B4
-void INIT_MOTEUR_BEGIN(void) {
-	init_allowed_time();
-	init_bonus_perfect();
-	init_calcbloc_func();
-	new_level = 1;
-	new_world = 1;
-	status_bar.lives = 3;
-	ray.hitp = 2;
-	gele = 0;
-	departlevel = 1;
-	poing.sub_etat = 1;
-	nb_continue = 9;
-	You_Win = 0;
-	set_proj_center(160, 170);
-	INIT_RAY_BEGIN();
-	scroll_x = -1;
-	scroll_y = -1;
-	special_ray_mov_win_x_left = 0;
-	special_ray_mov_win_x_right = 0;
-	fin_de_rayman = 0;
-	NumDemo = myRand(5);
-	if (DemoRecordWorld[NumDemo] == 5 && DemoRecordMap[NumDemo] == 10) {
-		++NumDemo;
-		if (NumDemo == COUNT(DemoRecordWorld)) {
-			NumDemo = 0;
-		}
-	}
-	First_Hit = 1;
-	First_Menu = 1;
-	time_left = -2;
-	life_becoz_wiz = 0;
-	dontdoit = 0;
-	RunTimeDemo = 1800;
-}
 
 //3D9D4
 void InitTextMode(void) {
@@ -820,16 +657,16 @@ void PcMain(void) {
 		DEPART_INIT_LOOP();
 		INIT_WORLD_INFO();
 		set_default_Bloc_clipping();
-		//DO_NEW_MENUS();
+		DO_NEW_MENUS();
 
 		if (!fin_de_rayman && !ModeDemo && Frequence == 70) {
-			//play_movie("intro.dat", 20);
+//			play_movie("intro.dat", 20);
 		}
 
 		if (fin_du_jeu || status_bar.lives < 0 || new_world == 0) {
 			FIN_GAME_LOOP();
 			if (ModeDemo) {
-				//FinDemoJeu();
+				FinDemoJeu();
 			}
 			continue;
 		}
@@ -837,7 +674,7 @@ void PcMain(void) {
 		MakeMyRand();
 		SPECIAL_INIT();
 		default_sprite_clipping();
-		//DO_WORLD_MAP();
+		DO_WORLD_MAP();
 		sprite_clipping(0, 320, 0, 200);
 		DEPART_WORLD();
 		if (!SonLimite) {
@@ -846,17 +683,17 @@ void PcMain(void) {
 
 		while (!(fin_du_jeu || new_world == 0 || new_level == 0)) {
 			WaitNSynchro(5);
-			//speaker_enable();
-			//DEPART_LEVEL();
+//			speaker_enable();
+			DEPART_LEVEL();
 			init_divers_level_PC(&v1);
 			if ((GameModeVideo == 0 && num_world == 6 && num_level == 4) || get_casse_brique_active()) {
-//				InitClipping();
+				InitClipping();
 			}
 
-			//INIT_MOTEUR_LEVEL(new_level);
-			//init_fee();
-			//init_moustique();
-			//InitPaletteSpecialPC();
+			INIT_MOTEUR_LEVEL(new_level);
+			init_fee();
+//			init_moustique();
+//			InitPaletteSpecialPC();
 
             if (byte_CFA2A != 0) {
                 fade_out(2, &rvb_plan3);
@@ -864,10 +701,10 @@ void PcMain(void) {
 
             while(!(fin_du_jeu || new_level == 0 || new_world == 0)) {
                 WaitNSynchro(15);
-                //INIT_MOTEUR_DEAD();
-                //INIT_RAY_ON_MS();
-                //START_LEVEL_ANIM();
-                //BackgroundOn = IsBackgroundOn();
+                INIT_MOTEUR_DEAD();
+                INIT_RAY_ON_MS();
+                START_LEVEL_ANIM();
+                BackgroundOn = IsBackgroundOn();
                 if (GameModeVideo == 0) {
                     default_sprite_clipping();
                     //InitModeXWithFrequency(VGA_FREQ);
@@ -880,7 +717,7 @@ void PcMain(void) {
                     //DO_MAIN_LOOP_PC_X();
                     During_The_Menu = 1;
                 } else {
-                    //InitClipping();
+                    InitClipping();
                     InitModeNormalWithFrequency(VGA_FREQ);
                     //set_frequency_mode(Frequence);
                     //INIT_GAME_MODE_NORMAL();
@@ -891,40 +728,40 @@ void PcMain(void) {
                 }
 
                 if (CarteSonAutorisee) {
-                    //stop_all_snd();
+                    stop_all_snd();
                 }
 
                 InitModeNormalWithFrequency(VGA_FREQ);
                 sprite_clipping(0, 320, 0, 200);
-                //START_LEVEL_ANIM();
+                START_LEVEL_ANIM();
                 if (ExitMenu) {
                     //INIT_CONTINUE();
                 } else {
-                    //DO_CONTINUE();
-                    //DO_VICTOIRE();
+                    DO_CONTINUE();
+                    DO_VICTOIRE();
                 }
                 ExitMenu = 0;
             }
 
-            //DONE_MOTEUR_LEVEL();
-            //FIN_DEAD_LOOP();
+            DONE_MOTEUR_LEVEL();
+            FIN_DEAD_LOOP();
 		}
 
 
 		if (MusicCdActive) {
 			stop_cd();
 		}
-		//FIN_MAP_LOOP();
+		FIN_MAP_LOOP();
 		if (ModeDemo) {
 			fin_du_jeu = 1;
 		}
 	}
 
-	//DoEffectBloodOut();
+//	DoEffectBloodOut();
 	if (CarteSonAutorisee) {
-		//stop_all_snd();
-		//DigiMusicDone();
+		stop_all_snd();
+//		DigiMusicDone();
 	}
-	//END_GAME();
+	END_GAME();
 
 }
