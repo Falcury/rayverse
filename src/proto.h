@@ -492,7 +492,7 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename);
 void load_level(mem_t* mem_level, const char* filename);
 void load_big_ray(mem_t* buffer);
 void LOAD_ALL_FIX(void);
-void LoadPcxInVignet(mem_t* buffer, i32 resource_id, i16* width, i16* height);
+image_t LoadPcxInVignet(mem_t* buffer, i32 resource_id, i16* width, i16* height, rgb_palette_t* pal_to_save);
 void LoadPcxPaletteInVignet(i32 resource_id, rgb_palette_t* palette);
 void LoadPlan0InVignet(i32 resource_id);
 u8* allocate_PLAN0(mem_t* mem_world, i32 width, i32 height);
@@ -1018,7 +1018,7 @@ i32 get_proj_y(i32 scale, i32 par_1);
 void display2(obj_t* obj);
 bool EOA(obj_t* obj);
 void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal);
-void start_fade_in(u32 speed);
+void start_fade_in(i16 speed);
 void start_fade_out(u32 speed);
 void fade_out(u32 speed, rgb_palette_t* palette);
 void INIT_FADE_IN(void);
@@ -1043,7 +1043,7 @@ void set_proj_center(i16 x, i16 y);
 void DO_NOVA(obj_t* obj);
 
 // bray.c
-void init_loader_anim(void);
+void INIT_LOADER_ANIM(void);
 void DO_LOADER_ANIM(void);
 
 // save.c

@@ -81,7 +81,9 @@ void sub_4212C(i16 a1) {
 
 //42134
 void readinput(void) {
-    //Read_Input_Func();
+    if (Read_Input_Func) {
+        Read_Input_Func();
+    }
 }
 
 //4213C

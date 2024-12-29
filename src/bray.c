@@ -3,7 +3,7 @@
 
 
 //6B1EC
-void init_loader_anim(void) {
+void INIT_LOADER_ANIM(void) {
 	bigray.offset_bx = 200;
 	bigray.offset_by = 240;
 	bigray.screen_y = -72;

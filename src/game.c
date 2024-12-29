@@ -94,8 +94,20 @@ void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal) {
 	}
 }
 
+//3C4FC
+void clear_palette(rgb_palette_t* palette) {
+    for (i32 i = 0; i < 256*3; ++i) {
+        rvb_fade[i] = ((u8*)(palette->colors))[i];
+    }
+}
+
+//inlined
+void SetPalette(void) {
+    //stub
+}
+
 //3C54C
-void start_fade_in(u32 speed) {
+void start_fade_in(i16 speed) {
 	// apply palette par_0?
 	nb_fade = 1 << (6 - speed);
 	fade = 1; // fade in
@@ -129,24 +141,47 @@ void INIT_FADE_IN(void) {
 }
 
 //71940
-void updateLogo(i32 par_0, i32 par_1, i32 par_2) {
+void updateLogo(i32 a1, i32 a2, i32 a3) {
 	start_fade_in(2);
 	WaitNSynchro(5);
-	for (i32 i = 0; i < par_0; ++i) {
+	for (i32 i = 0; i < a1; ++i) {
 		do_fade(&fade_source_palette, global_game->draw_buffer.pal);
 		advance_frame();
 	}
 	while (is_ogg_playing) {
-		advance_frame();
+		readinput();
+        if (TOUCHE(SC_SPACE) || but0pressed() || but1pressed() || a3 == -1) {
+            break;
+        }
+        advance_frame();
 	}
 	fade_out(2, &fade_source_palette);
 	WaitNSynchro(1);
 }
 
 
+//71920
+void INIT_PC(void) {
+    init_memory(&main_mem_tmp, 0x2EE00);
+}
+
+//71934
+void FIN_PC(void) {
+    free(main_mem_tmp);
+    main_mem_tmp = NULL;
+}
+
+//71A70
+void LOAD_SCREEN(void) {
+    LoadPlan2InVignet(main_mem_tmp, 29);
+}
 
 //71B34
 void DO_UBI_LOGO(void) {
+    INIT_PC();
+    SetCompteurTrameAudio();
+    current_pal_id = 0;
+    LOAD_SCREEN();
 	image_t ubisoft_logo = load_vignet_pcx(29);
 	copy_full_image_to_draw_buffer(&ubisoft_logo);
 	fade_source_palette = *ubisoft_logo.pal;
@@ -154,6 +189,8 @@ void DO_UBI_LOGO(void) {
 	INIT_FADE_IN();
 	play_cd_track(12); // CD track 12: Intro music - "Ubisoft Presents"
     updateLogo(60, -1, 8);
+    FIN_PC();
+    stop_cd();
 }
 
 i32 XMIN = 8;
@@ -588,7 +625,7 @@ void InitModeNormalWithFrequency(u8 freq) {
 	}
 	if (ModeVideoActuel != 0) {
 		//InitModeNormal();
-		memset(DrawBufferNormal, 0, 320 * 200);
+//		memset(DrawBufferNormal, 0, 320 * 200);
 //		memset(DisplayBufferNormal, 0, 320 * 200);
 		//set_vga_frequency();
 		ModeVideoActuel = 0;
@@ -596,7 +633,7 @@ void InitModeNormalWithFrequency(u8 freq) {
 		//dword_CD114 = sub_16AFC;
 		DrawSpriteColorNormalEtX = DrawSpriteColorNormal;
 		//dword_CD11C = (int)sub_16C89;
-		draw_buffer = DrawBufferNormal;
+		draw_buffer = DrawBufferNormal->memory;
 		DrawSpriteFlipNormalEtX = DrawSpriteFlipNormal;
 		DrawSpriteNormalEtX = DrawSpriteNormal;
 //		drawflocon1NormalETX = draw_flocon1_Normal;
@@ -630,6 +667,11 @@ void SPECIAL_INIT(void) {
 
 //18420
 void PcMain(void) {
+    MakeMyRand();
+    InitMusic();
+    input_mode = 1;
+    atexit(ToDoAtExit);
+    Init_Clavier();
 	InitMemoryVariable();
 	sprite_clipping(0, 320, 0, 200);
 	WaitNSynchro(10); // added

@@ -74,7 +74,7 @@ void game_init(game_state_t* game) {
 
 }
 
-void advance_frame() {
+void advance_frame(void) {
 	app_state_t* app_state = &global_app_state;
 	game_state_t* game = &app_state->game;
 	rgb_t clear_color = { 0, 0, 0 };

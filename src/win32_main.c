@@ -113,6 +113,29 @@ LRESULT CALLBACK main_window_callback(HWND window, UINT message, WPARAM wparam, 
 	return result;
 }
 
+void win32_process_keyboard_event(u32 vk_code, bool is_down) {
+    static u8 windows_code_to_dos_scancode[256] = {
+            0, 0, 0, 0, 0, 0, 0, 0, SC_BACKSPACE, SC_TAB, 0, 0, 0, SC_ENTER, 0, 0,
+            SC_LSHIFT, SC_CONTROL, SC_ALT, 0, SC_CAPSLOCK, 0, 0, 0, 0, 0, 0, SC_ESCAPE, 0, 0, 0, 0,
+            SC_SPACE, SC_PAGEUP, SC_PAGEDOWN, SC_END, SC_HOME, SC_LEFT, SC_UP, SC_RIGHT, SC_DOWN, 0, 0, 0, 0, SC_INSERT, SC_DELETE, 0,
+            SC_0, SC_1, SC_2, SC_3, SC_4, SC_5, SC_6, SC_7, SC_8, SC_9, 0, 0, 0, 0, 0, 0,
+            SC_A, SC_B, SC_C, SC_D, SC_E, SC_F, SC_G, SC_H, SC_I, SC_J, SC_K, SC_L, SC_M, SC_N, SC_O,
+            SC_P, SC_Q, SC_R, SC_S, SC_T, SC_U, SC_V, SC_W, SC_X, SC_Y, SC_Z, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            SC_F1, SC_F2, SC_F3, SC_F4, SC_F5, SC_F6, SC_F7, SC_F8, SC_F9, SC_F10, SC_F11, SC_F12, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            SC_NUMLOCK, SC_SCROLLLOCK, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            SC_LSHIFT, SC_RSHIFT, SC_CONTROL, SC_CONTROL, SC_ALT, SC_ALT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SC_SEMICOLON, SC_PLUS, SC_COMMA, SC_MINUS, SC_PERIOD, SC_SLASH,
+            SC_TILDE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SC_LEFTBRACKET, SC_BACKSLASH, SC_RIGHTBRACKET, SC_QUOTE, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    };
+    enum dos_scancode_enum dos_scancode = windows_code_to_dos_scancode[vk_code & 0xFF];
+    Touche_Enfoncee[dos_scancode & 0x7F] = is_down;
+}
+
 void process_message(HWND window, MSG message) {
 	if (message.message == WM_QUIT) {
 		global_app_state.running = false;
@@ -137,6 +160,20 @@ void process_message(HWND window, MSG message) {
 			u32 vk_code = (u32) message.wParam;
 			u32 lparam = message.lParam;
 			u32 scancode = ((lparam >> 16) & 0x7f) | ((lparam & (1 << 24)) != 0 ? 0x80 : 0);
+            //https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input?redirectedfrom=MSDN#extended-key-flag
+            bool is_extended_key = (message.lParam & KF_EXTENDED) == KF_EXTENDED;
+            if (is_extended_key) {
+                scancode = MAKEWORD(scancode, 0xE0);
+            }
+            u32 vk_code_ext = vk_code;
+            switch(vk_code) {
+                default: break;
+                case VK_SHIFT:   // converts to VK_LSHIFT or VK_RSHIFT
+                case VK_CONTROL: // converts to VK_LCONTROL or VK_RCONTROL
+                case VK_MENU:    // converts to VK_LMENU or VK_RMENU
+                    vk_code_ext = LOWORD(MapVirtualKeyW(scancode, MAPVK_VSC_TO_VK_EX));
+                    break;
+            }
 //			u32 hid_code = keycode_windows_to_hid(scancode);
 //			if (vk_code == VK_SPACE) {
 //				hid_code = KEY_Space; // NOTE: for some reason, Space is missing from the table in keycode_windows_to_hid()
@@ -148,6 +185,8 @@ void process_message(HWND window, MSG message) {
 			i16 ctrl_state = GetKeyState(VK_CONTROL);
 			bool32 ctrl_down = (ctrl_state < 0); // 'down' determined by high order bit == sign bit
 			if (was_down && is_down) break; // uninteresting: repeated key
+
+            win32_process_keyboard_event(vk_code_ext, is_down);
 
 			switch (vk_code) {
 				default: break;
@@ -332,5 +371,9 @@ void win32_advance_frame(app_state_t* app_state) {
 	if (!app_state->running) {
 		exit(0);
 	}
+}
+
+void win32_input_func(void) {
+
 }
 

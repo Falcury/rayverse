@@ -132,8 +132,7 @@ void FinDemoJeu(void) {
 //35C64
 i16 loader_anim_prg(u32 a1) {
     readinput();
-    bool valid_button_pressed = false; //stub
-    if (valid_button_pressed) {
+    if (ValidButPressed() || StartButPressed()) {
         PROC_EXIT = 1;
     }
     horloges(1);
@@ -154,7 +153,7 @@ void START_LOADER_ANIM(void) {
     LOAD_SAVE_SCREEN(main_mem_tmp);
     INIT_FADE_IN();
     play_cd_track(19); // Menu music - "World Map"
-    init_loader_anim();
+    INIT_LOADER_ANIM();
     DrawSpriteNormalEtX = DrawSpriteNormal256;
     DrawSpriteFlipNormalEtX = DrawSpriteFlipNormal256;
     SYNCHRO_LOOP(loader_anim_prg);
@@ -212,7 +211,7 @@ void FIRST_INIT(void) {
     gele = 0;
     JoystickPresent();
     word_E0CD0 = 3; // inlined sub_4212C()
-    DrawBufferNormal = (u8*)malloc(64064);
+    DrawBufferNormal = &global_app_state.game.draw_buffer; //(u8*)malloc(64064);
     EffetBufferNormal = (u8*)malloc(128000);
     if (!DrawBufferNormal || !EffetBufferNormal) {
         fatal_error();
@@ -481,12 +480,20 @@ bool LOAD_BIG_RAYMAN(mem_t* mem) {
 
 //3715C
 bool ValidButPressed(void) {
-    return false; //stub
+    bool result = false;
+    if (nb_fade == 0) {
+        result = (joy_buttonA1 == 1 || (input_mode == 1 && (TOUCHE(SC_ENTER) || TOUCHE(SC_SPACE))));
+    }
+    return result; //stub
 }
 
 //371A4
 bool StartButPressed(void) {
-    return false; //stub
+    if (input_mode == 1) {
+        return TOUCHE(SC_ENTER);
+    } else {
+        return but1pressed();
+    }
 }
 
 //371D4
@@ -511,5 +518,14 @@ void SelectButPressed(void) {
 
 //372B8
 void ToDoAtExit(void) {
+    Reset_Clavier();
+//    set_speaker_off();
+    if (MusicCdActive) {
+        DoneMusic();
+    }
+    if (ModeVideoActuel != 255) {
+        InitTextMode();
+    }
+    printf("\nThank you for playing Rayman.\n");
     //stub
 }

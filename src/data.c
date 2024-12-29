@@ -22,7 +22,7 @@ u8* base_snd8b_data;
 i32 saved_sprite_width; //92144
 
 //9215C
-archive_header_t vignetinfos[75] = {
+archive_header_t HeaderFilevignet[75] = {
         {0, 42275, 5, 253}, // 0
         {42275, 36462, 145, 81}, // 1
         {78737, 36152, 208, 209}, // 2
@@ -1060,7 +1060,7 @@ void* DrawBufferNormalIni; //CD128
 void* drawflocon3NormalETX; //CD12C
 u8* EffetBufferNormal; //CD130
 i32 TempsDemo; //CD134
-u8* DrawBufferNormal; //CD138
+image_t* DrawBufferNormal; //CD138
 void* anim_func; //CD13C
 char* save_ray[3]; //CD794
 
@@ -1077,18 +1077,20 @@ char world_filename[20]; //CD7D8
 i32 plan2_width; //CD7EC
 i32 plan3bit_nb_bytes; //CD7F0
 u32 dword_CD7F4; //CD7F4
-i32 plan2bit_length_ptr; //CD7F8
+i32 plan2bit_length; //CD7F8
 i32 plan2bit_nb_bytes; //CD7FC
 u8* PLAN0; //CD800
-
+u8* PLAN2; //CD804
+i32 plan0bit_length; //CD808
 char level_filename[20]; //CD80C
 i32 plan3bit_length; //CD820
 u8* PLAN0BIT; //CD824
 u8* PLAN2BIT; //CD828
 u8* PLAN3BIT; //CD82C
 u8* MAP_BLOCKS; //CD830
-
+u32 PLAN1_BUFFER_START_POINTER; //CD834
 u8* PLAN1_BUFFER; //CD838
+rgb_palette_t* rvb_special; //CD83C
 
 u32 TailleMainMemLevel; //CD844
 u32 TailleMainMemSprite; //CD848
@@ -1537,7 +1539,7 @@ u8 flammes_actives; //E0C27
 u8 BBF2DEsk; //E0C28
 u8 BBF2GEsk; //E0C29
 u8 Touche_Enfoncee[128]; //E0C30
-void (*Read_Input_Func)(void); //E0CB0
+input_func_t* Read_Input_Func; //E0CB0
 void* saved_keyboard_interrupt_handler; //E0CB4
 
 i16 joy_rec_left; //E0CCE

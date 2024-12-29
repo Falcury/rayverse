@@ -415,13 +415,135 @@ void LOAD_ALL_FIX(void) {
 }
 
 //46D68
-void LoadPcxInVignet(mem_t* buffer, i32 resource_id, i16* width, i16* height) {
-    //stub
+image_t LoadPcxInVignet(mem_t* buffer, i32 resource_id, i16* width, i16* height, rgb_palette_t* pal_to_save) {
+    ASSERT(sizeof(pcx_header_t) == 128);
+    FILE* fp = open_data_file("VIGNET.DAT", true);
+    image_t image = {0};
+    if (fp) {
+        archive_header_t* info = HeaderFilevignet + resource_id;
+        fseek(fp, info->offset, 0);
+
+        u8* pcx_buf = (u8*) malloc(info->size);
+        fread(pcx_buf, info->size, 1, fp);
+        u8* p = (u8*)pcx_buf;
+        u8 checksum = info->checksum_byte;
+        for (i32 i = 0; i < info->size; ++i) {
+            u8 b = *p;
+            checksum -= b;
+            b ^= info->xor_byte;
+            *p++ = b;
+        }
+#if 0
+        FILE* test_out = fopen("test_out.pcx", "wb");
+		fwrite(pcx_buf, info->size, 1, test_out);
+		fclose(test_out);
+
+#endif
+        if (checksum != 0) {
+            fatal_error();
+        }
+
+        pcx_header_t* header = (pcx_header_t*)pcx_buf;
+        image.width = header->max_x - header->min_x + 1;
+        image.height = header->max_y - header->min_y + 1;
+        if (width) *width = (i16)image.width;
+        if (height) *height = (i16)image.height;
+
+        if (header->bits_per_bitplane != 8 || header->n_color_planes != 1 /*|| header->palette_mode != 1*/) {
+            // unsupported file structure
+            fatal_error();
+        } else {
+            i32 decompressed_byte_count = image.width * image.height;
+            image.memory = (u8*)block_malloc(buffer, decompressed_byte_count);
+            image.memory_size = decompressed_byte_count;
+            // run-length decoding
+            u8* pos = pcx_buf + 128;
+            u8* end = pcx_buf + info->size;
+            i32 i = 0;
+            while (i < decompressed_byte_count && pos < end) {
+                u8 b = *pos;
+                if (b >= 0xC0) {
+                    // upper two bits are set -> remaining bits interpreted as run length (0-63)
+                    i32 run_length = b & 0x3F;
+                    ++pos;
+                    if (i + run_length <= decompressed_byte_count && pos < end) {
+                        b = *pos;
+                        memset(image.memory + i, b, run_length);
+                    } else {
+                        fatal_error(); // RLE encoding exceeding the end of one of the buffers
+                    }
+                    ++pos;
+                    i += run_length;
+                } else {
+                    // byte interpreted as single pixel value
+                    image.memory[i] = b;
+                    ++pos;
+                    ++i;
+                }
+            }
+            if (i != decompressed_byte_count) {
+                fatal_error();
+            }
+            // Save the image palette at the end of the file
+            // NOTE: This code is not in the original - I added it to avoid a redundant call to LoadPcxPaletteInVignet
+            // in case you want to use the palette (otherwise you will need to read the file twice...)
+            if (pal_to_save) {
+                i32 pal_offset = info->size - 768;
+                image.pal = pal_to_save;
+                image.pal_needs_free = false;
+                memcpy(pal_to_save, pcx_buf + pal_offset, sizeof(rgb_palette_t));
+            }
+            image.is_valid = true;
+
+        }
+        free(pcx_buf);
+
+    } else {
+        fatal_error();
+    }
+    return image;
 }
 
 //47280
 void LoadPcxPaletteInVignet(i32 resource_id, rgb_palette_t* palette) {
-    //stub
+    ASSERT(sizeof(pcx_header_t) == 128);
+    ASSERT(palette);
+    FILE* fp = open_data_file("VIGNET.DAT", true);
+    if (fp) {
+        archive_header_t* info = HeaderFilevignet + resource_id;
+        fseek(fp, info->offset, 0);
+
+        u8* pcx_buf = (u8*) malloc(info->size);
+        fread(pcx_buf, info->size, 1, fp);
+        u8* p = (u8*)pcx_buf;
+        u8 checksum = info->checksum_byte;
+        for (i32 i = 0; i < info->size; ++i) {
+            u8 b = *p;
+            checksum -= b;
+            b ^= info->xor_byte;
+            *p++ = b;
+        }
+        if (checksum != 0) {
+            fatal_error();
+        }
+
+        pcx_header_t* header = (pcx_header_t*)pcx_buf;
+        if (header->bits_per_bitplane != 8 || header->n_color_planes != 1 /*|| header->palette_mode != 1*/) {
+            // unsupported file structure
+            fatal_error();
+        } else {
+            // Save the image palette at the end of the file
+            // NOTE: This code is not in the original - I added it to avoid a redundant call to LoadPcxPaletteInVignet
+            // in case you want to use the palette (otherwise you will need to read the file twice...)
+
+            i32 pal_offset = info->size - 768;
+            memcpy(palette, pcx_buf + pal_offset, sizeof(rgb_palette_t));
+
+        }
+        free(pcx_buf);
+    } else {
+        fatal_error();
+    }
 }
 
 //473D0
@@ -434,7 +556,7 @@ u8* allocate_PLAN0(mem_t* mem_world, i32 width, i32 height) {
     u8* buffer1;
     u8* buffer2;
     if (FondAutorise == 2) {
-        buffer1 = DrawBufferNormal;
+        buffer1 = DrawBufferNormal->memory;
         buffer2 = EffetBufferNormal;
     } else {
         buffer1 = block_malloc(mem_world, width * height);
@@ -451,6 +573,18 @@ void PLAN0FND_to_bits_planes(u8* buffer, i16 width, i16 height) {
 
 //47D3C
 void LoadPlan2InVignet(mem_t* buffer, i32 resource_id) {
+    stop_cd();
+    i16 width = 0;
+    i16 height = 0;
+    image_t image = LoadPcxInVignet(buffer, resource_id, &width, &height, &current_rvb);
+    PLAN2 = image.memory;
+    //LoadPcxPaletteInVignet(resource_id, &current_rvb); // we already loaded the palette in LoadPcxInVignet(), so we can skip this
+    rvb_pres = current_rvb;
+    plan2_width = width;
+    plan2bit_length = width * height;
+    plan2bit_nb_bytes = width >> 2;
+    PLAN2BIT = PLAN2;
+
     //stub
 }
 

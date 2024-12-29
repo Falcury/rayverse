@@ -4,7 +4,7 @@ image_t load_vignet_pcx(u32 resource_id) {
 	FILE* fp = open_data_file("VIGNET.DAT", true);
 	image_t image = {0};
 	if (fp) {
-		archive_header_t* info = vignetinfos + resource_id;
+		archive_header_t* info = HeaderFilevignet + resource_id;
 		fseek(fp, info->offset, 0);
 
 		u8* pcx_buf = (u8*) malloc(info->size);
@@ -92,7 +92,7 @@ image_t load_vignet_pcx(u32 resource_id) {
 void load_vignet_palette(u32 resource_id, rgb_palette_t* palette) {
 	FILE* fp = open_data_file("VIGNET.DAT", true);
 	if (fp) {
-		archive_header_t* info = vignetinfos + resource_id;
+		archive_header_t* info = HeaderFilevignet + resource_id;
 		i32 read_offset = info->offset + info->size - 0x300;
 		fseek(fp, read_offset, 0);
 		fread(palette, 0x300, 1, fp);
