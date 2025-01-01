@@ -1356,36 +1356,34 @@ i16 sko_rayon_x; //CF8EE
 i16 sko_rayon_y; //CF8F0
 u16 path_has_changed; //CF8F2
 u16 inter_select; //CF8F4
-
-
-
+u8 saved_argv[255]; //CF8F6
 u8 horloge[25]; //CF9F5
-u8 windows_version_major; //CFA0E
-u8 windows_version_minor; //CFA0F
+u8 HVersionWindows; //CFA0E
+u8 LVersionWindows; //CFA0F
 u8 is_master_mode; //CFA10
-u8 byte_CFA11; //CFA11
-u8 windows_version; //CFA12
+u8 DosDetect; //CFA11
+u8 WindowsLance; //CFA12
 u8 SonLimite; //CFA13
 u8 byte_CFA14; //CFA14
 u8 byte_CFA15; //CFA15
-u8 byte_CFA16; //CFA16
+u8 HVerDos; //CFA16
 u8 CarteSonAutorisee; //CFA17
 u8 ToutSpriteAutorise; //CFA18 // is background clearing needed
-u8 byte_CFA19; //CFA19
+u8 MenuCredits; //CFA19
 u8 FondAutorise; //CFA1A // background available
-u8 byte_CFA1B; //CFA1B
-u8 Mode_Pad; //CFA1C
+u8 LVerDos; //CFA1B
+u8 Mode_Pad; //CFA1C // see also CFA23?
 u8 something_with_cfg_25_default_00_joy; //CFA1D (?)
 u8 Port_Pad; //CFA1E
 u8 ScrollDiffOn; //CFA1F
 u8 P486; //CFA20
 u8 type_fnd; //CFA21
 u8 no_fnd; //CFA22
-u8 is_joypad_mode; //CFA23
+u8 is_joypad_mode; //CFA23 //? may be Mode_Pad instead
 u8 type_fndscrX; //CFA24
 u8 NumCard; //CFA25
 u8 TheProcesseur; //CFA26
-u8 byte_CFA27; //CFA27
+u8 drm_byte_CFA27; //CFA27
 u8 VideoBiosCheckSum; //CFA28
 u8 byte_CFA29; //CFA29
 u8 byte_CFA2A; //CFA2A
@@ -1502,7 +1500,7 @@ u8 RaymanDansUneMapDuJeu; //CFA98
 u8 life_becoz_wiz; //CFA99
 u8 nb_fix_eta; //CFA9A
 u8 nb_loaded_eta; //CFA9B
-u8 byte_CFA9C; //CFA9C
+u8 position_ray; //CFA9C
 i32 CompteurTrameAudio; //CFAA0
 
 i16 word_DE8BC; //DE8BC

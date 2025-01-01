@@ -186,22 +186,16 @@ void game_get_sound_samples(game_sound_buffer_t* sound_buffer) {
 	}
 }
 
-//1CEE0
-void SetCompteurTrameAudio(void) {
-	CompteurTrameAudio = 0;
-}
 
-//1D028
-void stop_cd(void) {
-	MusicCdActive = 0;
-	SetCompteurTrameAudio();
-	is_ogg_playing = false;
-}
+
+
 
 //3EA00
 void LoadBnkWorld(i16 world) {
 	//stub
 }
+
+
 
 //71C00
 void manage_snd_event(void) {

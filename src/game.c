@@ -140,58 +140,15 @@ void INIT_FADE_IN(void) {
 	start_fade_in(2);
 }
 
-//71940
-void updateLogo(i32 a1, i32 a2, i32 a3) {
-	start_fade_in(2);
-	WaitNSynchro(5);
-	for (i32 i = 0; i < a1; ++i) {
-		do_fade(&fade_source_palette, global_game->draw_buffer.pal);
-		advance_frame();
-	}
-	while (is_ogg_playing) {
-		readinput();
-        if (TOUCHE(SC_SPACE) || but0pressed() || but1pressed() || a3 == -1) {
-            break;
-        }
-        advance_frame();
-	}
-	fade_out(2, &fade_source_palette);
-	WaitNSynchro(1);
-}
 
 
-//71920
-void INIT_PC(void) {
-    init_memory(&main_mem_tmp, 0x2EE00);
-}
 
-//71934
-void FIN_PC(void) {
-    free(main_mem_tmp);
-    main_mem_tmp = NULL;
-}
 
-//71A70
-void LOAD_SCREEN(void) {
-    LoadPlan2InVignet(main_mem_tmp, 29);
-}
 
-//71B34
-void DO_UBI_LOGO(void) {
-    INIT_PC();
-    SetCompteurTrameAudio();
-    current_pal_id = 0;
-    LOAD_SCREEN();
-	image_t ubisoft_logo = load_vignet_pcx(29);
-	copy_full_image_to_draw_buffer(&ubisoft_logo);
-	fade_source_palette = *ubisoft_logo.pal;
-	destroy_image(&ubisoft_logo);
-	INIT_FADE_IN();
-	play_cd_track(12); // CD track 12: Intro music - "Ubisoft Presents"
-    updateLogo(60, -1, 8);
-    FIN_PC();
-    stop_cd();
-}
+
+
+
+
 
 i32 XMIN = 8;
 i32 XMAX = 312;
@@ -408,52 +365,6 @@ i32 get_proj_y(i32 scale, i32 par_1) {
 
 
 
-//18CE8
-void display2(obj_t* obj) {
-	anim_t* anim = obj->animations + obj->anim_index;
-	u16 layers_per_frame = anim->layers_per_frame & 0x3FFF;
-	anim_layer_t* layer = anim->layers + (obj->anim_frame * layers_per_frame);
-	for (i32 layer_index = 0; layer_index < layers_per_frame; ++layer_index) {
-		i32 proj_y = get_proj_y(obj->scale, layer->y + obj->screen_y);
-		if (layer->sprite_index != 0) {
-			sprite_t* sprite = obj->sprites + layer->sprite_index;
-			if (sprite->unk_index != 0) {
-				i32 x;
-				if (obj->flags & obj_flags_8_flipped) {
-					if (obj->scale == 256 && layer_index == 5 && obj->anim_index >= 14 && obj->anim_index <= 16) {
-						x = -16;
-					} else {
-						x = 0;
-					}
-					x += obj->offset_bx * 2 - layer->x - sprite->outer_width + obj->screen_x;
-				} else {
-					x = layer->x + obj->screen_x;
-				}
-
-				draw_func_t* draw_func = NULL;
-				if ((obj->flags & obj_flags_8_flipped) ^ layer->mirrored) {
-					draw_func = DrawSpriteFlipNormalEtX;
-				} else {
-					draw_func = DrawSpriteNormalEtX;
-				}
-
-				i32 proj_x = get_proj_x(obj->scale, x);
-				i32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
-				i32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
-				vec2b_t proj_size = {(u8)proj_width, (u8)proj_height};
-				u8 sprite_field_A = sprite->field_A >> 4;
-
-				u8* image_data = obj->img_buffer + sprite->offset_in_atlas;
-
-				draw_func(proj_x /*eax*/, sprite_field_A /*edx*/, proj_y /*ebx*/, proj_size /*ecx*/, /*edi*/ &global_game->draw_buffer, image_data /*esi*/);
-
-			}
-		}
-
-		++layer;
-	}
-
-}
 
 
 
@@ -656,14 +567,7 @@ void set_speaker_on(void) {
 	//stub
 }
 
-//6B550
-void SPECIAL_INIT(void) {
-	dark_phase = 0;
-	if (ray_on_poelle == 1) {
-		RayEvts = SauveRayEvts;
-		ray_on_poelle = 0;
-	}
-}
+
 
 //18420
 void PcMain(void) {

@@ -254,6 +254,67 @@ void DO_RAYMAN(void) {
     //stub
 }
 
+//71920
+void INIT_PC(void) {
+    init_memory(&main_mem_tmp, 0x2EE00);
+}
+
+//71934
+void FIN_PC(void) {
+    free(main_mem_tmp);
+    main_mem_tmp = NULL;
+}
+
+//71940
+void updateLogo(i32 a1, i32 a2, i32 a3) {
+    start_fade_in(2);
+    WaitNSynchro(5);
+    for (i32 i = 0; i < a1; ++i) {
+        do_fade(&fade_source_palette, global_game->draw_buffer.pal);
+        advance_frame();
+    }
+    while (is_ogg_playing) {
+        readinput();
+        if (TOUCHE(SC_SPACE) || but0pressed() || but1pressed() || a3 == -1) {
+            break;
+        }
+        advance_frame();
+    }
+    fade_out(2, &fade_source_palette);
+    WaitNSynchro(1);
+}
+
+//71A70
+void LOAD_SCREEN(void) {
+    LoadPlan2InVignet(main_mem_tmp, 29);
+}
+
+//71A84
+void sub_71A84(void) {
+    LoadPlan2InVignet(main_mem_tmp, 31);
+}
+
+//71A98
+void sub_71A98(void) {
+    //stub
+}
+
+//71B34
+void DO_UBI_LOGO(void) {
+    INIT_PC();
+    SetCompteurTrameAudio();
+    current_pal_id = 0;
+    LOAD_SCREEN();
+    image_t ubisoft_logo = load_vignet_pcx(29);
+    copy_full_image_to_draw_buffer(&ubisoft_logo);
+    fade_source_palette = *ubisoft_logo.pal;
+    destroy_image(&ubisoft_logo);
+    INIT_FADE_IN();
+    play_cd_track(12); // CD track 12: Intro music - "Ubisoft Presents"
+    updateLogo(60, -1, 8);
+    FIN_PC();
+    stop_cd();
+}
 
 
 

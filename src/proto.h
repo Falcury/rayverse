@@ -11,6 +11,69 @@ void linux_end_frame(app_state_t* app_state);
 #endif
 void message_box(const char* message);
 
+// affiche.c
+void display2(obj_t* obj);
+void display_sprite(obj_t* obj, u8 a2, i16 a3, i16 a4, u8 a5);
+void display_sprite_NoClip(obj_t* obj, u8 a2, i16 a3, i16 a4, u8 a5);
+void DISPLAY_POING(void);
+void DISPLAY_CLING(obj_t* obj);
+void display_bar_boss(obj_t* obj);
+void DisplayCrackers(void);
+void DisplayProgrammerMessage(void);
+void DISPLAY_FIXE(i32 a1);
+void DISPLAY_POINT(i16 a1, i16 a2);
+void DISPLAY_PTS_TO(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 a5);
+void DISPLAY_PTS_TO_PLAN2(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 a5);
+void DISPLAY_CYMBALE(obj_t* obj);
+void DISPLAY_ALL_OBJECTS(void);
+void display_flocons_behind(void);
+void display_flocons_before(void);
+void display_pix_gerbes(void);
+void DISPLAY_BLACKBOX(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, u8 a6);
+void display_text(const char* text, i16 a2, i16 a3, u8 a4, u8 a5);
+void display_deform_text(const char* text, i16 a2, i16 a3, u8 a4, u8 a5, i16 a6, i16 a7, i16 a8);
+void display_text_sin(const char* text, i16 a2, i16 a3, u8 a4, u8 a5, u8 a6);
+void display_box_text(void* a1);
+void CLRSCR(void);
+void display_etoile(i16 a1, i16 a2);
+void display_grp_stars(void);
+void DISPLAY_TEXT_FEE(void);
+void DISPLAY_SAVE_SPRITES(i16 a1, i16 a2);
+void DISPLAY_SAVE_POING(void);
+void DISPLAY_OPTIONS_POING(void);
+void DISPLAY_YESNO_POING(void);
+void display_time(i32 a1);
+void DISPLAY_CONTINUE_SPR(void);
+void AFFICHE_SPRITE_DEFORME(void* a1, i32 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7, i16 a8, i16 a9, i16 a10);
+void DISPLAY_DEFORMATION(obj_t* obj, i16 a2, i16 a3, i16 a4);
+void DISPLAY_DEFORM_SPRITE(void* a1, i32 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7);
+void CALCUL_DEFORMATION(i16* a1, i16* a2, i16 a3, i16 a4, i16 a5);
+
+// araignee.c
+void get_spi_zdc(obj_t* obj, i16* a2, i16* a3, i16* a4, i16* a5);
+void DO_SPIDER_PLAFOND(obj_t* obj);
+void DO_SPIDER_PLAFOND_POING_COLLISION(obj_t* obj, i16 a2);
+void SPIDER_PLAFOND_REACT(obj_t* obj);
+void DO_DARD_PLAFOND_ALWAYS(obj_t* obj);
+void DO_SPIDER_COMMAND(obj_t* obj);
+void DO_SPIDER_TIR(obj_t* obj);
+void allocateDard(obj_t* obj);
+void DoSpiderPoingCollision(obj_t* obj, i16 a2);
+void DoSpiderRaymanZDD(obj_t* obj);
+
+// audiocd.c
+void SetCompteurTrameAudio(void);
+void DoCdCredits(void);
+void start_cd_credits(void);
+void start_cd_ubi_soft(void);
+void start_cd_gros_rayman(void);
+void start_cd_perdu(void);
+void DoCdRap(void);
+void start_cd_bbdead(void);
+void start_cd_gameover(void);
+void stop_cd(void);
+void cd_playing(void);
+
 // basic.c
 void set_subetat(obj_t* obj, u8 sub_etat);
 void set_main_etat(obj_t* obj, u8 etat);
@@ -942,9 +1005,240 @@ void DO_PYRANHA(obj_t* obj);
 void DoFishPoingCollision(obj_t* obj, i16 a2);
 void DoPoissonBleuRaymanZDD(obj_t* obj);
 
+// worldmap.c
+void TEST_DISPLAY_PTS_WAY(i16 a1, i16 world_info_index, i16 xpos, i16 ypos);
+void DISPLAY_PTS_WAY(void);
+void DISPLAY_PLAT_WAY(void);
+void DO_MEDAILLONS(void);
+void INIT_LEVEL_STAGE_NAME(void);
+void INIT_WORLD_STAGE_NAME(void);
+void INIT_STAGE_NAME(void);
+void CHANGE_STAGE_NAMES(void);
+void DO_STAGE_NAMES(void);
+void INIT_WORLD_INFO(void);
+void INIT_LITTLE_RAY(void);
+void RESTORE_RAY(void);
+void INIT_CHEMIN(void);
+void RESPOND_TO_UP(void);
+void RESPOND_TO_DOWN(void);
+void RESPOND_TO_RIGHT(void);
+void RESPOND_TO_LEFT(void);
+void DO_RAYMAN_IN_WLD_MAP(void);
+void DO_CHEMIN(void);
+void INIT_PASTILLES_SAUVE(void);
+void PASTILLES_SAUVE_SAVED(void);
+void FIN_WORLD_CHOICE(void);
+void DETER_WORLD_AND_LEVEL(void);
+void INIT_NEW_GAME(void);
+void DO_NOT_SAVE_CHOICE(void);
+void INIT_SAVE_CHOICE(void);
+void INIT_SAVE_CONTINUE(void);
+void DO_COMMANDE_SAVE(void);
+void SELECTION_SAVE_OPTION(void);
+void INIT_AFFICHE_ECRAN_SAVE(void);
+void SAISIE_NOM(void);
+void REALISATION_ACTION(void);
+void DISPLAY_SYMBOLE(i16 a1, i16 a2, i16 a3, u8 a4);
+void INIT_CONTINUE(void);
+void CHEAT_MODE_CONTINUE(void);
+void MAIN_CONTINUE_PRG(void);
+void FIN_CONTINUE_PRG(void);
+void INIT_NO_MORE_CONTINUE(void);
+void MAIN_NO_MORE_CONTINUE_PRG(void);
+void INIT_VIGNET(void);
+void INIT_CREDITS(void);
+void DO_CREDITS(void);
+void INIT_ANIM_VICTOIRE(void);
+void DO_RAYMAN_WINS(void);
+void INIT_LOADER_ANIM(void);
+void DO_LOADER_ANIM(void);
+void SPECIAL_INIT(void);
+void INIT_LEVEL_ANIM(void);
+void DO_LEVEL_ANIM(void);
+void FIN_LEVEL_ANIM(void);
+
 // rand.c
 i16 myRand(i16 max);
 void MakeMyRand(void);
+
+// ray.c
+void allocateRayLandingSmoke(void);
+void recale_ray_on_liane(void);
+void calc_bhand_typ(void);
+void IS_RAY_ON_LIANE(void);
+void rayMayLandOnAnObject(u8* a1, i16 obj_id);
+void set_air_speed(u8 a1, u8 a2, i16 a3, i32 a4);
+void Reset_air_speed(u8 a1);
+void determineRayAirInertia(void);
+void ray_jump(void);
+void ray_inertia_speed(u8 a1, u8 a2, i16 a3, i16 a4);
+void RAY_SWIP(void);
+void RAY_STOP(void);
+void RAY_HELICO(void);
+void Make_Ray_Hang(i16 a1, i16 a2);
+bool AIR(i32 a1);
+bool MUR(i32 a1);
+void CAN_RAY_HANG_BLOC(void);
+void RAY_TOMBE(void);
+void RAY_RESPOND_TO_DOWN(void);
+void RAY_RESPOND_TO_UP(void);
+void RAY_RESPOND_TO_DIR(void);
+void RAY_RESPOND_TO_NOTHING(void);
+void RAY_RESPOND_TO_BUTTON3(void);
+void RAY_RESPOND_TO_FIRE0(void);
+void RAY_RESPOND_TO_FIRE1(void);
+void RAY_BALANCE_ANIM(i16 a1);
+void SET_RAY_BALANCE(void);
+void RAY_GOING_BALANCE(obj_t* obj);
+void RAY_BALANCE(void);
+void RAY_FIN_BALANCE(void);
+void RayTestBlocSH(void);
+void remoteControlRay(void);
+void STOPPE_RAY_CONTRE_PAROIS(u8 a1);
+void RAY_IN_THE_AIR(void);
+void terminateFistWhenRayDies(void);
+void snifRayIsDead(i32 a1);
+void rayfallsinwater(void);
+void RAY_DEAD(void);
+void RAY_HURT(void);
+void RepousseRay(void);
+void RayEstIlBloque(void);
+void stackRay(void);
+void RAY_SURF(void);
+void DO_SURF_CHANGE_HAIRS(void);
+void DO_PIEDS_RAYMAN(void);
+void DO_MORT_DE_RAY(void);
+void TEST_FIN_FOLLOW(void);
+void RAY_FOLLOW(void);
+void RAY_RESPOND_TO_ALL_DIRS(void);
+void DO_RAY_ON_MS(void);
+void DO_RAYMAN(void);
+
+// saxo.c
+void saxoCanAttak(void);
+void INIT_SAXO(obj_t* obj);
+void allocateNote2(obj_t* obj, i16 a2);
+void DO_EXPLOSE_NOTE2(obj_t* obj);
+void DO_NOTE_CMD(obj_t* obj);
+void Cree_Eclat_Note(obj_t* obj, obj_t* a2);
+void DO_EXPLOSE_NOTE1(obj_t* obj);
+void BonneNote(obj_t* obj);
+void DO_NOTE_TOUCHEE(obj_t* obj);
+void DO_NOTE_REBOND(obj_t* obj);
+void allocateNote(obj_t* obj);
+void PrepareAtak(obj_t* obj);
+void SAXO_TIRE(obj_t* obj);
+void DO_SAXO_COUP(obj_t* obj);
+void DO_SAXO2_COUP(obj_t* obj);
+void SetSaxoEventPos(obj_t* obj);
+void SetSaxoCollNoteBox(obj_t* obj);
+void DO_SAXO_COMMAND(obj_t* obj);
+void DO_SAXO_ATTER(obj_t* obj);
+void DO_SAXO2_COMMAND(obj_t* obj);
+void DO_SAXO2_ATTER(obj_t* obj);
+void DO_SAXO_MARCHE(obj_t* obj);
+void DO_SAXO3_COMMAND(obj_t* obj);
+void DO_SAXO3_DEBUT(obj_t* obj);
+void saxo2_get_eject_sens(obj_t* obj);
+
+// skops.c
+void swap(i32 a1, i32 a2);
+void set_rubis_list(void);
+void allocate_rayon(i16 a1, i16 a2);
+void allocate_8_petits_rayons(i16 a1, i16 a2);
+void do_sko_rayon(void);
+void do_sko_rayon2(void);
+void start_sko_rayon(i16 a1, i16 a2);
+void start_sko_rayon2(i16 a1, i16 a2);
+void lance_pince(i32 a1);
+i32 sko_get_eject_sens(void);
+void DO_SOL_ENFONCE(void);
+void DO_SKO_PHASE_0(obj_t* obj);
+void DO_SKO_PHASE_1(obj_t* obj);
+void DO_SKO_PHASE_2(obj_t* obj);
+void DO_SKO_PHASE_3(obj_t* obj);
+void DO_SKO_PINCE(obj_t* obj);
+void DO_SCORPION_COLLISION(obj_t* obj);
+void DO_SCORPION_MORT(obj_t* obj);
+void DO_SKO(obj_t* obj);
+void SKO_ray_in_zone(obj_t* obj);
+void DO_SKO_HIT(obj_t* obj);
+i16 Get_PosLave_Y(void);
+
+// special.c
+void new_level_init(void);
+void fix_numlevel(obj_t* obj);
+void allocate_splash(obj_t* obj);
+void DO_BALLE(obj_t* obj);
+void DO_TIR(obj_t* obj);
+void DO_INTERACT_PLAT(obj_t* obj);
+void oldest_planted(void);
+void DO_GROWING_PLATFORM(void);
+void allocateExplosion(obj_t* obj);
+void BombExplosion(obj_t* obj);
+void MARACAS_GO(obj_t* obj);
+void ANGLE_RAYMAN(obj_t* obj);
+void allocateNOVA(void);
+void DO_NOVA(obj_t* obj);
+void DO_NOVA2(obj_t* obj);
+void NOVA_STATUS_BAR(void);
+void DO_REDEYE_FIRE(i16 a1, i16 a2, i16 a3);
+void calc_esquive_poing(obj_t* obj, i16* a2, i16* a3, i16* a4);
+void allocate_gerbe(void);
+void start_pix_gerbe(i16 a1, i16 a2);
+void do_pix_gerbes(void);
+void START_2_PARTS_CYMBAL_ACTION(obj_t* obj);
+void ChangeLevel(void);
+void init_moustique(void);
+void DO_CORDE_CASSE(obj_t* obj);
+void DO_FUMEE_CORDE(obj_t* obj);
+i32 GetY(i16 a1);
+void allocateSupHelico(obj_t* obj);
+void allocatePaillette(obj_t* obj);
+void test_fin_cling(void);
+
+// stoneman.c
+void DO_STONEMAN_COMMAND(obj_t* obj);
+void DO_STONEDOG_COMMAND(obj_t* obj);
+void DoStoneDogPoingCollision(obj_t* obj);
+void DO_STONEBOMB_COMMAND(obj_t* obj);
+void IS_STONEWOMAN_WAIT(obj_t* obj);
+void DO_STONEWOMAN_COMMAND(obj_t* obj);
+void DO_NOMOVE_STONEWOMAN_COMMAND(obj_t* obj);
+void DO_ONE_STONECHIP_COMMAND(obj_t* obj);
+void setStoneChipPos(obj_t* obj);
+void allocateStoneChips(obj_t* obj);
+void DO_STONE_EXPLOSION(obj_t* obj);
+void allocateStonemanStone(obj_t* obj);
+void DO_STONEMAN1_TIR(obj_t* obj);
+void DO_STONEMAN2_TIR(obj_t* obj);
+void allocateStonewomanStone(obj_t* obj);
+void DO_STONEWOMAN_TIR(obj_t* obj);
+void allocateEclatPS(obj_t* obj);
+void DO_PI_EXPLOSION(obj_t* obj);
+void DoPiMusPoingCollision(obj_t* obj);
+void DoPiPoingCollision(obj_t* obj);
+void DO_PNG_COLL_STONEMAN(obj_t* obj);
+void DO_PNG_COLL_STONEWOMAN(obj_t* obj);
+void DoStoneMan1et2RaymanZDD(obj_t* obj);
+void DoStoneDogRaymanZDD(obj_t* obj);
+
+// trumpet.c
+void DO_TRP_COMMAND(obj_t* obj);
+void trompetteWind(obj_t* obj, u8 a2);
+void DO_TRP_ATTAK(obj_t* obj);
+void trompetteAtter(obj_t* obj);
+void DoTrumpetPoingCollision(obj_t* obj);
+void DoTrompetteRaymanZDD(obj_t* obj);
+
+// ufo.c
+void test_block_chdir(obj_t* obj, i16 a1, i16 a2);
+void DO_MOVING_WITH_INDICATOR_COMMAND(obj_t* obj);
+void DO_IDC_COMMAND(obj_t* obj);
+void DO_LEV_POING_COLLISION(obj_t* obj);
+void START_UFO(obj_t* obj);
+
+// The function prototypes below are from misc source files (may need some cleanup).
 
 // engine.c
 void advance_frame(void);
@@ -968,8 +1262,6 @@ void stop_cd_music(void);
 ogg_t open_cd_vorbis(i32 track_number);
 void stop_ogg(ogg_t* ogg);
 void play_ogg(game_sound_buffer_t* sound_buffer, ogg_t* ogg);
-void SetCompteurTrameAudio(void);
-void stop_cd(void);
 void LoadBnkWorld(i16 world);
 void manage_snd_event(void);
 void SetVolumeSound(i16 volume);
@@ -1006,8 +1298,6 @@ void TestCdLoop(void);
 void InitMusic(void);
 void DoneMusic(void);
 
-//ray.c
-void RAY_HURT(void);
 
 // game.c
 u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte);
@@ -1015,7 +1305,6 @@ u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte);
 i32 get_proj_dist(i32 scale, i32 outer_dim);
 i32 get_proj_x(i32 scale, i32 par_1);
 i32 get_proj_y(i32 scale, i32 par_1);
-void display2(obj_t* obj);
 bool EOA(obj_t* obj);
 void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal);
 void start_fade_in(i16 speed);
@@ -1035,16 +1324,8 @@ void InitTextMode(void);
 void select_display_buffer(u8* buffer);
 void InitModeNormalWithFrequency(u8 freq);
 void set_speaker_on(void);
-void SPECIAL_INIT(void);
 void PcMain(void);
 void set_proj_center(i16 x, i16 y);
-
-// object.c
-void DO_NOVA(obj_t* obj);
-
-// bray.c
-void INIT_LOADER_ANIM(void);
-void DO_LOADER_ANIM(void);
 
 // save.c
 void set_medaillion_saved_data(void);
@@ -1057,10 +1338,8 @@ void restoreGameState(save_state_t* save_state);
 
 // vignet.c
 image_t load_vignet_pcx(u32 resource_id);
-void load_vignet_palette(u32 resource_id, rgb_palette_t* palette);
-void load_plan2_in_vignet(void* buffer, u32 resource_id);
 
-// world_map.c
+// misc_source.c
 void SpriteFixeOffset(mem_t* mem);
 void SpriteWorldOffset(mem_t* mem);
 void SpriteFixeBlocksFree(mem_t* mem);

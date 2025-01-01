@@ -1,8 +1,5 @@
 
-// sub_7B628
-void DO_NOVA(obj_t* obj) {
-	// stub
-}
+
 
 
 typedef struct {

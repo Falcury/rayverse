@@ -88,31 +88,3 @@ image_t load_vignet_pcx(u32 resource_id) {
 
 
 
-
-void load_vignet_palette(u32 resource_id, rgb_palette_t* palette) {
-	FILE* fp = open_data_file("VIGNET.DAT", true);
-	if (fp) {
-		archive_header_t* info = HeaderFilevignet + resource_id;
-		i32 read_offset = info->offset + info->size - 0x300;
-		fseek(fp, read_offset, 0);
-		fread(palette, 0x300, 1, fp);
-		fclose(fp);
-
-		// decrypt
-		u8* palette_byte = (u8*)palette;
-		for (i32 i = 0; i < 0x300; ++i) {
-			u8 xor_byte =  info->xor_byte;
-			u8 b = *palette_byte ^ xor_byte;
-			b >>= 2; // ?
-			*palette_byte = b;
-		}
-	} else {
-		fatal_error(); // cannot open palette
-	}
-}
-
-void load_plan2_in_vignet(void* buffer, u32 resource_id)  {
-	// stub
-	//stop_cd();
-	image_t image = load_vignet_pcx(resource_id);
-}

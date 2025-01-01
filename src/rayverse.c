@@ -58,8 +58,14 @@
 #include "linux_main.c"
 #endif
 
+// Misc source files, need cleanup
 #include "render.c"
 #include "misc_source.c"
+
+// Source files in (mostly) alphabetical order, corresponding to a possible ordering of the PC version's sources
+#include "affiche.c"
+#include "araignee.c"
+#include "audiocd.c"
 #include "basic.c"
 #include "bat.c"
 #include "bbmont.c"
@@ -83,6 +89,7 @@
 #include "menu.c"
 #include "meredenis.c"
 #include "mite.c"
+#include "moskito.c"
 #include "moteur.c"
 #include "neige.c"
 #include "map.c"
@@ -92,21 +99,22 @@
 #include "pmama.c"
 #include "poing.c"
 #include "poisson.c"
+#include "worldmap.c"
 #include "rand.c"
-#include "vignet.c"
-#include "bray.c"
-#include "sound.c"
-#include "video.c"
-#include "save.c"
-#include "world_map.c"
-#include "game.c"
-#include "engine.c"
-#include "object.c"
 #include "ray.c"
-#include "moskito.c"
+#include "sound.c"
 #include "saxo.c"
+#include "save.c"
 #include "skops.c"
+#include "special.c"
 #include "stoneman.c"
 #include "trumpet.c"
 #include "ufo.c"
+
+// More misc source files, these need cleanup
+#include "vignet.c"
+#include "video.c"
+#include "game.c"
+#include "engine.c"
+#include "object.c"
 
