@@ -91,6 +91,24 @@ void stop_cd(void);
 void cd_playing(void);
 
 // basic.c
+bool EOA(obj_t* obj);
+void save_objects_flags(void);
+void restore_objects_flags(obj_t* obj);
+void snapToSprite(obj_t* obj1, obj_t* obj2, u8 a3, i16 a4, i16 a5);
+void findfirstObject(i16 a1);
+void findfirstInactiveObject(i16 a1);
+void sinYspeed(obj_t* obj, i16 a2, i16 a3, i16* a4);
+void set_proj_center(i16 x, i16 y);
+i32 get_proj_dist(i16 scale, i16 outer_dim);
+i32 get_proj_dist2(i16 a1, i16 a2);
+i32 get_proj_x(i16 scale, i16 a2);
+i32 get_proj_y(i16 scale, i16 a2);
+void set_zoom_mode(u8 a1);
+i32 inverse_proj_x(i16 a1, i16 a2);
+i32 inverse_proj_y(i16 a1, i16 a2);
+void vblToEOA(obj_t* obj, u8 a2);
+void GET_ANIM_POS(obj_t* obj, i16* a2, i16* a3, i16* a4, i16* a5);
+void add_actobj(i16 a1);
 void set_subetat(obj_t* obj, u8 sub_etat);
 void set_main_etat(obj_t* obj, u8 etat);
 void set_main_and_sub_etat(obj_t* obj, u8 etat, u8 sub_etat);
@@ -421,13 +439,13 @@ void FIRST_INIT(void);
 void init_divers_level_PC(u8* a1);
 void file_level(void);
 void world_level(i32 world, char* filename);
-void LoadPlan3InVignet(i32 a1, i32 a2);
+void LoadPlan3InVignet(mem_t* mem, i32 resource_id);
 void DISPLAY_AND_FADE_PLAN3(void);
 void LOAD_VIGNET_PC(i32 a1, i16 a2);
 void LOAD_SAVE_SCREEN(mem_t* mem);
-void LOAD_PERFTIME_SCREEN(i32 a1);
-void LOAD_PERFECT_SCREEN(i32 a1);
-void LOAD_CONTINUE_SCREEN(i32 a1);
+void LOAD_PERFTIME_SCREEN(mem_t* mem);
+void LOAD_PERFECT_SCREEN(mem_t* mem);
+void LOAD_CONTINUE_SCREEN(mem_t* mem);
 void DISPLAY_FOND_CONTINUE(void);
 void SwapPlan2PlanVignInVignet(i32 a1, i32 a2, i16 a3);
 void LOAD_VIGNET_GAME(i32 a1);
@@ -1183,7 +1201,7 @@ void DO_RAY_ON_MS(void);
 void DO_RAYMAN(void);
 void INIT_PC(void); // NOTE: maybe these need to be moved to a separate source file?
 void FIN_PC(void);
-void updateLogo(i32 a1, i32 a2, i32 a3);
+void updateLogo(i32 fade_duration, i32 a2, i32 a3);
 void LOAD_SCREEN(void);
 void sub_71A84(void);
 void sub_71A98(void);
@@ -1317,10 +1335,6 @@ void START_UFO(obj_t* obj);
 
 // engine.c
 void advance_frame(void);
-void copy_full_image_contents(image_t* dest, image_t* source);
-void copy_full_image_to_draw_buffer(image_t* image);
-void copy_full_image_to_background_buffer(image_t* image); // TODO: keep or change?
-void clrscr(void);
 void game_init_sound(game_sound_buffer_t* sound, i32 samples_per_second);
 void game_init(game_state_t* game);
 void destroy_image(image_t* image);
@@ -1375,11 +1389,6 @@ void DoneMusic(void);
 
 // game.c
 u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte);
-
-i32 get_proj_dist(i32 scale, i32 outer_dim);
-i32 get_proj_x(i32 scale, i32 par_1);
-i32 get_proj_y(i32 scale, i32 par_1);
-bool EOA(obj_t* obj);
 void DrawSpriteNormal256(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
 void DrawSpriteFlipNormal256(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
 void DrawSpriteNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
@@ -1390,7 +1399,6 @@ void set_special_key_descriptions(const char** descriptions);
 void init_bonus_perfect(void);
 void select_display_buffer(u8* buffer);
 void set_speaker_on(void);
-void set_proj_center(i16 x, i16 y);
 void sprite_clipping(i32 xmin, i32 xmax, i32 ymin, i32 ymax);
 void default_sprite_clipping(void);
 bool clip_sprite_on_screen(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** image_data);

@@ -266,11 +266,13 @@ void FIN_PC(void) {
 }
 
 //71940
-void updateLogo(i32 a1, i32 a2, i32 a3) {
+void updateLogo(i32 fade_duration, i32 a2, i32 a3) {
     start_fade_in(2);
     WaitNSynchro(5);
-    for (i32 i = 0; i < a1; ++i) {
-        do_fade(&fade_source_palette, global_game->draw_buffer.pal);
+    memcpy(DrawBufferNormal, PLAN2BIT, 320*200);
+    //DisplayBufferModeNormal(DrawBufferNormal, display_buffer, current_rvb);
+    for (i32 i = 0; i < fade_duration; ++i) {
+        do_fade(&rvb_pres, &current_rvb);
         advance_frame();
     }
     while (is_ogg_playing) {
@@ -280,7 +282,7 @@ void updateLogo(i32 a1, i32 a2, i32 a3) {
         }
         advance_frame();
     }
-    fade_out(2, &fade_source_palette);
+    fade_out(2, &rvb_pres);
     WaitNSynchro(1);
 }
 
@@ -305,10 +307,6 @@ void DO_UBI_LOGO(void) {
     SetCompteurTrameAudio();
     current_pal_id = 0;
     LOAD_SCREEN();
-    image_t ubisoft_logo = load_vignet_pcx(29);
-    copy_full_image_to_draw_buffer(&ubisoft_logo);
-    fade_source_palette = *ubisoft_logo.pal;
-    destroy_image(&ubisoft_logo);
     INIT_FADE_IN();
     play_cd_track(12); // CD track 12: Intro music - "Ubisoft Presents"
     updateLogo(60, -1, 8);

@@ -21,7 +21,8 @@ void start_cd_ubi_soft(void) {
 
 //1CF7C
 void start_cd_gros_rayman(void) {
-    //stub
+    play_cd_track(19); // Menu music - "World Map"
+    // TODO: remove this once DoCdRap() is implemented (I think that loops the menu music)
 }
 
 //1CF80

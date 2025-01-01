@@ -119,11 +119,9 @@ void sub_3C3BC(void) {
 
 //3C4FC
 void clear_palette(rgb_palette_t* palette) {
-    for (i32 i = 0; i < 256*3; ++i) {
-        rvb_fade[i] = ((u8*)(palette->colors))[i]; //TODO: fix this (should set to zero!)
-    }
+    memset(palette, 0, sizeof(rgb_palette_t));
+    memset(rvb_fade, 0, sizeof(rvb_fade));
 }
-
 
 //3C520
 void set_fade_palette(rgb_palette_t* palette) {
@@ -135,10 +133,7 @@ void start_fade_in(i16 speed) {
     // apply palette par_0?
     nb_fade = 1 << (6 - speed);
     fade = 1; // fade in
-    for (i32 i = 0; i < 256*3; ++i) {
-        rvb_fade[i] = ((u8*)(global_game->draw_buffer.pal->colors))[i];
-    }
-    memset(global_game->draw_buffer.pal, 0, sizeof(rgb_palette_t));
+    clear_palette(&current_rvb);
     fade_speed = speed;
     // apply palette
 }
@@ -186,7 +181,7 @@ void fade_out(i16 speed, rgb_palette_t* palette) {
     u16 steps = nb_fade;
     for (i32 i = 0; i < steps; ++i) {
         advance_frame();
-        do_fade(palette, global_game->draw_buffer.pal);
+        do_fade(palette, &current_rvb);
     }
     advance_frame();
 }
@@ -224,7 +219,7 @@ void INIT_FADE_OUT(void) {
 
 //3CADC
 void DO_FADE_OUT(void) {
-    //stub
+    fade_out(2, rvb + current_pal_id);
 }
 
 //3CB04
@@ -237,7 +232,7 @@ void SYNCHRO_LOOP(scene_func_t scene_func) {
     i16 scene_ended = 0;
     do {
         advance_frame();
-        do_fade(&fade_source_palette, global_game->draw_buffer.pal);
+        DO_FADE();
         u32 timer = 0;
         scene_ended = scene_func(timer);
     } while(!scene_ended);
@@ -250,12 +245,17 @@ void DISPLAY_ANYSIZE_PICTURE(void* a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i
 
 //3CCE4
 void SAVE_PALETTE(rgb_palette_t* palette) {
-    //stub
+    save_current_pal = current_pal_id;
+    rvb_save = rvb[0];
+    rvb[0] = *palette;
+    current_rvb = *palette;
+    current_pal_id = 0;
 }
 
 //3CD58
 void RESTORE_PALETTE(void) {
-    //stub
+    current_pal_id = save_current_pal;
+    rvb[0] = rvb_save;
 }
 
 //3CD88
@@ -270,7 +270,7 @@ void RESTORE_PLAN3(void) {
 
 //3CDF8
 void DISPLAY_FOND3(void) {
-    //stub
+    memcpy(DrawBufferNormal, PLAN3BIT, 320*200);
 }
 
 //3CE20

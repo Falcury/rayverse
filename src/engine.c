@@ -30,28 +30,6 @@ void destroy_image(image_t* image) {
 	}
 }
 
-void copy_full_image_contents(image_t* dest, image_t* source) {
-	ASSERT(dest->width == source->width && dest->height == source->height && dest->memory_size == source->memory_size);
-	memcpy(dest->memory, source->memory, source->memory_size);
-	*dest->pal = *source->pal; //copy full palette by value
-}
-
-void copy_full_image_to_draw_buffer(image_t* image) {
-	copy_full_image_contents(&global_game->draw_buffer, image);
-}
-
-void copy_full_image_to_background_buffer(image_t* image) {
-	copy_full_image_contents(&global_game->draw_buffer_bg, image);
-}
-
-//3CDF8
-void clrscr() {
-	image_t* dest = &global_game->draw_buffer;
-	image_t* source = &global_game->draw_buffer_bg;
-	ASSERT(dest->width == source->width && dest->height == source->height && dest->memory_size == source->memory_size);
-	memcpy(dest->memory, source->memory, source->memory_size);
-}
-
 void game_init_sound(game_sound_buffer_t* sound, i32 samples_per_second) {
 	// Prepare a sound buffer for the game code to write into.
 	sound->samples_per_second = samples_per_second;
@@ -67,7 +45,7 @@ void game_init(game_state_t* game) {
 	load_sav(1); // debug
 
 	game->draw_buffer = create_palettized_image(320, 200);
-	game->draw_buffer_bg = create_palettized_image(320, 200);
+    game->draw_palette = &current_rvb;
 
 	game->initialized = true;
 	global_game = game;
@@ -79,7 +57,7 @@ void advance_frame(void) {
 	game_state_t* game = &app_state->game;
 	rgb_t clear_color = { 0, 0, 0 };
 	render_clear(app_state->active_surface, clear_color);
-	surface_blit_palettized_image(&game->draw_buffer, NULL, app_state->active_surface, NULL);
+    surface_blit_palettized_image(&game->draw_buffer, game->draw_palette, NULL, app_state->active_surface, NULL);
 #if _WIN32
 	win32_advance_frame(app_state);
 #else

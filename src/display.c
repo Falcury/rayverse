@@ -136,8 +136,8 @@ i16 loader_anim_prg(u32 a1) {
         PROC_EXIT = 1;
     }
     horloges(1);
-//    DoCdRap();
-    clrscr();
+    DoCdRap();
+    DISPLAY_FOND3();
     display2(&bigray);
     DO_LOADER_ANIM();
     if (PROC_EXIT && nb_fade == 0) {
@@ -149,10 +149,11 @@ i16 loader_anim_prg(u32 a1) {
 
 //35CC4
 void START_LOADER_ANIM(void) {
-    load_big_ray(main_mem_tmp);
+    LOAD_BIG_RAYMAN(main_mem_tmp);
     LOAD_SAVE_SCREEN(main_mem_tmp);
+    SAVE_PALETTE(&rvb_plan3);
+    start_cd_gros_rayman();
     INIT_FADE_IN();
-    play_cd_track(19); // Menu music - "World Map"
     INIT_LOADER_ANIM();
     DrawSpriteNormalEtX = DrawSpriteNormal256;
     DrawSpriteFlipNormalEtX = DrawSpriteFlipNormal256;
@@ -163,13 +164,14 @@ void START_LOADER_ANIM(void) {
 
 //35D30
 void END_LOADER_ANIM(void) {
-    fade_out(2, &fade_source_palette);
-    //restore_palette();
+    DO_FADE_OUT();
+    RESTORE_PALETTE();
 }
 
 //35D3C
 void DO_GROS_RAYMAN(void) {
     init_memory(&main_mem_tmp, 0x41A00);
+    SetCompteurTrameAudio();
     START_LOADER_ANIM();
     free(main_mem_tmp);
     PROC_EXIT = 0;
@@ -253,8 +255,17 @@ void world_level(i32 world, char* filename) {
 }
 
 //3640C
-void LoadPlan3InVignet(i32 a1, i32 a2) {
-    //stub
+void LoadPlan3InVignet(mem_t* mem, i32 resource_id) {
+    // The original code calls LoadPlan2InVignet() after saving the plan2 related stuff into temporary variables.
+    // This seems unnecessary though, so I simplified it a bit.
+    i16 width = 0;
+    i16 height = 0;
+    image_t image = LoadPcxInVignet(mem, resource_id, &width, &height, &current_rvb);
+    //LoadPcxPaletteInVignet(resource_id, &current_rvb); // we already loaded the palette in LoadPcxInVignet(), so we can skip this
+    rvb_plan3 = current_rvb;
+    plan3bit_length = width * height;
+    plan3bit_nb_bytes = width >> 2;
+    PLAN3BIT = image.memory;
 }
 
 //364E8
@@ -269,28 +280,23 @@ void LOAD_VIGNET_PC(i32 a1, i16 a2) {
 
 //365E0
 void LOAD_SAVE_SCREEN(mem_t* mem) {
-    //LoadPlan3InVignet(a1, 12);
-    // (implementation changed a bit from the original, maybe revise later)
-    image_t background = load_vignet_pcx(12);
-    copy_full_image_to_background_buffer(&background);
-    clrscr();
-    fade_source_palette = *background.pal;
-    destroy_image(&background);
+    LoadPlan3InVignet(mem, 12);
+    DISPLAY_FOND3();
 }
 
 //365F0
-void LOAD_PERFTIME_SCREEN(i32 a1) {
-    LoadPlan3InVignet(a1, 73);
+void LOAD_PERFTIME_SCREEN(mem_t* mem) {
+    LoadPlan3InVignet(mem, 73);
 }
 
 //36600
-void LOAD_PERFECT_SCREEN(i32 a1) {
-    LoadPlan3InVignet(a1, 71);
+void LOAD_PERFECT_SCREEN(mem_t* mem) {
+    LoadPlan3InVignet(mem, 71);
 }
 
 //36610
-void LOAD_CONTINUE_SCREEN(i32 a1) {
-    LoadPlan3InVignet(a1, 11);
+void LOAD_CONTINUE_SCREEN(mem_t* mem) {
+    LoadPlan3InVignet(mem, 11);
     //stub: there is a DRM check here
 }
 

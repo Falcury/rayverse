@@ -4,7 +4,6 @@
 app_state_t global_app_state;
 game_state_t* global_game;
 
-rgb_palette_t fade_source_palette;
 
 // engine.cpp
 
@@ -1421,7 +1420,7 @@ u8 rayOnMsWasThere; //CFA49
 u8 freeze; //CFA4A (?)
 u8 need_skip_timer; //CFA4B (?)
 u8 VGA_FREQ; //CFA4C
-u8 saved_current_pal; //CFA4D
+u8 save_current_pal; //CFA4D
 u8 use_sync; //CFA4E
 u8 pos_YN; //CFA4F
 u8 MusicCdActive; //CFA50

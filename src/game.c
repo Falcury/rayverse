@@ -272,62 +272,6 @@ void DrawSpriteColorNormal(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 p
 
 
 
-//1D560
-void set_proj_center(i16 x, i16 y) {
-	PROJ_CENTER_X = x;
-	PROJ_CENTER_Y = y;
-}
-
-//1D570
-i32 get_proj_dist(i32 scale, i32 outer_dim) {
-	//NOTE: needs checking
-	if (zoom_mode == 0) {
-		return outer_dim;
-	} else {
-		i32 temp = ((256*256) / (scale + 256)) * (outer_dim);
-		return (temp / 256);
-	}
-}
-
-//1D5D8
-i32 get_proj_x(i32 scale, i32 par_1) {
-	//NOTE: needs checking
-	i32 temp = ((256*256) / (scale + 256)) * (par_1 - PROJ_CENTER_X);
-	return ((temp / 256) + PROJ_CENTER_X);
-}
-
-//1D614
-i32 get_proj_y(i32 scale, i32 par_1) {
-	//NOTE: needs checking
-	i32 temp = ((256*256) / (scale + 256)) * (par_1 - PROJ_CENTER_Y);
-	return ((temp / 256) + PROJ_CENTER_Y);
-}
-
-
-
-
-
-
-
-//1D074
-bool EOA(obj_t* obj) {
-	eta_t* eta = get_eta(obj);
-	bool on_last_frame;
-	if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
-		on_last_frame = (obj->anim_frame == 0);
-	} else {
-		anim_t* anim = obj->animations + obj->anim_index;
-		on_last_frame = (obj->anim_frame == anim->frame_count - 1);
-	}
-	if (on_last_frame && horloge[eta->anim_speed & 15] == 0) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-
-
 //38400
 i16 dummy_scene_func(u32 par_0) {
 	return 1;
