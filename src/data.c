@@ -997,7 +997,7 @@ u8 ecroule_rubis_list[8]; //CCE00
 u8 saveobj[64]; //CCE08
 eta_t** loaded_eta[100]; //CCE48
 i32 idle_ticks; //CCFD8
-char rayman_path[100]; //CCFDC
+char CheminSauvegarde[100]; //CCFDC
 u32 Port; //CD040
 u32 DeviceID; //CD044
 u32 Irq; //CD048
@@ -1060,7 +1060,7 @@ void* DrawBufferNormalIni; //CD128
 void* drawflocon3NormalETX; //CD12C
 u8* EffetBufferNormal; //CD130
 i32 TempsDemo; //CD134
-image_t* DrawBufferNormal; //CD138
+u8* DrawBufferNormal; //CD138
 void* anim_func; //CD13C
 char* save_ray[3]; //CD794
 
@@ -1359,7 +1359,7 @@ u16 inter_select; //CF8F4
 u8 saved_argv[255]; //CF8F6
 u8 horloge[25]; //CF9F5
 u8 HVersionWindows; //CFA0E
-u8 LVersionWindows; //CFA0F
+u8 NVersionWindows; //CFA0F
 u8 is_master_mode; //CFA10
 u8 DosDetect; //CFA11
 u8 WindowsLance; //CFA12

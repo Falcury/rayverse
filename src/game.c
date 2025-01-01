@@ -64,81 +64,21 @@ void do_cmd_3_4(obj_t* event) {
 
 
 
-//3C5CC
-void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal) {
-	if (nb_fade > 0) {
-		--nb_fade;
-		if (fade == 1) {
-			for (i32 i = 0; i < 256*3; ++i) {
-				u8 c1 = ((u8*)(source_pal->colors))[i];
-				u32 temp = c1 << fade_speed;
-                rvb_fade[i] += temp;
-			}
-		} else if (fade == 2) {
-			for (i32 i = 0; i < 256*3; ++i) {
-				if (rvb_fade[i] > 0) {
-					u8 c1 = ((u8*)(source_pal->colors))[i];
-					u32 temp = c1 << fade_speed;
-                    rvb_fade[i] -= temp;
-				}
-			}
-		}
-		for (i32 i = 0; i < 256*3; ++i) {
-			u16 temp = rvb_fade[i] >> 6;
-			((u8*)(dest_pal->colors))[i] = (u8)temp;
-		}
-		// (apply palette)
-		if (nb_fade == 0) {
-			fade |= 0x40;
-		}
-	}
-}
 
-//3C4FC
-void clear_palette(rgb_palette_t* palette) {
-    for (i32 i = 0; i < 256*3; ++i) {
-        rvb_fade[i] = ((u8*)(palette->colors))[i];
-    }
-}
+
 
 //inlined
 void SetPalette(void) {
     //stub
 }
 
-//3C54C
-void start_fade_in(i16 speed) {
-	// apply palette par_0?
-	nb_fade = 1 << (6 - speed);
-	fade = 1; // fade in
-	for (i32 i = 0; i < 256*3; ++i) {
-        rvb_fade[i] = ((u8*)(global_game->draw_buffer.pal->colors))[i];
-	}
-	memset(global_game->draw_buffer.pal, 0, sizeof(rgb_palette_t));
-	fade_speed = speed;
-	// apply palette
-}
 
-void start_fade_out(u32 speed) {
-	nb_fade = 1 << (6 - speed);
-	fade = 2; // fade out
-	fade_speed = speed;
-}
 
-void fade_out(u32 speed, rgb_palette_t* palette) {
-	start_fade_out(speed);
-	u16 steps = nb_fade;
-	for (i32 i = 0; i < steps; ++i) {
-		advance_frame();
-		do_fade(palette, global_game->draw_buffer.pal);
-	}
-	advance_frame();
-}
 
-//3CA8C
-void INIT_FADE_IN(void) {
-	start_fade_in(2);
-}
+
+
+
+
 
 
 
@@ -393,16 +333,7 @@ i16 dummy_scene_func(u32 par_0) {
 	return 1;
 }
 
-//3CB54
-void SYNCHRO_LOOP(scene_func_t scene_func) {
-	i16 scene_ended = 0;
-	do {
-		advance_frame();
-		do_fade(&fade_source_palette, global_game->draw_buffer.pal);
-		u32 timer = 0;
-		scene_ended = scene_func(timer);
-	} while(!scene_ended);
-}
+
 
 //75268
 bool LoadOptionsOnDisk(void) {
@@ -489,24 +420,6 @@ void set_special_key_descriptions(const char** descriptions) {
 
 
 
-
-//17F00
-void InitMemoryVariable(void) {
-	P486 = 0;
-	NormalModeAutorise = 1;
-	JumelleEffetAutorise = 1;
-	CarteSonAutorisee = 1;
-	SonLimite = 0;
-	ToutSpriteAutorise = 1;
-	FondAutorise = 1;
-	TailleMainMemTmp = 0x22000;
-	TailleMainMemWorld = 0xF4C00;
-	TailleMainMemLevel = 0x87C00;
-	TailleMainMemSprite = 0xDF400;
-	TailleMainMemFix = 0x4D800;
-}
-
-
 //23B8C
 void init_bonus_perfect(void) {
 	for (i32 i = 0; i < 24; ++i) {
@@ -515,52 +428,11 @@ void init_bonus_perfect(void) {
 }
 
 
-
-//3D9D4
-void InitTextMode(void) {
-	//textmode();
-	ModeVideoActuel = 255;
-}
-
-
 //145F1
 void select_display_buffer(u8* buffer) {
 	//stub
 }
 
-//3D9E4
-void InitModeNormalWithFrequency(u8 freq) {
-	if (ModeVideoActuel == 255) {
-		//InitFirstModeVideo();
-		//GetVideoRegister()
-	}
-	if (ModeVideoActuel != 0) {
-		//InitModeNormal();
-//		memset(DrawBufferNormal, 0, 320 * 200);
-//		memset(DisplayBufferNormal, 0, 320 * 200);
-		//set_vga_frequency();
-		ModeVideoActuel = 0;
-		//dword_CD0F4 = sub_16A18;
-		//dword_CD114 = sub_16AFC;
-		DrawSpriteColorNormalEtX = DrawSpriteColorNormal;
-		//dword_CD11C = (int)sub_16C89;
-		draw_buffer = DrawBufferNormal->memory;
-		DrawSpriteFlipNormalEtX = DrawSpriteFlipNormal;
-		DrawSpriteNormalEtX = DrawSpriteNormal;
-//		drawflocon1NormalETX = draw_flocon1_Normal;
-//		drawflocon2NormalETX = draw_flocon2_Normal;
-//		drawflocon3NormalETX = draw_flocon3_Normal;
-//		drawflocon4NormalETX = draw_flocon4_Normal;
-//		drawflocon5NormalETX = draw_flocon5_Normal;
-//		drawflocon6NormalETX = draw_flocon6_Normal;
-//		drawflocon7NormalETX = draw_flocon7_Normal;
-//		drawpluie4NormalETX = draw_pluie4_Normal;
-//		drawpluie6NormalETX = draw_pluie6_Normal;
-//		drawpluie5NormalETX = draw_pluie5_Normal;
-//		drawpluie7NormalETX = draw_pluie7_Normal;
-//		fplotNormalETX = fplot_Normal;
-	}
-}
 
 //16EAA
 void set_speaker_on(void) {
@@ -569,145 +441,3 @@ void set_speaker_on(void) {
 
 
 
-//18420
-void PcMain(void) {
-    MakeMyRand();
-    InitMusic();
-    input_mode = 1;
-    atexit(ToDoAtExit);
-    Init_Clavier();
-	InitMemoryVariable();
-	sprite_clipping(0, 320, 0, 200);
-	WaitNSynchro(10); // added
-	INIT_MOTEUR_BEGIN();
-	FIRST_INIT();
-	DO_UBI_LOGO();
-	DO_GROS_RAYMAN();
-	LOAD_CONFIG();
-	//init_cheats(); // stub
-
-	NBRE_SAVE = 3;
-
-	// let the music finish playing while the main menu is not implemented yet :(
-	while (is_ogg_playing) {
-		advance_frame();
-	}
-
-	if (MusicCdActive) {
-		stop_cd();
-	}
-
-	u8 v1 = 0;
-
-	while (!fin_de_rayman) {
-		DEPART_INIT_LOOP();
-		INIT_WORLD_INFO();
-		set_default_Bloc_clipping();
-		DO_NEW_MENUS();
-
-		if (!fin_de_rayman && !ModeDemo && Frequence == 70) {
-//			play_movie("intro.dat", 20);
-		}
-
-		if (fin_du_jeu || status_bar.lives < 0 || new_world == 0) {
-			FIN_GAME_LOOP();
-			if (ModeDemo) {
-				FinDemoJeu();
-			}
-			continue;
-		}
-
-		MakeMyRand();
-		SPECIAL_INIT();
-		default_sprite_clipping();
-		DO_WORLD_MAP();
-		sprite_clipping(0, 320, 0, 200);
-		DEPART_WORLD();
-		if (!SonLimite) {
-			LoadBnkWorld(num_world_choice);
-		}
-
-		while (!(fin_du_jeu || new_world == 0 || new_level == 0)) {
-			WaitNSynchro(5);
-//			speaker_enable();
-			DEPART_LEVEL();
-			init_divers_level_PC(&v1);
-			if ((GameModeVideo == 0 && num_world == 6 && num_level == 4) || get_casse_brique_active()) {
-				InitClipping();
-			}
-
-			INIT_MOTEUR_LEVEL(new_level);
-			init_fee();
-//			init_moustique();
-//			InitPaletteSpecialPC();
-
-            if (byte_CFA2A != 0) {
-                fade_out(2, &rvb_plan3);
-            }
-
-            while(!(fin_du_jeu || new_level == 0 || new_world == 0)) {
-                WaitNSynchro(15);
-                INIT_MOTEUR_DEAD();
-                INIT_RAY_ON_MS();
-                START_LEVEL_ANIM();
-                BackgroundOn = IsBackgroundOn();
-                if (GameModeVideo == 0) {
-                    default_sprite_clipping();
-                    //InitModeXWithFrequency(VGA_FREQ);
-                    //set_frequency_mode(Frequence);
-                    //INIT_GAME_MODE_X(xmap, ymap);
-                    if (P486 == 1) {
-                        //sub_1268A(...);
-                    }
-                    During_The_Menu = 0;
-                    //DO_MAIN_LOOP_PC_X();
-                    During_The_Menu = 1;
-                } else {
-                    InitClipping();
-                    InitModeNormalWithFrequency(VGA_FREQ);
-                    //set_frequency_mode(Frequence);
-                    //INIT_GAME_MODE_NORMAL();
-                    During_The_Menu = 0;
-                    //DO_MAIN_LOOP_PC_NORMAL();
-                    During_The_Menu = 1;
-                    //FIN_GAME_MODE_NORMAL();
-                }
-
-                if (CarteSonAutorisee) {
-                    stop_all_snd();
-                }
-
-                InitModeNormalWithFrequency(VGA_FREQ);
-                sprite_clipping(0, 320, 0, 200);
-                START_LEVEL_ANIM();
-                if (ExitMenu) {
-                    //INIT_CONTINUE();
-                } else {
-                    DO_CONTINUE();
-                    DO_VICTOIRE();
-                }
-                ExitMenu = 0;
-            }
-
-            DONE_MOTEUR_LEVEL();
-            FIN_DEAD_LOOP();
-		}
-
-
-		if (MusicCdActive) {
-			stop_cd();
-		}
-		FIN_MAP_LOOP();
-		if (ModeDemo) {
-			fin_du_jeu = 1;
-		}
-	}
-
-//	DoEffectBloodOut();
-	if (CarteSonAutorisee) {
-		stop_all_snd();
-//		DigiMusicDone();
-	}
-	END_GAME();
-
-}

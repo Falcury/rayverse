@@ -3,7 +3,7 @@
 i64 performance_counter_frequency;
 i32 monitor_refresh_hz;
 
-i64 get_clock() {
+i64 get_clock(void) {
 	LARGE_INTEGER result;
 	QueryPerformanceCounter(&result);
 	return result.QuadPart;
@@ -81,10 +81,8 @@ LRESULT CALLBACK main_window_callback(HWND window, UINT message, WPARAM wparam, 
 	default: {
 		result = DefWindowProc(window, message, wparam, lparam);
 			 } break;
-	case WM_CLOSE: {
-		global_app_state.running = false;
-	} break;
-	case WM_DESTROY: {
+	case WM_CLOSE:
+    case WM_DESTROY: {
 		global_app_state.running = false;
 	} break;
 	case WM_SETCURSOR: {
@@ -335,8 +333,7 @@ int main(int argc, char** argv) {
 	app_state->flip_clock = get_clock();
 
 	global_app_state.running = true;
-	PcMain();
-	return 0;
+	return main_Ray(argc, argv); // run the game!
 }
 
 void win32_prepare_frame(app_state_t* app_state) {

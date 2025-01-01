@@ -11,6 +11,22 @@ void linux_end_frame(app_state_t* app_state);
 #endif
 void message_box(const char* message);
 
+// pcmain.c
+void init_arg(i32 argc, char** argv);
+void PrintDosInfo(void);
+void InitMemoryVariable(void);
+void AllocVariablesAutorisee(void);
+void AfficheEntente(void);
+int main_Ray(int argc, char** argv);
+void PcMain(void);
+
+// action.c
+void setBossReachingSpeeds(obj_t* obj, u8 a2, u8 a3, u8 a4);
+void testActionEnd(obj_t* obj);
+void firstFloorBelow(obj_t* obj);
+void adjustBossScrollLocker(void);
+void setBossScrollLimits(obj_t* obj);
+
 // affiche.c
 void display2(obj_t* obj);
 void display_sprite(obj_t* obj, u8 a2, i16 a3, i16 a4, u8 a5);
@@ -458,6 +474,58 @@ void DO_FEE_ETAPE(obj_t* obj);
 void fee_gives_super_evts(void);
 void DO_FEE(obj_t* obj);
 void DoFeeRaymanZDD(obj_t* obj);
+
+// frame.c
+void display_movie_frames(void);
+i32 playVideo2(const char* path, const char* filename, i32 a3, u8 a4);
+i32 playVideo(const char* path, const char* filename, i32 a3);
+i32 playVideo_alt(const char* path, const char* filename, i32 a3);
+void SWAP_BUFFERS(void);
+void sub_3B580(void);
+void sub_3B5E8(void);
+void calc_gros_type(void);
+void find_in_map(i16 a1, i16 a2);
+void init_find_in_map(void);
+void end_find_in_map(void);
+void build_map(i16 a1, i16 a2);
+void build_line_map(void* a1, i16 a2, i16 a3, i16 a4);
+void build_column_map(void* a1, i16 a2, i16 a3, i16 a4);
+void update_map(i16 a1, i16 a2, i16 a3, i16 a4);
+void sub_3BE20(void);
+void sub_3BEE0(i16 a1, i16 a2);
+void set_vga_frequency(u8 a1);
+void GetVideoRegister(void);
+void SetVideoRegister(void);
+void sub_3C3BC(void);
+void clear_palette(rgb_palette_t* palette);
+void set_fade_palette(rgb_palette_t* palette);
+void start_fade_in(i16 speed);
+void start_fade_out(i16 speed);
+void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal);
+void fade_out(i16 speed, rgb_palette_t* palette);
+void actualize_palette(u8 new_pal_id);
+void cyclage_palette(i16 a1, i16 a2, i16 a3);
+void DO_SWAP_PALETTE(void);
+void DO_FADE(void);
+void INIT_FADE_IN(void);
+void INIT_FADE_OUT(void);
+void DO_FADE_OUT(void);
+void EFFACE_VIDEO(void);
+void SYNCHRO_LOOP(scene_func_t scene_func);
+void DISPLAY_ANYSIZE_PICTURE(void* a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7);
+void SAVE_PALETTE(rgb_palette_t* palette);
+void RESTORE_PALETTE(void);
+void SAVE_PLAN3(void);
+void RESTORE_PLAN3(void);
+void DISPLAY_FOND3(void);
+void DISPLAY_FOND_MENU(void);
+void InitPaletteSpecialPC(void);
+void DoFadePaletteSpecialPC(i16 a1, i16 a2);
+void DoPaletteSpecialPC(void);
+void InitModeXWithFrequency(void);
+void InitTextMode(void);
+void InitModeNormalWithFrequency(u8 freq);
+void WaitNSynchro(i32 n_frames);
 
 // guetteur.c
 void swapGuetteurCollZones(obj_t* obj);
@@ -1113,6 +1181,13 @@ void RAY_FOLLOW(void);
 void RAY_RESPOND_TO_ALL_DIRS(void);
 void DO_RAY_ON_MS(void);
 void DO_RAYMAN(void);
+void INIT_PC(void); // NOTE: maybe these need to be moved to a separate source file?
+void FIN_PC(void);
+void updateLogo(i32 a1, i32 a2, i32 a3);
+void LOAD_SCREEN(void);
+void sub_71A84(void);
+void sub_71A98(void);
+void DO_UBI_LOGO(void);
 
 // saxo.c
 void saxoCanAttak(void);
@@ -1242,7 +1317,6 @@ void START_UFO(obj_t* obj);
 
 // engine.c
 void advance_frame(void);
-void WaitNSynchro(i32 n_frames);
 void copy_full_image_contents(image_t* dest, image_t* source);
 void copy_full_image_to_draw_buffer(image_t* image);
 void copy_full_image_to_background_buffer(image_t* image); // TODO: keep or change?
@@ -1306,26 +1380,21 @@ i32 get_proj_dist(i32 scale, i32 outer_dim);
 i32 get_proj_x(i32 scale, i32 par_1);
 i32 get_proj_y(i32 scale, i32 par_1);
 bool EOA(obj_t* obj);
-void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal);
-void start_fade_in(i16 speed);
-void start_fade_out(u32 speed);
-void fade_out(u32 speed, rgb_palette_t* palette);
-void INIT_FADE_IN(void);
 void DrawSpriteNormal256(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
 void DrawSpriteFlipNormal256(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
 void DrawSpriteNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
 void DrawSpriteFlipNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
-void SYNCHRO_LOOP(scene_func_t scene_func);
+void DrawSpriteColorNormal(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/);
 bool LoadOptionsOnDisk(void);
 void set_special_key_descriptions(const char** descriptions);
-void InitMemoryVariable(void);
 void init_bonus_perfect(void);
-void InitTextMode(void);
 void select_display_buffer(u8* buffer);
-void InitModeNormalWithFrequency(u8 freq);
 void set_speaker_on(void);
-void PcMain(void);
 void set_proj_center(i16 x, i16 y);
+void sprite_clipping(i32 xmin, i32 xmax, i32 ymin, i32 ymax);
+void default_sprite_clipping(void);
+bool clip_sprite_on_screen(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** image_data);
+bool clip_sprite_on_screen_flipped(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** image_data);
 
 // save.c
 void set_medaillion_saved_data(void);

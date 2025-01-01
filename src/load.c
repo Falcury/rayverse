@@ -556,7 +556,7 @@ u8* allocate_PLAN0(mem_t* mem_world, i32 width, i32 height) {
     u8* buffer1;
     u8* buffer2;
     if (FondAutorise == 2) {
-        buffer1 = DrawBufferNormal->memory;
+        buffer1 = DrawBufferNormal;
         buffer2 = EffetBufferNormal;
     } else {
         buffer1 = block_malloc(mem_world, width * height);

@@ -211,7 +211,7 @@ void FIRST_INIT(void) {
     gele = 0;
     JoystickPresent();
     word_E0CD0 = 3; // inlined sub_4212C()
-    DrawBufferNormal = &global_app_state.game.draw_buffer; //(u8*)malloc(64064);
+    DrawBufferNormal = global_app_state.game.draw_buffer.memory; //(u8*)malloc(64064);
     EffetBufferNormal = (u8*)malloc(128000);
     if (!DrawBufferNormal || !EffetBufferNormal) {
         fatal_error();

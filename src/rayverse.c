@@ -63,6 +63,8 @@
 #include "misc_source.c"
 
 // Source files in (mostly) alphabetical order, corresponding to a possible ordering of the PC version's sources
+#include "pcmain.c"
+#include "action.c"
 #include "affiche.c"
 #include "araignee.c"
 #include "audiocd.c"
@@ -80,6 +82,7 @@
 #include "dark.c"
 #include "display.c"
 #include "fee.c"
+#include "frame.c"
 #include "guetteur.c"
 #include "hybrid.c"
 #include "input.c"

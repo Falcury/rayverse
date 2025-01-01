@@ -131,8 +131,7 @@ int main(int argc, char** argv) {
     app_state->flip_clock = get_clock();
 
     global_app_state.running = true;
-    PcMain();
-    return 0;
+    return main_Ray(argc, argv); // run the game!
 }
 
 void linux_prepare_frame(app_state_t* app_state) {
