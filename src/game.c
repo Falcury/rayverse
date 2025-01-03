@@ -313,7 +313,7 @@ bool LoadOptionsOnDisk(void) {
 			mem_read(notbut + i, mem, 1);
 		}
 		for (i32 i = 0; i < 7; ++i) {
-			mem_read(key_table[i], mem, 1);
+			mem_read(tab_key[i], mem, 1);
 		}
 		mem_read(&GameModeVideo, mem, 1);
 		mem_read(&P486, mem, 1);
@@ -362,14 +362,6 @@ void set_special_key_descriptions(const char** descriptions) {
 	descriptions[SC_DELETE] = language_txt[221]; // del
 }
 
-
-
-//23B8C
-void init_bonus_perfect(void) {
-	for (i32 i = 0; i < 24; ++i) {
-		bonus_perfect[i] = 0;
-	}
-}
 
 
 //145F1

@@ -233,12 +233,12 @@ void raj_env_sound(i16 volume) {
 }
 
 //71DA0
-void raj_env_audio(void) {
+void raj_env_audio(i16 enabled) {
     //nullsub
 }
 
 //71DA4
-bool ray_env_stereo(i16 stereo) {
+bool raj_env_stereo(i16 stereo) {
     return stereo != 0;
 }
 
@@ -257,7 +257,7 @@ bool InitSnd(void) {
             voice_table[i].field_0 = -2;
         }
         raj_env_sound(18);
-        return ray_env_stereo(options_jeu_is_stereo);
+        return raj_env_stereo(options_jeu_is_stereo);
     } else {
         return false;
     }

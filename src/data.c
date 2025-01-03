@@ -491,7 +491,7 @@ u8 key_down = SC_DOWN; //95E3B
 u8 key_fist = SC_ALT; //95E3C
 u8 key_jump = SC_CONTROL; //95E3D
 u8 key_action = SC_X; //95E3E
-u8* key_table[7] = {&key_left, &key_up, &key_right, &key_down, &key_jump, &key_fist, &key_action}; //95E40
+u8* tab_key[7] = {&key_left, &key_up, &key_right, &key_down, &key_jump, &key_fist, &key_action}; //95E40
 u8 tab_key_sav[7] = {SC_LEFT, SC_UP, SC_RIGHT, SC_DOWN, SC_CONTROL, SC_ALT, SC_X}; //95E5C
 u8 is_in_game = 0; //95E63
 u8 byte_95E64 = 0; //95E64
@@ -1562,7 +1562,28 @@ i32* ExpPoint; //E0D10
 i32 dword_E0D14; //E0D14
 obj_t wldobj[100]; //E0D18
 
+rgb_palette_t menu_rvb; //E43AC
+
 const char** key_descriptions; //E4CB0
+void (*pINIT_SCROLL)(void); //E4CB4
+void (*pINIT_AFFICHE_SCREEN)(void); //E4CB8
+void (*pINIT_SCREEN)(void); //E4CBC
+void (*sEND_SCREEN)(void); //E4CC0
+void (*pDO_COMMANDE)(void); //E4CC4
+void (*pAFFICHE_SCREEN)(void); //E4CC8
+void (*pEND_SCREEN)(void); //E4CCC
+void (*pLOAD_SCREEN)(void); //E4CD0
+
+i16 hFondu; //E4CE2
+i16 xFondu; //E4CE4
+i16 yFondu; //E4CE6
+i16 wFondu; //E4CE8
+i16 EtapeFondu; //E4CEA
+
+u8 InOut; //E4CFB
+u8 byte_E4CFC; //E4CFC
+u8 byte_E4CFD; //E4CFD
+u8 byte_E4CFE; //E4CFE
 
 i32 RandomIndex; //E548C
 i16 stk_obj[20]; //E5490

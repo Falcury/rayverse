@@ -97,7 +97,7 @@ void readinput_center_joystick(void) {
 }
 
 //421C0
-void sub_421C0(void) {
+void update_pad_limits(i16* xmax, i16* xmin, i16* ymax, i16* ymin, i16* xcentre, i16* ycentre) {
     //stub
 }
 

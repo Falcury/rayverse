@@ -63,6 +63,7 @@ void PcMain(void) {
     FIRST_INIT();
     DO_UBI_LOGO();
     DO_GROS_RAYMAN();
+    INIT_EXTENSIONS();
     LOAD_CONFIG();
     //init_cheats(); // stub
 

@@ -18,7 +18,7 @@ void calc_off_fnd(void) {
 void check_key_table(void) {
     bool valid = true;
     for (i32 i = 0; i < 7; ++i) {
-        u8 key = *(key_table[i]);
+        u8 key = *(tab_key[i]);
         if (key > SC_DELETE || key_descriptions_qwerty[key] == 0 || key_descriptions_azerty[key] == 0) {
             valid = false;
             break; // added
@@ -26,13 +26,13 @@ void check_key_table(void) {
     }
     if (!valid) {
         // load defaults
-        *(key_table[0]) = SC_LEFT;
-        *(key_table[1]) = SC_UP;
-        *(key_table[2]) = SC_RIGHT;
-        *(key_table[3]) = SC_DOWN;
-        *(key_table[4]) = SC_CONTROL;
-        *(key_table[5]) = SC_ALT;
-        *(key_table[6]) = SC_X;
+        *(tab_key[0]) = SC_LEFT;
+        *(tab_key[1]) = SC_UP;
+        *(tab_key[2]) = SC_RIGHT;
+        *(tab_key[3]) = SC_DOWN;
+        *(tab_key[4]) = SC_CONTROL;
+        *(tab_key[5]) = SC_ALT;
+        *(tab_key[6]) = SC_X;
     }
 }
 
@@ -128,7 +128,83 @@ void init_key2txt(void) {
 
 //49998
 void DO_NEW_MENUS(void) {
-    //stub
+    dans_la_map_monde = 0;
+    SetCompteurTrameAudio();
+    current_pal_id = 0;
+    choix_menu = 0;
+    fin_du_jeu = 0;
+    MENU_SUITE = 0;
+    MENU_RETURN = 0;
+    menuEtape = 0;
+    if (OptionMusicCdActive) {
+        MusicCdActive = options_jeu_music_enabled;
+        if (!MusicCdActive) {
+            stop_cd();
+        }
+    }
+    Keyflush(); //TODO
+    CalcTab();
+    default_key();
+    i16 NewMenusArgs = 0;
+    while (!ModeDemo && !fin_du_jeu && !NewMenusArgs) {
+        raj_env_sound(options_jeu_sound_volume);
+        raj_env_stereo(options_jeu_is_stereo);
+        raj_env_audio(options_jeu_music_enabled);
+        switch(menuEtape) {
+            default: break;
+            case 0: {
+                pINIT_SCREEN = INIT_GENERAL_CHOICE;
+                pLOAD_SCREEN = LOAD_GENERAL_SCREEN;
+                INIT_FADE_IN();
+                DO_MENU();
+            } break;
+            case 3: {
+                DO_SAVE_CHOICE();
+                if (!MENU_RETURN) {
+                    fin_du_jeu = 0;
+                    NewMenusArgs = 1;
+                    new_world = 1;
+                }
+                DO_MENU();
+            } break;
+            case 4: {
+                pINIT_SCREEN = INIT_OPTIONS_CHOICE;
+                if (pLOAD_SCREEN) {
+                    byte_E4CFD = 1;
+                    pLOAD_SCREEN = LOAD_OPTIONS_SCREEN;
+                }
+                DO_MENU();
+            } break;
+            case 7: {
+                pINIT_SCREEN = INIT_KEY_SCREEN;
+                pLOAD_SCREEN = NULL;
+                DO_MENU();
+            } break;
+            case 8: {
+                pINIT_SCREEN = INIT_PAD_SCREEN;
+                pLOAD_SCREEN = NULL;
+                DO_MENU();
+            } break;
+            case 9: {
+                pINIT_SCREEN = INIT_GRAPHIC_SCREEN;
+                pLOAD_SCREEN = NULL;
+                DO_MENU();
+            } break;
+            case 10: {
+                pINIT_SCREEN = INIT_VIDEOMODE_SCREEN;
+                pLOAD_SCREEN = NULL;
+                DO_MENU();
+            } break;
+        }
+        RESET_ALL_TOUCHE();
+        if (MENU_RETURN) {
+            menuEtape = 0;
+            MENU_RETURN = 0;
+        }
+    }
+    new_key();
+    //SaveOptionsOnDisk();
+
 }
 
 //49B7C
@@ -138,6 +214,11 @@ void DO_OPTIONS_IN_GAME(void) {
 
 //49E98
 void INIT_GENERAL_CHOICE(void) {
+    pINIT_AFFICHE_SCREEN = NULL;
+    pINIT_SCROLL = NULL;
+    pDO_COMMANDE = DO_COMMANDE_GENERAL;
+    pEND_SCREEN = END_GENERAL_SCREEN;
+    pAFFICHE_SCREEN = AFFICHE_ECRAN_GENERAL;
     //stub
 }
 
@@ -342,8 +423,56 @@ void MAIN_CALIBRATE_JOYSTICK(void) {
 }
 
 //4F17C
-void menu_prg(void) {
-    //stub
+i16 menu_prg(u32 a1) {
+    readinput();
+    DoCdRap();
+    bool pad_limits_changed = false;
+    if (Main_Control) {
+        if (joyx0 < xpadmin) {
+            xpadmin = joyx0;
+            pad_limits_changed = true;
+        } else if (joyx0 > xpadmax) {
+            xpadmax = joyx0;
+            pad_limits_changed = true;
+        }
+        if (joyy0 < ypadmin) {
+            ypadmin = joyy0;
+            pad_limits_changed = true;
+        } else if (joyy0 > ypadmax) {
+            ypadmax = joyy0;
+            pad_limits_changed = true;
+        }
+    }
+    if (pad_limits_changed) {
+        // NOTE: this is not present in the Android version.
+        update_pad_limits(&xpadmax, &xpadmin, &ypadmax, &ypadmin, &xpadcentre, &ypadcentre);
+    }
+    if (pAFFICHE_SCREEN) {
+        pAFFICHE_SCREEN();
+    }
+    if (ReInitPlasma) {
+        ReInitPlasma = 0;
+        advance_frame();
+        InitPlasma(1);
+        SWAP_BUFFERS();
+    }
+    i16 need_exit = 0;
+    if (fin_du_jeu || sortie_options || MENU_RETURN || ModeDemo) {
+        need_exit = 1;
+    }
+    if (need_exit) {
+        if (pDO_COMMANDE && nb_fade != 0) {
+            pDO_COMMANDE();
+        }
+        if (ValidButPressed() && option_exit == position) {
+            sortie_options = 1;
+            PlaySnd_old(69);
+        }
+        if (MENU_RETURN) {
+            PlaySnd_old(77);
+        }
+    }
+    return need_exit;
 }
 
 //4F2E0
@@ -353,17 +482,55 @@ void DO_INTER_MENU(void) {
 
 //4F318
 void DO_MENU(void) {
-    //stub
+    if (pINIT_SCREEN) {
+        pINIT_SCREEN();
+    }
+    if (pINIT_AFFICHE_SCREEN) {
+        pINIT_AFFICHE_SCREEN();
+    }
+    if (pLOAD_SCREEN) {
+        pLOAD_SCREEN();
+    }
+    rgb_palette_t* palette;
+    if ((num_world == world_1_jungle && num_level == 9) ||
+            (num_world == world_2_music && num_level == 4) ||
+            (num_world == world_4_image && num_level == 4) ||
+            (num_world == world_5_cave && num_level == 4)
+    ) {
+        palette = rvb_special + numero_palette_special;
+    } else {
+        palette = rvb + current_pal_id;
+    }
+    menu_rvb = *palette;
+    InitGauge(); // TODO
+    InitPlasma(0); // TODO
+    SYNCHRO_LOOP(menu_prg);
+    if (pEND_SCREEN) {
+        pEND_SCREEN();
+    }
+    menu_rvb = rvb[current_pal_id];
 }
 
 //4F488
 void default_key(void) {
-    //stub
+    check_key_table();
+    for (i32 i = 0; i < 7; ++i) {
+        tab_key_sav[i] = *(tab_key[i]);
+    }
+    *(tab_key[0]) = SC_LEFT;
+    *(tab_key[1]) = SC_UP;
+    *(tab_key[2]) = SC_RIGHT;
+    *(tab_key[3]) = SC_DOWN;
+    *(tab_key[4]) = SC_CONTROL;
+    *(tab_key[5]) = SC_ALT;
+    *(tab_key[6]) = SC_X;
 }
 
 //4F4EC
 void new_key(void) {
-    //stub
+    for (i32 i = 0; i < 7; ++i) {
+        *(tab_key[i]) = tab_key_sav[i];
+    }
 }
 
 //4F50C

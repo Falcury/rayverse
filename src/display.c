@@ -176,6 +176,7 @@ void DO_GROS_RAYMAN(void) {
     free(main_mem_tmp);
     PROC_EXIT = 0;
     LOAD_ALL_FIX();
+    END_LOADER_ANIM();
 }
 
 //35D74

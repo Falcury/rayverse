@@ -202,6 +202,35 @@ void DO_BLKTOON_COMMAND(obj_t* obj);
 void DoBlackToonPoingCollision(obj_t* obj);
 void DoBlackToonRaymanZDD(obj_t* obj);
 
+// blood.c
+void DoEffectBloodOut(void);
+
+// bonus.c
+i16 get_allowed_time(void);
+void calc_left_time(void);
+void get_bonus_map_complete(i16 a1, i16 a2);
+void set_bonus_map_complete(i16 a1, i16 a2);
+void DO_WIZ_AFTER_BONUS_MAP(void);
+void init_bonus_perfect(void);
+void do_perfect_bonus(void);
+void DO_PERFECT_BONUS_MAP(void);
+
+// box.c
+void CalcTab(void);
+void InitPlasma(u8 a1);
+void Plasma(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7, i16 a8, i16 a9, u8 a10, i16 a11, i8 a12, i16 a13);
+void PlasmaBox(i16 a1, i16 a2, i16 a3, i16 a4, u8 a5);
+void InitFire(void);
+void Fire(i16 a1, i16 a2, i16 a3, i16 a4);
+void FireBox(i16 a1, i16 a2, i16 a3, i16 a4);
+void InitMenuPalette(void);
+void CaptureVideo(u8* a1, u8 a2);
+void CadreTrans(i16 a1, i16 a2, i16 a3, i16 a4);
+void DrawBlackBorderBox(i16 a1, i16 a2, i16 a3, i16 a4, u8 a5);
+void InitGauge(void);
+void gauge(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7);
+void ClearBorder(i16 a1, i16 a2, i16 a3, i16 a4);
+
 // blocs.c
 void MURDUR(i16 a1, i16 a2);
 void dist_to_bloc_floor(i16 a1, i16 a2, i16 a3);
@@ -603,7 +632,7 @@ void sub_4212C(i16 a1);
 void readinput(void);
 void readinput_calibrate_joystick(void);
 void readinput_center_joystick(void);
-void sub_421C0(void);
+void update_pad_limits(i16* xmax, i16* xmin, i16* ymax, i16* ymin, i16* xcentre, i16* ycentre);
 void sub_4225C(void);
 void read_record(const char* filename);
 void load_record(void);
@@ -716,7 +745,7 @@ void calibrate_joystick_prg(void);
 void AFFICHE_CENTER_JOYSTICK(void);
 void center_joystick_prg(void);
 void MAIN_CALIBRATE_JOYSTICK(void);
-void menu_prg(void);
+i16 menu_prg(u32 a1);
 void DO_INTER_MENU(void);
 void DO_MENU(void);
 void default_key(void);
@@ -1358,8 +1387,8 @@ void stop_ray_snd(void);
 u8 get_pan_snd(obj_t* obj);
 i32 get_vol_snd(obj_t* obj);
 void raj_env_sound(i16 volume);
-void raj_env_audio(void);
-bool ray_env_stereo(i16 stereo);
+void raj_env_audio(i16 enabled);
+bool raj_env_stereo(i16 stereo);
 bool InitSnd(void);
 i16 last_snd(i32 obj_id);
 i32 get_pile_obj(i32 a1);
