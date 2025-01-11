@@ -69,5 +69,4 @@ void surface_blit_palettized_image(image_t* source, rgb_palette_t* palette, rect
 		target_row += target->pitch;
 	}
 
-
 }

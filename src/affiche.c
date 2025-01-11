@@ -130,28 +130,83 @@ void display_pix_gerbes(void) {
 }
 
 //1A1C4
-void DISPLAY_BLACKBOX(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, u8 a6) {
+void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, i8 color) {
+    i32 clip_height = height;
+    i32 clip_width = width;
+    i32 clip_x = x;
+    i32 clip_y = x;
+    if (x < 0) {
+        clip_x = 0;
+        clip_width = x + width;
+    } else if (x > 320) {
+        clip_x = 320;
+    }
+    if (clip_width + clip_x > 320) {
+        clip_width = 320 - clip_x;
+    }
+    if (y < 0) {
+        clip_y = 0;
+        clip_height = y + height;
+    } else if (y > 200) {
+        clip_y = 200;
+    }
+    if (clip_height + clip_y > 200) {
+        clip_height = 200 - clip_y;
+    }
+
+    if (clip_width > 0 && clip_height > 0) {
+        if (font_size == -1) {
+            if (ModeVideoActuel == 1) {
+                //stub
+            } else {
+                if (color == 0) {
+                    DrawBlackBoxNormal(draw_buffer, clip_x, clip_y, clip_height, clip_width);
+                } else {
+                    DrawFondBoxNormal(draw_buffer, clip_x, clip_y, clip_height, clip_width);
+                }
+            }
+        }
+    }
+
     //stub
 }
 
 //1A3F0
-void display_text(const char* text, i16 x, i16 y, u8 font_size, u8 color) {
+void display_text(const char* text, i16 x, i16 y, u8 font_size, i8 color) {
     //stub
 }
 
 //1A68C
-void display_deform_text(const char* text, i16 x, i16 y, u8 font_size, u8 color, i16 a6, i16 a7, i16 a8) {
+void display_deform_text(const char* text, i16 x, i16 y, u8 font_size, i8 color, i16 a6, i16 a7, i16 a8) {
     //stub
 }
 
 //1A8DC
-void display_text_sin(const char* text, i16 x, i16 y, u8 font_size, u8 color, u8 a6) {
+void display_text_sin(const char* text, i16 x, i16 y, u8 font_size, i8 color, u8 a6) {
     //stub
 }
 
 //1ABE0
-void display_box_text(void* a1) {
-    //stub
+void display_box_text(display_item_t* box) {
+    i16 blackbox_x = (i16)(box->centered_x_pos - 3);
+    i16 blackbox_y = (i16)(box->centered_y_pos - 3);
+    i16 blackbox_width = (i16)(box->width + 6);
+    i16 blackbox_height = (i16)(box->height + 6);
+    if (box->field_D5) {
+        DISPLAY_BLACKBOX(blackbox_x, blackbox_y, blackbox_width, blackbox_height, -1, box->color);
+        if (box->is_fond == 1) {
+            display_text(box->text, box->xpos - 1, box->ypos - 1, box->font_size, box->color);
+        } else if (box->is_fond == 2) {
+            display_text(box->text, box->xpos + 1, box->ypos + 1, box->font_size, box->color);
+        } else {
+            display_text(box->text, box->xpos, box->ypos, box->font_size, box->color);
+        }
+    } else {
+        if (box->is_fond != 0) {
+            DISPLAY_BLACKBOX(blackbox_x, blackbox_y, blackbox_width, blackbox_height, -2, box->color);
+        }
+        display_text(box->text, box->xpos, box->ypos, box->font_size, box->color);
+    }
 }
 
 //1AD00

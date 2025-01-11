@@ -76,3 +76,18 @@ void DRAW_MAP(void* a1, void* a2) {
     //stub
 }
 
+//5D5B0
+void INIT_GAME_MODE_NORMAL(void) {
+    sprite_clipping(Bloc_lim_W1, Bloc_lim_W2, Bloc_lim_H1, Bloc_lim_H2);
+    DrawBufferNormalIni = DrawBufferNormal;
+    DrawBufferNormal += 4; //?
+//    Copy_Plan0_To_Buf = (void*)&Copy_Plan0Diff_To_Buf; // TODO
+    init_build_map(BIG_MAP);
+    N_CLRSCR(DrawBufferNormal);
+}
+
+//5D620
+void FIN_GAME_MODE_NORMAL(void) {
+    DrawBufferNormal = DrawBufferNormalIni;
+    draw_buffer = DrawBufferNormalIni;
+}

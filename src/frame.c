@@ -315,13 +315,13 @@ void DoPaletteSpecialPC(void) {
 }
 
 //3D8AC
-void InitModeXWithFrequency(void) {
+void InitModeXWithFrequency(u8 freq) {
     //stub
 }
 
 //3D9D4
 void InitTextMode(void) {
-    //textmode();
+    textmode();
     ModeVideoActuel = 255;
 }
 

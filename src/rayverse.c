@@ -59,10 +59,12 @@
 #endif
 
 // Misc source files, need cleanup
+#include "engine.c"
 #include "render.c"
 #include "misc_source.c"
 
 // Source files in (mostly) alphabetical order, corresponding to a possible ordering of the PC version's sources
+#include "lowlevel.c"
 #include "pcmain.c"
 #include "action.c"
 #include "affiche.c"
@@ -87,6 +89,7 @@
 #include "fee.c"
 #include "frame.c"
 #include "guetteur.c"
+#include "hifi.c"
 #include "hybrid.c"
 #include "input.c"
 #include "jumelle.c"
@@ -116,11 +119,3 @@
 #include "stoneman.c"
 #include "trumpet.c"
 #include "ufo.c"
-
-// More misc source files, these need cleanup
-#include "vignet.c"
-#include "video.c"
-#include "game.c"
-#include "engine.c"
-#include "object.c"
-

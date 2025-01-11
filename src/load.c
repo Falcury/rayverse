@@ -616,26 +616,16 @@ char* GetStringTxt(char* txt, char* out_buf) {
 }
 
 
-//924E0
-archive_header_t language_infos[] = {
-        {0, 4234, 48, 180},      // English
-        {4234, 4713, 130, 161},  // French
-        {8947, 4903, 207, 92},   // German
-        {13850, 2511, 208, 192}, // Japanese
-        {16361, 2366, 149, 20},  // Chinese
-};
-
-char* language_buffer; //TODO: allocate to main_mem_fix
-
+char* language_buffer;
 
 //47E10
-void LoadLanguageTxt(i32 language_index) {
-    mem_t* mem = read_entire_file("RAY.LNG", true);
-    if (mem) {
+void LoadLanguageTxt(mem_t* mem, i32 language_index) {
+    mem_t* lng_file = read_entire_file("RAY.LNG", true);
+    if (lng_file) {
         archive_header_t* lng_archive_header = &language_infos[language_index]; // is language_index used here?
-        language_buffer = (char*) malloc(lng_archive_header->size);
-        mem->cursor = lng_archive_header->offset;
-        i32 bytes_read = mem_read(language_buffer, mem, lng_archive_header->size);
+        language_buffer = (char*) block_malloc(mem, lng_archive_header->size);
+        lng_file->cursor = lng_archive_header->offset;
+        i32 bytes_read = mem_read(language_buffer, lng_file, lng_archive_header->size);
         if (bytes_read != lng_archive_header->size) {
             // error
             exit(1);

@@ -474,8 +474,17 @@ typedef struct display_item_t {
     u8 font_size;
     u8 field_D5;
     u8 is_fond;
-    u8 color;
+    i8 color;
 } display_item_t;
+
+
+typedef struct {
+    void (*command)(obj_t* obj);
+    void (*poing_collision)(obj_t* obj, i16 unk);
+    void (*rayman_collision)(obj_t* obj);
+    void (*rayman_in_zone)(obj_t* obj);
+    void (*u_turn)(obj_t* obj);
+} obj_procs_t;
 
 
 enum obj_type_enum {
@@ -1092,7 +1101,7 @@ enum dos_scancode_enum {
 	SC_F12          = 0x58,
 };
 
-typedef void (draw_func_t)(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
+typedef void (draw_func_t)(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
 typedef i16 (scene_func_t)(u32 a1);
 typedef i32 (calcbloc_func_t)(i32 a1, i32 a2);
 typedef void (void_func_t)(void);

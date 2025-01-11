@@ -1,5 +1,5 @@
 
-// Note: MSVC 6 doesn't support __VA_ARGS__
+// Global data
 
 app_state_t global_app_state;
 game_state_t* global_game;
@@ -11,9 +11,8 @@ ogg_t ogg_cd_track;
 bool is_ogg_playing;
 bool is_ogg_finished;
 
-// sound
-u8 base_snd8b_headers[0x800];
-u8* base_snd8b_data;
+
+
 
 
 // Data sorted by offset
@@ -97,6 +96,15 @@ archive_header_t HeaderFilevignet[75] = {
         {2927732, 19114, 33, 36}, // 72
         {2946846, 47407, 97, 52}, // 73
         {2994253, 14885, 77, 155}, // 74
+};
+
+//924E0
+archive_header_t language_infos[] = {
+        {0, 4234, 48, 180},      // English
+        {4234, 4713, 130, 161},  // French
+        {8947, 4903, 207, 92},   // German
+        {13850, 2511, 208, 192}, // Japanese
+        {16361, 2366, 149, 20},  // Chinese
 };
 
 i16 nb_des = 0; //9251C
@@ -340,6 +348,43 @@ zdc_t zdc_tab[200] = {
         {16, -24, 2, 81, 3, 0}, // 184
 };
 
+
+//935FC
+obj_procs_t ObjectsFonctions[] = {
+        {DO_ONE_CMD,                 DoBadGuy1PoingCollision,    DoRaymanCollisionDefault,    DoBadGuy1RaymanZDD,       ObjectUTurnDefault}, // 0: livingstone
+        {DO_ONE_CMD,                 DoPlatformPoingCollision,   DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 1: platform
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoPowerupRaymanCollision, ObjectUTurnDefault}, // 2: energy point
+        {DO_ONE_PINK_CMD,            DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoLidolPinkRaymanZDD,     ObjectUTurnDefault}, // 3: electoon
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 4: scenery
+        {TEST_WIZARD,                DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 5: magician
+        {DO_ONE_CMD,                 DoFallingObjPoingCollision, DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 6: yin with pin
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 7: swinging spiky fruit
+        {DO_ONE_CMD,                 DoFallingObjPoingCollision, DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 8: plum 1
+        {DO_ONE_CMD,                 DoBadGuy23PoingCollision,   DoRaymanCollisionDefault,    DoBadGuy23RaymanZDD,      ObjectUTurnDefault}, // 9: small livingstone
+        {DO_PYRANHA,                 DoFishPoingCollision,       DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 10: piranha
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 11: hit effect
+        {DO_ONE_CMD,                 DoChasseurPoingCollision,   DoRaymanCollisionDefault,    DoChasseurRaymanZDD,      ObjectUTurnDefault}, // 12: hunter 1
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 13: hunter bullet
+        {DO_ONE_CMD,                 DoChasseurPoingCollision,   DoRaymanCollisionDefault,    DoChasseurRaymanZDD,      ObjectUTurnDefault}, // 14: hunter 2
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 15:
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 16: falling platform
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 17: rising platform
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 18:
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 19: splash
+        {DO_TEN_COMMAND,             DoGeneBadGuyPoingCollision, DoRaymanCollisionDefault,    DoGeneBadGuyRaymanZDD,    ObjectUTurnDefault}, // 20: tentacle
+        {DO_PHOTOGRAPHE_CMD,         DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 21: photographer
+        {DO_MOVING_PLATFORM_COMMAND, DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 22: moving platform
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 23: rayman
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 24:
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 25: ejecting platform
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 26: disappearing cloud
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 27: trampoline cloud
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 28: blinking cloud
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 29:
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoAudioStartRaymanCollision, DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 30: audio start
+        {DO_ONE_CMD,                 DoPoingCollisionDefault,    DoRaymanCollisionDefault,    DoRaymanInZDDDefault,     ObjectUTurnDefault}, // 31:
+};
+
 u8 nb_levels_in_world[8] = {0, 22, 18, 13, 13, 12, 4, 0}; //94A74
 i16 pente[16] = {0, 3, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 42, 45}; //94A7C
 
@@ -556,6 +601,9 @@ archive_header_t sndvig_infos[9] = {
         {679088, 25472, 71, 84},
         {704560, 68350, 135, 79},
 };
+
+u8* bnkDataFixe; //966B0
+u8* bnkDataWorld; //966B4 // original name: sound_buffer
 
 //966B8
 u16 snd8b_offsets[128] = {
@@ -980,6 +1028,8 @@ i16 was_in_freeze = 0; //97F76
 u8 flagCDPlay; //97F78
 u8 phaseCd; //97F79
 
+u8 BIG_MAP[32]; //C21D8
+i32 Scroll_Masque[20]; //C21F8
 i32 VitesseYStageNameLevel[30]; //C2248
 i32 VitesseXStageNameWorld[30]; //C22C0
 i32 VitesseXStageNameLevel[30]; //C2338
@@ -1040,11 +1090,11 @@ u8 saveobj[64]; //CCE08
 eta_t** loaded_eta[100]; //CCE48
 i32 idle_ticks; //CCFD8
 char CheminSauvegarde[100]; //CCFDC
-u32 Port; //CD040
-u32 DeviceID; //CD044
-u32 Irq; //CD048
-u32 Param; //CD04C
-u32 Dma; //CD050
+i32 Port; //CD040
+i32 DeviceID; //CD044
+i32 Irq; //CD048
+i32 Param; //CD04C
+i32 Dma; //CD050
 u32 nb_blocks_plein; //CD054
 u32 nb_total_blocks; //CD058
 u32 RaymanExeSize; //CD05C
@@ -1550,6 +1600,21 @@ rgb_palette_t MenuPalette; //DE43C
 i16 word_DE8BC; //DE8BC
 u8 byte_DEEFB; //DEEFB
 
+u8 bnkHeaderFixe[0x800]; //DFAF0
+u8 bnkHeaderWorld[0x800]; //E02F0
+i32 current_port; //E0AF0
+i32 current_irq; //E0AF4
+i32 current_dma; //E0AF8
+i32 current_param; //E0AFC
+i32 dword_E0B00; //E0B00
+i32 dword_E0B04; //E0B04
+char current_device_name[100]; //E0B0A
+i32 current_device_id; //E0B6E
+
+obj_t* dark_obj; //E0B84
+char txt_dark2[100]; //E0B88
+u32 dword_E0BEC; //E0BEC
+u32 dword_E0BF0; //E0BF0
 i16 PosArYToon2; //E0BF4
 i16 PosArXToon2; //E0BF6
 i16 PosArYToon1; //E0BF8

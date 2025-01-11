@@ -11,7 +11,92 @@ void linux_end_frame(app_state_t* app_state);
 #endif
 void message_box(const char* message);
 
+// lowlevel.c
+void select_display_buffer(u8* buffer);
+void InitFirstModeVideo(void);
+void InitModeNormal(void);
+void InitModeX(void);
+void block_clear(u8* source, u8* dest);
+void block_copy(u8* source, u8* dest);
+void textmode(void);
+void draw_sprite_deform(void);
+void DisplayBufferModeNormal(u8* source, u8* dest);
+void DrawWldPointPlan2Normal(void* a1, i32 a2, i32 a3, u8* buffer);
+void DrawBlackBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width);
+void DrawFondBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width);
+void DrawBorderBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width, i32 a6);
+void DisplayAnyPictureNormal(u8* source_buffer, u8* dest_buffer, i32 a3, i32 a4, i32 a5, i32 a6, i32 a7, i32 a8, i32 a9);
+void ClearDrawAndDisplayBufferNormal(u8* draw_buf, u8* display_buf);
+void N_CLRSCR(u8* buffer);
+void Swap_To_Screen(u8* draw_buf, u8* display_buf, i32 height, i32 width);
+void clear_borders_Normal(u8* buffer, i32 height, i32 width);
+void Copy_Plan0Diff_To_Buf(u8* a1, u8* a2, i32 a3, i32 a4);
+void Display_Bloc(void* a1, void* a2);
+void Display_Bloc_Plein(void* a1, void* a2);
+void Clip(void);
+void Display_Bloc_Clippe(void* a1, void* a2, i16 a3, i16 a4);
+void Display_Bloc_Plein_Clippe(void* a1, void* a2, i16 a3, i16 a4);
+void fplot_Normal(u8* buffer, i32 a2, i32 a3, u8 a4);
+void flocon_clipping(i32 h1, i32 h2, i32 w1, i32 w2);
+void draw_flocon5_Normal(void);
+void draw_flocon1_Normal(void);
+void draw_flocon2_Normal(void);
+void draw_flocon3_Normal(void);
+void draw_pluie4_Normal(void);
+void draw_flocon4_Normal(void);
+void draw_pluie5_Normal(void);
+void draw_flocon7_Normal(void);
+void draw_pluie6_Normal(void);
+void draw_flocon6_Normal(void);
+void draw_pluie7_Normal(void);
+void get_joy_input2_dos1(void); // ?
+void get_joy_input2_dos2(void); // ?
+void get_joy_input2_windows1(void);
+void get_joy_input2_windows2(void);
+void dos_game_io_port_something(void);
+void dos_game_io_port_something2(void);
+void get_joy_input1_dos1(void);
+void get_joy_input1_dos2(void);
+void DetectCpu(void);
+void default_sprite_clipping(void);
+void get_sprite_clipping(i32* xmin, i32* xmax, i32* ymin, i32* ymax);
+i32 get_sprite_clipping_xmin(void);
+i32 get_sprite_clipping_xmax(void);
+i32 get_sprite_clipping_ymin(void);
+i32 get_sprite_clipping_ymax(void);
+void sprite_clipping(i32 xmin, i32 xmax, i32 ymin, i32 ymax);
+bool clip_sprite_on_screen(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** image_data);
+bool clip_sprite_on_screen_flipped(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** image_data);
+void DrawSpriteFlipNoClipX(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void DrawSpriteX(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void DrawSpriteNoClipX(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void DrawSpriteFlipX(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void DrawSpriteColorX(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void DrawSpriteColorFlipX(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void DrawSpriteFlipNormalNoClip(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void DrawSpriteNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void DrawSpriteNormal256(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buf /*edi*/, u8* image_data /*esi*/);
+void DrawSpriteNormalNoClip(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void DrawSpriteFlipNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void DrawSpriteFlipNormal256(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buf /*edi*/, u8* image_data /*esi*/);
+void DrawSpriteColorNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void DrawSpriteColorFlipNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void DrawSpriteDiffNormal_clip(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void DrawSpriteDiffNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data);
+void synchro(void);
+void endsynchro(void);
+void set_speaker_on(void);
+void set_speaker_off(void);
+void clock_ticks(void);
+void wait_until(void);
+void speaker_enable(void);
+
 // pcmain.c
+void InitData(void);
+void DO_GROS_MOTEUR_NORMAL(void);
+void DO_MAIN_LOOP_PC_NORMAL(void);
+void DO_GROS_MOTEUR_X(void);
+void DO_MAIN_LOOP_PC_X(void);
 void init_arg(i32 argc, char** argv);
 void PrintDosInfo(void);
 void InitMemoryVariable(void);
@@ -45,11 +130,11 @@ void DISPLAY_ALL_OBJECTS(void);
 void display_flocons_behind(void);
 void display_flocons_before(void);
 void display_pix_gerbes(void);
-void DISPLAY_BLACKBOX(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, u8 a6);
-void display_text(const char* text, i16 x, i16 y, u8 font_size, u8 color);
-void display_deform_text(const char* text, i16 x, i16 y, u8 font_size, u8 color, i16 a6, i16 a7, i16 a8);
-void display_text_sin(const char* text, i16 x, i16 y, u8 font_size, u8 color, u8 a6);
-void display_box_text(void* a1);
+void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, i8 color);
+void display_text(const char* text, i16 x, i16 y, u8 font_size, i8 color);
+void display_deform_text(const char* text, i16 x, i16 y, u8 font_size, i8 color, i16 a6, i16 a7, i16 a8);
+void display_text_sin(const char* text, i16 x, i16 y, u8 font_size, i8 color, u8 a6);
+void display_box_text(display_item_t* box);
 void CLRSCR(void);
 void display_etoile(i16 a1, i16 a2);
 void display_grp_stars(void);
@@ -569,7 +654,7 @@ void DISPLAY_FOND_MENU(void);
 void InitPaletteSpecialPC(void);
 void DoFadePaletteSpecialPC(i16 a1, i16 a2);
 void DoPaletteSpecialPC(void);
-void InitModeXWithFrequency(void);
+void InitModeXWithFrequency(u8 freq);
 void InitTextMode(void);
 void InitModeNormalWithFrequency(u8 freq);
 void WaitNSynchro(i32 n_frames);
@@ -584,6 +669,36 @@ void DO_PAR_TIR(obj_t* obj);
 void DO_PAR_POING_COLLISION(obj_t* obj);
 void PAR_REACT_TO_RAY_IN_ZONE(obj_t* obj);
 void DO_PAR_BOMB_COMMAND(obj_t* obj);
+
+// hifi.c
+void sub_3E66C(void);
+void sub_3E6B0(void);
+void rayman_sound_fatal_error(const char* message);
+void sub_3E710(void);
+void sub_3E780(void);
+void LoadBnkFile(i32 sound_set, i32 a2, u8* headers, u8* data);
+void LoadBnkFile_debug(i32 sound_set, i32 a2, u8** sound_buffer);
+void LoadBnkFixe(void);
+void LoadBnkWorld(i16 world);
+void KeyOn(u8 bank, u8 prog, u8 tone, u8 note, u8 volume, u8 a6);
+void KeyOff(u32 a1, u8 bank, u8 prog, u8 tone, u8 note);
+void KeyVol(u32 a1, u32 a2, u32 a3, i16 a4);
+void DigiMusicDone(void);
+void LoadTchatchPerdu(void);
+void PlayTchatch(void);
+void FreeTchatchVignette(void);
+void SetPort(i32 port);
+void SetIrq(i32 irq);
+void SetDma(i32 dma);
+void SetParam(i32 param);
+void SetDeviceID(i32 device_id);
+char* GetDeviceName(void);
+i32 GetPort(void);
+i32 GetIrq(void);
+i32 GetDma(void);
+i32 GetParam(void);
+i32 GetDeviceID_Ray(void);
+void FreeDetectDriver(void);
 
 // hybrid.c
 void allocateSTOSKO(void);
@@ -677,7 +792,7 @@ u8* allocate_PLAN0(mem_t* mem_world, i32 width, i32 height);
 void PLAN0FND_to_bits_planes(u8* buffer, i16 width, i16 height);
 void LoadPlan2InVignet(mem_t* buffer, i32 resource_id);
 char* GetStringTxt(char* txt, char* out_buf);
-void LoadLanguageTxt(i32 language_index);
+void LoadLanguageTxt(mem_t* mem, i32 language_index);
 void LoadPcxOptions(u8* buffer, i32 resource_id, i16* width, i16* height, rgb_palette_t* pal_to_save);
 
 // luciole.c
@@ -927,6 +1042,8 @@ void recaleRaysurlesBords(void);
 void set_xywhmap(i16 a1, i16 a2, i16 a3, i16 a4);
 void MaskScrollDiffSprites(mem_t* buffer);
 void DRAW_MAP(void* a1, void* a2);
+void INIT_GAME_MODE_NORMAL(void);
+void FIN_GAME_MODE_NORMAL(void);
 
 // ngawe.c
 void ngaweFollowsShip(obj_t* obj);
@@ -1372,14 +1489,12 @@ void destroy_image(image_t* image);
 i64 get_clock(void);
 float get_seconds_elapsed(i64 start, i64 end);
 // sound.c
-void LoadBnkFile(u8** sound_buffer, i32 sound_set);
 void game_get_sound_samples(game_sound_buffer_t* sound_buffer);
 void play_cd_track(i32 track_number);
 void stop_cd_music(void);
 ogg_t open_cd_vorbis(i32 track_number);
 void stop_ogg(ogg_t* ogg);
 void play_ogg(game_sound_buffer_t* sound_buffer, ogg_t* ogg);
-void LoadBnkWorld(i16 world);
 void manage_snd_event(void);
 void SetVolumeSound(i16 volume);
 void stop_all_snd(void);
@@ -1415,23 +1530,10 @@ void TestCdLoop(void);
 void InitMusic(void);
 void DoneMusic(void);
 
-
-// game.c
-u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte);
-void DrawSpriteNormal256(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
-void DrawSpriteFlipNormal256(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
-void DrawSpriteNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
-void DrawSpriteFlipNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buffer, u8* image_data);
-void DrawSpriteColorNormal(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buffer /*edi*/, u8* image_data /*esi*/);
-bool LoadOptionsOnDisk(void);
-void set_special_key_descriptions(const char** descriptions);
-void init_bonus_perfect(void);
-void select_display_buffer(u8* buffer);
-void set_speaker_on(void);
-void sprite_clipping(i32 xmin, i32 xmax, i32 ymin, i32 ymax);
-void default_sprite_clipping(void);
-bool clip_sprite_on_screen(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** image_data);
-bool clip_sprite_on_screen_flipped(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** image_data);
+// render.c
+void render_weird_gradient(surface_t* surface, int x_offset, int y_offset);
+void render_clear(surface_t* surface, rgb_t color);
+void surface_blit_palettized_image(image_t* source, rgb_palette_t* palette, rect_t* source_rect, surface_t* target, rect_t* target_rect);
 
 // save.c
 void set_medaillion_saved_data(void);
@@ -1442,11 +1544,12 @@ void doneGameSave(void);
 void saveGameState(obj_t* save_obj, save_state_t* save_state);
 void restoreGameState(save_state_t* save_state);
 
-// vignet.c
-image_t load_vignet_pcx(u32 resource_id);
-
 // misc_source.c
 void SpriteFixeOffset(mem_t* mem);
 void SpriteWorldOffset(mem_t* mem);
 void SpriteFixeBlocksFree(mem_t* mem);
 void SpriteWorldBlocksFree(mem_t* mem);
+u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte);
+bool LoadOptionsOnDisk(void);
+void set_special_key_descriptions(const char** descriptions);
+image_t load_vignet_pcx(u32 resource_id);

@@ -11,66 +11,8 @@ u8 snd_sqrt_table[128] = {
         236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251,
 };
 
-archive_header_t sndh8b_info[7] = {
-		{0,      0x0800, 0x4D, 0xC3},
-		{0x0800, 0x0800, 0xD9, 0xC1},
-		{0x1000, 0x0800, 0x24, 0x8E},
-		{0x1800, 0x0800, 0xFA, 0x16},
-		{0x2000, 0x0800, 0x67, 0x49},
-		{0x2800, 0x0800, 0xAB, 0xB7},
-		{0x3000, 0x0800, 0x63, 0xDE},
-};
-
-archive_header_t sndd8b_info[7] = {
-		{0,        0x01D140, 0xC0, 0x3C},
-		{0x01D140, 0x02224C, 0x94, 0x68},
-		{0x03F38C, 0x046DE8, 0x29, 0x95},
-		{0x086174, 0x03181C, 0xED, 0x17},
-		{0x0B7990, 0x030E98, 0x24, 0xB4},
-		{0x0E8828, 0x02F2F0, 0xF3, 0x3B},
-		{0x117B18, 0x02D588, 0xF8, 0x33}
-};
-
-void LoadBnkFile(u8** sound_buffer, i32 sound_set) {
-	// Load sound header
-	mem_t* mem = read_entire_file("SNDH8B.DAT", true);
-	if (!mem) fatal_error();
-
-    archive_header_t* header_info = &sndh8b_info[sound_set];
-
-	mem_seek(mem, header_info->offset);
-	mem_read(base_snd8b_headers, mem, header_info->size); // always 0x800 bytes
-
-	u8 checksum = decode_xor(base_snd8b_headers, header_info->size, header_info->xor_byte, header_info->checksum_byte);
-	if (checksum != 0) {
-		printf("[warning] LoadBnkFile(): incorrect checksum for SNDH8B.DAT\n");
-	}
-
-	free(mem);
-
-	// Load sound data
-    archive_header_t* data_info = &sndd8b_info[sound_set];
-	size_t sound_size = data_info->size;
-	void* temp = realloc(*sound_buffer, sound_size);
-	if (!temp) fatal_error();
-	*sound_buffer = (u8*)temp;
-
-	FILE* fp = open_data_file("SNDD8B.DAT", true);
-	if (!fp) fatal_error();
-
-	fseek(fp, data_info->offset, SEEK_SET);
-	size_t bytes_read = fread(*sound_buffer, 1, sound_size, fp);
-	if (bytes_read != data_info->size) fatal_error();
-
-	fclose(fp);
-
-	checksum = decode_xor(*sound_buffer, (u32)sound_size, data_info->xor_byte, data_info->checksum_byte);
-	if (checksum != 0) {
-		printf("[warning] LoadBnkFile(): incorrect checksum for SNDD8B.DAT\n");
-	}
 
 
-}
 
 
 
@@ -186,10 +128,6 @@ void game_get_sound_samples(game_sound_buffer_t* sound_buffer) {
 }
 
 
-//3EA00
-void LoadBnkWorld(i16 world) {
-	//stub
-}
 
 //71C00
 void manage_snd_event(void) {

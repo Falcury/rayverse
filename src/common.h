@@ -33,7 +33,7 @@ typedef long long i64;
 #define PATH_SEP "/"
 #endif
 
-static inline void fatal_error() {
+static inline void fatal_error(void) {
 	abort();
 }
 

@@ -14,7 +14,7 @@ void calc_off_fnd(void) {
     //stub
 }
 
-u8 byte_49290[4] = {0, 0, 0, 0}; //49290
+i8 byte_49290[4] = {0, 0, 0, 0}; //49290
 
 //49308
 void check_key_table(void) {
@@ -41,7 +41,7 @@ void check_key_table(void) {
 //49388
 void LOAD_CONFIG(void) {
     if (LoadOptionsOnDisk()) {
-        LoadLanguageTxt(0); // English
+        LoadLanguageTxt(main_mem_fix, 0); // English
         if (xpadmax == -1) {
             GameModeVideo = 1;
             P486 = 0;
@@ -53,20 +53,20 @@ void LOAD_CONFIG(void) {
         POINTEUR_BOUTONS_OPTIONS_BIS();
 
         // STUB: this section seems to be related to sound card initialization
-        /*if (CarteSonAutorisee && DeviceID != 999) {
-            //SetPort(Port);
-            //SetIrq(Irq);
-            //SetDma(Dma);
-            //SetParam(Param);
+        if (CarteSonAutorisee && DeviceID != 999) {
+            SetPort(Port);
+            SetIrq(Irq);
+            SetDma(Dma);
+            SetParam(Param);
             //if (sub_3E780()) {} // seems to do something with locking memory regions (DOS protected mode stuff)
 
         } else {
-            //SetDeviceID(DeviceID);
-            //CarteSonAutorisee = 0;
-        }*/
+            SetDeviceID(DeviceID);
+            CarteSonAutorisee = 0;
+        }
 
         if (CarteSonAutorisee) {
-            LoadBnkFile(&base_snd8b_data, 2);
+            LoadBnkFixe();
             InitSnd();
         }
 
@@ -82,14 +82,15 @@ void LOAD_CONFIG(void) {
     } else {
         // We didn't load a .cfg file -> load defaults
         if (CarteSonAutorisee) {
-            LoadBnkFile(&base_snd8b_data, 2);
+            LoadBnkFixe();
             InitSnd();
         }
+        LoadLanguageTxt(main_mem_fix, language);
         if (JoystickPresent()) {
             //vignet_load_proc = load_vignet_12;
-            //sub_23F30();
-            //start_fade_out(2);
-            //do_calibrate_joystick_menu(); //stub
+            CalcTab();
+            DO_FADE_OUT();
+            MAIN_CALIBRATE_JOYSTICK();
         } else {
             xpadmax = -2;
         }

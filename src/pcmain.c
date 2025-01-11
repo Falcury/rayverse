@@ -1,4 +1,29 @@
 
+//16F80
+void InitData(void) {
+    //stub
+}
+
+//17084
+void DO_GROS_MOTEUR_NORMAL(void) {
+    //stub
+}
+
+//170E0
+void DO_MAIN_LOOP_PC_NORMAL(void) {
+    //stub
+}
+
+//176A8
+void DO_GROS_MOTEUR_X(void) {
+    //stub
+}
+
+//177E0
+void DO_MAIN_LOOP_PC_X(void) {
+    //stub
+}
+
 //17CB8
 void init_arg(i32 argc, char** argv) {
     //stub
@@ -129,24 +154,24 @@ void PcMain(void) {
                 BackgroundOn = IsBackgroundOn();
                 if (GameModeVideo == 0) {
                     default_sprite_clipping();
-                    //InitModeXWithFrequency(VGA_FREQ);
-                    //set_frequency_mode(Frequence);
+                    InitModeXWithFrequency(VGA_FREQ);
+                    NewFrequency(Frequence);
                     //INIT_GAME_MODE_X(xmap, ymap);
                     if (P486 == 1) {
                         //sub_1268A(...);
                     }
                     During_The_Menu = 0;
-                    //DO_MAIN_LOOP_PC_X();
+                    DO_MAIN_LOOP_PC_X();
                     During_The_Menu = 1;
                 } else {
                     InitClipping();
                     InitModeNormalWithFrequency(VGA_FREQ);
-                    //set_frequency_mode(Frequence);
-                    //INIT_GAME_MODE_NORMAL();
+                    NewFrequency(Frequence);
+                    INIT_GAME_MODE_NORMAL();
                     During_The_Menu = 0;
-                    //DO_MAIN_LOOP_PC_NORMAL();
+                    DO_MAIN_LOOP_PC_NORMAL();
                     During_The_Menu = 1;
-//                    FIN_GAME_MODE_NORMAL();
+                    FIN_GAME_MODE_NORMAL();
                 }
 
                 if (CarteSonAutorisee) {
@@ -182,7 +207,7 @@ void PcMain(void) {
 //	DoEffectBloodOut();
     if (CarteSonAutorisee) {
         stop_all_snd();
-//		DigiMusicDone();
+		DigiMusicDone();
     }
     END_GAME();
 

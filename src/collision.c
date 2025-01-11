@@ -332,7 +332,39 @@ void DO_ONE_CMD_LR_ATTENTE(obj_t* obj) {
 
 //2F594
 void DO_ONE_CMD_UPDOWN(obj_t* obj) {
-    //stub
+    if (obj->type == obj_1_platform) {
+        if (obj->command == cmd_3_down) {
+            obj->yspeed = -2;
+        } else if (obj->command == cmd_4) {
+            obj->yspeed = 2;
+        }
+    } else if (obj->type == obj_10_piranha) {
+        if (obj->main_etat == 0 && obj->sub_etat == 0) {
+            if (obj->command == cmd_3_down) {
+                obj->yspeed = -2;
+            } else {
+                obj->yspeed = 2;
+            }
+        }
+    } else if (obj->type == obj_24) {
+        // This procedure is only called for commands 3 and 4, so, not sure why we are checking for command 2 here?
+        if (obj->command != cmd_2_up) {
+            --obj->nb_cmd;
+            if (obj->nb_cmd <= 0) {
+                if (obj->command == cmd_3_down) {
+                    obj->yspeed = -1;
+                } else if (obj->command == cmd_4) {
+                    obj->yspeed = 1;
+                }
+            } else {
+                obj->yspeed = 0;
+                obj->nb_cmd = 0;
+                obj->command = cmd_2_up;
+                obj->spawn_y = obj->ypos;
+            }
+
+        }
+    }
 }
 
 //2F63C
