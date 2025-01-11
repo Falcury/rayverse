@@ -262,7 +262,11 @@ void calc_let_Width2(u8 a1, u8 a2) {
 
 //1EF80
 void INIT_TEXT_TO_DISPLAY(void) {
-    //stub
+    for (i32 i = 0; i < COUNT(text_to_display); ++i) {
+        text_to_display[i].text[0] = '\0';
+        text_to_display[i].is_fond = 0;
+        text_to_display[i].field_D5 = 0;
+    }
 }
 
 //1EFB4
@@ -281,7 +285,7 @@ void calc_largmax_text(void* a1, i16 a2, i16 a3, i16 a4, u8 a5) {
 }
 
 //1F21C
-void INIT_TXT_BOX(void* a1) {
+void INIT_TXT_BOX(display_item_t* a1) {
     //stub
 }
 

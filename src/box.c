@@ -65,6 +65,16 @@ void gauge(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
 }
 
 //24DCC
-void ClearBorder(i16 a1, i16 a2, i16 a3, i16 a4) {
-    //stub
+void ClearBorder(i16 lim_H1, i16 lim_H2, i16 lim_W1, i16 lim_W2) {
+    memset(draw_buffer, 0, lim_H1 * 320);
+    memset(draw_buffer, 0, (200 - lim_H2) * 320);
+    for (i32 y = lim_H1; y < lim_H2; ++y) {
+        u8* row = draw_buffer + 320 * y;
+        if (lim_W1 > 0) {
+            memset(row, 0, lim_W1);
+        }
+        if (lim_W2 < 320) {
+            memset(row + lim_W2, 0, 320 - lim_W2);
+        }
+    }
 }

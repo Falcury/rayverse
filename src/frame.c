@@ -275,7 +275,28 @@ void DISPLAY_FOND3(void) {
 
 //3CE20
 void DISPLAY_FOND_MENU(void) {
-    //stub
+    i32 v1 = 320 - Bloc_lim_W2 + Bloc_lim_W1;
+    if (OptionGame) {
+        if (prev_Bloc_lim_W1 != Bloc_lim_W1) {
+            if (prev_Bloc_lim_W1 < Bloc_lim_W1) {
+                ClearBorder((i16)Bloc_lim_H1, (i16)Bloc_lim_H2, (i16)Bloc_lim_W1, (i16)Bloc_lim_W2);
+            }
+            Bloc_lim_W1 = prev_Bloc_lim_W1;
+        }
+        memset(draw_buffer, 0, Bloc_lim_H1 * 320);
+        i32 buffer_offset = Bloc_lim_H1 * 320 + Bloc_lim_W1;
+        for (i32 y = Bloc_lim_H1; y < Bloc_lim_H2; ++y) {
+            u8* dest_pos = draw_buffer + buffer_offset;
+            u8* source_pos = EffetBufferNormal + buffer_offset;
+            for (i32 x = Bloc_lim_W1; x < Bloc_lim_W2; ++x) {
+                *dest_pos++ = *source_pos++;
+            }
+            buffer_offset += 320;
+        }
+        memset(draw_buffer, 0, (200 - Bloc_lim_H2) * 320);
+    } else {
+        memcpy(draw_buffer, EffetBufferNormal, 320*200);
+    }
 }
 
 //3CF70

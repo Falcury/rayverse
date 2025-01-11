@@ -459,7 +459,7 @@ void INIT_MOTEUR_BEGIN(void) {
             NumDemo = 0;
         }
     }
-    First_Hit = 1;
+    First_Hist = 1;
     First_Menu = 1;
     time_left = -2;
     life_becoz_wiz = 0;

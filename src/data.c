@@ -493,8 +493,8 @@ u8 key_jump = SC_CONTROL; //95E3D
 u8 key_action = SC_X; //95E3E
 u8* tab_key[7] = {&key_left, &key_up, &key_right, &key_down, &key_jump, &key_fist, &key_action}; //95E40
 u8 tab_key_sav[7] = {SC_LEFT, SC_UP, SC_RIGHT, SC_DOWN, SC_CONTROL, SC_ALT, SC_X}; //95E5C
-u8 is_in_game = 0; //95E63
-u8 byte_95E64 = 0; //95E64
+u8 OptionGame = 0; //95E63
+u8 GoMenu = 0; //95E64
 u16 fixon = 1; //95E66      // scores enabled
 u16 fixontemp = 0; //95E68
 u16 SizeScreen = 0; //95E6A
@@ -520,6 +520,43 @@ u8 CasseBriqueON = 0; //962B9
 
 u8 playing_intro_video = 0; //964DD
 
+i32 prev_Bloc_lim_W1; //9654C
+
+//96550
+archive_header_t snd8b_header_infos[7] = {
+        {0, 2048, 77, 195},
+        {2048, 2048, 217, 193},
+        {4096, 2048, 36, 142},
+        {6144, 2048, 250, 22},
+        {8192, 2048, 103, 73},
+        {10240, 2048, 171, 183},
+        {12288, 2048, 99, 222},
+};
+
+//965A4
+archive_header_t snd8b_data_infos[7] = {
+        {0, 119104, 192, 60},
+        {119104, 139852, 148, 104},
+        {258956, 290280, 41, 149},
+        {549236, 202780, 237, 23},
+        {752016, 200344, 36, 180},
+        {952360, 193264, 243, 59},
+        {1145624, 185736, 248, 51},
+};
+
+//965F8
+archive_header_t sndvig_infos[9] = {
+        {0, 83700, 77, 96},
+        {83700, 134576, 217, 38},
+        {218276, 118290, 36, 67},
+        {336566, 83104, 250, 122},
+        {419670, 35392, 103, 177},
+        {455062, 125648, 171, 164},
+        {580710, 98378, 99, 219},
+        {679088, 25472, 71, 84},
+        {704560, 68350, 135, 79},
+};
+
 //966B8
 u16 snd8b_offsets[128] = {
         11, 12, 13, 14, 15, 16, 16, 17, 19, 20, 21, 22, 23,
@@ -536,6 +573,8 @@ u16 snd8b_offsets[128] = {
         10935, 11585, 12274, 13003, 13777, 14596, 15464, 16384,
         17358, 18390,
 };
+
+u8 first_option; //96881
 
 //96888
 const char* key_descriptions_azerty[128] = {
@@ -989,6 +1028,10 @@ u8 wi_save_zone[24]; //CAF88
 u8 save_zone[2592]; //CAFA0
 i16 allowed_time[192]; //CB9C0
 u8 bonus_perfect[24]; //CBB40
+display_item_t info_dialog_text; //CBB58 //?
+display_item_t msg_to_display; //CBC30
+display_item_t menu_to_display[9]; //CBD08
+display_item_t text_to_display[11]; //CC4A0
 
 level_t level; //CCDF0
 level_t level_obj; //CCDFC
@@ -1408,7 +1451,7 @@ u8 NBRE_SAVE; //CFA3D
 u8 byte_CFA3E; //CFA3E
 u8 nouvelle_partie; //CFA3F
 u8 PROC_EXIT; //CFA40
-u8 First_Hit; //CFA41
+u8 First_Hist; //CFA41
 u8 First_Menu; //CFA42
 u8 dontdoit; //CFA43
 u8 vignet_to_display; //CFA44
@@ -1502,6 +1545,8 @@ u8 nb_loaded_eta; //CFA9B
 u8 position_ray; //CFA9C
 i32 CompteurTrameAudio; //CFAA0
 
+rgb_palette_t MenuPalette; //DE43C
+
 i16 word_DE8BC; //DE8BC
 u8 byte_DEEFB; //DEEFB
 
@@ -1536,7 +1581,7 @@ u8 flammes_actives; //E0C27
 u8 BBF2DEsk; //E0C28
 u8 BBF2GEsk; //E0C29
 u8 Touche_Enfoncee[128]; //E0C30
-input_func_t* Read_Input_Func; //E0CB0
+void_func_t* Read_Input_Func; //E0CB0
 void* saved_keyboard_interrupt_handler; //E0CB4
 
 i16 joy_rec_left; //E0CCE
@@ -1562,8 +1607,10 @@ i32* ExpPoint; //E0D10
 i32 dword_E0D14; //E0D14
 obj_t wldobj[100]; //E0D18
 
-rgb_palette_t menu_rvb; //E43AC
-
+rgb_palette_t menu_rvb; //E43AC (?)
+rgb_palette_t rvb_options_in_game; //E46AC (?)
+rgb_palette_t rvb_menu_save; //E49AC (?)
+display_item_t* dialog_display_item_ptr; // E4CAC (?)
 const char** key_descriptions; //E4CB0
 void (*pINIT_SCROLL)(void); //E4CB4
 void (*pINIT_AFFICHE_SCREEN)(void); //E4CB8

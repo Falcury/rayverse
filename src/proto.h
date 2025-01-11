@@ -46,9 +46,9 @@ void display_flocons_behind(void);
 void display_flocons_before(void);
 void display_pix_gerbes(void);
 void DISPLAY_BLACKBOX(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, u8 a6);
-void display_text(const char* text, i16 a2, i16 a3, u8 a4, u8 a5);
-void display_deform_text(const char* text, i16 a2, i16 a3, u8 a4, u8 a5, i16 a6, i16 a7, i16 a8);
-void display_text_sin(const char* text, i16 a2, i16 a3, u8 a4, u8 a5, u8 a6);
+void display_text(const char* text, i16 x, i16 y, u8 font_size, u8 color);
+void display_deform_text(const char* text, i16 x, i16 y, u8 font_size, u8 color, i16 a6, i16 a7, i16 a8);
+void display_text_sin(const char* text, i16 x, i16 y, u8 font_size, u8 color, u8 a6);
 void display_box_text(void* a1);
 void CLRSCR(void);
 void display_etoile(i16 a1, i16 a2);
@@ -88,7 +88,7 @@ void DoCdRap(void);
 void start_cd_bbdead(void);
 void start_cd_gameover(void);
 void stop_cd(void);
-void cd_playing(void);
+bool cd_playing(void);
 
 // basic.c
 bool EOA(obj_t* obj);
@@ -139,7 +139,7 @@ void INIT_TEXT_TO_DISPLAY(void);
 void deter_num_let(u8 a1);
 void calc_num_let_spr(u8 a1, u8* a2);
 void calc_largmax_text(void* a1, i16 a2, i16 a3, i16 a4, u8 a5);
-void INIT_TXT_BOX(void* a1);
+void INIT_TXT_BOX(display_item_t* a1);
 void Deter_Option_Caract(u8* a1, i16 a2, i16 a3);
 void SwapAB(i16* a, i16* b);
 void Bresenham(void* func, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7);
@@ -229,7 +229,7 @@ void CadreTrans(i16 a1, i16 a2, i16 a3, i16 a4);
 void DrawBlackBorderBox(i16 a1, i16 a2, i16 a3, i16 a4, u8 a5);
 void InitGauge(void);
 void gauge(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7);
-void ClearBorder(i16 a1, i16 a2, i16 a3, i16 a4);
+void ClearBorder(i16 lim_H1, i16 lim_H2, i16 lim_W1, i16 lim_W2);
 
 // blocs.c
 void MURDUR(i16 a1, i16 a2);
@@ -509,7 +509,7 @@ bool StartButPressed(void);
 bool PauseButPressed(void);
 bool ExitButPressed(void);
 bool CancelButPressed(void);
-void SelectButPressed(void);
+bool SelectButPressed(void);
 void ToDoAtExit(void);
 
 // fee.c
@@ -678,7 +678,7 @@ void PLAN0FND_to_bits_planes(u8* buffer, i16 width, i16 height);
 void LoadPlan2InVignet(mem_t* buffer, i32 resource_id);
 char* GetStringTxt(char* txt, char* out_buf);
 void LoadLanguageTxt(i32 language_index);
-void LoadPcxOptions(u8* buffer, i32 resource_id, i16* a3, i16* a4);
+void LoadPcxOptions(u8* buffer, i32 resource_id, i16* width, i16* height, rgb_palette_t* pal_to_save);
 
 // luciole.c
 void get_luciole(void);
@@ -754,14 +754,14 @@ i32 CalcSpeed(void);
 void general_init_screen(i16 a1, i16 a2, i16 a3);
 void TestCompteur(void);
 void TestButtonReleased(void);
-void display_box_text_plasma(void* a1, u8 a2);
+void display_box_text_plasma(display_item_t* a1, u8 a2);
 void display_box_text_fire(void* a1);
 void display_box_msg_prg(void);
 void display_box_msg(void* a1);
-void display_box_msg_commande(void* a1, void* a2);
-void AfficeYesNo(void);
+void display_box_msg_commande(display_item_t* a1, void_func_t a2);
+void AfficheYesNo(void);
 void DO_YESNOBIS(void);
-void confirmation_msg(void);
+u8 confirmation_msg(u8 which_message);
 void SYNCHRO_LOOP_PALETTE(void* func);
 void apparition_prg(void);
 void fondu_prg(void);

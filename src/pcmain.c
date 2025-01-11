@@ -69,11 +69,6 @@ void PcMain(void) {
 
     NBRE_SAVE = 3;
 
-    // let the music finish playing while the main menu is not implemented yet :(
-    while (is_ogg_playing) {
-        advance_frame();
-    }
-
     if (MusicCdActive) {
         stop_cd();
     }

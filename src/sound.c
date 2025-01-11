@@ -136,7 +136,7 @@ void play_ogg(game_sound_buffer_t* sound_buffer, ogg_t* ogg) {
 		if (samples_filled == 0) {
 			is_ogg_finished = true;
 			is_ogg_playing = false;
-			MusicCdActive = false;
+            SetCompteurTrameAudio();
 		}
 	}
 }
@@ -180,22 +180,16 @@ void game_get_sound_samples(game_sound_buffer_t* sound_buffer) {
 			play_ogg(sound_buffer, &ogg_cd_track);
 		}
 	} else {
-		for (u32 sample_index = 0; sample_index < sound_buffer->sample_count; ++sample_index) {
-			i16 sample_value = 0;
-		}
+        i32 bytes_per_sample = sizeof(short) * 2;
+        memset(sound_buffer->samples, 0, sound_buffer->sample_count * bytes_per_sample);
 	}
 }
-
-
-
 
 
 //3EA00
 void LoadBnkWorld(i16 world) {
 	//stub
 }
-
-
 
 //71C00
 void manage_snd_event(void) {
@@ -404,6 +398,7 @@ void TestCdLoop(void) {
 
 //73384
 void InitMusic(void) {
+    MusicCdActive = 1;
     //stub
 }
 

@@ -391,7 +391,10 @@ void Keyflush(void) {
 
 //36C54
 void LOAD_GENERAL_SCREEN(void) {
-    //stub
+    i16 width = 0;
+    i16 height = 0;
+    LoadPcxOptions(EffetBufferNormal, 13, &width, &height, &rvb_plan3);
+    //LoadPcxPaletteInVignet(13, &rvb_plan3); // opening twice no longer needed (we saved the palette in LoadPcxOptions)
 }
 
 //36C88
@@ -519,8 +522,12 @@ bool CancelButPressed(void) {
 }
 
 //37280
-void SelectButPressed(void) {
-    //stub
+bool SelectButPressed(void) {
+    if (input_mode == 1) {
+        return TOUCHE(SC_ESCAPE);
+    } else {
+        return 0; //TODO: stub
+    }
 }
 
 //372B8

@@ -135,17 +135,17 @@ void DISPLAY_BLACKBOX(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, u8 a6) {
 }
 
 //1A3F0
-void display_text(const char* text, i16 a2, i16 a3, u8 a4, u8 a5) {
+void display_text(const char* text, i16 x, i16 y, u8 font_size, u8 color) {
     //stub
 }
 
 //1A68C
-void display_deform_text(const char* text, i16 a2, i16 a3, u8 a4, u8 a5, i16 a6, i16 a7, i16 a8) {
+void display_deform_text(const char* text, i16 x, i16 y, u8 font_size, u8 color, i16 a6, i16 a7, i16 a8) {
     //stub
 }
 
 //1A8DC
-void display_text_sin(const char* text, i16 a2, i16 a3, u8 a4, u8 a5, u8 a6) {
+void display_text_sin(const char* text, i16 x, i16 y, u8 font_size, u8 color, u8 a6) {
     //stub
 }
 

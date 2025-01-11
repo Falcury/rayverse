@@ -21,7 +21,7 @@ void start_cd_ubi_soft(void) {
 
 //1CF7C
 void start_cd_gros_rayman(void) {
-    play_cd_track(19); // Menu music - "World Map"
+    //play_cd_track(19); // Menu music - "World Map"
     // TODO: remove this once DoCdRap() is implemented (I think that loops the menu music)
 }
 
@@ -32,12 +32,24 @@ void start_cd_perdu(void) {
 
 //1CF94
 void DoCdRap(void) {
-    //stub
+    if (CompteurTrameAudio > 180) {
+        CompteurTrameAudio = 0;
+    }
+    if (MusicCdActive && CompteurTrameAudio == 0) {
+        if (!cd_playing()) {
+            start_cd_bbdead();
+        }
+    }
 }
 
 //1CFD4
 void start_cd_bbdead(void) {
-    //stub
+    if (is_limited_mode) {
+        MusicCdActive = 0;
+    }
+    if (MusicCdActive) {
+        play_cd_track(19); // Menu music - "World Map"
+    }
 }
 
 //1CFFC
@@ -47,12 +59,15 @@ void start_cd_gameover(void) {
 
 //1D028
 void stop_cd(void) {
-    MusicCdActive = 0;
     SetCompteurTrameAudio();
     is_ogg_playing = false;
 }
 
 //1D050
-void cd_playing(void) {
-    //stub
+bool cd_playing(void) {
+    if (MusicCdActive) {
+        return is_ogg_playing;
+    } else {
+        return false;
+    }
 }
