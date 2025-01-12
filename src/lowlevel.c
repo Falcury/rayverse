@@ -58,7 +58,25 @@ void DrawWldPointPlan2Normal(void* a1, i32 a2, i32 a3, u8* buffer) {
 
 //14AEF
 void DrawBlackBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width) {
-    //stub
+    if (x < 0) {
+        width += x;
+        x = 0;
+    }
+    if (y < 0) {
+        height += y;
+        y = 0;
+    }
+    if (y + height > 200) {
+        height = 200 - y;
+    }
+    if (x + width > 320) {
+        width = 320 - x;
+    }
+    if (width > 0 && height > 0) {
+        for (i32 current_y = y; current_y < y + height && height < 320; ++current_y) {
+            memset(buffer + 320 * current_y + x, 0, width);
+        }
+    }
 }
 
 //14B2C

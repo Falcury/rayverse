@@ -622,7 +622,21 @@ u16 snd8b_offsets[128] = {
         17358, 18390,
 };
 
-u8 first_option; //96881
+u8* ptrTchatch = 0; //967B8
+u8 (*TEST_KEY_BUTTON0)(void) = TestKeyWeapon; //967BC
+u8 (*TEST_KEY_BUTTON1)(void) = TestKeyJump; //967C0
+u8 (*TEST_KEY_BUTTON2)(void) = TestKeyAction; //967C4
+u8 (*TEST_KEY_BUTTON3)(void) = TestKeyAction; //967C8
+u8 byte_967CC = 0; //967CC
+i32 XSpeedJumelle = 0; //967D0
+i32 YSpeedJumelle = 0; //967D4
+
+i16 TabW1[4] = {4, 12, 20, 24}; //9684C
+i16 TabW2[4] = {320, 312, 304, 300}; //96854
+i16 TabH1[4] = {0, 8, 16, 20}; //9685C
+i16 TabH2[4] = {200, 192, 184, 180}; //96864
+
+u8 first_option = 0; //96881
 
 //96888
 const char* key_descriptions_azerty[128] = {
@@ -1205,7 +1219,7 @@ obj_t mapobj[25]; //CD8CC
 
 u32 background_DES; //CE634
 map_data_t mp; //CE638
-u32 dword_CE644; //CE644
+obj_t* alpha_numbers; //CE644
 u32 dword_CE648; //CE648
 obj_t ray; //CE650
 
@@ -1397,7 +1411,7 @@ u16 fee_obj_id; //CF888
 u16 word_CF88A; //CF88A
 i16 num_world; // 0xCF88C
 u16 pierre_acorde_obj_id; // CF88E
-u16 xmapmap; //CF890
+u16 xmapmax; //CF890
 u16 new_world; // 0xCF892
 u16 rayman_obj_id; //CF894
 u16 mus_obd_id; //CF896

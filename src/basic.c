@@ -251,13 +251,56 @@ void del_actobj(obj_t* obj) {
 }
 
 //1EEB8
-void calc_let_Width(u8 a1, u8 a2) {
-    //stub
+i32 calc_let_Width(u8 font_size, i32 num_let) {
+    obj_t* obj = NULL;
+    sprite_t* sprite;
+    if (num_let > 1000) {
+        sprite = alpha_numbers->sprites + (num_let - 1000);
+    } else {
+        if (font_size <= 1) {
+            if (font_size == 1) {
+                num_let += 41;
+            }
+            sprite = alpha2->sprites + num_let;
+        } else {
+            if (font_size != 2) {
+                return 0; // NOTE: possible bug here with an uninitialized pointer in the PC version (?)
+            }
+            sprite = alpha->sprites + num_let;
+        }
+    }
+    if (sprite) {
+        return sprite->outer_width;
+    } else {
+        return 0;
+    }
 }
 
 //1EF1C
-void calc_let_Width2(u8 a1, u8 a2) {
-    //stub
+i32 calc_let_Width2(u8 font_size, i32 num_let) {
+    obj_t* obj = NULL;
+    sprite_t* sprite;
+    if (num_let > 1000) {
+        sprite = alpha_numbers->sprites + (num_let - 1000);
+    } else {
+        if (font_size <= 1) {
+            if (font_size == 1) {
+                num_let += 41;
+            }
+            sprite = alpha2->sprites + num_let;
+        } else {
+            if (font_size != 2) {
+                return 0; // NOTE: possible bug here with an uninitialized pointer in the PC version (?)
+            }
+            sprite = alpha->sprites + num_let;
+        }
+    }
+    if (sprite) {
+        i32 width = (sprite->field_9 & 0xF) + sprite->inner_width;
+        return width;
+    } else {
+        return 0;
+    }
 }
 
 //1EF80
@@ -270,8 +313,46 @@ void INIT_TEXT_TO_DISPLAY(void) {
 }
 
 //1EFB4
-void deter_num_let(u8 a1) {
-    //stub
+i32 deter_num_let(u8 c, char* next_chars) {
+    if (c == ']') {
+        char next_text[4] = {0};
+        strncpy(next_text, next_chars, 3);
+        return atoi(next_text) + 1000;
+    }
+    if (c >= 'a' && c <= 'z') {
+        return c - 93;
+    } else if (c >= '0' && c <= '9') {
+        return c - 18;
+    } else if (c == '?') {
+        return 1;
+    } else if (c == '|') {
+        return 49;
+    } else if (c == '~') {
+        return 46;
+    } else if (c == 129) {
+        return 44;
+    } else if (c == 148) {
+        return 43;
+    } else if (c == 248) {
+        return 45;
+    } else if (c == 156) {
+        return 42;
+    } else if (c == '#') {
+        return 47;
+    } else if (c == '%') {
+        return 45;
+    } else if (c == '!') {
+        return 2;
+    } else if (c == '\'') {
+        return 41;
+    } else if (c == '*') {
+        return 48;
+    } else if (c == '.') {
+        return 3;
+    } else if (c == ':') {
+        return 40;
+    }
+    return 0;
 }
 
 //1F194
@@ -285,8 +366,82 @@ void calc_largmax_text(void* a1, i16 a2, i16 a3, i16 a4, u8 a5) {
 }
 
 //1F21C
-void INIT_TXT_BOX(display_item_t* a1) {
-    //stub
+void INIT_TXT_BOX(display_item_t* box) {
+    char text[200];
+    u8 font_size = box->font_size;
+    i32 total_width = 0;
+    i32 max_width = 0;
+    i32 line_height = 0;
+    i32 num_lines = 0;
+    i32 max_chars = 0;
+    i32 total_chars = 0;
+    i32 is_slash = 0;
+    i32 char_spacing = 0;
+    i32 space_width = 0;
+    i32 num_let = 0;
+
+    if (font_size == 2) {
+        line_height = 15;
+        char_spacing = 1;
+        space_width = 8;
+    } else if (font_size == 1) {
+        line_height = 23;
+        char_spacing = 3;
+        space_width = 10;
+    } else {
+        line_height = 36;
+        char_spacing = 3;
+        space_width = 12;
+    }
+    memcpy(text, box->text, sizeof(text));
+    if (text[0] != '\0') {
+        for (i32 i = 0; i < sizeof(text); ++i) {
+            char c = text[i];
+            if (c == '\0') {
+                break;
+            }
+            if (c == '/') {
+                is_slash = 1;
+                ++num_lines;
+                if (total_width > max_width) {
+                    max_width = total_width;
+                }
+                total_width = 0;
+                if (total_chars > max_chars) {
+                    max_chars = total_chars;
+                }
+                total_chars = 0;
+                num_let = 0;
+            } else if (c == ' ') {
+                num_let = 0;
+                total_width += space_width;
+                ++total_chars;
+            } else {
+                num_let = deter_num_let(text[i], text + i + 1);
+            }
+            if (num_let != 0) {
+                total_chars += 1;
+                total_width += calc_let_Width2(font_size, num_let) - char_spacing;
+                if (num_let >= 1000) {
+                    i += 3;
+                }
+            }
+        }
+        if (num_lines != 0) {
+            --num_lines;
+        } else {
+            max_width = total_width;
+            num_lines = 1;
+        }
+        if (is_slash) {
+            box->centered_x_pos = box->xpos - (max_width >> 1);
+        } else {
+            box->centered_x_pos = box->xpos;
+        }
+        box->width = max_width + 2;
+        box->centered_y_pos = box->ypos - line_height + 2;
+        box->height = num_lines * line_height - 2;
+    }
 }
 
 //1F4A0

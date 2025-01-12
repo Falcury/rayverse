@@ -346,16 +346,16 @@ void DEPART_WORLD(void) {
         new_level = 1;
     }
     if (You_Win == 1 && num_world_choice == world_6_cake) {
-        //DO_VICTOIRE();
+        DO_VICTOIRE();
     } else if (!fin_du_jeu && new_world != 0) {
-        //START_WORLD_VIGNET();
+        START_WORLD_VIGNET();
         block_free(main_mem_world);
         block_free(main_mem_sprite);
         world_level(num_world_choice, world_filename);
         load_world(main_mem_world, main_mem_sprite, world_filename);
         SpriteWorldOffset(main_mem_sprite);
         INIT_MOTEUR_WORLD();
-        //END_WORLD_VIGNET();
+        END_WORLD_VIGNET();
     }
 }
 

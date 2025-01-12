@@ -134,7 +134,7 @@ void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, i8 col
     i32 clip_height = height;
     i32 clip_width = width;
     i32 clip_x = x;
-    i32 clip_y = x;
+    i32 clip_y = y;
     if (x < 0) {
         clip_x = 0;
         clip_width = x + width;

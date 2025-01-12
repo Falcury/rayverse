@@ -144,7 +144,14 @@ void DigiMusicDone(void) {
 
 //3ECC4
 void LoadTchatchPerdu(void) {
-    //stub
+    stop_cd();
+    FILE* fp = open_data_file("sndvig.dat", true);
+    if (fp) {
+        archive_header_t* sndvig_header = sndvig_infos + 6;
+        //stub
+//        ptrTchatch;
+        fclose(fp);
+    }
 }
 
 //3EDF4
