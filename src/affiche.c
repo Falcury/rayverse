@@ -173,6 +173,74 @@ void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, i8 col
 
 //1A3F0
 void display_text(const char* text, i16 x, i16 y, u8 font_size, i8 color) {
+    i32 total_width = 0;
+    i32 max_width = 0;
+    i32 line_height = 0;
+    i32 num_lines = 0;
+    i32 max_chars = 0;
+    i32 total_chars = 0;
+    i32 is_slash = 0;
+    i16 char_spacing = 0;
+    i16 space_width = 0;
+    i32 num_let = 0;
+
+    if (font_size == 2) {
+        line_height = 15;
+        char_spacing = 1;
+        space_width = 8;
+    } else if (font_size == 1) {
+        line_height = 23;
+        char_spacing = 3;
+        space_width = 10;
+    } else {
+        line_height = 36;
+        char_spacing = 3;
+        space_width = 12;
+    }
+
+    i32 current_x = x;
+
+    sprite_t* sprite = NULL;
+
+    if (text) {
+        for (i32 i = 0; i < strlen(text); ++i) {
+            const char* pos = text + i;
+            char c = *pos;
+            if (c == '/') {
+                current_x = x - calc_largmax_text(pos, i, space_width, char_spacing, font_size) / 2;
+                if (i > 1) {
+                    y += line_height; // next row
+                }
+                num_let = 0;
+            } else if (c == ' ') {
+                num_let = 0;
+                current_x += space_width;
+            } else {
+                i32 let_width = calc_let_Width(font_size, num_let);
+                if (num_let < 1000) {
+                    if (font_size <= 1) {
+                        if (font_size == 1) {
+                            num_let += 41;
+                        }
+                        sprite = alpha2->sprites + num_let;
+                        vec2b_t size = {let_width, sprite->outer_height};
+                        DrawSpriteColorNormalEtX(current_x, color, y, size, &global_game->draw_buffer, alpha2->img_buffer + sprite->offset_in_atlas);
+                    } else if (font_size == 2) {
+                        sprite = alpha->sprites + num_let;
+                        vec2b_t size = {let_width, sprite->outer_height};
+                        DrawSpriteColorNormalEtX(current_x, color, y, size, &global_game->draw_buffer, alpha->img_buffer + sprite->offset_in_atlas);
+                    }
+                } else {
+                    sprite = alpha_numbers->sprites + (num_let - 1000);
+                    vec2b_t size = {let_width, sprite->outer_height};
+                    DrawSpriteColorNormalEtX(current_x, color, y, size, &global_game->draw_buffer, alpha_numbers->img_buffer + sprite->offset_in_atlas);
+                    i += 3;
+                }
+                current_x += (sprite->color & 0xF) + sprite->inner_width;
+            }
+
+        }
+    }
     //stub
 }
 

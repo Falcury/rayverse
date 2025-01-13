@@ -413,50 +413,50 @@ bool clip_sprite_on_screen_flipped(i32* proj_x, i32* proj_y, vec2b_t* proj_size,
 }
 
 
-#define DRAW_FUNC(name) void name (i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data)
+#define DRAW_FUNC(name) void name (i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data)
 
 //163E6
-void DrawSpriteFlipNoClipX(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteFlipNoClipX(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 
 //163F2
-void DrawSpriteX(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteX(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 
 //16559
-void DrawSpriteNoClipX(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteNoClipX(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 
 //16565
-void DrawSpriteFlipX(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteFlipX(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 
 //166DF
-void DrawSpriteColorX(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteColorX(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 
 //16876
-void DrawSpriteColorFlipX(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteColorFlipX(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 
 //16A18
-void DrawSpriteFlipNormalNoClip(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteFlipNormalNoClip(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 
 //16A24
-void DrawSpriteNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteNormal(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 
 //16A9D
-void DrawSpriteNormal256(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buf /*edi*/, u8* image_data /*esi*/) {
+void DrawSpriteNormal256(i32 proj_x /*eax*/, i32 color /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buf /*edi*/, u8* image_data /*esi*/) {
     if (clip_sprite_on_screen(&proj_x, &proj_y, &proj_size, &image_data) && proj_size.x > 0) {
         u8* draw_pos = draw_buf->memory + proj_y * draw_buf->width /*320*/ + proj_x;
         u8* draw_end = draw_pos + proj_size.y * draw_buf->width;
@@ -478,17 +478,17 @@ void DrawSpriteNormal256(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 pro
 }
 
 //16AFC
-void DrawSpriteNormalNoClip(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteNormalNoClip(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 
 //16B08
-void DrawSpriteFlipNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteFlipNormal(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 
 //16B88
-void DrawSpriteFlipNormal256(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buf /*edi*/, u8* image_data /*esi*/) {
+void DrawSpriteFlipNormal256(i32 proj_x /*eax*/, i32 color /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, image_t* draw_buf /*edi*/, u8* image_data /*esi*/) {
     if (clip_sprite_on_screen_flipped(&proj_x, &proj_y, &proj_size, &image_data) && proj_size.x > 0) {
         u8* draw_pos = draw_buf->memory + proj_y * draw_buf->width /*320*/ + proj_x;
         u8* draw_end = draw_pos + proj_size.y * draw_buf->width;
@@ -510,22 +510,22 @@ void DrawSpriteFlipNormal256(i32 proj_x /*eax*/, i32 sprite_field_A /*edx*/, i32
 }
 
 //16BEA
-void DrawSpriteColorNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteColorNormal(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 
 //16C89
-void DrawSpriteColorFlipNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteColorFlipNormal(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 
 //16D33
-void DrawSpriteDiffNormal_clip(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteDiffNormal_clip(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 
 //16E0D
-void DrawSpriteDiffNormal(i32 proj_x, i32 sprite_field_A, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
+void DrawSpriteDiffNormal(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, image_t* draw_buf, u8* image_data) {
     //stub
 }
 

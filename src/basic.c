@@ -296,7 +296,7 @@ i32 calc_let_Width2(u8 font_size, i32 num_let) {
         }
     }
     if (sprite) {
-        i32 width = (sprite->field_9 & 0xF) + sprite->inner_width;
+        i32 width = (sprite->color & 0xF) + sprite->inner_width;
         return width;
     } else {
         return 0;
@@ -313,7 +313,7 @@ void INIT_TEXT_TO_DISPLAY(void) {
 }
 
 //1EFB4
-i32 deter_num_let(u8 c, char* next_chars) {
+i32 deter_num_let(u8 c, const char* next_chars) {
     if (c == ']') {
         char next_text[4] = {0};
         strncpy(next_text, next_chars, 3);
@@ -361,8 +361,27 @@ void calc_num_let_spr(u8 a1, u8* a2) {
 }
 
 //1F1B0
-void calc_largmax_text(void* a1, i16 a2, i16 a3, i16 a4, u8 a5) {
-    //stub
+i16 calc_largmax_text(const char* text, i16 char_index, i16 space_width, i16 char_spacing, u8 font_size) {
+    i16 width = 0;
+    for (;;) {
+        ++char_index;
+        char c = text[char_index];
+        if (c == '\0' || c == '/') {
+            break;
+        }
+        if (c == ' ') {
+            width += space_width;
+        } else {
+            i32 num_let = deter_num_let(c, text + char_index + 1);
+            if (num_let != 0) {
+                width += calc_let_Width2(font_size, num_let) - char_spacing;
+                if (num_let >= 1000) {
+                    char_index += 3;
+                }
+            }
+        }
+    }
+    return width;
 }
 
 //1F21C

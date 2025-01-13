@@ -213,7 +213,7 @@ typedef struct sprite_t {
 	u8 outer_height;
 	u8 inner_width;
 	u8 inner_height;
-	u8 field_9;
+	u8 color;
 	u8 field_A;
 	u8 field_B;
 } sprite_t;
