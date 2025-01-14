@@ -32,11 +32,11 @@ void display2(obj_t* obj) {
                 i32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
                 i32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
                 vec2b_t proj_size = {(u8)proj_width, (u8)proj_height};
-                u8 sprite_field_A = sprite->field_A >> 4;
+                u8 sprite_field_A = sprite->color >> 4;
 
                 u8* image_data = obj->img_buffer + sprite->offset_in_atlas;
 
-                draw_func(proj_x /*eax*/, sprite_field_A /*edx*/, proj_y /*ebx*/, proj_size /*ecx*/, /*edi*/ &global_game->draw_buffer, image_data /*esi*/);
+                draw_func(proj_x /*eax*/, sprite_field_A /*edx*/, proj_y /*ebx*/, proj_size /*ecx*/, /*edi*/ draw_buffer, image_data /*esi*/);
 
             }
         }
@@ -173,13 +173,7 @@ void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, i8 col
 
 //1A3F0
 void display_text(const char* text, i16 x, i16 y, u8 font_size, i8 color) {
-    i32 total_width = 0;
-    i32 max_width = 0;
     i32 line_height = 0;
-    i32 num_lines = 0;
-    i32 max_chars = 0;
-    i32 total_chars = 0;
-    i32 is_slash = 0;
     i16 char_spacing = 0;
     i16 space_width = 0;
     i32 num_let = 0;
@@ -216,32 +210,41 @@ void display_text(const char* text, i16 x, i16 y, u8 font_size, i8 color) {
                 num_let = 0;
                 current_x += space_width;
             } else {
+                num_let = deter_num_let(c, pos + 1);
+            }
+            if (num_let != 0) {
                 i32 let_width = calc_let_Width(font_size, num_let);
                 if (num_let < 1000) {
                     if (font_size <= 1) {
                         if (font_size == 1) {
                             num_let += 41;
                         }
-                        sprite = alpha2->sprites + num_let;
-                        vec2b_t size = {let_width, sprite->outer_height};
-                        DrawSpriteColorNormalEtX(current_x, color, y, size, &global_game->draw_buffer, alpha2->img_buffer + sprite->offset_in_atlas);
+                        ASSERT(num_let < alpha2_sprite_count);
+                        if (num_let < alpha2_sprite_count) { // bounds check added
+                            sprite = alpha2->sprites + num_let;
+                            vec2b_t size = {let_width, sprite->outer_height};
+                            DrawSpriteColorNormalEtX(current_x, color, y - sprite->outer_height, size, draw_buffer, alpha2->img_buffer + sprite->offset_in_atlas);
+                        }
+
                     } else if (font_size == 2) {
-                        sprite = alpha->sprites + num_let;
-                        vec2b_t size = {let_width, sprite->outer_height};
-                        DrawSpriteColorNormalEtX(current_x, color, y, size, &global_game->draw_buffer, alpha->img_buffer + sprite->offset_in_atlas);
+                        ASSERT(num_let < alpha_sprite_count);
+                        if (num_let < alpha_sprite_count) { // bounds check added
+                            sprite = alpha->sprites + num_let;
+                            vec2b_t size = {let_width, sprite->outer_height};
+                            DrawSpriteColorNormalEtX(current_x, color, y - sprite->outer_height, size, draw_buffer, alpha->img_buffer + sprite->offset_in_atlas);
+                        }
                     }
                 } else {
                     sprite = alpha_numbers->sprites + (num_let - 1000);
                     vec2b_t size = {let_width, sprite->outer_height};
-                    DrawSpriteColorNormalEtX(current_x, color, y, size, &global_game->draw_buffer, alpha_numbers->img_buffer + sprite->offset_in_atlas);
+                    DrawSpriteColorNormalEtX(current_x, color, y - sprite->outer_height, size, draw_buffer, alpha_numbers->img_buffer + sprite->offset_in_atlas);
                     i += 3;
                 }
-                current_x += (sprite->color & 0xF) + sprite->inner_width;
+                current_x += (sprite->field_9 & 0xF) + sprite->inner_width - char_spacing;
             }
 
         }
     }
-    //stub
 }
 
 //1A68C

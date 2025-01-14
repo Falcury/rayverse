@@ -16,7 +16,7 @@ bool is_ogg_finished;
 
 
 // Data sorted by offset
-
+i32 saved_sprite_color; //92140
 i32 saved_sprite_width; //92144
 
 //9215C

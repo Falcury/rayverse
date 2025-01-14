@@ -257,16 +257,19 @@ i32 calc_let_Width(u8 font_size, i32 num_let) {
     if (num_let > 1000) {
         sprite = alpha_numbers->sprites + (num_let - 1000);
     } else {
-        if (font_size <= 1) {
-            if (font_size == 1) {
-                num_let += 41;
-            }
-            sprite = alpha2->sprites + num_let;
-        } else {
-            if (font_size != 2) {
-                return 0; // NOTE: possible bug here with an uninitialized pointer in the PC version (?)
-            }
-            sprite = alpha->sprites + num_let;
+        switch (font_size) {
+            case 0:
+                sprite = alpha2->sprites + num_let;
+                break;
+            case 1:
+                sprite = alpha2->sprites + num_let + 41;
+                break;
+            case 2:
+                sprite = alpha->sprites + num_let;
+                break;
+            default:
+                // NOTE: possible bug here with an uninitialized pointer in the PC version (?)
+                return 0;
         }
     }
     if (sprite) {
@@ -296,7 +299,7 @@ i32 calc_let_Width2(u8 font_size, i32 num_let) {
         }
     }
     if (sprite) {
-        i32 width = (sprite->color & 0xF) + sprite->inner_width;
+        i32 width = (sprite->field_9 & 0xF) + sprite->inner_width;
         return width;
     } else {
         return 0;

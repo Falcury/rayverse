@@ -281,8 +281,8 @@ void AFFICHE_ECRAN_GENERAL(void) {
     for (i32 i = 0; i < nbre_options; ++i) {
         display_item_t* to_display = menu_to_display + i;
         if (i == positiony) {
-//            display_box_text(to_display);
-            display_box_text_plasma(to_display, 1);
+            display_box_text(to_display); // TODO: change back to display_box_text_plasma() once implemented
+//            display_box_text_plasma(to_display, 1);
         } else {
 //            display_box_text(to_display);
             display_text(to_display->text, to_display->xpos, to_display->ypos, to_display->font_size, to_display->color);
