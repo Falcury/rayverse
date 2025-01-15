@@ -1390,7 +1390,7 @@ i16 sko_phase; //CF816
 rayevts_t SauveRayEvts; //CF818
 rayevts_t RayEvts; //CF81A
 u16 ZDCPTR; //CF81C
-u16 finBossLevel; //CF81E
+u16 finBosslevel; //CF81E // TODO: bitfield?
 i16 bloc_lim_H2; //CF820
 i16 png_or_fee_id; //CF822
 i16 loop_nb_trames; //CF824
@@ -1455,18 +1455,18 @@ u16 word_CF89A; //CF89A
 u16 word_CF89C; //CF89C
 i16 xmap; //CF89E
 i16 departlevel; //CF8A0
-i16 ray_y_main_pos_init; //CF8A2
+i16 ray_Y_main_pos_init; //CF8A2
 i16 jump_time; //CF8A4
 i16 ymap; //CF8A6
 i16 special_ray_mov_win_x_left; //CF8A8
-i16 ray_x_main_pos_init; //CF8AA
+i16 ray_X_main_pos_init; //CF8AA
 i16 ymap_old; //CF8AC
 i16 special_ray_mov_win_x_right; //CF8AE
 i16 xmap_old; //CF8B0
 i16 h_scroll_speed; //CF8B2
 i16 v_scroll_speed; //CF8B4
-i16 saved_xmap; //CF8B6
-i16 saved_ymap; //CF8B8
+i16 xmapsave; //CF8B6
+i16 ymapsave; //CF8B8
 i16 scroll_y; //CF8BA
 u16 black_ray_obj_id; //CF8BC
 u16 word_CF8BE; //CF8BE
@@ -1545,7 +1545,7 @@ u8 MENU_SUITE; //CFA38
 u8 MENU_RETURN; //CFA39
 u8 last_credit; //CFA3A
 u8 nb_continue; //CFA3B
-u8 byte_CFA3C; //CFA3C
+u8 fin_dark; //CFA3C
 u8 NBRE_SAVE; //CFA3D
 u8 byte_CFA3E; //CFA3E
 u8 nouvelle_partie; //CFA3F
@@ -1553,7 +1553,7 @@ u8 PROC_EXIT; //CFA40
 u8 First_Hist; //CFA41
 u8 First_Menu; //CFA42
 u8 dontdoit; //CFA43
-u8 vignet_to_display; //CFA44
+u8 Vignet_To_Display; //CFA44
 u8 chemin_percent; //CFA45
 u8 You_Win; //CFA46 (?)
 u8 display_Vignet; //CFA47

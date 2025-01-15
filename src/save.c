@@ -265,7 +265,7 @@ void load_sav(u8 which_save) {
 		u16 map_location = dans_la_map_monde ? num_world_choice : world_index;
 		// Note: Game bug: saved_map_location is only 1 byte, but we are writing/reading 2 bytes,
 		mem_read(&map_location, raw, 2);
-		mem_read(&finBossLevel, raw, 2);
+		mem_read(&finBosslevel, raw, 2);
 		free(raw);
 
 	}
@@ -278,7 +278,7 @@ void load_sav(u8 which_save) {
 void reset_items_and_bosses(void) {
 	memset(collected_events_data, 0, 2592);
 	memset(bonus_completed_data, 0, 24);
-	finBossLevel = 0;
+    finBosslevel = 0;
 
 	for (i32 i = 0; i < 24; ++i) {
 		medaillion_saved_data[i] &= ~(7 << 2);
@@ -511,7 +511,7 @@ void SaveGameOnDisk(u8 which_save) {
     u16 map_location = dans_la_map_monde ? num_world_choice : world_index;
     // Note: Game bug: saved_map_location is only 1 byte, but we are writing/reading 2 bytes,
     mem_write(&map_location, raw, 2);
-    mem_write(&finBossLevel, raw, 2);
+    mem_write(&finBosslevel, raw, 2);
     raw->cursor = 0;
 
     mem_t* compressed = compress_sav(raw);

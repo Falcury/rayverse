@@ -485,7 +485,7 @@ void Bresenham(void* func, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
 
 //1F880
 void init_finBossLevel(void) {
-    finBossLevel &= 0xF000;
+    finBosslevel &= 0xF000;
 }
 
 //1F8A4
