@@ -518,7 +518,7 @@ void display_inter_anim(void);
 void continue_fonction(void);
 void DO_CONTINUE(void);
 void saisie_nom_prg(void);
-void selection_save_option_prg(void);
+i16 selection_save_option_prg(u32 a1);
 void DO_SAVE_CHOICE(void);
 void AFFICHE_ECRAN_SAVE(void);
 void select_level_prg(void);
@@ -869,11 +869,11 @@ i32 CalcSpeed(void);
 void general_init_screen(i16 a1, i16 a2, i16 a3);
 void TestCompteur(void);
 void TestButtonReleased(void);
-void display_box_text_plasma(display_item_t* a1, u8 a2);
-void display_box_text_fire(void* a1);
-void display_box_msg_prg(void);
+void display_box_text_plasma(display_item_t* box, u8 a2);
+void display_box_text_fire(display_item_t* a1);
+i16 display_box_msg_prg(u32 a1);
 void display_box_msg(void* a1);
-void display_box_msg_commande(display_item_t* a1, void_func_t a2);
+void display_box_msg_commande(display_item_t* box, void_func_t commande_box_func);
 void AfficheYesNo(void);
 void DO_YESNOBIS(void);
 u8 confirmation_msg(u8 which_message);
@@ -1353,6 +1353,23 @@ void sub_71A84(void);
 void sub_71A98(void);
 void DO_UBI_LOGO(void);
 
+// save.c
+void doneGameSave(void);
+void saveGameState(obj_t* save_obj, save_state_t* save_state);
+void restoreGameState(save_state_t* save_state);
+i32 get_offset_in_safe_zone(i16 a1);
+void reset_save_zone_level(void);
+void take_bonus(i16 a1);
+void bonus_taken(i16 a1);
+void storeWorldInfoAcces(void);
+void retrieveWorldInfoAccess(void);
+void file_size(void);
+void SaveGameOnDisk(u8 which_save);
+bool LoadGameOnDisk(u8 which_save);
+bool LoadInfoGame(u8 which_save);
+bool SaveOptionsOnDisk(void);
+bool LoadOptionsOnDisk(void);
+
 // saxo.c
 void saxoCanAttak(void);
 void INIT_SAXO(obj_t* obj);
@@ -1538,11 +1555,7 @@ void surface_blit_palettized_image(image_t* source, rgb_palette_t* palette, rect
 // save.c
 void set_medaillion_saved_data(void);
 void load_sav(u8 which_save);
-void SaveGameOnDisk(u8 which_save);
 void reset_items_and_bosses(void);
-void doneGameSave(void);
-void saveGameState(obj_t* save_obj, save_state_t* save_state);
-void restoreGameState(save_state_t* save_state);
 
 // misc_source.c
 void SpriteFixeOffset(mem_t* mem);
@@ -1550,6 +1563,5 @@ void SpriteWorldOffset(mem_t* mem);
 void SpriteFixeBlocksFree(mem_t* mem);
 void SpriteWorldBlocksFree(mem_t* mem);
 u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte);
-bool LoadOptionsOnDisk(void);
 void set_special_key_descriptions(const char** descriptions);
 image_t load_vignet_pcx(u32 resource_id);

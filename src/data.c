@@ -468,6 +468,33 @@ world_info_t t_world_info[24] = {
         {306, 267, 15, 23, 23, 23, 0, 0, 7, 20, 1, 0, 0, 0, (char*)0xBFEA8}, // 23: Save Game (Cave)
 };
 
+//94FBC
+i32 timeCd[133] = {
+        0, 215, 215, 80, 215, 215, 74, 215, 80, 215, 215, 215, 215, 215, 215, 215,
+        74, 80, 68, 68, 68, 68, 68, 238, 238, 238, 238, 238, 238, 238, 238, 238,
+        238, 80, 238, 238, 238, 84, 84, 68, 68, 0, 0, 0, 0, 109, 109, 109,
+        109, 109, 109, 109, 109, 109, 82, 80, 68, 68, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 145, 145, 145, 118, 145, 145, 145, 145, 145, 145, 118, 68, 68,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 142, 142, 142, 142, 142, 142, 142,
+        142, 142, 81, 81, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 132,
+        132, 132, 83, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+};
+
+u8 let_shadow = 0; //951D0
+
+//94F3C
+u8 map_cd_tracks[128] = {
+        14, 14, 9, 14, 14, 5, 14, 9, 14, 14, 14, 14, 14, 14, 14, 5,
+        9, 15, 15, 15, 15, 15, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+        9, 17, 17, 17, 7, 7, 15, 15, 0, 0, 0, 0, 16, 16, 16, 16,
+        16, 16, 16, 16, 16, 6, 9, 15, 15, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 13, 13, 13, 4, 13, 13, 13, 13, 13, 13, 4, 15, 15, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 8, 8, 8, 8, 8,
+        8, 3, 3, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 11,
+        11, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
 //95828
 u8 DemoRecord[1500] = {
         0, 41, 32, 8, 0, 19, 32, 27, 0, 30, 4, 2, 0, 60, 32, 11, 0, 16, 4, 12, 0, 69, 4, 7, 36, 20, 32, 27, 0, 74,
@@ -563,6 +590,10 @@ u8 OptionMusicCdActive = 1; //95EB6
 u8 casse_brique_active = 0; //962B8
 u8 CasseBriqueON = 0; //962B9
 
+u8 dark_attaque = 0; //9637D
+u8 type_dark_attaque = 0; //9637E
+u8 ButtonReleasedSav3 = 0; //96380
+
 u8 playing_intro_video = 0; //964DD
 
 i32 prev_Bloc_lim_W1; //9654C
@@ -636,7 +667,11 @@ i16 TabW2[4] = {320, 312, 304, 300}; //96854
 i16 TabH1[4] = {0, 8, 16, 20}; //9685C
 i16 TabH2[4] = {200, 192, 184, 180}; //96864
 
+u8 msg_box_being_displayed = 0; //96880
 u8 first_option = 0; //96881
+u8 byte_96882 = 0; //96882
+u8 byte_96883 = 0; //96883
+u8 byte_96884 = 64; //96884
 
 //96888
 const char* key_descriptions_azerty[128] = {
@@ -1614,6 +1649,20 @@ rgb_palette_t MenuPalette; //DE43C
 i16 word_DE8BC; //DE8BC
 u8 byte_DEEFB; //DEEFB
 
+u8 sav_checksum; //DF70C
+vitraux_info_t VitrauxInfos[5];
+i16 dark_rayon_dy; //DF742
+i16 dark_rayon_dx; //DF744
+i16 corde_x; //DF746
+i16 corde_y_haut; //DF748
+i16 corde_y_bas; //DF74A
+u8 byte_DF74C; //DF74C
+
+i16 level_select; //DF750
+
+u8 ButtonReleasedSav2; //DF756
+u8 ButtonReleasedSav1; //DF757
+
 u8 bnkHeaderFixe[0x800]; //DFAF0
 u8 bnkHeaderWorld[0x800]; //E02F0
 i32 current_port; //E0AF0
@@ -1663,11 +1712,20 @@ u8 Touche_Enfoncee[128]; //E0C30
 void_func_t* Read_Input_Func; //E0CB0
 void* saved_keyboard_interrupt_handler; //E0CB4
 
+i16 joy_rec_up; //E0CBC
+i16 bux11; //E0CBE
+i16 joy_rec_right; //E0CC0
+i16 bux10; //E0CC2
+i16 bux01; //E0CC4
+i16 bux00; //E0CC6
+i16 joy_rec_down; //E0CC8
+i16 auto_joy_left; //E0CCA (?)
+i16 auto_joy_up; //E0CCC (?)
 i16 joy_rec_left; //E0CCE
 i16 word_E0CD0; //E0CD0
-i16 word_E0CD2; //E0CD2
+i16 auto_joy_down; //E0CD2 (?)
 i16 word_E0CD4; //E0CD4
-i16 word_E0CD6; //E0CD6
+i16 auto_joy_right; //E0CD6 (?)
 i16 word_E0CD8; //E0CD8
 i32 PositionJumelleDemandeY; //E0CDC
 i32 PositionJumelleDemandeX; //E0CE0
@@ -1699,6 +1757,7 @@ void (*pDO_COMMANDE)(void); //E4CC4
 void (*pAFFICHE_SCREEN)(void); //E4CC8
 void (*pEND_SCREEN)(void); //E4CCC
 void (*pLOAD_SCREEN)(void); //E4CD0
+void (*pCOMMANDE_BOX)(void); //E4CD4
 
 i16 hFondu; //E4CE2
 i16 xFondu; //E4CE4

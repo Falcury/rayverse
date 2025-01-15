@@ -74,67 +74,7 @@ i16 dummy_scene_func(u32 par_0) {
 
 
 
-//75268
-bool LoadOptionsOnDisk(void) {
-    mem_t* mem = read_entire_file("RAYMAN.CFG", false);
-    if (mem) {
-        if (mem->len != 0x84) {
-            return false;
-        }
-        mem_read(&language, mem, 1);
-        mem_read(&Port, mem, 4);
-        mem_read(&Irq, mem, 4);
-        mem_read(&Dma, mem, 4);
-        mem_read(&Param, mem, 4);
-        mem_read(&DeviceID, mem, 4);
-        mem_read(&NumCard, mem, 1);
-        mem_read(&options_jeu_KeyJump, mem, 2);
-        mem_read(&options_jeu_KeyWeapon, mem, 2);
-        mem_read(&options_jeu_KeyUnknown_default_02, mem, 2);
-        mem_read(&options_jeu_KeyAction, mem, 2);
-        mem_read(&options_jeu_music_enabled, mem, 2); // 13 = default?
-        mem_read(&options_jeu_sound_volume, mem, 2); // 13 = default?
-        mem_read(&options_jeu_is_stereo, mem, 2);
-        mem_read(&Mode_Pad, mem, 1);
-        mem_read(&Port_Pad, mem, 1);
-        mem_read(&xpadmax, mem, 2);
-        mem_read(&xpadmin, mem, 2);
-        mem_read(&ypadmax, mem, 2);
-        mem_read(&ypadmin, mem, 2);
-        mem_read(&xpadcentre, mem, 2);
-        mem_read(&ypadcentre, mem, 2);
-        for (i32 i = 0; i < 4; ++i) {
-            notbut[i] = 0;
-            mem_read(notbut + i, mem, 1);
-        }
-        for (i32 i = 0; i < 7; ++i) {
-            mem_read(tab_key[i], mem, 1);
-        }
-        mem_read(&GameModeVideo, mem, 1);
-        mem_read(&P486, mem, 1);
-        mem_read(&SizeScreen, mem, 1);
-        if (Frequence != 70) {
-            mem_read(&Frequence, mem, 1);
-        } else {
-            mem_read(&fixon, mem, 1); // in effect, skips this byte
-        }
-        mem_read(&fixon, mem, 1);
-        mem_read(&BackgroundOptionOn, mem, 1);
-        mem_read(&ScrollDiffOn, mem, 1);
-        mem_read(&tRefRam2VramNormalFix, mem, 16);
-        mem_read(&tRefRam2VramNormal, mem, 16);
-        mem_read(&tRefTransFondNormal, mem, 16);
-        mem_read(&tRefSpriteNormal, mem, 4);
-        mem_read(&tRefRam2VramX, mem, 4);
-        mem_read(&tRefVram2VramX, mem, 4);
-        mem_read(&tRefSpriteX, mem, 4);
 
-        free(mem);
-        return true;
-    } else {
-        return false;
-    }
-}
 
 //498A4
 void set_special_key_descriptions(const char** descriptions) {

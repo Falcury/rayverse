@@ -20,13 +20,32 @@ void saisie_nom_prg(void) {
 }
 
 //34334
-void selection_save_option_prg(void) {
-    //stub
+i16 selection_save_option_prg(u32 a1) {
+    return 0; //stub
 }
 
 //34490
 void DO_SAVE_CHOICE(void) {
-    //stub
+    let_shadow = 1;
+    LOAD_SAVE_SCREEN(main_mem_level);
+    SAVE_PALETTE(&rvb_plan3);
+    InitPlasma(0);
+    INIT_FADE_IN();
+    INIT_SAVE_CHOICE();
+    INIT_SAVE_CONTINUE();
+    TempsDemo = 0;
+    INIT_AFFICHE_ECRAN_SAVE();
+    ButtonReleasedSav1 = 1;
+    ButtonReleasedSav2 = 1;
+    ButtonReleasedSav3 = 0;
+    max_compteur = 100;
+    compteur = 0;
+    xwldmapsave = 0;
+    ywldmapsave = 0;
+    SYNCHRO_LOOP(selection_save_option_prg);
+    DO_FADE_OUT();
+    RESTORE_PALETTE();
+    block_free(main_mem_level);
 }
 
 //3452C

@@ -148,12 +148,39 @@ void DO_NOT_SAVE_CHOICE(void) {
 
 //6980C
 void INIT_SAVE_CHOICE(void) {
-    //stub
+    rotationtxt = 0;
+    ktxtenx = 4096;
+    ktxteny = 4096;
+    coeffktxt = 1;
+    nbre_options = 3;
+    positiony = 1;
+    positionx2 = 3;
+    positiony2 = NBRE_SAVE + 1;
+    button_released = 1;
+    compteur = 0;
+    max_compteur = 100;
+    nouvelle_partie = 0;
+    delai_repetition = 100;
+    repetition = 50;
+    basex = 40;
+    sortie_save = 0;
+    for (i32 i = 0; i < NBRE_SAVE; ++i) {
+        LoadInfoGame(i); //TODO
+    }
 }
 
 //698F0
 void INIT_SAVE_CONTINUE(void) {
-    //stub
+    selection_effectuee = 0;
+    realisation_effectuee = 0;
+    fichier_selectionne = 0;
+    fichier_a_copier = 0;
+    action = 0;
+    fin_saisie_nom = 0;
+    affiche_bon_ecran = 0;
+    clignotement = 0;
+    compteur_clignote = 0;
+    positionx = 1;
 }
 
 //69944
@@ -168,7 +195,17 @@ void SELECTION_SAVE_OPTION(void) {
 
 //69D54
 void INIT_AFFICHE_ECRAN_SAVE(void) {
-    //stub
+    nbre_options = 4;
+    general_init_screen(20, 65, 5);
+    basex = 50;
+    display_item_t* to_display = menu_to_display;
+    to_display->font_size = 1;
+    to_display->is_fond = 1;
+    to_display->field_D5 = 1;
+    to_display->ypos = debut_sortie;
+    to_display->color = 5;
+    ecartx = 21;
+    ecarty = ecart_options;
 }
 
 //69DCC

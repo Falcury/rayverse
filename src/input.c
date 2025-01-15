@@ -26,22 +26,65 @@ u8 TestKeyAction(void) {
 
 //41CE4
 i32 leftjoy(void) {
-    return 0; //stub
+    i32 result = 0;
+    if (Main_Control == 2) {
+        //stub?
+    }
+    if (input_mode == 1) {
+        result |= (TOUCHE(key_left) && !(TOUCHE(key_right)));
+    }
+    if (record.is_playing) {
+        result = joy_rec_left;
+    }
+    return result;
 }
 
 //41D54
 i32 rightjoy(void) {
-    return 0; //stub
+    i32 result = 0;
+    if (Main_Control == 2) {
+        //stub?
+    }
+    if (input_mode == 1) {
+        result |= (TOUCHE(key_right) && !(TOUCHE(key_left)));
+    }
+    if (record.is_playing) {
+        result = joy_rec_right;
+    }
+    return result;
 }
 
 //41DC4
 i32 downjoy(void) {
-    return 0; //stub
+    i32 result = 0;
+    if (Main_Control == 2) {
+        //stub?
+    }
+    if (TOUCHE(SC_DOWN)) {
+        int x = 5;
+    }
+    if (input_mode == 1) {
+        result |= (TOUCHE(key_down) && !(TOUCHE(key_up)));
+    }
+    if (record.is_playing) {
+        result = joy_rec_down;
+    }
+    return result;
 }
 
 //41E34
 i32 upjoy(void) {
-    return 0; //stub
+    i32 result = 0;
+    if (Main_Control == 2) {
+        //stub?
+    }
+    if (input_mode == 1) {
+        result |= (TOUCHE(key_up) && !(TOUCHE(key_down)));
+    }
+    if (record.is_playing) {
+        result = joy_rec_up;
+    }
+    return result;
 }
 
 //41EA4

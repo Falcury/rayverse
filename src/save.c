@@ -272,52 +272,7 @@ void load_sav(u8 which_save) {
 
 }
 
-// sub_74400
-void SaveGameOnDisk(u8 which_save) {
-	if (!(which_save >= 1 && which_save <= 3)) {
-		return; // out of bounds
-	}
 
-
-	size_t capacity = 4*1024; // TODO: what is the exact uncompressed save file filesize?
-	mem_t* raw = (mem_t*)calloc(1, sizeof(mem_t) + capacity);
-	raw->capacity = capacity;
-
-	//set_medaillion_saved_data();
-	
-	mem_write(save_names[which_save-1], raw, 4);
-	mem_write(&nb_continue, raw, 1);
-	mem_write(medaillion_saved_data, raw, 24);
-	mem_write(&RayEvts, raw, 2);
-	mem_write(&poing, raw, 20);
-	mem_write(&status_bar, raw, 10);
-	mem_write(&ray.hitp, raw, 1);
-	mem_write(collected_events_data, raw, 2592);
-	mem_write(bonus_completed_data, raw, 24);
-	u16 map_location = dans_la_map_monde ? num_world_choice : world_index;
-	// Note: Game bug: saved_map_location is only 1 byte, but we are writing/reading 2 bytes,
-	mem_write(&map_location, raw, 2);
-	mem_write(&finBossLevel, raw, 2);
-	raw->cursor = 0;
-
-	mem_t* compressed = compress_sav(raw);
-	
-	u8 checksum = 0;
-	mem_t* encoded = sav_xor_stream(compressed, &checksum);
-	
-	
-	char filename[512];
-	snprintf(filename, 512, "RAYMAN%d_.SAV", which_save);
-	// stub: writing out to a temporary file for encryption
-
-	FILE* fp = fopen(filename, "wb");
-	fwrite(encoded->data, encoded->len, 1, fp);
-	fclose(fp);
-
-	free(raw);
-	free(compressed);
-	free(encoded);
-}
 
 
 void reset_items_and_bosses(void) {
@@ -494,4 +449,163 @@ void restoreGameState(save_state_t* save_state) {
 
 
 	}
+}
+
+//741C8
+i32 get_offset_in_safe_zone(i16 a1) {
+    return 0; //stub
+}
+
+//74250
+void reset_save_zone_level(void) {
+    //stub
+}
+
+//74270
+void take_bonus(i16 a1) {
+    //stub
+}
+
+//742A8
+void bonus_taken(i16 a1) {
+    //stub
+}
+
+//742E0
+void storeWorldInfoAcces(void) {
+    //stub
+}
+
+//7435C
+void retrieveWorldInfoAccess(void) {
+    //stub
+}
+
+//743C8
+void file_size(void) {
+    //stub
+}
+
+//74400
+void SaveGameOnDisk(u8 which_save) {
+    if (!(which_save >= 1 && which_save <= 3)) {
+        return; // out of bounds
+    }
+
+
+    size_t capacity = 4*1024; // TODO: what is the exact uncompressed save file filesize?
+    mem_t* raw = (mem_t*)calloc(1, sizeof(mem_t) + capacity);
+    raw->capacity = capacity;
+
+    //set_medaillion_saved_data();
+
+    mem_write(save_names[which_save-1], raw, 4);
+    mem_write(&nb_continue, raw, 1);
+    mem_write(medaillion_saved_data, raw, 24);
+    mem_write(&RayEvts, raw, 2);
+    mem_write(&poing, raw, 20);
+    mem_write(&status_bar, raw, 10);
+    mem_write(&ray.hitp, raw, 1);
+    mem_write(collected_events_data, raw, 2592);
+    mem_write(bonus_completed_data, raw, 24);
+    u16 map_location = dans_la_map_monde ? num_world_choice : world_index;
+    // Note: Game bug: saved_map_location is only 1 byte, but we are writing/reading 2 bytes,
+    mem_write(&map_location, raw, 2);
+    mem_write(&finBossLevel, raw, 2);
+    raw->cursor = 0;
+
+    mem_t* compressed = compress_sav(raw);
+
+    u8 checksum = 0;
+    mem_t* encoded = sav_xor_stream(compressed, &checksum);
+
+
+    char filename[512];
+    snprintf(filename, 512, "RAYMAN%d_.SAV", which_save);
+    // stub: writing out to a temporary file for encryption
+
+    FILE* fp = fopen(filename, "wb");
+    fwrite(encoded->data, encoded->len, 1, fp);
+    fclose(fp);
+
+    free(raw);
+    free(compressed);
+    free(encoded);
+}
+
+//746D0
+bool LoadGameOnDisk(u8 which_save) {
+    return 0; //stub
+}
+
+//749C8
+bool LoadInfoGame(u8 which_save) {
+    return 0; //stub
+}
+
+//74CC8
+bool SaveOptionsOnDisk(void) {
+    return 0; //stub
+}
+
+//75268
+bool LoadOptionsOnDisk(void) {
+    mem_t* mem = read_entire_file("RAYMAN.CFG", false);
+    if (mem) {
+        if (mem->len != 0x84) {
+            return false;
+        }
+        mem_read(&language, mem, 1);
+        mem_read(&Port, mem, 4);
+        mem_read(&Irq, mem, 4);
+        mem_read(&Dma, mem, 4);
+        mem_read(&Param, mem, 4);
+        mem_read(&DeviceID, mem, 4);
+        mem_read(&NumCard, mem, 1);
+        mem_read(&options_jeu_KeyJump, mem, 2);
+        mem_read(&options_jeu_KeyWeapon, mem, 2);
+        mem_read(&options_jeu_KeyUnknown_default_02, mem, 2);
+        mem_read(&options_jeu_KeyAction, mem, 2);
+        mem_read(&options_jeu_music_enabled, mem, 2); // 13 = default?
+        mem_read(&options_jeu_sound_volume, mem, 2); // 13 = default?
+        mem_read(&options_jeu_is_stereo, mem, 2);
+        mem_read(&Mode_Pad, mem, 1);
+        mem_read(&Port_Pad, mem, 1);
+        mem_read(&xpadmax, mem, 2);
+        mem_read(&xpadmin, mem, 2);
+        mem_read(&ypadmax, mem, 2);
+        mem_read(&ypadmin, mem, 2);
+        mem_read(&xpadcentre, mem, 2);
+        mem_read(&ypadcentre, mem, 2);
+        for (i32 i = 0; i < 4; ++i) {
+            notbut[i] = 0;
+            mem_read(notbut + i, mem, 1);
+        }
+        for (i32 i = 0; i < 7; ++i) {
+            mem_read(tab_key[i], mem, 1);
+        }
+        mem_read(&GameModeVideo, mem, 1);
+        mem_read(&P486, mem, 1);
+        mem_read(&SizeScreen, mem, 1);
+        if (Frequence != 70) {
+            mem_read(&Frequence, mem, 1);
+        } else {
+            mem_read(&fixon, mem, 1); // in effect, skips this byte
+        }
+        mem_read(&fixon, mem, 1);
+        mem_read(&BackgroundOptionOn, mem, 1);
+        mem_read(&ScrollDiffOn, mem, 1);
+        mem_read(&tRefRam2VramNormalFix, mem, 16);
+        mem_read(&tRefRam2VramNormal, mem, 16);
+        mem_read(&tRefTransFondNormal, mem, 16);
+        mem_read(&tRefSpriteNormal, mem, 4);
+        mem_read(&tRefRam2VramX, mem, 4);
+        mem_read(&tRefVram2VramX, mem, 4);
+        mem_read(&tRefSpriteX, mem, 4);
+
+        free(mem);
+        return true;
+    } else {
+        return false;
+    }
 }

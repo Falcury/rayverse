@@ -486,6 +486,16 @@ typedef struct {
     void (*u_turn)(obj_t* obj);
 } obj_procs_t;
 
+typedef struct {
+    i16 field_0;
+    i16 field_2;
+    u8 field_4;
+    u8 field_5;
+    u8 field_6;
+    u8 field_7;
+    i16 field_8;
+} vitraux_info_t;
+
 
 enum obj_type_enum {
 	obj_0_livingstone						= 0,

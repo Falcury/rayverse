@@ -281,10 +281,8 @@ void AFFICHE_ECRAN_GENERAL(void) {
     for (i32 i = 0; i < nbre_options; ++i) {
         display_item_t* to_display = menu_to_display + i;
         if (i == positiony) {
-            display_box_text(to_display); // TODO: change back to display_box_text_plasma() once implemented
-//            display_box_text_plasma(to_display, 1);
+            display_box_text_plasma(to_display, 1);
         } else {
-//            display_box_text(to_display);
             display_text(to_display->text, to_display->xpos, to_display->ypos, to_display->font_size, to_display->color);
         }
     }
@@ -314,7 +312,7 @@ void DO_COMMANDE_GENERAL(void) {
     }
     if (downjoy() && (button_released || (delai_repetition < compteur && compteur % repetition == 0))) {
         PlaySnd_old(68);
-        if (positiony <= option_exit) {
+        if (positiony < option_exit) {
             ++positiony;
         } else {
             positiony = first_option;
@@ -602,8 +600,8 @@ i16 menu_prg(u32 a1) {
     if (fin_du_jeu || sortie_options || MENU_RETURN || ModeDemo) {
         need_exit = 1;
     }
-    if (need_exit) {
-        if (pDO_COMMANDE && nb_fade != 0) {
+    if (!need_exit) {
+        if (pDO_COMMANDE && nb_fade == 0) {
             pDO_COMMANDE();
         }
         if (ValidButPressed() && option_exit == position) {
@@ -683,7 +681,11 @@ i32 CalcSpeed(void) {
 
 //4F698
 void general_init_screen(i16 a1, i16 a2, i16 a3) {
-    //stub
+    debut_titre = a1 + 11;
+    ecart_options = (2 * a2 - 15 * nbre_options) / (nbre_options + 1);
+    debut_options = 2 * a1 + ecart_options + 15;
+    debut_sortie = a3 + (2 * a2) + 11 + (2 * a1);
+    sortie_options = 0;
 }
 
 //4F76C
@@ -710,18 +712,25 @@ void TestButtonReleased(void) {
 }
 
 //4F800
-void display_box_text_plasma(display_item_t* a1, u8 a2) {
+void display_box_text_plasma(display_item_t* box, u8 a2) {
+    if (msg_box_being_displayed) {
+        display_text(box->text, box->xpos, box->ypos, box->font_size, box->color);
+    } else {
+        PlasmaBox(box->centered_x_pos, box->centered_y_pos, box->width, box->height, a2);
+        display_box_text(box);
+    }
     //stub
 }
 
 //4F878
-void display_box_text_fire(void* a1) {
-    //stub
+void display_box_text_fire(display_item_t* a1) {
+    FireBox(a1->centered_x_pos, a1->centered_y_pos, a1->width, a1->height);
+    display_box_text(a1);
 }
 
 //4F8B4
-void display_box_msg_prg(void) {
-    //stub
+i16 display_box_msg_prg(u32 a1) {
+    return 0; //stub
 }
 
 //4F904
@@ -730,8 +739,32 @@ void display_box_msg(void* a1) {
 }
 
 //4F960
-void display_box_msg_commande(display_item_t* a1, void_func_t a2) {
-    //stub
+void display_box_msg_commande(display_item_t* box, void_func_t commande_box_func) {
+    dialog_display_item_ptr = box;
+    pCOMMANDE_BOX = commande_box_func;
+    msg_box_being_displayed = 1;
+    endsynchro();
+    synchro();
+    InitFire();
+
+    if (pAFFICHE_SCREEN) {
+        pAFFICHE_SCREEN();
+    }
+
+    do {
+        display_box_text_fire(dialog_display_item_ptr);
+        AfficheYesNo();
+        endsynchro();
+        synchro();
+        DO_FADE();
+        SWAP_BUFFERS();
+        readinput();
+    } while (!(ValidButPressed() && nb_fade == 0));
+
+    SYNCHRO_LOOP(display_box_msg_prg);
+    msg_box_being_displayed = 0;
+    ReInitPlasma = 1;
+    RESET_ALL_TOUCHE();
 }
 
 //4F9F0
