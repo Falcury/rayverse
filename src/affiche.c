@@ -201,7 +201,7 @@ void display_text(const char* text, i16 x, i16 y, u8 font_size, i8 color) {
             const char* pos = text + i;
             char c = *pos;
             if (c == '/') {
-                current_x = x - calc_largmax_text(pos, i, space_width, char_spacing, font_size) / 2;
+                current_x = x - calc_largmax_text(text, i, space_width, char_spacing, font_size) / 2;
                 if (i > 1) {
                     y += line_height; // next row
                 }

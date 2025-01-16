@@ -25,13 +25,31 @@ void InitFire(void) {
 }
 
 //244C4
-void Fire(i16 a1, i16 a2, i16 a3, i16 a4) {
+void Fire(i16 x, i16 y, i16 width, i16 height) {
     //stub
 }
 
 //24738
-void FireBox(i16 a1, i16 a2, i16 a3, i16 a4) {
-    //stub
+void FireBox(i16 x, i16 y, i16 width, i16 height) {
+    x -= 3;
+    y -= 3;
+    width += 6;
+    height += 6;
+    if (x < 0) {
+        width += x;
+        x = 0;
+    }
+    if (y < 0) {
+        height += y;
+        y = 0;
+    }
+    if (x + width > 320) {
+        width = 320 - x;
+    }
+    if (y + height > 200) {
+        height = 200 - y;
+    }
+    Fire(x, y, width, height);
 }
 
 //2479C

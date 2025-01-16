@@ -669,7 +669,7 @@ i16 TabH2[4] = {200, 192, 184, 180}; //96864
 
 u8 msg_box_being_displayed = 0; //96880
 u8 first_option = 0; //96881
-u8 byte_96882 = 0; //96882
+u8 yesno_finished = 0; //96882
 u8 byte_96883 = 0; //96883
 u8 byte_96884 = 64; //96884
 

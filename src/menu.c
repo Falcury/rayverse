@@ -730,16 +730,42 @@ void display_box_text_fire(display_item_t* a1) {
 
 //4F8B4
 i16 display_box_msg_prg(u32 a1) {
-    return 0; //stub
+    yesno_finished = 0;
+    readinput();
+    if (pAFFICHE_SCREEN) {
+        pAFFICHE_SCREEN();
+    }
+    display_box_text_fire(dialog_display_item_ptr);
+    if (pCOMMANDE_BOX) {
+        pCOMMANDE_BOX();
+    }
+    if (SelectButPressed() || yesno_finished) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 //4F904
-void display_box_msg(void* a1) {
-    //stub
+void display_box_msg(display_item_t* box) {
+    dialog_display_item_ptr = box;
+    if (pAFFICHE_SCREEN) {
+        pAFFICHE_SCREEN();
+    }
+    endsynchro();
+    synchro();
+    InitFire();
+    SWAP_BUFFERS();
+    pCOMMANDE_BOX = NULL;
+    SYNCHRO_LOOP(display_box_msg_prg);
+    msg_box_being_displayed = 0;
+    ReInitPlasma = 1;
+    RESET_ALL_TOUCHE();
 }
 
 //4F960
 void display_box_msg_commande(display_item_t* box, void_func_t commande_box_func) {
+
     dialog_display_item_ptr = box;
     pCOMMANDE_BOX = commande_box_func;
     msg_box_being_displayed = 1;
@@ -747,11 +773,10 @@ void display_box_msg_commande(display_item_t* box, void_func_t commande_box_func
     synchro();
     InitFire();
 
-    if (pAFFICHE_SCREEN) {
-        pAFFICHE_SCREEN();
-    }
-
     do {
+        if (pAFFICHE_SCREEN) {
+            pAFFICHE_SCREEN();
+        }
         display_box_text_fire(dialog_display_item_ptr);
         AfficheYesNo();
         endsynchro();
@@ -759,7 +784,9 @@ void display_box_msg_commande(display_item_t* box, void_func_t commande_box_func
         DO_FADE();
         SWAP_BUFFERS();
         readinput();
-    } while (!(ValidButPressed() && nb_fade == 0));
+    } while (!ValidButPressed() || nb_fade != 0);
+
+    RESET_ALL_TOUCHE(); // added: fix enter not released leading to immediate closure of dialog //TODO: find out the cause of this bug?
 
     SYNCHRO_LOOP(display_box_msg_prg);
     msg_box_being_displayed = 0;
@@ -769,12 +796,34 @@ void display_box_msg_commande(display_item_t* box, void_func_t commande_box_func
 
 //4F9F0
 void AfficheYesNo(void) {
-    //stub
+    display_item_t* to_display = dialog_display_item_ptr;
+    if (pos_YN == 0) {
+        display_text(language_txt[147], to_display->xpos - 25, to_display->centered_y_pos + to_display->height, 2, 1);
+        display_text(language_txt[148], to_display->xpos + 35, to_display->centered_y_pos + to_display->height, 2, 0);
+    } else {
+        display_text(language_txt[147], to_display->xpos - 25, to_display->centered_y_pos + to_display->height, 2, 0);
+        display_text(language_txt[148], to_display->xpos + 35, to_display->centered_y_pos + to_display->height, 2, 1);
+    }
 }
 
 //4FAC4
 void DO_YESNOBIS(void) {
-    //stub
+    TestCompteur();
+    if ((leftjoy() || rightjoy()) && !(downjoy() || upjoy())) {
+        if (button_released || (compteur > delai_repetition && (compteur % repetition == 0))) {
+            pos_YN = !pos_YN;
+            PlaySnd_old(68);
+        }
+    }
+    AfficheYesNo();
+    if (SelectButPressed()) {
+        pos_YN = 1;
+        yesno_finished = 1;
+    }
+    if (ValidButPressed() && button_released) {
+        yesno_finished = 1;
+    }
+    TestButtonReleased();
 }
 
 //4FB94
