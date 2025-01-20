@@ -1203,7 +1203,7 @@ u8* EffetBufferNormal; //CD130
 i32 TempsDemo; //CD134
 u8* DrawBufferNormal; //CD138
 void* anim_func; //CD13C
-char* save_ray[3]; //CD794
+char save_ray[4][3]; //CD794
 
 options_t options; //CD7A4
 u8* draw_buffer; //CD7B8
@@ -1236,15 +1236,21 @@ rgb_palette_t* rvb_special; //CD83C
 u32 TailleMainMemLevel; //CD844
 u32 TailleMainMemSprite; //CD848
 mem_t* main_mem_level; //CD84C
+i32 cdTimeStart; //CD858
+i32 cdTime; //CD85C
 mem_t* main_mem_sprite; //CD860
 
 u32 TailleMainMemTmp; //CD86C
+i32 cdTimeEnd; //CD870
 mem_t* main_mem_fix; //CD874
+
 mem_t* main_mem_world; //CD880
+mem_t* temp_mem_buf; //CD88C
 u32 TailleMainMemFix; //CD898
 u32 TailleMainMemWorld; //CD89C
 mem_t* main_mem_tmp; //CD8A0
-mem_t* temp_mem_buf; //CD88C
+
+loadinforay_t LoadInfoRay[3]; //CD8AC
 
 u32 flocon_tab; //CD8BC
 u32 map_time; //CD8C0
@@ -1529,7 +1535,7 @@ u8 VideoBiosCheckSum; //CFA28
 u8 byte_CFA29; //CFA29
 u8 byte_CFA2A; //CFA2A
 u8 BiosCheckSum; //CFA2B
-u8 is_limited_mode; //CFA2C
+u8 JeuCracker; //CFA2C
 u8 PositionStageNameCalcule; //CFA2D
 u8 ModeAutoJumelle; //CFA2E
 u8 ChangeJumelleSizeOK; //CFA2F

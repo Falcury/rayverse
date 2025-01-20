@@ -31,6 +31,8 @@
 #define snprintf _snprintf
 #define for if(0); else for // prevent error C2374: multiple initialization in for loops
 #endif
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
 #endif
 
 #define STB_VORBIS_HEADER_ONLY

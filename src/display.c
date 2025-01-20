@@ -21,6 +21,21 @@ void saisie_nom_prg(void) {
 
 //34334
 i16 selection_save_option_prg(u32 a1) {
+    readinput();
+    DoCdRap();
+    button_released = ButtonReleasedSav1;
+    DO_COMMANDE_SAVE();
+    ButtonReleasedSav1 = button_released;
+    if (ReInitPlasma) {
+        ReInitPlasma = 0;
+        endsynchro();
+        synchro();
+        InitPlasma(1);
+        AFFICHE_ECRAN_SAVE();
+        SWAP_BUFFERS();
+    } else {
+        AFFICHE_ECRAN_SAVE();
+    }
     return 0; //stub
 }
 
@@ -50,7 +65,70 @@ void DO_SAVE_CHOICE(void) {
 
 //3452C
 void AFFICHE_ECRAN_SAVE(void) {
-    //stub
+    if (compteur >= max_compteur || button_released) {
+        if (button_released) {
+            compteur = 0;
+        } else {
+            compteur = delai_repetition + 1;
+        }
+    } else {
+        ++compteur;
+    }
+    if (compteur_clignote >= 30) {
+        compteur_clignote = 0;
+    } else {
+        ++compteur_clignote;
+    }
+    DISPLAY_FOND3();
+    display_text(language_txt[96], 160, debut_titre, 1, 0); // /choose a game/
+
+    i16 start_xpos;
+    i16 erase_xpos;
+    if (language == 1) {
+        start_xpos = 255;
+        erase_xpos = 145;
+    } else {
+        start_xpos = 265;
+        erase_xpos = 159;
+    }
+
+    if (positionx2 == 1) {
+        strncpy(menu_to_display->text, language_txt[97], 200); // /copy/
+        menu_to_display->xpos = 53;
+    } else {
+        display_text(language_txt[97], 53, debut_sortie, 1, 5); // /copy/
+    }
+
+    if (positionx2 == 2) {
+        strncpy(menu_to_display->text, language_txt[98], 200); // /erase/
+        menu_to_display->xpos = erase_xpos;
+    } else {
+        display_text(language_txt[98], erase_xpos, debut_sortie, 1, 5); // /erase/
+    }
+
+    if (positionx2 == 3) {
+        strncpy(menu_to_display->text, language_txt[99], 200); // /start/
+        menu_to_display->xpos = start_xpos;
+    } else {
+        display_text(language_txt[99], start_xpos, debut_sortie, 1, 5); // /start/
+    }
+
+    INIT_TXT_BOX(menu_to_display);
+    display_box_text_plasma(menu_to_display, 1);
+
+    for (i32 i = 0; i < NBRE_SAVE; ++i) {
+        if (save_ray[i][0] == '\0') {
+            let_shadow = 1;
+            display_text(language_txt[155], basex, debut_options + (ecarty + 23) * i, 1, 2);
+        } else {
+            for (i32 j = 0; j < strlen(save_ray[i]); ++j) {
+                //stub
+            }
+            DISPLAY_SAVE_SPRITES(basex + 3 * (ecartx + 11) - 30, i);
+        }
+    }
+    DISPLAY_SAVE_POING(); // TODO
+
 }
 
 //34A80

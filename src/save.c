@@ -1,6 +1,5 @@
 // 0CD794
 char save_names[4][3];
-u8 medaillion_saved_data[24];
 u8 collected_events_data[2592];
 u8 bonus_completed_data[24];
 
@@ -11,7 +10,7 @@ void set_medaillion_saved_data(void) {
 		u8 unlocked_bit = medaillion->state & 1;
 		u8 status_flag_4_bit = (medaillion->state & 4) >> 2;
 		u8 save_byte = (unlocked_bit) | (status_flag_4_bit << 1) | ((medaillion->nb_cages & 7) << 2);
-		medaillion_saved_data[i] = save_byte;
+		wi_save_zone[i] = save_byte;
 	}
 }
 
@@ -255,7 +254,7 @@ void load_sav(u8 which_save) {
 
 		mem_read(save_names[which_save-1], raw, 4);
 		mem_read(&nb_continue, raw, 1);
-		mem_read(medaillion_saved_data, raw, 24);
+		mem_read(wi_save_zone, raw, 24);
 		mem_read(&RayEvts, raw, 2);
 		mem_read(&poing, raw, 20);
 		mem_read(&status_bar, raw, 10);
@@ -281,7 +280,7 @@ void reset_items_and_bosses(void) {
     finBosslevel = 0;
 
 	for (i32 i = 0; i < 24; ++i) {
-		medaillion_saved_data[i] &= ~(7 << 2);
+		wi_save_zone[i] &= ~(7 << 2);
 	}
 
 }
@@ -501,7 +500,7 @@ void SaveGameOnDisk(u8 which_save) {
 
     mem_write(save_names[which_save-1], raw, 4);
     mem_write(&nb_continue, raw, 1);
-    mem_write(medaillion_saved_data, raw, 24);
+    mem_write(wi_save_zone, raw, 24);
     mem_write(&RayEvts, raw, 2);
     mem_write(&poing, raw, 20);
     mem_write(&status_bar, raw, 10);
@@ -538,9 +537,50 @@ bool LoadGameOnDisk(u8 which_save) {
     return 0; //stub
 }
 
+
 //749C8
 bool LoadInfoGame(u8 which_save) {
-    return 0; //stub
+    char save_filename[32];
+    snprintf(save_filename, 64, "RAYMAN%d.SAV", which_save);
+    mem_t* encoded = read_entire_file(save_filename, false);
+    bool has_error = false;
+    if (encoded) {
+        u8 checksum = 0;
+        mem_t* compressed = sav_xor_stream(encoded, &checksum);
+        free(encoded);
+        mem_t* raw = decompress_sav(compressed);
+        if (raw) {
+            mem_read(save_names[which_save-1], raw, 4);
+            mem_read(&nb_continue, raw, 1);
+            mem_read(wi_save_zone, raw, 24);
+            mem_read(&RayEvts, raw, 2);
+            mem_read(&poing, raw, 20);
+            mem_read(&status_bar, raw, 10);
+
+            loadinforay_t* info = LoadInfoRay + (which_save - 1);
+            info->continues = nb_continue;
+            i32 cages = 0;
+            for (i32 i = 0; i < 24; ++i) {
+                u8 w = wi_save_zone[i];
+                cages += (w >> 2) & 7;
+            }
+            info->cages = cages;
+            info->lives = status_bar.lives;
+            info->tings = status_bar.num_wiz;
+            free(raw);
+        } else {
+            has_error = true;
+        }
+        free(compressed);
+    } else {
+        has_error = true;
+    }
+
+    if (JeuCracker) {
+        save_ray[which_save-1][0] = '\0';
+    }
+
+    return has_error;
 }
 
 //74CC8

@@ -186,6 +186,13 @@ typedef struct status_bar_t {
 	u8 max_hitp;
 } status_bar_t;
 
+typedef struct {
+    u8 lives;
+    u8 tings;
+    u8 cages;
+    u8 continues;
+} loadinforay_t;
+
 typedef struct poing_t {
 	u32 field_0; // Fixed-point y pos value?
 	u16 field_4;

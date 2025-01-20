@@ -165,7 +165,7 @@ void INIT_SAVE_CHOICE(void) {
     basex = 40;
     sortie_save = 0;
     for (i32 i = 0; i < NBRE_SAVE; ++i) {
-        LoadInfoGame(i); //TODO
+        LoadInfoGame(i);
     }
 }
 
@@ -185,7 +185,39 @@ void INIT_SAVE_CONTINUE(void) {
 
 //69944
 void DO_COMMANDE_SAVE(void) {
-    //stub
+    if (rightjoy() && !upjoy() && !downjoy() && !fichier_a_copier && (button_released || (delai_repetition < compteur && (compteur % repetition == 0)))) {
+        positionx2 = (positionx2 == 3) ? 1 : positionx2 + 1;
+        TempsDemo = 0;
+        PlaySnd_old(68);
+    }
+    if (leftjoy() && !upjoy() && !downjoy() && !fichier_a_copier && (button_released || (delai_repetition < compteur && (compteur % repetition == 0)))) {
+        positionx2 = (positionx2 == 1) ? 3 : positionx2 - 1;
+        TempsDemo = 0;
+        PlaySnd_old(68);
+    }
+
+    if (upjoy() && !leftjoy() && !rightjoy() && !fichier_a_copier && (button_released || (delai_repetition < compteur && (compteur % repetition == 0)))) {
+        positiony = (positiony <= 1) ? NBRE_SAVE : positiony - 1;
+        TempsDemo = 0;
+        PlaySnd_old(68);
+    }
+    if (downjoy() && !leftjoy() && !rightjoy() && !fichier_a_copier && (button_released || (delai_repetition < compteur && (compteur % repetition == 0)))) {
+        positiony = (positiony == NBRE_SAVE) ? 1 : positiony + 1;
+        TempsDemo = 0;
+        PlaySnd_old(68);
+    }
+
+    if (rightjoy() || leftjoy() || downjoy() || upjoy()) {
+        button_released = 0;
+    } else {
+        compteur = 0;
+        button_released = 1;
+    }
+
+    if (SelectButPressed() && button_released) {
+        MENU_RETURN = 1;
+        PlaySnd_old(77);
+    }
 }
 
 //69C1C

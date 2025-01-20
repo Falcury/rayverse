@@ -44,7 +44,7 @@ void DoCdRap(void) {
 
 //1CFD4
 void start_cd_bbdead(void) {
-    if (is_limited_mode) {
+    if (JeuCracker) {
         MusicCdActive = 0;
     }
     if (MusicCdActive) {
