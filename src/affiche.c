@@ -314,8 +314,43 @@ void DISPLAY_TEXT_FEE(void) {
 }
 
 //1B0E0
-void DISPLAY_SAVE_SPRITES(i16 a1, i16 a2) {
-    //stub
+void DISPLAY_SAVE_SPRITES(i16 x, i16 save_index) {
+    i16 y = save_index * (ecarty + 23) + debut_options - 23;
+    loadinforay_t* loadinfo = LoadInfoRay + save_index;
+    i32 sprite_index = 27;
+    display_sprite(&div_obj, 27, x, y, 1);
+    x += div_obj.sprites[sprite_index].outer_width;
+
+    sprite_index = (loadinfo->lives / 10) % 10 + 28;
+    display_sprite(&div_obj, sprite_index, x, y, 1);
+    x += div_obj.sprites[sprite_index].outer_width;
+
+    sprite_index = loadinfo->lives % 10 + 28;
+    display_sprite(&div_obj, sprite_index, x, y, 1);
+    // The original code always uses sprite 28 here (I assume this doesn't matter as all the digits are the same width)?
+    x += div_obj.sprites[28].outer_width + 10;
+
+    sprite_index = 57;
+    display_sprite(&mapobj[0], sprite_index, x, y, 1);
+    x += mapobj[0].sprites[sprite_index].outer_width;
+
+    sprite_index = loadinfo->continues % 10 + 28;
+    display_sprite(&div_obj, sprite_index, x, y, 1);
+    x += div_obj.sprites[37].outer_width + 10;
+
+    sprite_index = loadinfo->cages / 100 + 28;
+    display_sprite(&div_obj, sprite_index, x, y, 1);
+    x += div_obj.sprites[sprite_index].outer_width;
+
+    sprite_index = (loadinfo->cages / 10) % 10 + 28;
+    display_sprite(&div_obj, sprite_index, x, y, 1);
+    x += div_obj.sprites[sprite_index].outer_width;
+
+    sprite_index = loadinfo->cages % 10 + 28;
+    display_sprite(&div_obj, sprite_index, x, y, 1);
+    x += div_obj.sprites[sprite_index].outer_width;
+
+    display_text("%", x, debut_options + save_index * (ecarty + 23), 1, 2);
 }
 
 //1B424

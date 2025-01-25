@@ -1,5 +1,4 @@
 // 0CD794
-char save_names[4][3];
 u8 collected_events_data[2592];
 u8 bonus_completed_data[24];
 
@@ -252,7 +251,7 @@ void load_sav(u8 which_save) {
 		mem_t* raw = decompress_sav(compressed);
 		free(compressed);
 
-		mem_read(save_names[which_save-1], raw, 4);
+		mem_read(save_ray[which_save-1], raw, 4);
 		mem_read(&nb_continue, raw, 1);
 		mem_read(wi_save_zone, raw, 24);
 		mem_read(&RayEvts, raw, 2);
@@ -498,7 +497,7 @@ void SaveGameOnDisk(u8 which_save) {
 
     //set_medaillion_saved_data();
 
-    mem_write(save_names[which_save-1], raw, 4);
+    mem_write(save_ray[which_save-1], raw, 4);
     mem_write(&nb_continue, raw, 1);
     mem_write(wi_save_zone, raw, 24);
     mem_write(&RayEvts, raw, 2);
@@ -550,7 +549,7 @@ bool LoadInfoGame(u8 which_save) {
         free(encoded);
         mem_t* raw = decompress_sav(compressed);
         if (raw) {
-            mem_read(save_names[which_save-1], raw, 4);
+            mem_read(save_ray[which_save-1], raw, 4);
             mem_read(&nb_continue, raw, 1);
             mem_read(wi_save_zone, raw, 24);
             mem_read(&RayEvts, raw, 2);

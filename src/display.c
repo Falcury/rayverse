@@ -15,8 +15,8 @@ void DO_CONTINUE(void) {
 }
 
 //34240
-void saisie_nom_prg(void) {
-    //stub
+i16 saisie_nom_prg(u32 a1) {
+    return 0; //stub
 }
 
 //34334
@@ -36,7 +36,29 @@ i16 selection_save_option_prg(u32 a1) {
     } else {
         AFFICHE_ECRAN_SAVE();
     }
-    return 0; //stub
+    readinput();
+    button_released = ButtonReleasedSav2;
+    SELECTION_SAVE_OPTION();
+    ButtonReleasedSav1 = button_released;
+    REALISATION_ACTION();
+    if ((action == 1 || (action == 3 && !fichier_existant)) && fichier_selectionne) {
+        if (!fin_saisie_nom) {
+            INIT_AFFICHE_ECRAN_SAVE();
+            SYNCHRO_LOOP(saisie_nom_prg);
+        }
+        if (!MENU_RETURN) {
+            SaveGameOnDisk(fichier_selectionne);
+        }
+    }
+    if (realisation_effectuee) {
+        INIT_SAVE_CONTINUE();
+    }
+    action = 0;
+    ++TempsDemo;
+    if (TempsDemo >= RunTimeDemo && !sortie_save && !fin_du_jeu) {
+        InitDemoJeu();
+    }
+    return fin_du_jeu || sortie_save || ModeDemo || MENU_RETURN;
 }
 
 //34490

@@ -138,7 +138,36 @@ void DETER_WORLD_AND_LEVEL(void) {
 
 //696CC
 void INIT_NEW_GAME(void) {
-    //stub
+    new_level = 1;
+    new_world = 1;
+    status_bar.lives = 3;
+    ray.hitp = 2;
+    fin_du_jeu = 0;
+    nb_continue = 9;
+    ray.flags &= ~obj_flags_1;
+    poing.sub_etat = 1;
+    departlevel = 1;
+    memset(wi_save_zone, 0, sizeof(wi_save_zone));
+    memset(save_zone, 0, sizeof(save_zone));
+    INIT_RAY_BEGIN();
+    u8 first_world_is_accessible_flag = (t_world_info[0].state | 1);
+    for (i32 i = 0; i < 24; ++i) {
+        world_info_t* world_info = t_world_info + 1;
+        world_info->nb_cages = 0;
+        world_info->state &= ~7;
+    }
+    t_world_info[0].state |= first_world_is_accessible_flag;
+    i32 save_index = positiony - 1;
+    loadinforay_t* loadinfo = LoadInfoRay + save_index;
+    loadinfo->lives = 3;
+    loadinfo->tings = 0;
+    loadinfo->cages = 0;
+    loadinfo->continues = 0;
+    for (i32 i = 0; i < 23; ++i) { // NOTE: the loop only goes up to 23 here, not 24
+        bonus_perfect[i] = 0;
+    }
+    init_finBossLevel();
+    INIT_WORLD_INFO();
 }
 
 //697DC
@@ -222,7 +251,25 @@ void DO_COMMANDE_SAVE(void) {
 
 //69C1C
 void SELECTION_SAVE_OPTION(void) {
-    //stub
+    TestCompteur();
+    if (positionx2 == 1 && ValidButPressed()) {
+        if (button_released || (delai_repetition < compteur && compteur % repetition == 0)) {
+            action = 1;
+            PlaySnd_old(69);
+        }
+    } else if (positionx2 == 2 && ValidButPressed()) {
+        if (button_released || (delai_repetition < compteur && compteur % repetition == 0)) {
+            action = 2;
+            PlaySnd_old(69);
+        }
+    } else if (positionx2 == 3 && ValidButPressed()) {
+        if (button_released || (delai_repetition < compteur && compteur % repetition == 0)) {
+            action = 3;
+            PlaySnd_old(69);
+            WaitNSynchro(20);
+        }
+    }
+    TestButtonReleased();
 }
 
 //69D54
@@ -247,7 +294,33 @@ void SAISIE_NOM(void) {
 
 //6A0F4
 void REALISATION_ACTION(void) {
-    //stub
+    switch(action) {
+        default: break;
+        case 1: {
+            // Copy
+            if (!fichier_a_copier) {
+                //stub
+            }
+        } break;
+        case 2: {
+            // Erase
+            //stub
+        } break;
+        case 3: {
+            // Start
+            fichier_selectionne = positiony;
+            if (save_ray[fichier_selectionne-1][0] == '\0') {
+                fichier_existant = 0;
+                nouvelle_partie = 1;
+                INIT_NEW_GAME();
+            } else {
+                fichier_existant = 1;
+                LoadGameOnDisk(fichier_selectionne);
+                sortie_save = 1;
+                new_world = 1;
+            }
+        } break;
+    }
 }
 
 //6A3A0
