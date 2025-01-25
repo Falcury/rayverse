@@ -48,8 +48,21 @@ void display2(obj_t* obj) {
 
 
 //18EB0
-void display_sprite(obj_t* obj, u8 a2, i16 a3, i16 a4, u8 a5) {
-    //stub
+void display_sprite(obj_t* obj, u8 sprite_index, i16 x, i16 y, u8 flipped) {
+    sprite_t* sprite = obj->sprites + sprite_index;
+    draw_func_t* draw_func;
+    if (((sprite->flags & 4) != 0) == flipped) {
+        draw_func = DrawSpriteFlipNormalEtX;
+    } else {
+        draw_func = DrawSpriteNormalEtX;
+    }
+    i32 proj_x = get_proj_x(obj->scale, x);
+    i32 proj_y = get_proj_y(obj->scale, y);
+    i32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
+    i32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
+    vec2b_t proj_size = {(u8)proj_width, (u8)proj_height};
+    u8* image_data = obj->img_buffer + sprite->offset_in_atlas;
+    draw_func(proj_x, sprite->color, proj_y, proj_size, draw_buffer, image_data);
 }
 
 //18F7C
@@ -307,7 +320,10 @@ void DISPLAY_SAVE_SPRITES(i16 a1, i16 a2) {
 
 //1B424
 void DISPLAY_SAVE_POING(void) {
-    //stub
+    display_sprite(&mapobj[0], 2, 10, (ecarty + 23) * (positiony - 1) + debut_options - 23, 0);
+    if (fichier_a_copier) {
+        display_sprite(&mapobj[0], 1, 10, (ecarty + 23) * (fichier_a_copier - 1) + debut_options - 23, 0);
+    }
 }
 
 //1B4AC

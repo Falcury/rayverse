@@ -321,44 +321,44 @@ void sprite_clipping(i32 xmin, i32 xmax, i32 ymin, i32 ymax) {
 }
 
 //1626D
-bool clip_sprite_on_screen(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** image_data) {
-    saved_sprite_width = proj_size->x;
-    if (*proj_x < XMIN) {
-        i32 x_left_of_screen = -(*proj_x - XMIN);
-        if (proj_size->x <= x_left_of_screen) {
+bool clip_sprite_on_screen(i32* x, i32* y, vec2b_t* size, u8** image_data) {
+    saved_sprite_width = size->x;
+    if (*x < XMIN) {
+        i32 x_left_of_screen = -(*x - XMIN);
+        if (size->x <= x_left_of_screen) {
             return false;
         } else {
             x_left_of_screen &= 0xFFFF;
-            proj_size->x -= (u8) x_left_of_screen;
-            *proj_x = XMIN;
+            size->x -= (u8) x_left_of_screen;
+            *x = XMIN;
             *image_data += x_left_of_screen;
         }
     }
-    i32 proj_right = *proj_x + proj_size->x;
+    i32 proj_right = *x + size->x;
     if (proj_right > XMAX) {
-        if (*proj_x >= XMAX) {
+        if (*x >= XMAX) {
             return false;
         } else {
-            proj_size->x = XMAX - *proj_x;
+            size->x = XMAX - *x;
         }
     }
-    if (*proj_y < YMIN) {
-        if (*proj_y + proj_size->y < YMIN) {
+    if (*y < YMIN) {
+        if (*y + size->y < YMIN) {
             return false;
         } else {
-            i32 y_above_screen = -(*proj_y - YMIN);
+            i32 y_above_screen = -(*y - YMIN);
             y_above_screen &= 0xFFFF;
-            proj_size->y -= (u8) y_above_screen;
+            size->y -= (u8) y_above_screen;
             *image_data += saved_sprite_width * y_above_screen;
-            *proj_y = YMIN;
+            *y = YMIN;
         }
     }
-    i32 proj_bottom = *proj_y + proj_size->y;
+    i32 proj_bottom = *y + size->y;
     if (proj_bottom > YMAX) {
-        if (*proj_y >= YMAX) {
+        if (*y >= YMAX) {
             return false;
         } else {
-            proj_size->y = YMAX - *proj_y;
+            size->y = YMAX - *y;
             return true;
         }
     } else {
@@ -367,44 +367,44 @@ bool clip_sprite_on_screen(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** im
 }
 
 //16323
-bool clip_sprite_on_screen_flipped(i32* proj_x, i32* proj_y, vec2b_t* proj_size, u8** image_data) {
-    saved_sprite_width = proj_size->x;
-    if (*proj_x < XMIN) {
-        i32 x_left_of_screen = -(*proj_x - XMIN);
-        if (proj_size->x <= x_left_of_screen) {
+bool clip_sprite_on_screen_flipped(i32* x, i32* y, vec2b_t* size, u8** image_data) {
+    saved_sprite_width = size->x;
+    if (*x < XMIN) {
+        i32 x_left_of_screen = -(*x - XMIN);
+        if (size->x <= x_left_of_screen) {
             return false;
         } else {
             x_left_of_screen &= 0xFFFF;
-            proj_size->x -= (u8) x_left_of_screen;
-            *proj_x = XMIN;
+            size->x -= (u8) x_left_of_screen;
+            *x = XMIN;
         }
     }
-    i32 proj_right = *proj_x + proj_size->x;
+    i32 proj_right = *x + size->x;
     if (proj_right > XMAX) {
-        if (*proj_x >= XMAX) {
+        if (*x >= XMAX) {
             return false;
         } else {
-            proj_size->x = XMAX - *proj_x;
-            *image_data += saved_sprite_width - proj_size->x;
+            size->x = XMAX - *x;
+            *image_data += saved_sprite_width - size->x;
         }
     }
-    if (*proj_y < YMIN) {
-        if (*proj_y + proj_size->y < YMIN) {
+    if (*y < YMIN) {
+        if (*y + size->y < YMIN) {
             return false;
         } else {
-            i32 y_above_screen = -(*proj_y - YMIN);
+            i32 y_above_screen = -(*y - YMIN);
             y_above_screen &= 0xFFFF;
-            proj_size->y -= (u8) y_above_screen;
+            size->y -= (u8) y_above_screen;
             *image_data += saved_sprite_width * y_above_screen;
-            *proj_y = YMIN;
+            *y = YMIN;
         }
     }
-    i32 proj_bottom = *proj_y + proj_size->y;
+    i32 proj_bottom = *y + size->y;
     if (proj_bottom > YMAX) {
-        if (*proj_y >= YMAX) {
+        if (*y >= YMAX) {
             return false;
         } else {
-            proj_size->y = YMAX - *proj_y;
+            size->y = YMAX - *y;
             return true;
         }
     } else {
@@ -416,54 +416,71 @@ bool clip_sprite_on_screen_flipped(i32* proj_x, i32* proj_y, vec2b_t* proj_size,
 #define DRAW_FUNC(name) void name (i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data)
 
 //163E6
-void DrawSpriteFlipNoClipX(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data) {
+void DrawSpriteFlipNoClipX(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
     //stub
 }
 
 //163F2
-void DrawSpriteX(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data) {
+void DrawSpriteX(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
     //stub
 }
 
 //16559
-void DrawSpriteNoClipX(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data) {
+void DrawSpriteNoClipX(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
     //stub
 }
 
 //16565
-void DrawSpriteFlipX(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data) {
+void DrawSpriteFlipX(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
     //stub
 }
 
 //166DF
-void DrawSpriteColorX(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data) {
+void DrawSpriteColorX(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
     //stub
 }
 
 //16876
-void DrawSpriteColorFlipX(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data) {
+void DrawSpriteColorFlipX(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
     //stub
 }
 
 //16A18
-void DrawSpriteFlipNormalNoClip(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data) {
+void DrawSpriteFlipNormalNoClip(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
     //stub
 }
 
 //16A24
-void DrawSpriteNormal(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data) {
-    //stub
-}
-
-//16A9D
-void DrawSpriteNormal256(i32 proj_x /*eax*/, i32 color /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, u8* draw_buf /*edi*/, u8* image_data /*esi*/) {
-    if (clip_sprite_on_screen(&proj_x, &proj_y, &proj_size, &image_data) && proj_size.x > 0) {
-        u8* draw_pos = draw_buf + proj_y * 320 + proj_x;
-        u8* draw_end = draw_pos + proj_size.y * 320;
+void DrawSpriteNormal(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
+    if (clip_sprite_on_screen(&x, &y, &size, &image_data) && size.x > 0) {
+        u8* draw_pos = draw_buf + y * 320 + x;
+        u8* draw_end = draw_pos + size.y * 320;
         i32 sprite_width = saved_sprite_width; // this was saved in clip_sprite_on_screen()
         u8* sprite_pos = image_data;
         while (draw_pos < draw_end) {
-            for (i32 i = 0; i < proj_size.x; ++i) {
+            for (i32 i = 0; i < size.x; ++i) {
+                u8 c = sprite_pos[i];
+                if (c < 160) {
+                    draw_pos[i] = c;
+                } else {
+                    i += (c - 160);
+                }
+            }
+            sprite_pos += sprite_width;
+            draw_pos += 320;
+        }
+    }
+}
+
+//16A9D
+void DrawSpriteNormal256(i32 x /*eax*/, i32 color /*edx*/, i32 y /*ebx*/, vec2b_t size /*ecx*/, u8* draw_buf /*edi*/, u8* image_data /*esi*/) {
+    if (clip_sprite_on_screen(&x, &y, &size, &image_data) && size.x > 0) {
+        u8* draw_pos = draw_buf + y * 320 + x;
+        u8* draw_end = draw_pos + size.y * 320;
+        i32 sprite_width = saved_sprite_width; // this was saved in clip_sprite_on_screen()
+        u8* sprite_pos = image_data;
+        while (draw_pos < draw_end) {
+            for (i32 i = 0; i < size.x; ++i) {
                 u8 c = sprite_pos[i];
                 if (c != 0) {
                     draw_pos[i] = c;
@@ -476,27 +493,44 @@ void DrawSpriteNormal256(i32 proj_x /*eax*/, i32 color /*edx*/, i32 proj_y /*ebx
 }
 
 //16AFC
-void DrawSpriteNormalNoClip(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data) {
+void DrawSpriteNormalNoClip(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
     //stub
 }
 
 //16B08
-void DrawSpriteFlipNormal(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data) {
-    //stub
-}
-
-//16B88
-void DrawSpriteFlipNormal256(i32 proj_x /*eax*/, i32 color /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, u8* draw_buf /*edi*/, u8* image_data /*esi*/) {
-    if (clip_sprite_on_screen_flipped(&proj_x, &proj_y, &proj_size, &image_data) && proj_size.x > 0) {
-        u8* draw_pos = draw_buf + proj_y * 320 + proj_x;
-        u8* draw_end = draw_pos + proj_size.y * 320;
+void DrawSpriteFlipNormal(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
+    if (clip_sprite_on_screen(&x, &y, &size, &image_data) && size.x > 0) {
+        u8* draw_pos = draw_buf + y * 320 + x;
+        u8* draw_end = draw_pos + size.y * 320;
         i32 sprite_width = saved_sprite_width; // this was saved in clip_sprite_on_screen()
         u8* sprite_pos = image_data;
         while (draw_pos < draw_end) {
-            for (i32 i = 0; i < proj_size.x; ++i) {
+            for (i32 i = 0; i < size.x; ++i) {
+                u8 c = sprite_pos[i];
+                if (c < 160) {
+                    draw_pos[size.x - i - 1] = c; // reverse order (flipped)
+                } else {
+                    i += (c - 160);
+                }
+            }
+            sprite_pos += sprite_width;
+            draw_pos += 320;
+        }
+    }
+}
+
+//16B88
+void DrawSpriteFlipNormal256(i32 x /*eax*/, i32 color /*edx*/, i32 y /*ebx*/, vec2b_t size /*ecx*/, u8* draw_buf /*edi*/, u8* image_data /*esi*/) {
+    if (clip_sprite_on_screen_flipped(&x, &y, &size, &image_data) && size.x > 0) {
+        u8* draw_pos = draw_buf + y * 320 + x;
+        u8* draw_end = draw_pos + size.y * 320;
+        i32 sprite_width = saved_sprite_width; // this was saved in clip_sprite_on_screen()
+        u8* sprite_pos = image_data;
+        while (draw_pos < draw_end) {
+            for (i32 i = 0; i < size.x; ++i) {
                 u8 c = sprite_pos[i];
                 if (c != 0) {
-                    draw_pos[proj_size.x-i-1] = c; // reverse order (flipped)
+                    draw_pos[size.x - i - 1] = c; // reverse order (flipped)
                 }
             }
             sprite_pos += sprite_width;
@@ -506,16 +540,16 @@ void DrawSpriteFlipNormal256(i32 proj_x /*eax*/, i32 color /*edx*/, i32 proj_y /
 }
 
 //16BEA
-void DrawSpriteColorNormal(i32 proj_x /*eax*/, i32 color /*edx*/, i32 proj_y /*ebx*/, vec2b_t proj_size /*ecx*/, u8* draw_buf /*edi*/, u8* image_data /*esi*/) {
+void DrawSpriteColorNormal(i32 x /*eax*/, i32 color /*edx*/, i32 y /*ebx*/, vec2b_t size /*ecx*/, u8* draw_buf /*edi*/, u8* image_data /*esi*/) {
     saved_sprite_color = color * 8;
-    if (clip_sprite_on_screen(&proj_x, &proj_y, &proj_size, &image_data) && proj_size.x > 0) {
-        u8* draw_pos = draw_buf + proj_y * 320 + proj_x;
-        u8* draw_end = draw_pos + proj_size.y * 320;
+    if (clip_sprite_on_screen(&x, &y, &size, &image_data) && size.x > 0) {
+        u8* draw_pos = draw_buf + y * 320 + x;
+        u8* draw_end = draw_pos + size.y * 320;
         i32 sprite_width = saved_sprite_width; // this was saved in clip_sprite_on_screen()
         u8* sprite_pos = image_data;
         u8 current_color = saved_sprite_color;
         while (draw_pos < draw_end) {
-            for (i32 i = 0; i < proj_size.x; ++i) {
+            for (i32 i = 0; i < size.x; ++i) {
                 u8 c = sprite_pos[i];
                 if (c < 160) {
                     draw_pos[i] = c | current_color;
@@ -527,21 +561,39 @@ void DrawSpriteColorNormal(i32 proj_x /*eax*/, i32 color /*edx*/, i32 proj_y /*e
             draw_pos += 320;
         }
     }
-    //stub
 }
 
 //16C89
-void DrawSpriteColorFlipNormal(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data) {
-    //stub
+void DrawSpriteColorFlipNormal(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
+    saved_sprite_color = color * 8;
+    if (clip_sprite_on_screen(&x, &y, &size, &image_data) && size.x > 0) {
+        u8* draw_pos = draw_buf + y * 320 + x;
+        u8* draw_end = draw_pos + size.y * 320;
+        i32 sprite_width = saved_sprite_width; // this was saved in clip_sprite_on_screen()
+        u8* sprite_pos = image_data;
+        u8 current_color = saved_sprite_color;
+        while (draw_pos < draw_end) {
+            for (i32 i = 0; i < size.x; ++i) {
+                u8 c = sprite_pos[i];
+                if (c < 160) {
+                    draw_pos[size.x - i - 1] = c | current_color; // reverse order (flipped)
+                } else {
+                    i += (c - 160);
+                }
+            }
+            sprite_pos += sprite_width;
+            draw_pos += 320;
+        }
+    }
 }
 
 //16D33
-void DrawSpriteDiffNormal_clip(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data) {
+void DrawSpriteDiffNormal_clip(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
     //stub
 }
 
 //16E0D
-void DrawSpriteDiffNormal(i32 proj_x, i32 color, i32 proj_y, vec2b_t proj_size, u8* draw_buf, u8* image_data) {
+void DrawSpriteDiffNormal(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
     //stub
 }
 
