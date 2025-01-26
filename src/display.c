@@ -138,15 +138,31 @@ void AFFICHE_ECRAN_SAVE(void) {
     INIT_TXT_BOX(menu_to_display);
     display_box_text_plasma(menu_to_display, 1);
 
-    for (i32 i = 0; i < NBRE_SAVE; ++i) {
-        if (save_ray[i][0] == '\0') {
+    for (i32 save_index = 0; save_index < NBRE_SAVE; ++save_index) {
+        if (save_ray[save_index][0] == '\0') {
             let_shadow = 1;
-            display_text(language_txt[155], basex, debut_options + (ecarty + 23) * i, 1, 2);
+            display_text(language_txt[155], basex, debut_options + (ecarty + 23) * save_index, 1, 2);
         } else {
-            for (i32 j = 0; j < strlen(save_ray[i]); ++j) {
+            for (i32 j = 0; j < strlen(save_ray[save_index]); ++j) {
+                if (positionx == j && positiony == save_index + 1 && clignotement) {
+                    //stub
+                    ktxtenx = 4096;
+                    i16 v15;
+                    if (coeffktxt > 511) {
+                        coeffktxt = 0;
+                        v15 = 256;
+                    } else {
+                        v15 = coeffktxt + 256;
+                    }
+                    //stub
+                } else {
+                    char c_copy[2] = {0};
+                    c_copy[0] = save_ray[save_index][j];
+
+                }
                 //stub
             }
-            DISPLAY_SAVE_SPRITES(basex + 3 * (ecartx + 11) - 30, i);
+            DISPLAY_SAVE_SPRITES(basex + 3 * (ecartx + 11) - 30, save_index);
         }
     }
     DISPLAY_SAVE_POING(); // TODO
@@ -154,13 +170,21 @@ void AFFICHE_ECRAN_SAVE(void) {
 }
 
 //34A80
-void select_level_prg(void) {
-    //stub
+i16 select_level_prg(u32 a1) {
+    return 0; //stub
 }
 
 //34BB4
-void SELECT_LEVEL(i16 a1) {
-    //stub
+i16 SELECT_LEVEL(i16 original_level_choice) {
+    // This seems to be a level selection screen.
+    level_select = original_level_choice;
+    inter_select = 0;
+    LoadPlan2InVignet(main_mem_level, 50);
+    SAVE_PALETTE(&rvb_pres);
+    INIT_FADE_IN();
+    SYNCHRO_LOOP(select_level_prg);
+    RESTORE_PALETTE();
+    return level_select;
 }
 
 //34C00
@@ -174,13 +198,75 @@ void DISPLAY_STAGE_NAMES(void) {
 }
 
 //35028
-void WORLD_CHOICE(void) {
-    //stub
+i16 WORLD_CHOICE(u32 a1) {
+    return 0; //stub
 }
 
 //3514C
 void DO_WORLD_MAP(void) {
-    //stub
+    //clear_text_input_buffer();
+    SetCompteurTrameAudio();
+    EFFACE_VIDEO();
+    INIT_RAY(new_level);
+    readinput();
+    map_time = 0;
+    if (!ModeDemo) {
+        LoadPlan2InVignet(main_mem_level, 48); //NOTE: 46 in the Android version
+        WidthNworld = plan2_width;
+        HeightNworld = plan2_height;
+        chemin_percent = 1;
+        DISPLAY_PTS_WAY();
+    }
+    SAVE_PALETTE(&rvb_pres);
+    INIT_FADE_IN();
+    INIT_CHEMIN();
+    if (xwldmapsave != 0 && ywldmapsave != 0) {
+        xmap = (scroll_end_x + scroll_start_x) / 2;
+        ymap = (scroll_end_y + scroll_start_y) / 2;
+        DefaultJumelleVariable();
+    }
+    if (!ModeDemo) {
+        //InitPcSoundCard?
+        SYNCHRO_LOOP(WORLD_CHOICE);
+    }
+    if (JeuCracker && num_world_choice > world_3_mountain) {
+        fin_de_rayman = 1;
+        new_world = 1;
+        new_level = 1;
+        fin_du_jeu = 1;
+        PROC_EXIT = 1;
+    }
+    if (PROC_EXIT) {
+        fin_du_jeu = 1;
+        fichier_selectionne = 0;
+        world_index = num_world_choice;
+        menuEtape = 4;
+        num_world_choice = num_world;
+        num_level_choice = num_level;
+        num_world = 0;
+        PlaySnd_old(77);
+    }
+    for (;;) {
+        // We seem to wait here until all buttons are released (why? can we skip this?)
+        if (!but0pressed() && !but1pressed() && !but2pressed() && !but3pressed()) {
+            break;
+        }
+        if (ModeDemo) {
+            break;
+        }
+        readinput();
+        break; // added // TODO: investigate if this code is needed
+    }
+    DETER_WORLD_AND_LEVEL();
+    if (!get_casse_brique_active() && ALL_WORLD && !ModeDemo) {
+        num_level_choice = SELECT_LEVEL(num_level_choice);
+    }
+    if (!ModeDemo) {
+        PlaySnd_old(69);
+        WaitNSynchro(5);
+    }
+    FIN_WORLD_CHOICE();
+    stop_cd();
 }
 
 //35370

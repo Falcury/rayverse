@@ -21,7 +21,14 @@ void set_casse_brique_active(void) {
 
 //26A40
 void enter_casse_brique(void) {
-    //stub
+    if (casse_brique_active) {
+        old_num_level_choice = num_level_choice;
+        num_level_choice = 22;
+        old_num_world_choice = num_world_choice;
+        num_world_choice = 1;
+        num_world = 1;
+        CasseBriqueON = 1;
+    }
 }
 
 //26A90

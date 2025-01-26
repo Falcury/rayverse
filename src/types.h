@@ -292,7 +292,7 @@ typedef struct obj_t {
 	i16 nb_sprites;
 	i16 next_command_index;
 	i16 nb_cmd;
-	i16 command_par2; // action (?) // command_par2?
+	i16 command_par2; // action (?) // command_par2? // field_4A
 	u16 follow_y;
 	u16 follow_x;
 	u16 cmd_arg_1;
@@ -1064,6 +1064,11 @@ typedef struct rayevts_t {
 	u8 squashed : 1;            //0x8000
 } rayevts_t;
 
+typedef struct wi_save_zone_t {
+    u8 unlocked : 1;
+    u8 status_flag_4_bit: 1;
+    u8 cages : 3;
+} wi_save_zone_t;
 
 enum world_enum {
 	world_0_none     = 0,

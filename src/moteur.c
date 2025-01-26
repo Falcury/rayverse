@@ -402,8 +402,78 @@ void INIT_RAY_BEGIN(void) {
 }
 
 //59948
-void INIT_RAY(u8 a1) {
-    //stub
+void INIT_RAY(u8 level_index) {
+    gele = 0;
+    compteur_attente = 0;
+    ray_mode = (ray.main_etat == 6) + 1;
+    if (RayEvts.tiny) {
+        rms.hitp = ray.hitp;
+        ray = rms;
+    }
+    xmap = 0;
+    ymap = 0;
+    ray.type = obj_23_rayman;
+    ray.screen_x = 0;
+    ray.screen_y = 0;
+    ray.xspeed = 0;
+    ray.yspeed = 0;
+    ray.xpos = 100;
+    ray.offset_hy = 20;
+    ray.ypos = 10;
+    ray.anim_index = 0;
+    ray.anim_frame = 0;
+    ray.main_etat = 2;
+    ray.sub_etat = 2;
+    ray.configuration = 0;
+    ray.timer = 0;
+    ray.offset_bx = 80;
+    ray.offset_by = 78;
+    ray.command_par2 = -1;
+    ray.phase = -1;
+    ray.iframes_timer = -1;
+    ray.is_active = 1;
+    ray.flags = (ray.flags | (obj_flags_4_triggered | obj_flags_8_flipped)) & ~obj_flags_0x40;
+    ray_stack_is_full = 0;
+    no_ray_landing_smoke = 0;
+    in_air_because_hit = 0;
+    remoteRayXToReach = -32000;
+    ray_last_ground_btyp = 1;
+    ray_pos_in_stack = 0;
+    ray_se_noie = 0;
+    ray_in_fee_zone = 1;
+    fin_dark = 0;
+    for (i32 i = 0; i < 10; ++i) {
+        pos_stack[i] = ray.xpos;
+    }
+    poing.is_active = 0;
+    poing.is_charging = 0;
+    if (level_index != 0) {
+        RayEvts.super_helico = 0;
+    }
+    if (!(num_world == world_1_jungle && num_level == 9) && !ModeDemo && !record.is_recording) {
+        RayEvts.magicseed= 0;
+    }
+    if (RayEvts.squashed) {
+        RayEvts.tiny = RayEvts.squashed;
+        Ray_RayEcrase(); //TODO
+    }
+    RayEvts.tiny = 0;
+    RayEvts.force_run = 0;
+    if (save1.rayevts_reverse && save1.save_obj_id != -1) {
+        RayEvts.reverse = 0;
+        if (num_world == world_6_cake && num_level == 3) {
+            RAY_REVERSE_COMMANDS();
+        }
+    } else {
+        RayEvts.reverse = 1;
+        RAY_REVERSE_COMMANDS();
+    }
+
+    if (level.objects && level.nb_objects > 0) {
+        //stub
+    }
+
+
 }
 
 //59CF4
@@ -461,7 +531,7 @@ void INIT_MOTEUR_BEGIN(void) {
     }
     First_Hist = 1;
     First_Menu = 1;
-    time_left = -2;
+    left_time = -2;
     life_becoz_wiz = 0;
     dontdoit = 0;
     RunTimeDemo = 1800;

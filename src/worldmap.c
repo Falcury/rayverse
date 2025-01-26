@@ -133,7 +133,25 @@ void FIN_WORLD_CHOICE(void) {
 
 //695DC
 void DETER_WORLD_AND_LEVEL(void) {
-    //stub
+    world_index = num_world_choice;
+    if (!ModeDemo) {
+        world_info_t* world_info = t_world_info + num_world_choice;
+        num_level_choice = world_info->level;
+        num_world_choice = world_info->world;
+        enter_casse_brique();
+    }
+    RayEvts.firefly = 0;
+    if (num_world_choice == world_5_cave && num_level_choice == 3 && (finBosslevel & 0x200)) {
+        RayEvts.firefly = 1;
+        ++num_level_choice;
+    } else if (num_world_choice == world_5_cave && num_level_choice == 4 && (finBosslevel & 0x200) && ModeDemo) {
+        RayEvts.firefly = 1;
+    } else if (num_world_choice == world_6_cake && (finBosslevel & 0x80)) {
+        You_Win = 1;
+        fin_du_jeu = 1;
+        new_world = 1;
+        fin_dark = 1;
+    }
 }
 
 //696CC

@@ -141,6 +141,7 @@ mem_t* compress_sav(mem_t* raw) {
 	compressed->capacity = capacity;
 
 	compressed->cursor = 1; // checksum (1 byte) is written at the end
+    raw->cursor = 0;
 	mem_write(&raw->len, compressed, 4); // decompressed size
 	bool finished = false;
 	while (!finished) {
@@ -234,6 +235,47 @@ bool test_sav_encode_decode(mem_t* encoded) {
 	return success;
 }
 #endif //NEED_SAV_ENCODE_DECODE_TEST
+
+#if 0
+void sav_set_ALL_WORLD(u8 which_save) {
+    char save_filename[32];
+    snprintf(save_filename, 64, "RAYMAN%d.SAV", which_save);
+    mem_t* encoded = read_entire_file(save_filename, false);
+    bool has_error = false;
+    if (encoded) {
+        u8 checksum = 0;
+        mem_t* compressed = sav_xor_stream(encoded, &checksum);
+        free(encoded);
+        mem_t* raw = decompress_sav(compressed);
+        if (raw) {
+
+            raw->data[2679] = 1; // Sets ALL_WORLD to 1
+
+            mem_t* recompressed = compress_sav(raw);
+            if (recompressed) {
+                mem_t* reencoded = sav_xor_stream(recompressed, &checksum);
+                if (reencoded) {
+
+                    snprintf(save_filename, 64, "RAYMAN%d_ALL_WORLD.SAV", which_save);
+                    FILE* fp = fopen(save_filename, "wb");
+                    fwrite(reencoded->data, reencoded->len, 1, fp);
+                    fclose(fp);
+
+                    free(reencoded);
+                }
+                free(recompressed);
+            }
+
+            free(raw);
+        } else {
+            has_error = true;
+        }
+        free(compressed);
+    } else {
+        has_error = true;
+    }
+}
+#endif
 
 // sub_746D0
 // Partly based on https://github.com/RayCarrot/RayCarrot.Rayman/blob/3bf249b64da4254c03fa49a15bb9d5691ddfce66/RayCarrot.Rayman/Encoder/Rayman12PCSaveDataEncoder.cs
@@ -476,7 +518,12 @@ void storeWorldInfoAcces(void) {
 
 //7435C
 void retrieveWorldInfoAccess(void) {
-    //stub
+    for (i32 i = 0; i < COUNT(t_world_info); ++i) {
+        world_info_t* world_info = t_world_info + i;
+        world_info->state = (world_info->state & ~1) | (wi_save_zone[i] & 1); // unlocked bit
+        world_info->state = (world_info->state & ~4) | (((u8)(wi_save_zone[i] << 6) >> 7) * 4); // unknown flag
+        world_info->nb_cages =  ((u8)(wi_save_zone[i] << 3) >> 5); // cages
+    }
 }
 
 //743C8
@@ -533,7 +580,49 @@ void SaveGameOnDisk(u8 which_save) {
 
 //746D0
 bool LoadGameOnDisk(u8 which_save) {
-    return 0; //stub
+    char save_filename[32];
+    snprintf(save_filename, 64, "RAYMAN%d.SAV", which_save);
+    mem_t* encoded = read_entire_file(save_filename, false);
+    bool has_error = false;
+    if (encoded) {
+        u8 checksum = 0;
+        mem_t* compressed = sav_xor_stream(encoded, &checksum);
+        free(encoded);
+        mem_t* raw = decompress_sav(compressed);
+        if (raw) {
+            mem_read(save_ray[which_save-1], raw, 4);
+            mem_read(&nb_continue, raw, 1);
+            mem_read(wi_save_zone, raw, 24);
+            mem_read(&RayEvts, raw, 2);
+            mem_read(&poing, raw, 20);
+            mem_read(&status_bar, raw, 10);
+            mem_read(&ray.hitp, raw, 1);
+            mem_read(save_zone, raw, 2592);
+            mem_read(bonus_perfect, raw, 24);
+            // NOTE: the original code reads 2 bytes into world_index, even though it's a 1-byte value.
+            // Were world_index and ALL_WORLD a 2-byte struct together? (Doesn't seem to be the case in the Android code though.)
+            mem_read(&world_index, raw, 1);
+            mem_read(&ALL_WORLD, raw, 1);
+            mem_read(&finBosslevel, raw, 2);
+
+            retrieveWorldInfoAccess();
+            xwldmapsave = 0;
+            ywldmapsave = 0;
+
+            free(raw);
+        } else {
+            has_error = true;
+        }
+        free(compressed);
+    } else {
+        has_error = true;
+    }
+
+    if (JeuCracker) {
+        save_ray[which_save-1][0] = '\0';
+    }
+
+    return has_error;
 }
 
 

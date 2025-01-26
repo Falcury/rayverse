@@ -1254,16 +1254,21 @@ loadinforay_t LoadInfoRay[3]; //CD8AC
 
 u32 flocon_tab; //CD8BC
 u32 map_time; //CD8C0
-u32 time_left; //CD8C4
-
+u32 left_time; //CD8C4
+u32 lidol_source_obj; //CD8C8
 obj_t mapobj[25]; //CD8CC
-
-u32 background_DES; //CE634
+i32 bossSpeedFactor; //CE5B0
+i32 alternateBossSpeedFactor; //CE5B4
+i16 pos_stack[10]; //CE5B8
+i16 cymbal_obj_id[2]; //CE5CC
+i16 scroll_obj_id[50]; //CE5D0
+u32 ScrollDiffSprites; //CE634
 map_data_t mp; //CE638
 obj_t* alpha_numbers; //CE644
 u32 dword_CE648; //CE648
 obj_t ray; //CE650
-
+obj_t* star_ray_dev; //CE6D4
+obj_t* star_ray_der; //CE6D8
 obj_t* poing_obj; //CE6DC
 obj_t* alpha; //CE6E0
 u8* alpha_image_atlas; //CE6E4
@@ -1651,6 +1656,20 @@ u8 position_ray; //CFA9C
 i32 CompteurTrameAudio; //CFAA0
 
 rgb_palette_t MenuPalette; //DE43C
+
+i16 old_num_world_choice; //DE80C
+i16 old_num_level_choice; //DE80E
+i16 CBoffsetXMin; //DE810
+i16 CBoffsetYMin; //DE812
+i16 CBoffsetYMax; //DE814
+i16 CBoffsetXMax; //DE816
+i16 LIMITE_GAUCHE; //DE818
+i16 XOFFSETCBRIGHT; //DE81A
+i16 XOFFSETRAY; //DE81C
+i16 LIMITE_DROITE; //DE81E
+i16 YOFFSETCB; //DE820
+i16 XOFFSETCBLEFT; //DE822
+u8 nb_collis; //DE824
 
 i16 word_DE8BC; //DE8BC
 u8 byte_DEEFB; //DEEFB

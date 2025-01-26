@@ -89,22 +89,66 @@ i32 upjoy(void) {
 
 //41EA4
 i32 but0pressed(void) {
-    return 0; //stub
+    i32 result = 0;
+    if (nb_fade == 0) {
+        if (Main_Control && notbut[0] != 1) {
+            result = (joy_buttonA1 == 1 || (input_mode == 1 && TEST_KEY_BUTTON0()));
+        } else {
+            result = (input_mode == 1 && TEST_KEY_BUTTON0());
+            if (ModeDemo) {
+                result |= (joy_buttonA1 == 1);
+            }
+        }
+    }
+    return result;
 }
 
 //41F30
 i32 but1pressed(void) {
-    return 0; //stub
+    i32 result = 0;
+    if (nb_fade == 0) {
+        if (Main_Control && notbut[1] != 1) {
+            result = (joy_buttonA2 == 1 || (input_mode == 1 && TEST_KEY_BUTTON1()));
+        } else {
+            result = (input_mode == 1 && TEST_KEY_BUTTON1());
+            if (ModeDemo) {
+                result |= (joy_buttonA2 == 1);
+            }
+        }
+    }
+    return result;
 }
 
 //41FBC
 i32 but2pressed(void) {
-    return 0; //stub
+    i32 result = 0;
+    if (nb_fade == 0) {
+        if (Main_Control && notbut[2] != 1) {
+            result = (joy_buttonB1 == 1 || (input_mode == 1 && TEST_KEY_BUTTON2()));
+        } else {
+            result = (input_mode == 1 && TEST_KEY_BUTTON1());
+            if (ModeDemo) {
+                result |= (joy_buttonB1 == 1);
+            }
+        }
+    }
+    return result;
 }
 
 //42048
 i32 but3pressed(void) {
-    return 0; //stub
+    i32 result = 0;
+    if (nb_fade == 0) {
+        if (Main_Control && notbut[3] != 1) {
+            result = (joy_buttonB2 == 1 || (input_mode == 1 && TEST_KEY_BUTTON3()));
+        } else {
+            result = (input_mode == 1 && TEST_KEY_BUTTON3());
+            if (ModeDemo) {
+                result |= (joy_buttonA1 == 1); // NOTE: original code says A1, not B2 (maybe a bug?)
+            }
+        }
+    }
+    return result;
 }
 
 //420D4

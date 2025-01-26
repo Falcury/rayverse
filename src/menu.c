@@ -177,7 +177,6 @@ void DO_NEW_MENUS(void) {
                     NewMenusArgs = 1;
                     new_world = 1;
                 }
-                DO_MENU();
             } break;
             case 4: {
                 pINIT_SCREEN = INIT_OPTIONS_CHOICE;
