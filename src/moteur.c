@@ -470,10 +470,48 @@ void INIT_RAY(u8 level_index) {
     }
 
     if (level.objects && level.nb_objects > 0) {
-        //stub
+
+        obj_t* obj = level.objects;
+        for (i32 i = 0; i < level.nb_objects; ++i) {
+            if (obj->type != obj_99_rayman_start_pos) {
+                break;
+            }
+            ++obj;
+        }
+        // NOTE: if the rayman start position doesn't exist, the first object is used instead
+        if (!fin_continue) {
+            ray.flags &= ~obj_flags_4_triggered;
+            ray.is_active = 0;
+        }
+        xmap = obj->xpos + obj->offset_bx - 160;
+        ymap = obj->ypos - 10;
+        if (GameModeVideo) {
+            if (xmap >= xmapmax) {
+                xmap = xmapmax;
+            }
+            if (ymap >= ymapmax) {
+                ymap = ymapmax;
+            }
+            if (xmap < 0) {
+                xmap = 0;
+            }
+            if (ymap < 0) {
+                ymap = 0;
+            }
+        } else {
+            set_xymap();
+        }
+        ray.xpos = obj->xpos + obj->offset_bx - ray.offset_bx;
+        ray.ypos = obj->ypos + obj->offset_by - ray.offset_by;
     }
 
-
+    if (RaymanDansUneMapDuJeu) {
+        calc_btyp(&ray);
+    } else {
+        for (i32 i = 0; i < 5; ++i) {
+            ray.coll_btype[i] = 0;
+        }
+    }
 }
 
 //59CF4

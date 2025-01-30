@@ -67,7 +67,10 @@ void INIT_WORLD_INFO(void) {
 
 //68C44
 void INIT_LITTLE_RAY(void) {
-    //stub
+    raytmp = ray;
+    ray.sprites = raylittle.sprites;
+    ray.img_buffer = raylittle.img_buffer;
+    ray.scale = 256;
 }
 
 //68C8C
@@ -77,7 +80,83 @@ void RESTORE_RAY(void) {
 
 //68CB8
 void INIT_CHEMIN(void) {
-    //stub
+    PROC_EXIT = 0;
+    dans_la_map_monde = 1;
+    gele = 0;
+    if (!ModeDemo) {
+        new_world = 0;
+        num_world_choice = world_index;
+    }
+    old_num_world = num_world_choice;
+    INIT_LITTLE_RAY();
+    set_main_and_sub_etat(&ray, 0, 0);
+    world_info_t* initial_world_info = t_world_info + num_world_choice;
+    ray.xpos = initial_world_info->xpos - ray.offset_bx + 4;
+    ray.ypos = initial_world_info->ypos - ray.offset_by + 8;
+    ray.xspeed = 0;
+    ray.yspeed = 0;
+    set_zoom_mode(0);
+    chemin_percent = 0;
+    Nb_total_cages = 0;
+    for (i32 i = 0; i < 24; ++i) {
+        obj_t* medaillon = mapobj + i;
+        world_info_t* world_info = t_world_info + i;
+        medaillon->type = obj_54_medaillon;
+        medaillon->spawn_x = world_info->xpos - 78;
+        medaillon->spawn_y = world_info->ypos - 64;
+        medaillon->spawn_etat = 5;
+        if (world_info->state & 4) {
+            medaillon->spawn_subetat = 46;
+        } else {
+            i32 cages = world_info->nb_cages;
+            if (cages != 0) {
+                Nb_total_cages += cages;
+                if (cages == 6) {
+                    medaillon->spawn_subetat = 52;
+                } else {
+                    medaillon->spawn_subetat = 47;
+                }
+            } else if (i == 17) {
+                medaillon->sub_etat = 59;
+                medaillon->spawn_subetat = 59;
+            } else {
+                medaillon->spawn_subetat = 39;
+            }
+        }
+        medaillon->scale = 0;
+        medaillon->offset_bx = 0;
+        medaillon->offset_by = 64;
+        obj_init(medaillon); //TODO
+        CalcObjPosInWorldMap(medaillon); //TODO
+        medaillon->anim_frame = i % medaillon->animations[get_eta(medaillon)->anim_index].frame_count;
+    }
+
+    // unlock Mr Dark's Dare
+    if ((t_world_info[17].state & 1) == 0 && Nb_total_cages >= 102) {
+        t_world_info[17].state |= 4;
+    }
+
+    xmapinit = xmap;
+    ymapinit = ymap;
+    xmap = xwldmapsave;
+    ymap = ywldmapsave;
+    ChangeJumelleVariable();
+    special_ray_mov_win_x_left = 30;
+    special_ray_mov_win_x_right = 30;
+    scroll_x = -1;
+    scroll_y = -1;
+    ray.flags = (ray.flags & ~obj_flags_8_flipped) | ((dir_on_wldmap & 1) * obj_flags_8_flipped);
+
+    // If it's a new game, create the new save file on disk
+    if (nouvelle_partie) {
+        if (NBRE_SAVE != 0) {
+            SaveGameOnDisk(fichier_selectionne);
+        }
+        nouvelle_partie = 0;
+    }
+
+    INIT_PASTILLES_SAUVE();
+    INIT_STAGE_NAME(); //TODO
 }
 
 //68F38

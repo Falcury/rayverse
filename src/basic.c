@@ -83,8 +83,8 @@ i32 get_proj_y(i16 scale, i16 a2) {
 }
 
 //1D650
-void set_zoom_mode(u8 a1) {
-    //stub
+void set_zoom_mode(u8 mode) {
+    zoom_mode = mode;
 }
 
 //1D658

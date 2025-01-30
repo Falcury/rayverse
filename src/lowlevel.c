@@ -5,6 +5,15 @@
 
 // functions omitted up to 145F1 (including various draw functions for X mode)
 
+//12783
+void display_emptypicture(void) {
+    //stub
+}
+
+//127A2
+void display_anypicture(void) {
+    //stub
+}
 
 //145F1
 void select_display_buffer(u8* buffer) {
@@ -95,9 +104,14 @@ void DisplayAnyPictureNormal(u8* source_buffer, u8* dest_buffer, i32 a3, i32 a4,
 }
 
 //14C6B
-void ClearDrawAndDisplayBufferNormal(u8* draw_buf, u8* display_buf) {
-    memset(draw_buf, 0, 320*200);
-    memset(display_buf, 0, 320*200);
+void ClearDrawAndDisplayBufferNormal(u8* draw_buf /*edi*/, u8* display_buf /*esi*/) {
+    // added NULL checks
+    if (draw_buf) {
+        memset(draw_buf, 0, 320*200);
+    }
+    if (display_buf) {
+        memset(display_buf, 0, 320*200);
+    }
 }
 
 //14C8E

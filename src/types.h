@@ -559,7 +559,7 @@ enum obj_type_enum {
 	obj_51_moskito_fruit_small				= 51,
 	obj_52_moskito_fruit_medium				= 52,
 	obj_53_shaky_fruit        				= 53,
-	obj_54									= 54,
+	obj_54_medaillon						= 54,
 	obj_55_musician							= 55,
 	obj_56_nonmoving_stoneman				= 56,
 	obj_57_stake							= 57,

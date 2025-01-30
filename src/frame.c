@@ -224,7 +224,14 @@ void DO_FADE_OUT(void) {
 
 //3CB04
 void EFFACE_VIDEO(void) {
-    //stub
+    endsynchro();
+    if (ModeVideoActuel == 1) {
+        SWAP_BUFFERS();
+        display_emptypicture();
+        display_emptypicture();
+    } else {
+        ClearDrawAndDisplayBufferNormal(DrawBufferNormal, DisplayBufferNormal);
+    }
 }
 
 //3CB54

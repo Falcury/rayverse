@@ -12,6 +12,8 @@ void linux_end_frame(app_state_t* app_state);
 void message_box(const char* message);
 
 // lowlevel.c
+void display_emptypicture(void);
+void display_anypicture(void);
 void select_display_buffer(u8* buffer);
 void InitFirstModeVideo(void);
 void InitModeNormal(void);
@@ -188,7 +190,7 @@ i32 get_proj_dist(i16 scale, i16 outer_dim);
 i32 get_proj_dist2(i16 a1, i16 a2);
 i32 get_proj_x(i16 scale, i16 a2);
 i32 get_proj_y(i16 scale, i16 a2);
-void set_zoom_mode(u8 a1);
+void set_zoom_mode(u8 mode);
 i32 inverse_proj_x(i16 a1, i16 a2);
 i32 inverse_proj_y(i16 a1, i16 a2);
 void vblToEOA(obj_t* obj, u8 a2);
