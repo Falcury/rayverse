@@ -269,7 +269,7 @@ void allocate_badguy(obj_t* tentacle_obj, i16 which_enemy, i16 xspeed, i16 yspee
     // stub
     for (i32 event_index = 0; event_index < level.nb_objects; ++event_index) {
         obj_t* spawned = level.objects + event_index;
-        if (((which_enemy == 1 && spawned->type == obj_0_livingstone) || (which_enemy == 2 && spawned->type == obj_9_small_livingstone))
+        if (((which_enemy == 1 && spawned->type == TYPE_0_BADGUY1) || (which_enemy == 2 && spawned->type == TYPE_9_BADGUY2))
             && spawned->spawn_x <= 0 && spawned->is_active == 0
                 ) {
             spawned->flags &= ~(obj_flags_4_triggered | obj_flags_0x40);

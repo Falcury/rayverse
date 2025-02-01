@@ -1,6 +1,6 @@
 
 //3DB40
-void swapGuetteurCollZones(obj_t* obj) {
+void swapGuetteurCollZones(obj_t* obj, u8 a2) {
     //stub
 }
 

@@ -40,7 +40,7 @@ void swapWeaponAnimState(obj_t* obj) {
 }
 
 //5149C
-void swapMereDenisCollZones(obj_t* obj) {
+void swapMereDenisCollZones(obj_t* obj, u8 a2) {
     //stub
 }
 

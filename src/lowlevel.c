@@ -61,8 +61,13 @@ void DisplayBufferModeNormal(u8* source, u8* dest) {
 }
 
 //14AC1
-void DrawWldPointPlan2Normal(void* a1, i32 a2, i32 a3, u8* buffer) {
-    //stub
+void DrawWldPointPlan2Normal(u8* buffer, i32 x, i32 y) {
+    i32 stride = 384;
+    u8* pos = buffer + stride * y + x;
+    *(u16*)(pos + 0 * stride + 1) = 0x0C00;
+    *(u32*)(pos + 1 * stride)   = 0x0C0E0A00;
+    *(u32*)(pos + 2 * stride)   = 0x000A0900;
+    *(u16*)(pos + 3 * stride + 1) = 0x0C00;
 }
 
 //14AEF

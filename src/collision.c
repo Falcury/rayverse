@@ -52,10 +52,10 @@ i32 inter_box(i16 box1_x, i16 box1_y, i16 box1_width, i16 box1_height, i16 box2_
 //2B48C
 void GET_OBJ_ZDC(obj_t* obj) {
     switch(obj->type) {
-        case obj_2_energypoint:
-        case obj_8_plum1:
-        case obj_134_plum2:
-        case obj_167_plum3: {
+        case TYPE_2_POWERUP:
+        case TYPE_8_FALLING_OBJ:
+        case TYPE_134_FALLING_OBJ2:
+        case TYPE_167_FALLING_OBJ3: {
             //GET_ANIM_POS(obj, ..)
         } break;
 
@@ -181,7 +181,7 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
         if (!(ray.main_etat == 3 && (ray.sub_etat == 22 || ray.sub_etat == 32)) &&
             !(ray.main_etat == 2 && ray.sub_etat == 31)
                 ) {
-            if ((get_eta(&ray)->interaction_flags & 0x40) && (tile_flags[calc_typ_trav(&ray, 2)] & 0x10)) {
+            if ((get_eta(&ray)->interaction_flags & 0x40) && (block_flags[calc_typ_trav(&ray, 2)] & 0x10)) {
                 set_main_and_sub_etat(&ray, 0, 61);
             } else {
                 set_main_and_sub_etat(&ray, 2, 8);
@@ -193,23 +193,23 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
             } else {
                 if (other_obj != NULL) {
                     i32 bump_direction = -1;
-                    if (other_obj->type == obj_180_mr_sax_chasing) {
+                    if (other_obj->type == TYPE_180_SAXO2) {
                         //bump_direction = sub_778CC();
-                    } else if (other_obj->type == obj_150_mr_skops) {
+                    } else if (other_obj->type == TYPE_150_SCORPION) {
                         //bump_direction = sub_79688();
-                    } else if (other_obj->type == obj_198_mr_stone_chase) {
+                    } else if (other_obj->type == TYPE_198_BB12) {
                         bump_direction = 1;
-                    } else if (other_obj->type == obj_200) {
+                    } else if (other_obj->type == TYPE_200_BB13) {
                         bump_direction = -1;
-                    } else if (other_obj->type == obj_100_moth) {
+                    } else if (other_obj->type == TYPE_100_MITE) {
                         bump_direction = (other_obj->flags & obj_flags_8_flipped) ? 1 : -1;
-                    } else if (other_obj->type == obj_120_red_drummer) {
+                    } else if (other_obj->type == TYPE_120_BATTEUR_FOU) {
                         // bump_direction = sub_2008C(other_event);
-                    } else if (other_obj->type == obj_187_viking_mama) {
+                    } else if (other_obj->type == TYPE_187_MAMA_PIRATE) {
                         // bump_direction = sub_6628C(other_event);
-                    } else if (other_obj->type == obj_209_mr_dark_flame_left) {
+                    } else if (other_obj->type == TYPE_209_FIRE_LEFT) {
                         bump_direction = 1;
-                    } else if (other_obj->type == obj_210_mr_dark_flame_right) {
+                    } else if (other_obj->type == TYPE_210_FIRE_RIGHT) {
                         bump_direction = -1;
                     } else {
                         i32 xspeed_delta = other_obj->xspeed - ray.xspeed;
@@ -222,7 +222,7 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
                     i32 bump_speed;
                     if (obj_type_flags[other_obj->type] & obj_type_flags_bit_10_fast_bump) {
                         bump_speed = 5;
-                    } else if (other_obj->type == obj_180_mr_sax_chasing) {
+                    } else if (other_obj->type == TYPE_180_SAXO2) {
                         bump_speed = 4;
                     } else {
                         bump_speed = 2;
@@ -319,7 +319,7 @@ void DO_ONE_CMD_WAIT(obj_t* obj) {
         obj->yspeed = 0;
         set_main_and_sub_etat(obj, 0, 0);
     } else {
-        if (!(obj->type == obj_10_piranha && obj->main_etat == 0 && obj->sub_etat == 0)) {
+        if (!(obj->type == TYPE_10_FISH && obj->main_etat == 0 && obj->sub_etat == 0)) {
             obj->yspeed = 0;
         }
     }
@@ -332,13 +332,13 @@ void DO_ONE_CMD_LR_ATTENTE(obj_t* obj) {
 
 //2F594
 void DO_ONE_CMD_UPDOWN(obj_t* obj) {
-    if (obj->type == obj_1_platform) {
+    if (obj->type == TYPE_1_PLATFORM) {
         if (obj->command == cmd_3_down) {
             obj->yspeed = -2;
         } else if (obj->command == cmd_4) {
             obj->yspeed = 2;
         }
-    } else if (obj->type == obj_10_piranha) {
+    } else if (obj->type == TYPE_10_FISH) {
         if (obj->main_etat == 0 && obj->sub_etat == 0) {
             if (obj->command == cmd_3_down) {
                 obj->yspeed = -2;
@@ -346,7 +346,7 @@ void DO_ONE_CMD_UPDOWN(obj_t* obj) {
                 obj->yspeed = 2;
             }
         }
-    } else if (obj->type == obj_24) {
+    } else if (obj->type == TYPE_24_INTERACTPLT) {
         // This procedure is only called for commands 3 and 4, so, not sure why we are checking for command 2 here?
         if (obj->command != cmd_2_up) {
             --obj->nb_cmd;
@@ -369,7 +369,7 @@ void DO_ONE_CMD_UPDOWN(obj_t* obj) {
 
 //2F63C
 void special_pour_liv(obj_t* event) {
-    if (event->type == obj_0_livingstone && event->main_etat == 1 && event->sub_etat == 11) {
+    if (event->type == TYPE_0_BADGUY1 && event->main_etat == 1 && event->sub_etat == 11) {
         event->flags &= ~0x10;
     }
 }

@@ -20,7 +20,7 @@ bool can_free_fish(obj_t* piranha) {
     bool result = true;
     for (i32 i = 0; i < level.nb_objects; ++i) {
         obj_t* event = level.objects + i;
-        if (event->type == obj_10_piranha && event->spawn_x == piranha->spawn_x && !event->is_active && event->timer >= 100) {
+        if (event->type == TYPE_10_FISH && event->spawn_x == piranha->spawn_x && !event->is_active && event->timer >= 100) {
             result = false;
             break;
         }

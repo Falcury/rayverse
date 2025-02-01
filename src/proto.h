@@ -23,7 +23,7 @@ void block_copy(u8* source, u8* dest);
 void textmode(void);
 void draw_sprite_deform(void);
 void DisplayBufferModeNormal(u8* source, u8* dest);
-void DrawWldPointPlan2Normal(void* a1, i32 a2, i32 a3, u8* buffer);
+void DrawWldPointPlan2Normal(u8* buffer, i32 x, i32 y);
 void DrawBlackBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width);
 void DrawFondBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width);
 void DrawBorderBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width, i32 a6);
@@ -110,7 +110,7 @@ void PcMain(void);
 // action.c
 void setBossReachingSpeeds(obj_t* obj, u8 a2, u8 a3, u8 a4);
 void testActionEnd(obj_t* obj);
-void firstFloorBelow(obj_t* obj);
+i16 firstFloorBelow(obj_t* obj);
 void adjustBossScrollLocker(void);
 void setBossScrollLimits(obj_t* obj);
 
@@ -124,9 +124,9 @@ void display_bar_boss(obj_t* obj);
 void DisplayCrackers(void);
 void DisplayProgrammerMessage(void);
 void DISPLAY_FIXE(i32 a1);
-void DISPLAY_POINT(i16 a1, i16 a2);
+void DISPLAY_POINT(i16 x, i16 y);
 void DISPLAY_PTS_TO(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 a5);
-void DISPLAY_PTS_TO_PLAN2(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 a5);
+void DISPLAY_PTS_TO_PLAN2(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 percent);
 void DISPLAY_CYMBALE(obj_t* obj);
 void DISPLAY_ALL_OBJECTS(void);
 void display_flocons_behind(void);
@@ -193,7 +193,7 @@ i32 get_proj_y(i16 scale, i16 a2);
 void set_zoom_mode(u8 mode);
 i32 inverse_proj_x(i16 a1, i16 a2);
 i32 inverse_proj_y(i16 a1, i16 a2);
-void vblToEOA(obj_t* obj, u8 a2);
+i32 vblToEOA(obj_t* obj, u8 a2);
 void GET_ANIM_POS(obj_t* obj, i16* a2, i16* a3, i16* a4, i16* a5);
 void add_actobj(i16 a1);
 void set_subetat(obj_t* obj, u8 sub_etat);
@@ -213,7 +213,7 @@ void makeUturn(obj_t* obj);
 u8 BTYP(i32 tile_x, i32 tile_y);
 void calc_btyp_square(obj_t* obj);
 void DO_OBJ_REBOND_EN_X(obj_t* obj);
-void calc_btyp(obj_t* obj);
+u8 calc_btyp(obj_t* obj);
 void init_obj_in_the_air(obj_t* obj);
 void make_my_fruit_go_down(obj_t* obj, i16 a2);
 void switchOff(obj_t* obj);
@@ -229,7 +229,7 @@ i16 calc_largmax_text(const char* text, i16 char_index, i16 space_width, i16 cha
 void INIT_TXT_BOX(display_item_t* box);
 void Deter_Option_Caract(u8* a1, i16 a2, i16 a3);
 void SwapAB(i16* a, i16* b);
-void Bresenham(void* func, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7);
+void Bresenham(void (*func)(i16, i16), i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 param_6, i16 percent);
 void init_finBossLevel(void);
 void Change_Wait_Anim(void);
 void add_alwobj(obj_t* obj);
@@ -320,8 +320,8 @@ void ClearBorder(i16 lim_H1, i16 lim_H2, i16 lim_W1, i16 lim_W2);
 
 // blocs.c
 void MURDUR(i16 a1, i16 a2);
-void dist_to_bloc_floor(i16 a1, i16 a2, i16 a3);
-void bloc_floor(i16 a1, i16 a2, i16 a3);
+i32 dist_to_bloc_floor(i16 btype, i16 x, i16 y);
+u8 bloc_floor(i16 btype, i16 x, i16 y);
 u8 calc_typ_trav(obj_t* obj, u8 a2);
 u8 calc_typ_travd(obj_t* obj, u8 a2);
 void TEST_FIN_BLOC(obj_t* obj);
@@ -662,7 +662,7 @@ void InitModeNormalWithFrequency(u8 freq);
 void WaitNSynchro(i32 n_frames);
 
 // guetteur.c
-void swapGuetteurCollZones(obj_t* obj);
+void swapGuetteurCollZones(obj_t* obj, u8 a2);
 void guetteurFollowsShip(obj_t* obj);
 void DO_ONE_PAR_COMMAND(obj_t* obj);
 void hasGuetteurABomb(obj_t* obj);
@@ -896,7 +896,7 @@ void allocateMereDenisBombChips(obj_t* obj);
 void mereDenisExplodeBombs(obj_t* obj);
 void mereDenisDropBomb(obj_t* obj);
 void swapWeaponAnimState(obj_t* obj);
-void swapMereDenisCollZones(obj_t* obj);
+void swapMereDenisCollZones(obj_t* obj, u8 a2);
 void prepareNewMereDenisAttack(obj_t* obj);
 void snapLaserToWeapon(obj_t* obj);
 void allocateSpaceMamaLaser(obj_t* obj);
@@ -1074,7 +1074,7 @@ i32 abs_cosinus(i32 x);
 i32 abs_sinus_cosinus(i32 x);
 
 // objinit.c
-void Prio(obj_t* obj);
+u8 Prio(obj_t* obj);
 void first_obj_init(obj_t* obj);
 void obj_init(obj_t* obj);
 void init_struct_level(void);
@@ -1240,7 +1240,7 @@ void DoFishPoingCollision(obj_t* obj, i16 a2);
 void DoPoissonBleuRaymanZDD(obj_t* obj);
 
 // worldmap.c
-void TEST_DISPLAY_PTS_WAY(i16 a1, i16 world_info_index, i16 xpos, i16 ypos);
+void TEST_DISPLAY_PTS_WAY(i16 world, i16 connected_world, i16 xpos, i16 ypos);
 void DISPLAY_PTS_WAY(void);
 void DISPLAY_PLAT_WAY(void);
 void DO_MEDAILLONS(void);

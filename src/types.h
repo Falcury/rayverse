@@ -296,7 +296,7 @@ typedef struct obj_t {
 	u16 follow_y;
 	u16 follow_x;
 	u16 cmd_arg_1;
-	i16 phase;
+	i16 phase; // 52
 	u16 rayman_distance; //54
 	i16 iframes_timer; // timer (?)
 	u16 test_block_index;
@@ -304,7 +304,7 @@ typedef struct obj_t {
 	u16 zdc_meta; // ?
 	u16 active_timer;
 	u16 type;
-	u8 coll_btype[5];
+	u8 coll_btype[5]; // 0 = center, 1 = left, 2 = right, 3 = up, 4 = down
 	u8 field_67;
 	u8 offset_bx;
 	u8 offset_by;
@@ -312,24 +312,24 @@ typedef struct obj_t {
 	u8 anim_frame;
 	u8 sub_etat; // 6C
 	u8 main_etat; // 6D
-	u8 spawn_subetat; // 6E
+	u8 spawn_sub_etat; // 6E
 	u8 spawn_etat; // 6F
 	u8 command; // 70
-	u8 gravity_value_1;
-	u8 gravity_value_2;
-	u8 change_anim_mode; // etat updated (?)
+	u8 gravity_value_1; // 71
+	u8 gravity_value_2; // 72
+	u8 change_anim_mode; // etat updated (?) // 73
 	i8 offset_hy;
 	u8 follow_sprite; // the sprite index which uses the obj collision
 	u8 hitp;
 	u8 spawn_hitp;
-	u8 init_flag; // display_prio?
+	u8 init_flag; // display_prio? //78
 	u8 hit_sprite; // 79
-	u8 active_flag;
-	u8 detect_zone;
-	i8 cmd_context_depth;
+	u8 active_flag; // 7A // TODO: check if this is correct? discrepancy between PS1 and PC/Android struct layouts
+	u8 detect_zone; // 7B // TODO: check if this is correct? discrepancy between PS1 and PC/Android struct layouts
+	i8 cmd_context_depth; // 7C
 	u8 configuration; // 7D
 	u8 display_prio; // layer the obj sprites get drawn to, between 1 and 7; 0 means it doesn't get drawn
-	i8 timer;
+	i8 timer; // 7F
 	u8 anim_count;
 	u8 flags;
 	u8 field_82;
@@ -505,268 +505,268 @@ typedef struct {
 
 
 enum obj_type_enum {
-	obj_0_livingstone						= 0,
-	obj_1_platform							= 1,
-	obj_2_energypoint						= 2,
-	obj_3_electoon							= 3,
-	obj_4_scenery							= 4,
-	obj_5_magician							= 5,
-	obj_6_yin_with_pin						= 6,
-	obj_7_swinging_spiky_fruit				= 7,
-	obj_8_plum1								= 8,
-	obj_9_small_livingstone					= 9,
-	obj_10_piranha							= 10,
-	obj_11_hit_effect						= 11,
-	obj_12_hunter1							= 12,
-	obj_13_hunterbullet						= 13,
-	obj_14_hunter2							= 14, // shoots upward
-	obj_15									= 15,
-	obj_16_falling_platform					= 16,
-	obj_17_rising_platform					= 17,
-	obj_18									= 18,
-	obj_19_splash							= 19,
-	obj_20_tentacle							= 20,
-	obj_21_photographer						= 21,
-	obj_22_moving_platform					= 22,
-	obj_23_rayman			            	= 23,
-	obj_24									= 24,
-	obj_25_ejecting_platform				= 25,
-	obj_26_disappearing_cloud				= 26,
-	obj_27_trampoline_cloud					= 27,
-	obj_28_blinking_cloud					= 28,
-	obj_29_bounce_platform					= 29,
-	obj_30_ambient_starter					= 30,
-	obj_31_oneup_collected					= 31,
-	obj_32_mr_dark_2nd_phase				= 32,
-	obj_33_mr_dark_fireballs				= 33,
-	obj_34_horizontal_nenuphar2				= 34,
-	obj_35_stoneman_throwing				= 35,
-	obj_36_stoneman_lava_ball				= 36,
-	obj_37_tarayzan							= 37,
-	obj_38_magicseed						= 38,
-	obj_39_planted_nenuphar					= 39,
-	obj_40_stone_dog						= 40,
-	obj_41_prickly							= 41,
-	obj_42_exit_sign						= 42,
-	obj_43_stoneman_shooting				= 43,
-	obj_44_stoneman_flame					= 44,
-	obj_45_moving_prickly 					= 45,
-	obj_46_mr_stone							= 46,
-	obj_47_bouncing_lava_ball				= 47,
-	obj_48_torch							= 48,
-	obj_49_moving_flat_stone				= 49,
-	obj_50_moskito_bzzit					= 50,
-	obj_51_moskito_fruit_small				= 51,
-	obj_52_moskito_fruit_medium				= 52,
-	obj_53_shaky_fruit        				= 53,
-	obj_54_medaillon						= 54,
-	obj_55_musician							= 55,
-	obj_56_nonmoving_stoneman				= 56,
-	obj_57_stake							= 57,
-	obj_58_cage								= 58,
-	obj_59_opened_cage    					= 59,
-	obj_60_big_clown						= 60,
-	obj_61_big_water_clown					= 61,
-	obj_62_water_balloon					= 62,
-	obj_63_platform_starts_moving 			= 63,
-	obj_64_autoscroll						= 64,
-	obj_65_spider							= 65,
-	obj_66_spider_dart						= 66,
-	obj_67_swinging_flower					= 67,
-	obj_68									= 68,
-	obj_69_big_bouncing_boulder				= 69,
-	obj_70_trumpet							= 70,
-	obj_71_note								= 71,
-	obj_72_pirate_with_earring				= 72,
-	obj_73_earring							= 73,
-	obj_74_mr_sax							= 74,
-	obj_75_bounce_glitter					= 75,
-	obj_76_kildoor							= 76,
-	obj_77_bomber_pirate					= 77,
-	obj_78_pirate_bomb						= 78,
-	obj_79_lava_ball_fragment				= 79,
-	obj_80									= 80,
-	obj_81_cymbal							= 81,
-	obj_82_big_powerup						= 82,
-	obj_83_explosion						= 83, // dust effect
-	obj_84_tibetan_juggler					= 84,
-	obj_85_eyes								= 85,
-	obj_86_maracas							= 86,
-	obj_87_tambourin_platform1				= 87,
-	obj_88_tambourin_platform2				= 88,
-	obj_89_joe								= 89,
-	obj_90_mr_sax_wrong_note				= 90,
-	obj_91_note_bomb1						= 91,
-	obj_92_note_bomb2						= 92,
-	obj_93_punched_wrong_note				= 93,
-	obj_94_fist								= 94,
-	obj_95_fistpickup						= 95,
-	obj_96_mr_stone_totem					= 96,
-	obj_97_mr_stone_boulder					= 97,
-	obj_98_space_mama						= 98,
-	obj_99_rayman_start_pos					= 99,
-	obj_100_moth							= 100,
-	obj_101_swinging_prickly      			= 101,
-	obj_102_tiny_wrong_note					= 102,
-	obj_103_large_eyed_fish					= 103,
-	obj_104_large_nosed_fish				= 104,
-	obj_105_bouncing_crystalrock1 			= 105,
-	obj_106_bouncing_crystalrock2 			= 106,
-	obj_107_big_spiky_ball					= 107,
-	obj_108_mr_dark_electoons				= 108,
-	obj_109_boulder							= 109,
-	obj_110_destroyed_boulder				= 110,
-	obj_111_crushed_guitar				    = 111,
-	obj_112_washing_machine					= 112,
-	obj_113_mallets							= 113,
-	obj_114									= 114,
-	obj_115_mr_stone_cloud					= 115,
-	obj_116_tnt_clown						= 116,
-	obj_117_tnt_clown_burst					= 117,
-	obj_118_tnt_clown_kamikaze				= 118,
-	obj_119_clown_tnt						= 119,
-	obj_120_red_drummer						= 120,
-	obj_121_mr_stone_flame					= 121,
-	obj_122_mr_stone_stone_dog				= 122,
-	obj_123_antitoon						= 123,
-	obj_124_return_sign						= 124,
-	obj_125_candy_platform					= 125,
-	obj_126_fork					       	= 126,
-	obj_127_swiss_knife						= 127,
-	obj_128_corkscrew						= 128,
-	obj_129_small_knife			   			= 129,
-	obj_130_antitoon_eyes					= 130,
-	obj_131_mallets_spring					= 131,
-	obj_132_large_mouthed_fish				= 132,
-	obj_133_supercopter						= 133,
-	obj_134_plum2							= 134,
-	obj_135_flame_mr_stone					= 135,
-	obj_136_tiny_rayman						= 136,
-	obj_137_fairy						   	= 137,
-	obj_138_sprinkler_4heads				= 138,
-	obj_139_maracas_flying					= 139,
-	obj_140_ring							= 140,
-	obj_141_snow							= 141,
-	obj_142_extralife						= 142,
-	obj_143_item_blink						= 143,
-	obj_144									= 144,
-	obj_145_bad_eyes						= 145,
-	obj_146_eyes_bolt						= 146,
-	obj_147_moskito_huge_spiky_fruit		= 147,
-	obj_148									= 148,
-	obj_149_treble_clef						= 149,
-	obj_150_mr_skops						= 150,
-	obj_151_bullet							= 151,
-	obj_152_snare_drum						= 152,
-	obj_153_betilla							= 153,
-	obj_154_sprinkler_4heads_moving			= 154,
-	obj_155_sprinkler_3heads				= 155,
-	obj_156_wrong_note1						= 156,
-	obj_157_water							= 157,
-	obj_158_palette_change					= 158,
-	obj_159_tibetan_6platforms				= 159,
-	obj_160_tibetan_2platforms				= 160,
-	obj_161_ting							= 161,
-	obj_162_flying_saucer_platform			= 162,
-	obj_163_circuit_box						= 163,
-	obj_164_gendoor							= 164,
-	obj_165_evil_livingstone				= 165,
-	obj_166_lever							= 166,
-	obj_167_plum3							= 167,
-	obj_168_cymbal_single					= 168,
-	obj_169									= 169,
-	obj_170_mr_skops_beam					= 170,
-	obj_171_rayman_bzzit_cutscene			= 171,
-	obj_172_stoneman_aggressive   			= 172,
-	obj_173_viking_ship						= 173,
-	obj_174_space_pirate_left				= 174,
-	obj_175_punaise_platform				= 175,
-	obj_176_pencil_pointing_down			= 176,
-	obj_177_yin1							= 177,
-	obj_178_pencil_pointing_down_moving		= 178,
-	obj_179_pencil_pointing_down_wave		= 179,
-	obj_180_mr_sax_chasing					= 180,
-	obj_181_mr_sax_walk_speed				= 181,
-	obj_182_wrong_note_stationary_punchable	= 182,
-	obj_183_mr_sax_first_encounter			= 183,
-	obj_184_space_pirate_right				= 184,
-	obj_185_wrong_note2						= 185,
-	obj_186_priate_pan_flying_away			= 186,
-	obj_187_viking_mama						= 187,
-	obj_188_red_crystal_platform			= 188,
-	obj_189_red_crystal_platform_moving		= 189,
-	obj_190_viking_mama_sword				= 190,
-	obj_191_pencil_falling					= 191,
-	obj_192_space_mama_beam					= 192,
-	obj_193_space_mama_pot					= 193,
-	obj_194_space_mama_pot_part				= 194,
-	obj_195_spider_ceiling					= 195,
-	obj_196_spider_homing_dart				= 196,
-	obj_197_medaillion						= 197,
-	obj_198_mr_stone_chase					= 198,
-	obj_199_mr_stone_chase_walking			= 199,
-	obj_200									= 200,
-	obj_201									= 201,
-	obj_202_stars_on_rayman					= 202,
-	obj_203_washing_machine2				= 203,
-	obj_204_dark_rayman						= 204,
-	obj_205_dark_rayman_fist				= 205,
-	obj_206_rayman_feet						= 206,
-	obj_207_frying_pan						= 207,
-	obj_208_dust_circle						= 208,
-	obj_209_mr_dark_flame_left				= 209,
-	obj_210_mr_dark_flame_right				= 210,
-	obj_211_mr_stone_swinging_totem			= 211,
-	obj_212_mr_dark							= 212,
-	obj_213_space_mama_with_washing_machine	= 213,
-	obj_214_buoy							= 214,
-	obj_215_mr_dark_spell_fireball			= 215,
-	obj_216_eat_at_joes_sign				= 216,
-	obj_217_moth2							= 217,
-	obj_218_spaxkito						= 218,
-	obj_219_flat_stone_rope					= 219,
-	obj_220_flat_stone_with_ropes			= 220,
-	obj_221_rope_dust						= 221,
-	obj_222_float_stone_detached_rope		= 222,
-	obj_223_stoneskops						= 223,
-	obj_224_stoneskops_claw					= 224,
-	obj_225_pan_pirate_45					= 225,
-	obj_226_pan_pirate2_45					= 226,
-	obj_227_moskito							= 227,
-	obj_228_electric_plug					= 228,
-	obj_229_punaise_facing_down				= 229,
-	obj_230_punaise_horizontal				= 230,
-	obj_231_moskitomama_right				= 231,
-	obj_232_moskitomama_left				= 232,
-	obj_233_moskitomama_beam				= 233,
-	obj_234_lava							= 234,
-	obj_235_punaise							= 235,
-	obj_236_cancel_mr_dark_spell			= 236,
-	obj_237_eraser							= 237,
-	obj_238_betilla_text_fist				= 238,
-	obj_239_viking_ship_nest				= 239,
-	obj_240_pencil_pointing_up				= 240,
-	obj_241_pencil_pointing_up_moving		= 241,
-	obj_242_pencil_pointing_up_wave			= 242,
-	obj_243_stylo							= 243,
-	obj_244_space_mama_second_beam			= 244,
-	obj_245_joes_beach						= 245,
-	obj_246_mr_dark_separate_rope			= 246,
-	obj_247									= 247,
-	obj_248_mr_skops_claw					= 248,
-	obj_249_theatre_curtain					= 249,
-	obj_250_punaise_up_down					= 250,
-	obj_251_theatre_water_front				= 251,
-	obj_252_theatre_water_back				= 252,
-	obj_253									= 253,
-	obj_254									= 254,
-	obj_255									= 255,
-	obj_256_breakoutbrick_20				= 256,
-	obj_257_breakout_game					= 257,
-	obj_258_nougat							= 258,
-	obj_259_edu_letter						= 259,
-	obj_260_edu_digit						= 260,
-	obj_261_edu_roadsign					= 261,
+	TYPE_0_BADGUY1 = 0, // livingstone
+	TYPE_1_PLATFORM = 1,
+	TYPE_2_POWERUP = 2, // energypoint
+	TYPE_3_LIDOLPINK = 3, // electoon
+	TYPE_4_NEUTRAL = 4, // scenery
+	TYPE_5_WIZARD1 = 5, // magician
+	TYPE_6_FALLING_YING_OUYE = 6, // yin with pin
+	TYPE_7_MORNINGSTAR = 7, // swinging spiky fruit
+	TYPE_8_FALLING_OBJ = 8, // plum
+	TYPE_9_BADGUY2 = 9, // small livingstone
+	TYPE_10_FISH = 10, // piranha
+	TYPE_11_BOUM = 11, // hit effect
+	TYPE_12_CHASSEUR1 = 12, // hunter 1
+	TYPE_13_BALLE1 = 13, // hunter bullet
+	TYPE_14_CHASSEUR = 14, // hunter 2 (shoots upward)
+	TYPE_15_BALLE2 = 15,
+	TYPE_16_FALLPLAT = 16, // falling platform
+	TYPE_17_LIFTPLAT = 17, // rising platform
+	TYPE_18_BTBPLAT = 18,
+	TYPE_19_SPLASH = 19, // splash
+	TYPE_20_GENEBADGUY = 20, // tentacle
+	TYPE_21_PHOTOGRAPHE = 21, // photographer
+	TYPE_22_MOVE_PLAT = 22, // moving platform
+	TYPE_23_RAYMAN = 23,
+	TYPE_24_INTERACTPLT = 24,
+	TYPE_25_INST_PLAT = 25, // ejecting platform
+	TYPE_26_CRUMBLE_PLAT = 26, // disappearing cloud
+	TYPE_27_BOING_PLAT = 27, // trampoline cloud
+	TYPE_28_ONOFF_PLAT = 28, // blinking cloud
+	TYPE_29_AUTOJUMP_PLAT = 29, // bounce platform
+	TYPE_30_AUDIOSTART = 30, // ambient starter
+	TYPE_31_ONEUP_ALWAYS = 31, // 1-up collected
+	TYPE_32_DARK_PHASE2 = 32, // Mr Dark 2nd phase
+	TYPE_33_DARK2_SORT = 33, // Mr Dark fireballs
+	TYPE_34_MOVE_AUTOJUMP_PLAT = 34, // horizontal nenuphar 2
+	TYPE_35_STONEMAN1 = 35, // stoneman (throwing)
+	TYPE_36_STONEBOMB = 36, // stoneman lava ball
+	TYPE_37_TARZAN = 37, // tarayzan
+	TYPE_38_GRAINE = 38, // magic seed
+	TYPE_39_NEN_GRAINE = 39, // planted nenuphar
+	TYPE_40_STONEDOG = 40, // stone dog
+	TYPE_41_OUYE = 41, // prickly
+	TYPE_42_SIGNPOST = 42, // exit sign
+	TYPE_43_STONEMAN2 = 43, // stoneman (shooting)
+	TYPE_44_CLASH = 44, // stoneman flame
+	TYPE_45_MOVE_OUYE = 45, // moving prickly
+	TYPE_46_BB1 = 46, // Mr Stone
+	TYPE_47_STONEBOMB2 = 47, // bouncing lava ball
+	TYPE_48_FLAMME2 = 48, // torch
+	TYPE_49_MOVE_START_PLAT = 49, // moving flat stone
+	TYPE_50_MOSKITO = 50, // moskito (Bzzit)
+	TYPE_51_MST_FRUIT1 = 51, // moskito fruit small
+	TYPE_52_MST_FRUIT2 = 52, // moskito fruit medium
+	TYPE_53_MST_SHAKY_FRUIT = 53, // shaky fruit
+	TYPE_54_MEDAILLON = 54, // medaillon
+	TYPE_55_MUS_WAIT = 55, // mucisian
+	TYPE_56_STONEWOMAN2 = 56, // nonmoving stoneman
+	TYPE_57_STALAG = 57, // stake
+	TYPE_58_CAGE = 58, // cage
+	TYPE_59_CAGE2 = 59, // opened cage
+	TYPE_60_BIG_CLOWN = 60, // big clown
+	TYPE_61_WAT_CLOWN = 61, // big water clown
+	TYPE_62_DROP = 62, // water balloon
+	TYPE_63_MOVE_START_NUA = 63, // platform starts moving
+	TYPE_64_SCROLL = 64, // autoscroll
+	TYPE_65_SPIDER = 65, // spider
+	TYPE_66_DARD = 66, // spider dart
+	TYPE_67_SWING_PLAT = 67, // swinging flower
+	TYPE_68_BIG_BOING_PLAT = 68,
+	TYPE_69_STONEBOMB3 = 69, // big bouncing boulder
+	TYPE_70_TROMPETTE = 70, // trumpet
+	TYPE_71_NOTE = 71, // note
+	TYPE_72_PIRATE_NGAWE = 72, // pirate with earring
+	TYPE_73_RING = 73, // earring
+	TYPE_74_SAXO = 74, // Mr Sax
+	TYPE_75_PAILETTE = 75, // bounce glitter
+	TYPE_76_DESTROYING_DOOR = 76, // kildoor
+	TYPE_77_PIRATE_GUETTEUR = 77, // bomber pirate
+	TYPE_78_PIRATE_BOMB = 78, // pirate bomb
+	TYPE_79_STONECHIP = 79, // lava ball fragment
+	TYPE_80_BIGSTONE = 80,
+	TYPE_81_CYMBALE = 81, // cymbal
+	TYPE_82_JAUGEUP = 82, // big powerup
+	TYPE_83_EXPLOSION = 83, // dust effect
+	TYPE_84_TIBETAIN = 84, // tibetan juggler
+	TYPE_85_ROLLING_EYES = 85, // eyes
+	TYPE_86_MARACAS = 86, // maracas
+	TYPE_87_TAMBOUR1 = 87, // tambourin platform1
+	TYPE_88_TAMBOUR2 = 88, // tambourin platform2
+	TYPE_89_JOE = 89, // Joe
+	TYPE_90_NOTE0 = 90, // Mr Sax wrong note
+	TYPE_91_NOTE1 = 91, // note bomb 1
+	TYPE_92_NOTE2 = 92, // note bomb 2
+	TYPE_93_BONNE_NOTE = 93, // punched wrong note
+	TYPE_94_POING = 94, // fist
+	TYPE_95_POING_POWERUP = 95, // fist pickup
+	TYPE_96_TOTEM = 96, // Mr Stone totem
+	TYPE_97_BBL = 97, // Mr Stone boulder
+	TYPE_98_SPACE_MAMA = 98, // Space Mama
+	TYPE_99_RAY_POS = 99, // Rayman start pos
+	TYPE_100_MITE = 100, // moth
+	TYPE_101_MORNINGSTAR_MOUNTAI = 101, // swinging prickly
+	TYPE_102_BNOTE = 102, // tiny wrong note
+	TYPE_103_POI1 = 103, // large eyed fish
+	TYPE_104_POI2 = 104, // large nosed fish
+	TYPE_105_MARTEAU = 105, // bouncing crystal rock 1
+	TYPE_106_MOVE_MARTEAU = 106, // bouncing crystal rock 2
+	TYPE_107_GROSPIC = 107, // big spiky ball
+	TYPE_108_DARK2_PINK_FLY = 108, // Mr Dark electoons
+	TYPE_109_PI = 109, // boulder
+	TYPE_110_PI_BOUM = 110, // destroyed boulder
+	TYPE_111_PI_MUS = 111, // crushed guitar
+	TYPE_112_WASHING_MACHINE = 112, // washing machine
+	TYPE_113_BAG1 = 113, // mallets
+	TYPE_114_UNUSED_114 = 114,
+	TYPE_115_BB1_PLAT = 115, // Mr Stone cloud
+	TYPE_116_CLOWN_TNT = 116, // TNT clown
+	TYPE_117_CLOWN_TNT2 = 117, // TNT clown burst
+	TYPE_118_CLOWN_TNT3 = 118, // TNT clown kamikaze
+	TYPE_119_TNT_BOMB = 119, // clown TNT
+	TYPE_120_BATTEUR_FOU = 120, // red drummer
+	TYPE_121_ECLAIR = 121, // Mr Stone flame
+	TYPE_122_STONEDOG2 = 122, // Mr Stone stone dog
+	TYPE_123_BLACKTOON1 = 123, // antitoon
+	TYPE_124_PANCARTE = 124, // return sign
+	TYPE_125_BON3 = 125, // candy platform
+	TYPE_126_FOURCHETTE = 126, // fork
+	TYPE_127_COUTEAU_SUISSE = 127, // swiss knife
+	TYPE_128_TIRE_BOUCHON = 128, // corkscrew
+	TYPE_129_PETIT_COUTEAU = 129, // small knife
+	TYPE_130_BLACKTOON_EYES = 130, // antitoon eyes
+	TYPE_131_BAG3 = 131, // mallets spring
+	TYPE_132_POI3 = 132, // large mouthed fish
+	TYPE_133_SUPERHELICO = 133, // supercopter
+	TYPE_134_FALLING_OBJ2 = 134, // plum2
+	TYPE_135_ETINC = 135, // flame Mr Stone
+	TYPE_136_DEMI_RAYMAN = 136, // tiny Rayman
+	TYPE_137_REDUCTEUR = 137, // fairy
+	TYPE_138_ROULETTE = 138, // sprinkler (4 heads)
+	TYPE_139_MARACAS_BAS = 139, // maracas flying
+	TYPE_140_PT_GRAPPIN = 140, // ring
+	TYPE_141_NEIGE = 141, // snow
+	TYPE_142_ONEUP = 142, // extralife
+	TYPE_143_NOVA2 = 143, // item blink
+	TYPE_144_LIDOLPINK2 = 144,
+	TYPE_145_KILLING_EYES = 145, // bad eyes
+	TYPE_146_FLASH = 146, // eyes bolt
+	TYPE_147_MST_SCROLL = 147, // moskito huge spiky fruit
+	TYPE_148_GRAP_BONUS = 148,
+	TYPE_149_CLE_SOL = 149, // treble clef
+	TYPE_150_SCORPION = 150, // Mr Skops
+	TYPE_151_BULLET = 151, // bullet
+	TYPE_152_CAISSE_CLAIRE = 152, // snare drum
+	TYPE_153_FEE = 153, // Betilla
+	TYPE_154_ROULETTE2 = 154, // sprinkler (4 heads, moving)
+	TYPE_155_ROULETTE3 = 155, // sprinkler (3 heads)
+	TYPE_156_WALK_NOTE_1 = 156, // wrong note 1
+	TYPE_157_EAU = 157, // water
+	TYPE_158_PALETTE_SWAPPER = 158, // palette change
+	TYPE_159_TIBETAIN_6 = 159, // tibetan 6 platforms
+	TYPE_160_TIBETAIN_2 = 160, // tibetan 2 platforms
+	TYPE_161_WIZ = 161, // ting
+	TYPE_162_UFO_IDC = 162, // flying saucer platform
+	TYPE_163_INDICATOR 	= 163, // circuit box
+	TYPE_164_GENERATING_DOOR = 164, // gendoor
+	TYPE_165_BADGUY3 = 165, // evil livingstone
+	TYPE_166_LEVIER = 166, // lever
+	TYPE_167_FALLING_OBJ3 = 167, // plum 3
+	TYPE_168_CYMBAL1 = 168, // cymbal single
+	TYPE_169_CYMBAL2 = 169,
+	TYPE_170_RAYON = 170, // Mr Skops beam
+	TYPE_171_MST_COPAIN = 171, // Rayman Bzzit cutscene
+	TYPE_172_STONEWOMAN = 172, // stoneman (aggressive)
+	TYPE_173_BATEAU	= 173, // viking ship
+	TYPE_174_PIRATE_POELLE = 174, // space pirate (left)
+	TYPE_175_PUNAISE1 = 175, // punaise platform
+	TYPE_176_CRAYON_BAS	= 176, // pencil pointing down
+	TYPE_177_FALLING_YING = 177, // yin1
+	TYPE_178_HERSE_BAS = 178, // pencil pointing down (moving)
+	TYPE_179_HERSE_BAS_NEXT = 179, // pencil pointing down (wave)
+	TYPE_180_SAXO2 = 180, // Mr Sax (chasing)
+	TYPE_181_SCROLL_SAX = 181, // Mr Sax walk speed
+	TYPE_182_NOTE3 = 182, // wrong note stationary punchable
+	TYPE_183_SAXO3 = 183, // Mr Sax (first encounter)
+	TYPE_184_PIRATE_POELLE_D = 184, // space pirate (right)
+	TYPE_185_WALK_NOTE_2 = 185, // wrong note 2
+	TYPE_186_POELLE_ALWAYS = 186, // pirate pan flying away
+	TYPE_187_MAMA_PIRATE = 187, // Viking Mama
+	TYPE_188_RUBIS = 188, // red crystal platform
+	TYPE_189_MOVE_RUBIS = 189, // red crystal platform (moving)
+	TYPE_190_COUTEAU = 190, // Viking Mama sword
+	TYPE_191_FALLING_CRAYON = 191, // pencil (falling)
+	TYPE_192_SMA_GRAND_LASER = 192, // Space Mama beam
+	TYPE_193_SMA_BOMB = 193, // Space Mama pot
+	TYPE_194_SMA_BOMB_CHIP = 194, // Space Mama pot part
+	TYPE_195_SPIDER_PLAFOND = 195, // spider (ceiling)
+	TYPE_196_DARD_PLAFOND = 196, // spider homing dart
+	TYPE_197_MEDAILLON_TOON = 197, // medaillon
+	TYPE_198_BB12 = 198, // Mr Stone (chase)
+	TYPE_199_BB1_VIT = 199, // Mr Stone (chase, walking)
+	TYPE_200_BB13 = 200,
+	TYPE_201_BB14 = 201,
+	TYPE_202_RAY_ETOILES = 202, // stars on Rayman
+	TYPE_203_SMA_WEAPON = 203, // washing machine 2
+	TYPE_204_BLACK_RAY = 204, // dark Rayman
+	TYPE_205_BLACK_FIST = 205, // dark Rayman fist
+	TYPE_206_PIEDS_RAYMAN = 206, // Rayman's feet
+	TYPE_207_POELLE = 207, // frying pan
+	TYPE_208_LANDING_SMOKE = 208, // dust circle
+	TYPE_209_FIRE_LEFT = 209, // Mr Dark flame (left)
+	TYPE_210_FIRE_RIGHT = 210, // Mr Dark flame (right)
+	TYPE_211_BOUT_TOTEM = 211, // Mr Stone swinging totem
+	TYPE_212_DARK = 212, // Mr Dark
+	TYPE_213_SPACE_MAMA2 = 213, // Space Mama (with washing machine)
+	TYPE_214_BOUEE_JOE = 214, // buoy
+	TYPE_215_DARK_SORT = 215, // Mr Dark spell fireball
+	TYPE_216_ENS = 216, // Eat at Joe's sign
+	TYPE_217_MITE2 = 217, // moth 2
+	TYPE_218_HYBRIDE_MOSAMS = 218, // Spaxkito
+	TYPE_219_CORDE = 219, // flat stone rope
+	TYPE_220_PIERREACORDE = 220, // flat stone (with ropes)
+	TYPE_221_CFUMEE = 221, // rope dust
+	TYPE_222_CORDEBAS = 222, // flat stone (detached rope)
+	TYPE_223_HYBRIDE_STOSKO = 223, // Stoneskops
+	TYPE_224_STOSKO_PINCE = 224, // Stoneskops claw
+	TYPE_225_PIRATE_P_45 = 225, // pan pirate (45 degrees)
+	TYPE_226_PIRATE_P_D_45 = 226, // pan pirate 2 (45 degrees)
+	TYPE_227_MOSKITO2 = 227, // Moskito
+	TYPE_228_PRI = 228, // electric plug
+	TYPE_229_PUNAISE2 = 229, // punaise (facing down)
+	TYPE_230_PUNAISE3 = 230, // punaise (horizontal)
+	TYPE_231_HYB_BBF2_D = 231, // Moskitomama (right)
+	TYPE_232_HYB_BBF2_G = 232, // Moskitomama (left)
+	TYPE_233_HYB_BBF2_LAS = 233, // Moskitomama beam
+	TYPE_234_LAVE = 234, // lava
+	TYPE_235_PUNAISE4 = 235, // punaise
+	TYPE_236_ANNULE_SORT_DARK = 236, // cancel Mr Dark spell
+	TYPE_237_GOMME = 237, // eraser
+	TYPE_238_POING_FEE = 238, // Betilla text fist
+	TYPE_239_PIRATE_GUETTEUR2 = 239, // viking ship nest
+	TYPE_240_CRAYON_HAUT = 240, // pencil (pointing up)
+	TYPE_241_HERSE_HAUT = 241, // pencil (pointing up, moving)
+	TYPE_242_HERSE_HAUT_NEXT = 242, // pencil (pointing up, wave)
+	TYPE_243_MARK_AUTOJUMP_PLAT = 243, // stylo
+	TYPE_244_SMA_PETIT_LASER = 244, // Space Mama second beam
+	TYPE_245_DUNE = 245, // Joe's beach
+	TYPE_246_CORDE_DARK = 246, // Mr Dark separate rope
+	TYPE_247_VITRAIL = 247,
+	TYPE_248_SKO_PINCE = 248, // Mr Skops claw
+	TYPE_249_RIDEAU = 249, // theatre curtain
+	TYPE_250_PUNAISE5 = 250, // punaise (up down)
+	TYPE_251_VAGUE_DEVANT = 251, // theatre water (front)
+	TYPE_252_VAGUE_DERRIERE = 252, // theatre water (back)
+	TYPE_253_PLANCHES = 253,
+	TYPE_254_SLOPEY_PLAT = 254,
+	TYPE_255_INVALID = 255,
+	TYPE_256_BREAKOUTBRICK_20 = 256, // breakout brick 20
+	TYPE_257_BREAKOUT_GAME = 257, // breakout game
+	TYPE_258_NOUGAT = 258, // nougat
+	TYPE_259_EDU_LETTER = 259, // EDU letter
+	TYPE_260_EDU_DIGIT = 260, // EDU digit
+	TYPE_261_EDU_ROAD_SIGN = 261, // EDU road sign
 };
 
 // TODO: switch to these?
@@ -1029,23 +1029,31 @@ typedef enum ObjType {
     TYPE_INVALID=255
 } ObjType;
 
-// NOTE: change to bitfield?
-enum rayevts_enum {
-	rayevts_1_poing   = 1,
-	rayevts_2_hang    = 2,
-	rayevts_4_helico  = 4,
-	rayevts_8_super_helico  = 8,
-	rayevts_0x10_handstand_dash  = 0x10,
-	rayevts_0x20_handstand  = 0x20,
-	rayevts_0x40_magicseed  = 0x40,
-	rayevts_0x80_grab  = 0x80,
-	rayevts_0x100_run  = 0x100,
-	rayevts_0x200_tiny  = 0x200,
-	rayevts_0x400_firefly  = 0x400,
-	rayevts_0x800_force_run  = 0x800, // and 0x1000 (2-bit value?)
-	rayevts_0x2000_reverse  = 0x2000, // and 0x4000 (2-bit value?)
-	rayevts_0x8000_squashed = 0x8000,
-};
+typedef enum btyp_enum {
+    BTYP_NONE=0,
+    BTYP_CHDIR=1,
+    BTYP_SOLID_RIGHT_45=2,
+    BTYP_SOLID_LEFT_45=3,
+    BTYP_SOLID_RIGHT1_30=4,
+    BTYP_SOLID_RIGHT2_30=5,
+    BTYP_SOLID_LEFT1_30=6,
+    BTYP_SOLID_LEFT2_30=7,
+    BTYP_HURT=8,
+    BTYP_RESSORT=9, /*bounce*/
+    BTYP_WATER=10,
+    BTYP_LIANE=12, /*climb*/
+    BTYP_SOLID_PASSTHROUGH=14,
+    BTYP_SOLID=15,
+    BTYP_SLIPPERY_RIGHT_45=18,
+    BTYP_SLIPPERY_LEFT_45=19,
+    BTYP_SLIPPERY_RIGHT1_30=20,
+    BTYP_SLIPPERY_RIGHT2_30=21,
+    BTYP_SLIPPERY_LEFT1_30=22,
+    BTYP_SLIPPERY_LEFT2_30=23,
+    BTYP_SPIKES=24,
+    BTYP_CLIFF=25,
+    BTYP_SLIPPERY=30,
+} BlockType;
 
 typedef struct rayevts_t {
 	u8 poing : 1;               //1
@@ -1063,6 +1071,21 @@ typedef struct rayevts_t {
 	u8 reverse : 2;             //0x2000 and 0x4000
 	u8 squashed : 1;            //0x8000
 } rayevts_t;
+
+typedef struct finbosslevel_t {
+    u8 bzzit : 1;           // 1
+    u8 moskito : 1;         // 2
+    u8 mr_sax : 1;          // 4
+    u8 mr_stone : 1;        // 8
+    u8 viking_mama : 1;     // 0x10
+    u8 space_mama : 1;      // 0x20
+    u8 mr_skops : 1;        // 0x40
+    u8 mr_dark : 1;         // 0x80
+    u8 crazy_drummer : 1;   // 0x100
+    u8 helped_joe_1 : 1;    // 0x200
+    u8 helped_joe_2 : 1;    // 0x400
+    u8 helped_musician : 1; // 0x800
+} finbosslevel_t;
 
 typedef struct wi_save_zone_t {
     u8 unlocked : 1;

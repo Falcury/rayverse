@@ -98,8 +98,8 @@ i32 inverse_proj_y(i16 a1, i16 a2) {
 }
 
 //1D6C8
-void vblToEOA(obj_t* obj, u8 a2) {
-    //stub
+i32 vblToEOA(obj_t* obj, u8 a2) {
+    return 0; //stub
 }
 
 //1D738
@@ -196,13 +196,38 @@ u8 BTYP(i32 tile_x, i32 tile_y) {
     if (tile_x >= 0 && tile_x <= (mp.width - 1) && tile_y >= 0 && tile_y <= (mp.height - 1)) {
         return mp.map[tile_y * mp.width + tile_x].tile_type;
     } else {
-        return 0;
+        return BTYP_NONE;
     }
 }
 
 //1E608
 void calc_btyp_square(obj_t* obj) {
-    //stub
+    i16 x_offset;
+    if (obj->type == TYPE_23_RAYMAN) {
+        x_offset = RayEvts.tiny ? 4 : 8;
+    } else {
+        x_offset = 16;
+    }
+
+    i16 x = obj->xpos + obj->offset_bx;
+    i16 y = obj->ypos + obj->offset_by;
+    i16 tile_x = ashr16(y, 4);
+    i16 tile_y = ashr16(x, 4);
+    i16 tile_x_left = ashr16(x - x_offset, 4);
+    i16 tile_x_right = ashr16(x + x_offset, 4);
+
+    obj->coll_btype[3] = BTYP(tile_x, tile_y - 1); // up
+    obj->coll_btype[1] = BTYP(tile_x_left, tile_y); // left
+
+    // center
+    if (obj->main_etat == 2) {
+        obj->coll_btype[0] = bloc_floor(BTYP(tile_x, tile_y), x % 16, y % 16);
+    } else {
+        obj->coll_btype[0] = BTYP(tile_x, tile_y);
+    }
+
+    obj->coll_btype[2] = BTYP(tile_x_right, tile_y); // right
+    obj->coll_btype[4] = BTYP(tile_x, tile_y + 1); // down
 }
 
 //1E76C
@@ -211,8 +236,102 @@ void DO_OBJ_REBOND_EN_X(obj_t* obj) {
 }
 
 //1E790
-void calc_btyp(obj_t* obj) {
-    //stub
+u8 calc_btyp(obj_t* obj) {
+    u8 btyp = BTYP_NONE;
+    calc_btyp_square(obj);
+    i32 x = obj->xpos + obj->offset_bx;
+    i32 y = obj->ypos + obj->offset_by;
+
+    if (obj->type == TYPE_RAYMAN) {
+        ray.cmd_arg_1 = -1;
+        switch (ray.coll_btype[0]) {
+            case BTYP_NONE:
+            case BTYP_CHDIR:
+                break;
+            case BTYP_SOLID_RIGHT_45:
+            case BTYP_SOLID_LEFT_45:
+            case BTYP_SOLID_RIGHT1_30:
+            case BTYP_SOLID_RIGHT2_30:
+            case BTYP_SOLID_LEFT1_30:
+            case BTYP_SOLID_LEFT2_30:
+            case BTYP_LIANE:
+            case BTYP_SOLID_PASSTHROUGH:
+            case BTYP_SOLID:
+                ray_last_ground_btyp = 1;
+                break;
+            case BTYP_SLIPPERY_RIGHT_45:
+            case BTYP_SLIPPERY_LEFT_45:
+            case BTYP_SLIPPERY_RIGHT1_30:
+            case BTYP_SLIPPERY_RIGHT2_30:
+            case BTYP_SLIPPERY_LEFT1_30:
+            case BTYP_SLIPPERY_LEFT2_30:
+            case BTYP_SLIPPERY:
+                ray_last_ground_btyp = 0;
+                break;
+        }
+    }
+
+    if (!(block_flags[obj->coll_btype[0]] & 2)) {
+        if (obj->type == TYPE_23_RAYMAN) {
+            btyp = mp.map[ray.rayman_distance].tile_type;
+        } else {
+            btyp = BTYP(x >> 4, y >> 4);
+        }
+
+        if (obj->main_etat == 2 && !(block_flags[btyp] & 2)) {
+            btyp = BTYP(x >> 4, (y + 16) >> 4);
+        }
+
+        if (!(block_flags[btyp] & 2)) {
+            u8 left_and_right_solid = (block_flags[obj->coll_btype[2]] & 2) + ((block_flags[obj->coll_btype[1]] & 2) != 0);
+            // left = 1, right = 2, both = 3
+            if (left_and_right_solid == 3) {
+                // decide whether the closest solid tile is to the left or right?
+                if ((x % 16) < 8) {
+                    left_and_right_solid = 1;
+                } else {
+                    left_and_right_solid = 2;
+                }
+            }
+
+            if (left_and_right_solid != 0) {
+                u8 left_or_right = left_and_right_solid - 1; // now 0 = left, 1 = right
+                if (obj->type == TYPE_23_RAYMAN) {
+                    if (ray_last_ground_btyp == 1) {
+                        i32 ground_x = left_or_right ? x + 16 : x - 16;
+                        if (!(block_flags[BTYP(ground_x >> 4, y >> 6)] & 2)) {
+                            if (ray.main_etat != 2) {
+                                obj->cmd_arg_1 = (left_or_right == ((ray.flags & obj_flags_8_flipped) != 0));
+                            }
+                            ray.coll_btype[0] = ray.coll_btype[1 + (left_or_right != 0)];
+                        }
+                    }
+                } else if (left_or_right != ((ray.flags & obj_flags_8_flipped) != 0) && obj->main_etat != 2) {
+                    if (
+                            (obj->type == TYPE_BADGUY1 && obj->flags & obj_flags_8_flipped) ||
+                            obj->type == TYPE_BADGUY2 || obj->type == TYPE_BADGUY3 || obj->type == TYPE_GENEBADGUY ||
+                            obj->type == TYPE_STONEMAN1 || obj->type == TYPE_STONEMAN2 ||
+                            obj->type == TYPE_BIG_CLOWN || obj->type == TYPE_WAT_CLOWN ||
+                            (obj->type == TYPE_SPIDER && obj->cmd_arg_1 != 0) ||
+                            obj->type == TYPE_TROMPETTE || obj->type == TYPE_MITE || obj->type == TYPE_MITE2 ||
+                            obj->type == TYPE_CAISSE_CLAIRE || obj->type == TYPE_WALK_NOTE_1 || obj->type == TYPE_SPIDER_PLAFOND ||
+                            (obj->type == TYPE_BLACKTOON1 &&
+                             (obj->follow_sprite == 1 || obj->follow_sprite == 4 || (obj->follow_sprite == 7 && obj->configuration == 2)) &&
+                             !(obj->main_etat == 0 && obj->sub_etat == 4)
+                            )
+                    ) {
+                        makeUturn(obj);
+                        obj->coll_btype[0] = BTYP_SOLID;
+                    }
+                }
+            } else {
+                btyp = obj->coll_btype[0];
+            }
+        }
+    } else {
+        btyp = obj->coll_btype[0];
+    }
+    return btyp;
 }
 
 //1EAA8
@@ -478,14 +597,235 @@ void SwapAB(i16* a, i16* b) {
     *b = temp;
 }
 
+// Taken from the PS1 decomp for now (reconstructing this doesn't look fun)
 //1F520
-void Bresenham(void* func, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
-    //stub
+void Bresenham(void (*func)(i16, i16), i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 param_6, i16 percent)
+{
+    s16 sp10;
+    s16 sp12;
+    s16 sp14;
+    s16 sp16;
+    void (*sp18)(s16, s16);
+    s16 sp20;
+    s32 var_s0_2;
+    s16 var_s0_3;
+    s16 var_s0_4;
+    s16 var_s0_5;
+    s32 var_s1_1;
+    s16 var_s1_2;
+    s16 var_s1_3;
+    s16 var_s1_4;
+    s16 var_s3;
+    s32 temp_a0;
+    s32 temp_a3;
+    s32 temp_lo_1;
+    s32 temp_lo_2;
+    s32 temp_lo_3;
+    s32 temp_lo_4;
+    s32 temp_s6_1;
+    s32 temp_s6_2;
+    s32 temp_s6_3;
+    s32 temp_s6_4;
+    s16 var_s0_1;
+    s32 var_s2_1;
+    s32 var_s2_2;
+    s32 var_s4;
+    s32 var_s5;
+    s32 var_s7_1;
+    s32 var_s7_2;
+    s32 var_v0;
+    s32 test_1;
+    s32 test_2;
+
+    /*sp18 = param_1;*/
+    sp10 = origin_x;
+    sp14 = origin_y;
+    sp12 = dest_x;
+    var_s0_1 = 0;
+    var_s5 = dest_x - origin_x;
+    sp16 = dest_y;
+    var_s4 = dest_y - origin_y;
+    test_1 = param_6;
+    sp20 = test_1;
+    temp_s6_1 = percent;
+    if (var_s5 == 0)
+    {
+        var_s3 = 0;
+    }
+    else
+    {
+        var_s3 = abs(var_s4 / var_s5) < 1;
+    }
+    if (var_s3 == 1)
+    {
+        if (var_s5 < 0)
+        {
+            var_s0_1 = 1;
+            SwapAB(&sp10, &sp12);
+            SwapAB(&sp14, &sp16);
+            var_s5 = -var_s5;
+            var_s4 = -var_s4;
+        }
+        else if ((var_s5 == 0) && (var_s4 < 0))
+        {
+            var_s0_1 = 1;
+            SwapAB(&sp14, &sp16);
+            var_s4 = -var_s4;
+        }
+
+        if (var_s4 <= 0)
+        {
+            var_s7_1 = var_s4 >> 0x1F;
+        }
+        else
+            var_s7_1 = 1;
+
+        var_s4 = abs(var_s4);
+        var_s2_1 = (var_s4 * 2) - var_s5;
+        temp_a3 = var_s4 - var_s5;
+        if (var_s0_1 != 0)
+        {
+            var_s0_2 = sp12;
+            temp_s6_1 = var_s0_2 + ((sp10 - var_s0_2) * (s16) temp_s6_1 / 100);
+            var_s0_2++;
+            var_s1_1 = sp16;
+
+            var_s7_1 = -var_s7_1;
+            while (var_s0_2 >= temp_s6_1)
+            {
+                var_s3 += 1;
+                if (var_s2_1 > 0)
+                {
+                    var_s1_1 += var_s7_1;
+                    var_s2_1 += (s16) (temp_a3 * 2);
+                }
+                else
+                {
+                    var_s2_1 += (s16) (var_s4 * 2);
+                }
+
+                if (sp20 < var_s3)
+                {
+                    func(var_s0_2, var_s1_1);
+                    var_s3 = 0;
+                }
+                var_s0_2 -= 1;
+            }
+        }
+        else
+        {
+            var_s0_2 = sp10;
+            temp_s6_1 = var_s0_2 + ((sp12 - var_s0_2) * (s16) temp_s6_1 / 100);
+            var_s0_2 = var_s0_2 + 1;
+            var_s1_1 = sp14;
+
+            while (var_s0_2 <= temp_s6_1)
+            {
+                var_s3 += 1;
+                if (var_s2_1 > 0)
+                {
+                    var_s1_1 += var_s7_1;
+                    var_s2_1 += (s16) (temp_a3 * 2);
+                }
+                else
+                {
+                    var_s2_1 += (s16) (var_s4 * 2);
+                }
+                if (sp20 < var_s3)
+                {
+                    func(var_s0_2, var_s1_1);
+                    var_s3 = 0;
+                }
+                var_s0_2 += 1;
+            }
+        }
+    }
+    else
+    {
+        if (var_s4 < 0)
+        {
+            var_s0_1 = 1;
+            SwapAB(&sp10, &sp12);
+            SwapAB(&sp14, &sp16);
+            var_s5 = -var_s5;
+            var_s4 = -var_s4;
+        }
+        else if ((var_s4 == 0) && (var_s5 < 0))
+        {
+            var_s0_1 = 1;
+            SwapAB(&sp10, &sp12);
+            var_s5 = -var_s5;
+        }
+
+        if (var_s5 <= 0)
+        {
+            var_s7_1 = var_s5 >> 0x1F;
+        }
+        else
+            var_s7_1 = 1;
+        var_s5 = abs(var_s5);
+        var_s2_1 = (var_s5 * 2) - var_s4;
+        temp_a0 = var_s5 - var_s4;
+        if (var_s0_1 != 0)
+        {
+            var_s0_2 = sp16;
+            temp_s6_1 = var_s0_2 + ((sp14 - var_s0_2) * (s16) temp_s6_1 / 100);
+            var_s0_2++;
+            var_s1_1 = sp12;
+            var_s7_1 = -var_s7_1;
+            while (var_s0_2 >= temp_s6_1)
+            {
+                var_s3 += 1;
+                if (var_s2_1 > 0)
+                {
+                    var_s1_1 += var_s7_1;
+                    var_s2_1 += (s16) (temp_a0 * 2);
+                }
+                else
+                {
+                    var_s2_1 += (s16) (var_s5 * 2);
+                }
+                if (sp20 < var_s3)
+                {
+                    func(var_s1_1, var_s0_2);
+                    var_s3 = 0;
+                }
+                var_s0_2 -= 1;
+            }
+        }
+        else
+        {
+            var_s0_2 = sp14;
+            temp_s6_1 = var_s0_2 + ((sp16 - var_s0_2) * (s16) temp_s6_1 / 100);
+            var_s0_2++;
+            var_s1_1 = sp10;
+            while (var_s0_2 <= temp_s6_1)
+            {
+                var_s3 += 1;
+                if (var_s2_1 > 0)
+                {
+                    var_s1_1 += var_s7_1;
+                    var_s2_1 += (s16) (temp_a0 * 2);
+                }
+                else
+                {
+                    var_s2_1 += (s16) (var_s5 * 2);
+                }
+                if (sp20 < var_s3)
+                {
+                    func(var_s1_1, var_s0_2);
+                    var_s3 = 0;
+                }
+                var_s0_2 += 1;
+            }
+        }
+    }
 }
 
 //1F880
 void init_finBossLevel(void) {
-    finBosslevel &= 0xF000;
+    ASSERT(sizeof(finBosslevel)==2);
+    *(u16*)(&finBosslevel) = 0;
 }
 
 //1F8A4

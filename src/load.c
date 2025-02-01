@@ -312,12 +312,12 @@ void LOAD_ALL_FIX(void) {
 
             obj_t* obj = wldobj + des_index;
 
-            i32 eta_ptr_value = 0;
-            mem_read(&eta_ptr_value, mem, 4);
-            if (eta_ptr_value == -1) {
+            i32 which_eta = 0;
+            mem_read(&which_eta, mem, 4);
+            if (which_eta == -1) {
                 obj->eta = NULL;
             } else {
-                obj->eta = loaded_eta[des_index];
+                obj->eta = loaded_eta[which_eta];
             }
 
             mem_read(&RaymanExeSize, mem, 4);

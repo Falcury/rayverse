@@ -23,7 +23,7 @@ void fix_numlevel(obj_t* obj) {
                     num_level_choice++;
 
                 // Boss: Bzzit
-                if (num_level == 5 && (finBosslevel & 1) != 0)
+                if (num_level == 5 && (finBosslevel.bzzit) != 0)
                     num_level_choice++;
 
                 // Betilla: hang
@@ -31,11 +31,11 @@ void fix_numlevel(obj_t* obj) {
                     new_world = 1;
 
                 // Boss: Moskito chase
-                if (num_level == 13 && (finBosslevel & 2) != 0)
+                if (num_level == 13 && (finBosslevel.moskito) != 0)
                     num_level_choice++;
 
                 // Boss: Moskito
-                if (num_level == 15 && (finBosslevel & 2) != 0)
+                if (num_level == 15 && (finBosslevel.moskito) != 0)
                     new_world = 1;
 
                 // Betilla: grab
@@ -46,11 +46,11 @@ void fix_numlevel(obj_t* obj) {
                 // Music
             case 2:
                 // Boss: Red Drummer (unused)
-                if (num_level == 5 && (finBosslevel & 0x100) != 0)
+                if (num_level == 5 && (finBosslevel.crazy_drummer) != 0)
                     new_world = 1;
 
                 // Boss: Sax encounter
-                if (num_level == 9 && (finBosslevel & 4) != 0)
+                if (num_level == 9 && (finBosslevel.mr_sax) != 0)
                     new_world = 1;
 
                 // Betilla: helico
@@ -58,18 +58,18 @@ void fix_numlevel(obj_t* obj) {
                     new_world = 1;
 
                 // Boss: Sax
-                if (num_level == 14 && (finBosslevel & 4) != 0)
+                if (num_level == 14 && (finBosslevel.mr_sax) != 0)
                     new_world = 1;
                 break;
 
                 // Mountain
             case 3:
                 // Boss: Stone chase
-                if (num_level == 1 && (finBosslevel & 8) != 0)
+                if (num_level == 1 && (finBosslevel.mr_stone) != 0)
                     new_world = 1;
 
                 // Boss: Stone
-                if ((num_level == 9) && (finBosslevel & 8) != 0)
+                if ((num_level == 9) && (finBosslevel.mr_stone) != 0)
                     new_world = 1;
 
                 // Betilla: run
@@ -80,25 +80,25 @@ void fix_numlevel(obj_t* obj) {
                 // Image
             case 4:
                 // Boss: Pirate Mama
-                if (num_level == 3 && (finBosslevel & 0x10) != 0)
+                if (num_level == 3 && (finBosslevel.viking_mama) != 0)
                     new_world = 1;
 
                 // Boss: Space Mama
-                if (num_level == 10 && (finBosslevel & 0x20) != 0)
+                if (num_level == 10 && (finBosslevel.space_mama) != 0)
                     new_world = 1;
                 break;
 
                 // Cave
             case 5:
                 // Boss: Skops
-                if (num_level == 9 && (finBosslevel & 0x40) != 0)
+                if (num_level == 9 && (finBosslevel.mr_skops) != 0)
                     new_world = 1;
                 break;
 
                 // Cake
             case 6:
                 // Boss: Dark (unused)
-                if (num_level == 1 && (finBosslevel & 0x80) != 0)
+                if (num_level == 1 && (finBosslevel.mr_dark) != 0)
                     new_world = 1;
                 break;
         }

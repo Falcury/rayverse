@@ -5,13 +5,18 @@ void MURDUR(i16 a1, i16 a2) {
 }
 
 //24EAC
-void dist_to_bloc_floor(i16 a1, i16 a2, i16 a3) {
-    //stub
+i32 dist_to_bloc_floor(i16 btype, i16 x, i16 y) {
+    i32 result = calcblocfloor[btype](x, y) - y;
+    return result;
 }
 
 //24EC8
-void bloc_floor(i16 a1, i16 a2, i16 a3) {
-    //stub
+u8 bloc_floor(i16 btype, i16 x, i16 y) {
+    if (dist_to_bloc_floor(btype, x, y) > 0) {
+        return 0;
+    } else {
+        return btype;
+    }
 }
 
 //24F60

@@ -10,8 +10,8 @@ void testActionEnd(obj_t* obj) {
 }
 
 //18AD0
-void firstFloorBelow(obj_t* obj) {
-    //stub
+i16 firstFloorBelow(obj_t* obj) {
+    return 0; //stub
 }
 
 //18B4C
@@ -21,5 +21,10 @@ void adjustBossScrollLocker(void) {
 
 //18C8C
 void setBossScrollLimits(obj_t* obj) {
-    //stub
+    bossScrollStartX = scroll_start_x;
+    bossScrollEndX = scroll_end_x;
+    floorLine = firstFloorBelow(obj); //TODO
+    bossScrollStartY = Bloc_lim_H1 - Bloc_lim_H2 + floorLine - 16;
+    bossScrollEndY = ymapmax;
+    adjustBossScrollLocker(); //TODO
 }

@@ -318,7 +318,7 @@ void load_sav(u8 which_save) {
 void reset_items_and_bosses(void) {
 	memset(collected_events_data, 0, 2592);
 	memset(bonus_completed_data, 0, 24);
-    finBosslevel = 0;
+    *(u16*)&finBosslevel = 0;
 
 	for (i32 i = 0; i < 24; ++i) {
 		wi_save_zone[i] &= ~(7 << 2);
@@ -369,7 +369,7 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state) {
 	save_state->poing_sub_etat = poing.sub_etat;
 	for (i32 obj_id = 0; obj_id < level.nb_objects; ++obj_id) {
 		obj_t* obj = level.objects + obj_id;
-		if (obj->type == obj_141_snow || obj->type == obj_164_gendoor || obj->type == obj_179_pencil_pointing_down_wave || obj->type == obj_242_pencil_pointing_up_wave) {
+		if (obj->type == TYPE_141_NEIGE || obj->type == TYPE_164_GENERATING_DOOR || obj->type == TYPE_179_HERSE_BAS_NEXT || obj->type == TYPE_242_HERSE_HAUT_NEXT) {
 			u32 bit = 1 << (obj_id & 0x1F);
 			u32 index = obj_id >> 5;
 			if (obj->flags & obj_flags_4_triggered) {
@@ -435,7 +435,7 @@ void restoreGameState(save_state_t* save_state) {
                 } break;
             }
         }
-        poing_obj->spawn_subetat = save_state->poing_sub_etat;
+        poing_obj->spawn_sub_etat = save_state->poing_sub_etat;
         poing.sub_etat = save_state->poing_sub_etat;
         dead_time = save_state->dead_time;
         decalage_en_cours = 0;
@@ -453,20 +453,20 @@ void restoreGameState(save_state_t* save_state) {
         for (i32 obj_id = 0; obj_id < level.nb_objects; ++obj_id) {
             obj_t* obj = level.objects + obj_id;
             u16 type = obj->type;
-            if (type == obj_3_electoon
-                || type == obj_13_hunterbullet
-                || type == obj_15
-                || type == obj_59_opened_cage
-                || type == obj_36_stoneman_lava_ball
-                || type == obj_66_spider_dart
-                || type == obj_62_water_balloon
-                || type == obj_99_rayman_start_pos
+            if (type == TYPE_3_LIDOLPINK
+                || type == TYPE_13_BALLE1
+                || type == TYPE_15_BALLE2
+                || type == TYPE_59_CAGE2
+                || type == TYPE_36_STONEBOMB
+                || type == TYPE_66_DARD
+                || type == TYPE_62_DROP
+                || type == TYPE_99_RAY_POS
             ) {
                 obj->flags &= ~obj_flags_4_triggered;
             } else {
-                if (type != obj_141_snow && type != obj_164_gendoor) {
+                if (type != TYPE_141_NEIGE && type != TYPE_164_GENERATING_DOOR) {
                     bool need_check_triggered;
-                    if (type == obj_179_pencil_pointing_down_wave || type == obj_242_pencil_pointing_up_wave) {
+                    if (type == TYPE_179_HERSE_BAS_NEXT || type == TYPE_242_HERSE_HAUT_NEXT) {
                         obj->field_1C = 1;
                         need_check_triggered = true;
                     } else {

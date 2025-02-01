@@ -103,8 +103,8 @@ void DISPLAY_FIXE(i32 a1) {
 }
 
 //19864
-void DISPLAY_POINT(i16 a1, i16 a2) {
-    //stub
+void DISPLAY_POINT(i16 x, i16 y) {
+    DrawWldPointPlan2Normal(PLAN2BIT, x, y - 2);
 }
 
 //1987C
@@ -113,8 +113,8 @@ void DISPLAY_PTS_TO(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 a5) 
 }
 
 //198C4
-void DISPLAY_PTS_TO_PLAN2(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 a5) {
-    //stub
+void DISPLAY_PTS_TO_PLAN2(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 percent) {
+    Bresenham(DISPLAY_POINT, origin_x + 8, origin_y, dest_x + 8, dest_y, 7, percent);
 }
 
 //198F4

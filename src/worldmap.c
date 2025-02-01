@@ -2,13 +2,36 @@
 // NOTE: unsure about the source filename
 
 //67860
-void TEST_DISPLAY_PTS_WAY(i16 a1, i16 world_info_index, i16 xpos, i16 ypos) {
+void TEST_DISPLAY_PTS_WAY(i16 world, i16 connected_world, i16 xpos, i16 ypos) {
+    if (world != connected_world) {
+        world_info_t* connected_world_info = t_world_info + connected_world;
+        if ((connected_world_info->state & 2) == 0) {
+            if (connected_world_info->state & 1) {
+                DISPLAY_PTS_TO_PLAN2(xpos, ypos, connected_world_info->xpos, connected_world_info->ypos, 128);
+            } else if (connected_world_info->state & 4) {
+                DISPLAY_PTS_TO_PLAN2(xpos, ypos, connected_world_info->xpos, connected_world_info->ypos, chemin_percent);
+            }
+        }
+    }
     //stub
 }
 
 //678E8
 void DISPLAY_PTS_WAY(void) {
-    //stub
+    for (i32 i = 0; i < 24; ++i) {
+        world_info_t* world_info = t_world_info + i;
+        world_info->state &= ~2;
+    }
+    for (i32 i = 0; i < 24; ++i) {
+        world_info_t* world_info = t_world_info + i;
+        if (world_info->state & 1) {
+            TEST_DISPLAY_PTS_WAY(world_index, world_info->index_up, world_info->xpos, world_info->ypos);
+            TEST_DISPLAY_PTS_WAY(world_index, world_info->index_down, world_info->xpos, world_info->ypos);
+            TEST_DISPLAY_PTS_WAY(world_index, world_info->index_left, world_info->xpos, world_info->ypos);
+            TEST_DISPLAY_PTS_WAY(world_index, world_info->index_right, world_info->xpos, world_info->ypos);
+            world_info->state |= 2;
+        }
+    }
 }
 
 //6799C
@@ -101,33 +124,33 @@ void INIT_CHEMIN(void) {
     for (i32 i = 0; i < 24; ++i) {
         obj_t* medaillon = mapobj + i;
         world_info_t* world_info = t_world_info + i;
-        medaillon->type = obj_54_medaillon;
+        medaillon->type = TYPE_54_MEDAILLON;
         medaillon->spawn_x = world_info->xpos - 78;
         medaillon->spawn_y = world_info->ypos - 64;
         medaillon->spawn_etat = 5;
         if (world_info->state & 4) {
-            medaillon->spawn_subetat = 46;
+            medaillon->spawn_sub_etat = 46;
         } else {
             i32 cages = world_info->nb_cages;
             if (cages != 0) {
                 Nb_total_cages += cages;
                 if (cages == 6) {
-                    medaillon->spawn_subetat = 52;
+                    medaillon->spawn_sub_etat = 52;
                 } else {
-                    medaillon->spawn_subetat = 47;
+                    medaillon->spawn_sub_etat = 47;
                 }
             } else if (i == 17) {
                 medaillon->sub_etat = 59;
-                medaillon->spawn_subetat = 59;
+                medaillon->spawn_sub_etat = 59;
             } else {
-                medaillon->spawn_subetat = 39;
+                medaillon->spawn_sub_etat = 39;
             }
         }
         medaillon->scale = 0;
         medaillon->offset_bx = 0;
         medaillon->offset_by = 64;
-        obj_init(medaillon); //TODO
-        CalcObjPosInWorldMap(medaillon); //TODO
+        obj_init(medaillon);
+        CalcObjPosInWorldMap(medaillon);
         medaillon->anim_frame = i % medaillon->animations[get_eta(medaillon)->anim_index].frame_count;
     }
 
@@ -220,12 +243,12 @@ void DETER_WORLD_AND_LEVEL(void) {
         enter_casse_brique();
     }
     RayEvts.firefly = 0;
-    if (num_world_choice == world_5_cave && num_level_choice == 3 && (finBosslevel & 0x200)) {
+    if (num_world_choice == world_5_cave && num_level_choice == 3 && finBosslevel.helped_joe_1) {
         RayEvts.firefly = 1;
         ++num_level_choice;
-    } else if (num_world_choice == world_5_cave && num_level_choice == 4 && (finBosslevel & 0x200) && ModeDemo) {
+    } else if (num_world_choice == world_5_cave && num_level_choice == 4 && finBosslevel.helped_joe_1 && ModeDemo) {
         RayEvts.firefly = 1;
-    } else if (num_world_choice == world_6_cake && (finBosslevel & 0x80)) {
+    } else if (num_world_choice == world_6_cake && finBosslevel.mr_dark) {
         You_Win = 1;
         fin_du_jeu = 1;
         new_world = 1;

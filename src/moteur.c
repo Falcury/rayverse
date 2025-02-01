@@ -90,7 +90,7 @@ void SET_X_SPEED(obj_t* obj) {
         } else {
             xspeed = eta->left_speed * horloge_index;
         }
-        if (obj->type == obj_23_rayman && RayEvts.tiny) {
+        if (obj->type == TYPE_23_RAYMAN && RayEvts.tiny) {
             xspeed /= 2;
         }
     }
@@ -166,7 +166,7 @@ void DO_ANIM(obj_t* obj) {
         eta = get_eta(obj);
         obj->anim_index = eta->anim_index;
         anim = obj->animations + obj->anim_index;
-        if ((obj->type == obj_23_rayman && (ray_old_etat == 2 || ray_old_etat == 6)) ||
+        if ((obj->type == TYPE_23_RAYMAN && (ray_old_etat == 2 || ray_old_etat == 6)) ||
             (obj->sub_etat == 61 && ray_old_subetat == 61 && ray_old_etat == 0)) {
             if (ray.timer > 60 && !RayEvts.squashed) {
                 ray.timer = 60;
@@ -412,7 +412,7 @@ void INIT_RAY(u8 level_index) {
     }
     xmap = 0;
     ymap = 0;
-    ray.type = obj_23_rayman;
+    ray.type = TYPE_23_RAYMAN;
     ray.screen_x = 0;
     ray.screen_y = 0;
     ray.xspeed = 0;
@@ -473,7 +473,7 @@ void INIT_RAY(u8 level_index) {
 
         obj_t* obj = level.objects;
         for (i32 i = 0; i < level.nb_objects; ++i) {
-            if (obj->type != obj_99_rayman_start_pos) {
+            if (obj->type != TYPE_99_RAY_POS) {
                 break;
             }
             ++obj;

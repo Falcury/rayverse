@@ -137,7 +137,8 @@ void DoScrollInWorldMap(i16 a1, i16 a2) {
 
 //444D4
 void CalcObjPosInWorldMap(obj_t* obj) {
-    //stub
+    obj->screen_x = obj->xpos + 8 - xmap + JumellePosX - JumelleXMin;
+    obj->screen_y = obj->ypos - ymap + JumellePosY - JumelleYMin;
 }
 
 //44524
