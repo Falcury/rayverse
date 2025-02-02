@@ -46,12 +46,76 @@ void DO_MEDAILLONS(void) {
 
 //67D50
 void INIT_LEVEL_STAGE_NAME(void) {
-    //stub
+    memcpy(text_to_display[1].text, t_world_info[num_world_choice].text, 48);
+    text_to_display[1].xpos = 450;
+    text_to_display[1].ypos = 193;
+    text_to_display[1].font_size = 2;
+    text_to_display[1].is_fond = 0;
+    text_to_display[1].field_D5 = 0;
+    INIT_TXT_BOX(&text_to_display[1]);
+    text_to_display[1].centered_y_pos -= 6;
+    text_to_display[1].width += 10;
+    text_to_display[1].height += 6;
+    text_to_display[1].color = t_world_info[num_world_choice].color;
 }
 
 //67E40
 void INIT_WORLD_STAGE_NAME(void) {
-    //stub
+    i8 new_color = 0;
+    switch (t_world_info[num_world_choice].world) {
+        case 1: {
+            strcpy(text_to_display[3].text, language_txt[24]); // /the dream forest/
+            new_color = 5;
+        } break;
+        case 2: {
+            strcpy(text_to_display[3].text, language_txt[25]); // /band land/
+            new_color = 3;
+        } break;
+        case 3: {
+            strcpy(text_to_display[3].text, language_txt[26]); // /blue mountains/
+            new_color = 0;
+        } break;
+        case 4: {
+            strcpy(text_to_display[3].text, language_txt[27]); // /picture city/
+            new_color = 2;
+        } break;
+        case 5: {
+            strcpy(text_to_display[3].text, language_txt[28]); // /the caves of skops/
+            new_color = 1;
+        } break;
+        case 6: {
+            strcpy(text_to_display[3].text, language_txt[29]); // /candy chateau/
+            new_color = 1;
+        } break;
+        case 7: {
+            new_color = t_world_info[num_world_choice].color;
+            switch(fichier_selectionne) {
+                case 0: {
+                    strcpy(text_to_display[3].text, language_txt[161]); // /password/
+                } break;
+                case 1: {
+                    strncpy(text_to_display[3].text, save_ray[1], 4);
+                } break;
+                case 2: {
+                    strncpy(text_to_display[3].text, save_ray[2], 4);
+                } break;
+                case 3: {
+                    strncpy(text_to_display[3].text, save_ray[3], 4);
+                } break;
+                default: break;
+            }
+        } break;
+        default: break;
+    }
+    text_to_display[3].color = new_color;
+    text_to_display[3].font_size = 1;
+    text_to_display[3].xpos = 450;
+    text_to_display[3].ypos = 30;
+    text_to_display[3].is_fond = 0;
+    text_to_display[3].field_D5 = 0;
+    INIT_TXT_BOX(&text_to_display[3]);
+    text_to_display[3].width += 10;
+    text_to_display[3].height += 2;
 }
 
 //68120
@@ -61,7 +125,12 @@ void INIT_STAGE_NAME(void) {
 
 //6817C
 void CHANGE_STAGE_NAMES(void) {
-    //stub
+    text_to_display[2] = text_to_display[1];
+    INIT_LEVEL_STAGE_NAME();
+    if (t_world_info[num_world_choice].world != t_world_info[old_num_world].world) {
+        text_to_display[4] = text_to_display[3];
+        INIT_WORLD_STAGE_NAME();
+    }
 }
 
 //68208
@@ -204,6 +273,38 @@ void RESPOND_TO_LEFT(void) {
 
 //69078
 void DO_RAYMAN_IN_WLD_MAP(void) {
+    if (old_num_world == num_world_choice) {
+        if (ValidButPressed()) {
+            PositionStageNameCalcule = 0;
+            ModeAutoJumelle = 0;
+            if (num_world_choice == 18 || num_world_choice == 19 || num_world_choice == 20 || num_world_choice == 21 ||
+                num_world_choice == 22 || num_world_choice == 23
+            ) {
+                if (t_world_info[num_world_choice].text == language_txt[150] /* /save game/ */ &&
+                    NBRE_SAVE != 0 &&
+                    strcmp(text_to_display[3].text, language_txt[161] /* /password/ */) != 0
+                ) {
+                    // Erase previously saved game?
+                    if (confirmation_msg(3)) {
+                        SaveGameOnDisk(fichier_selectionne);
+                        PASTILLES_SAUVE_SAVED(num_world_choice);
+                        CHANGE_STAGE_NAMES();
+                    }
+                }
+            } else {
+                new_world = 1;
+            }
+            ChangeJumelleSizeOK &= ~4;
+        } else if (rightjoy()) {
+            RESPOND_TO_RIGHT();
+        } else if (leftjoy()) {
+            RESPOND_TO_LEFT();
+        } else if (downjoy()) {
+            RESPOND_TO_DOWN();
+        } else if (upjoy()) {
+            RESPOND_TO_UP();
+        }
+    }
     //stub
 }
 
@@ -224,8 +325,9 @@ void INIT_PASTILLES_SAUVE(void) {
 }
 
 //6954C
-void PASTILLES_SAUVE_SAVED(void) {
-    //stub
+void PASTILLES_SAUVE_SAVED(i16 world) {
+    INIT_PASTILLES_SAUVE();
+    t_world_info[world].text = language_txt[151]; // /game saved/
 }
 
 //69570

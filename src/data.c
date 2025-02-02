@@ -1228,8 +1228,8 @@ u8* EffetBufferNormal; //CD130
 i32 TempsDemo; //CD134
 u8* DrawBufferNormal; //CD138
 void* anim_func; //CD13C
-char save_ray[4][3]; //CD794
 
+char save_ray[4][3]; //CD798
 options_t options; //CD7A4
 u8* draw_buffer; //CD7B8
 u32 new_sprite_deform; //CD7BC
@@ -1483,7 +1483,7 @@ u16 word_CF88A; //CF88A
 i16 num_world; // 0xCF88C
 u16 pierre_acorde_obj_id; // CF88E
 u16 xmapmax; //CF890
-u16 new_world; // 0xCF892
+i16 new_world; // 0xCF892
 u16 rayman_obj_id; //CF894
 u16 mus_obd_id; //CF896
 i16 helico_time; //CF898
@@ -1596,7 +1596,7 @@ u8 display_Vignet; //CFA47
 u8 colour; //CFA48
 u8 rayOnMsWasThere; //CFA49
 u8 freeze; //CFA4A (?)
-u8 need_skip_timer; //CFA4B (?)
+u8 need_timer; //CFA4B (?)
 u8 VGA_FREQ; //CFA4C
 u8 save_current_pal; //CFA4D
 u8 use_sync; //CFA4E

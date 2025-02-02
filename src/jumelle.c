@@ -5,7 +5,7 @@ void plot2linejumelle(i32 a1, i32 a2, i32 a3, void* a4, i32 a5, i32 a6, i32 a7) 
 }
 
 //42E1C
-void DisplayJumellesNormal(i32 a1, i32 a2, void* a3, i32 a4, i32 a5, i32 a6) {
+void DisplayJumellesNormal(i32 x, i32 y, i32 rayon, i32 a4, u8* effet_buf, u8* draw_buf) {
     //stub
 }
 

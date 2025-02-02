@@ -642,7 +642,7 @@ void clock_ticks(void) {
 }
 
 //16F5D
-void wait_until(void) {
+void wait_until(i32 target /*ebx*/) {
     //stub
 }
 

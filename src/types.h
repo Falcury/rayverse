@@ -170,7 +170,7 @@ typedef struct world_info_t {
 	u8 nb_cages;
 	u8 world;
 	u8 level;
-	u8 color;
+	i8 color;
 	u8 field_D;
 	u8 field_E;
 	u8 field_F;

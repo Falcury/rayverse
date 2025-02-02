@@ -199,7 +199,47 @@ void DISPLAY_STAGE_NAMES(void) {
 
 //35028
 i16 WORLD_CHOICE(u32 a1) {
-    return 0; //stub
+    //map_screen_check_cheats();
+    i32 next_clock_target = 0;
+    if (need_timer) {
+        next_clock_target = word_CF7EE + a1;
+    }
+
+    let_shadow = 0;
+    memset(DrawBufferNormal, 0, 320*200);
+    draw_buffer = EffetBufferNormal;
+
+    DO_RAYMAN_IN_WLD_MAP();
+    DO_CHEMIN();
+    DisplayJumellesFondNormal();
+    display2(&ray);
+    DISPLAY_PLAT_WAY();
+
+    i32 v0 = 3 * RayonJumelle + 3;
+    if (v0 >= 0) {
+        v0 = 3 * RayonJumelle;
+    }
+    DisplayJumellesNormal(JumellePosX, JumellePosY, RayonJumelle, v0 >> 2, EffetBufferNormal, DrawBufferNormal);
+    draw_buffer = DrawBufferNormal;
+
+    DISPLAY_STAGE_NAMES();
+    readinput();
+    DoCdRap();
+    test_Keyb_on_wldmap();
+    if (PROC_EXIT) {
+        PlaySnd_old(77);
+    }
+
+    i16 result = new_world;
+    if (new_world || PROC_EXIT || get_casse_brique_active()) {
+        result = 1;
+    }
+
+    if (need_timer) {
+        wait_until(next_clock_target);
+        // if (?) { DO_RAYMAN_IN_WLD_MAP(); DO_CHEMIN(); }
+    }
+    return result;
 }
 
 //3514C
