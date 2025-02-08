@@ -38,7 +38,7 @@ void PrintDosInfo(void) {
 void InitMemoryVariable(void) {
     P486 = 0;
     NormalModeAutorise = 1;
-    JumelleEffetAutorise = 1;
+    JumelleEffetAutorise = 0; // TODO: re-enable once implemented
     CarteSonAutorisee = 1;
     SonLimite = 0;
     ToutSpriteAutorise = 1;

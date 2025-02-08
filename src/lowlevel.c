@@ -104,8 +104,35 @@ void DrawBorderBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width, i32 a6
 }
 
 //14C19
-void DisplayAnyPictureNormal(u8* source_buffer, u8* dest_buffer, i32 a3, i32 a4, i32 a5, i32 a6, i32 a7, i32 a8, i32 a9) {
-    //stub
+void DisplayAnyPictureNormal(u8* source_buffer, u8* dest_buffer, i32 source_x, i32 source_y, i32 dest_x, i32 dest_y, i32 stride, i32 width, i32 height) {
+    // NOTE: bounds checks added
+    if (source_x < 0) {
+        dest_x -= source_x;
+        width += source_x;
+        source_x = 0;
+    }
+    if (source_y < 0) {
+        dest_y -= source_y;
+        height += source_y;
+        source_y = 0;
+    }
+    if (dest_x + width > 320) {
+        width = 320 - dest_x;
+    }
+    if (dest_y + height > 200) {
+        width = 200 - dest_x;
+    }
+    if (width <= 0 || height <= 0) {
+        return;
+    }
+
+    u8* dest = dest_buffer + 320 * dest_y + dest_x;
+    u8* source = source_buffer + stride * source_y + source_x;
+    for (i32 i = height; i != 0; --i) {
+        memcpy(dest, source, width);
+        dest += 320;
+        source += stride;
+    }
 }
 
 //14C6B

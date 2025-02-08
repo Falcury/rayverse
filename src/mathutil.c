@@ -91,6 +91,11 @@ i32 ashr32(i32 x, u8 bits) {
     return result;
 }
 
+//inlined
+i32 sgn(i32 x) {
+    return (x < 0) ? -1 : (x > 0);
+}
+
 //5DFC0
 i32 sinus(i32 x) {
     return 0; //stub

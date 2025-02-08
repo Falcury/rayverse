@@ -539,7 +539,7 @@ void DoBadGuy23PoingCollision(obj_t* obj, i16 a2) {
 //62AD4
 void DoBadGuy23RaymanZDD(obj_t* obj) {
     if (obj->main_etat == 1 && obj->sub_etat == 11) {
-        set_subetat(obj, 14);
+        set_sub_etat(obj, 14);
     } else if ((obj->main_etat == 0 && obj->sub_etat == 0) || (obj->main_etat == 1 && obj->sub_etat == 0)) {
         set_main_and_sub_etat(obj, 1, 11);
         obj->flags &= ~obj_flags_0x10;
@@ -663,9 +663,9 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
 void DoPlatformPoingCollision(obj_t* obj, i16 a2) {
     if (obj->hit_sprite == a2) {
         if (poing_obj->xspeed > 0) {
-            set_subetat(obj, 25);
+            set_sub_etat(obj, 25);
         } else if (poing_obj->xspeed < 0) {
-            set_subetat(obj, 26);
+            set_sub_etat(obj, 26);
         }
     }
 }

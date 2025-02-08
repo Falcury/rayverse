@@ -113,7 +113,7 @@ void add_actobj(i16 a1) {
 }
 
 // 1D808
-void set_subetat(obj_t* obj, u8 sub_etat) {
+void set_sub_etat(obj_t* obj, u8 sub_etat) {
     obj->change_anim_mode = 1;
     obj->sub_etat = sub_etat;
 }

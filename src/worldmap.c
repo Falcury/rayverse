@@ -36,12 +36,86 @@ void DISPLAY_PTS_WAY(void) {
 
 //6799C
 void DISPLAY_PLAT_WAY(void) {
-    //stub
+    for (i32 i = 0; i < 24; ++i) {
+        world_info_t* world_info = t_world_info + i;
+        obj_t* obj = mapobj + i;
+        if ((world_info->state & 2) || i == 17) {
+            i32 x = obj->screen_x + obj->offset_bx + 8;
+            if (x > -8 && x < LargeurJumelle + 14) {
+                i32 y = obj->screen_y + obj->offset_by;
+                if (y > -10 && y < HauteurJumelle + 12) {
+                    display2(obj); // seems to be DISPLAY_PLATEAU() inlined
+                }
+            }
+            if (chemin_percent != 0 && i != 17) {
+                world_info_t* wi_up = t_world_info + world_info->index_up;
+                world_info_t* wi_down = t_world_info + world_info->index_down;
+                world_info_t* wi_left = t_world_info + world_info->index_left;
+                world_info_t* wi_right = t_world_info + world_info->index_right;
+                if (wi_up->state & 4) {
+                    DISPLAY_PTS_TO_PLAN2(world_info->xpos, world_info->ypos, wi_up->xpos, wi_up->ypos, chemin_percent);
+                }
+                if (wi_down->state & 4) {
+                    DISPLAY_PTS_TO_PLAN2(world_info->xpos, world_info->ypos, wi_down->xpos, wi_down->ypos, chemin_percent);
+                }
+                if (wi_left->state & 4) {
+                    DISPLAY_PTS_TO_PLAN2(world_info->xpos, world_info->ypos, wi_left->xpos, wi_left->ypos, chemin_percent);
+                }
+                if (wi_right->state & 4) {
+                    DISPLAY_PTS_TO_PLAN2(world_info->xpos, world_info->ypos, wi_right->xpos, wi_right->ypos, chemin_percent);
+                }
+            }
+        }
+    }
 }
 
 //67B2C
 void DO_MEDAILLONS(void) {
-    //stub
+    if (chemin_percent < 128 && (horloge[2] != 0 || ALL_WORLD)) {
+        ++chemin_percent;
+    }
+    for (i32 i = 0; i < 24; ++i) {
+        world_info_t* world_info = t_world_info + i;
+        obj_t* obj = mapobj + i;
+        if ((world_info->state & 4) || (world_info->state & 2)) {
+            CalcObjPosInWorldMap(obj);
+
+            if (chemin_percent == 128 && (world_info->state & 4) &&
+                (t_world_info[world_info->index_right].state & 2) &&
+                (t_world_info[world_info->index_left].state & 2) &&
+                (t_world_info[world_info->index_up].state & 2) &&
+                (t_world_info[world_info->index_down].state & 2)
+            ) {
+                // set unlocked
+                world_info->state = (world_info->state & ~7) | 1;
+                set_sub_etat(obj, 46);
+            }
+
+            if (i == 17 && !(obj->sub_etat == 59 || obj->sub_etat == 46) && (world_info->state & 1)) {
+                set_sub_etat(obj, 59);
+            } else if ((i == 18 || i == 19 || i == 20 || i == 21 || i == 22 || i == 23) &&
+                    !(obj->sub_etat == 58 || obj->sub_etat == 46) &&
+                    (world_info->state & 1)
+            ) {
+                set_sub_etat(obj, 58);
+            } else {
+                u8 nb_cages = world_info->nb_cages;
+                if (nb_cages > 5 && obj->sub_etat == 51 && EOA(obj)) {
+                    set_sub_etat(obj, 52);
+                } else if (nb_cages > 4 && obj->sub_etat == 50 && EOA(obj)) {
+                    set_sub_etat(obj, 51);
+                } else if (nb_cages > 3 && obj->sub_etat == 49 && EOA(obj)) {
+                    set_sub_etat(obj, 50);
+                } else if (nb_cages > 2 && obj->sub_etat == 48 && EOA(obj)) {
+                    set_sub_etat(obj, 49);
+                } else if (nb_cages > 1 && obj->sub_etat == 47 && EOA(obj)) {
+                    set_sub_etat(obj, 48);
+                }
+            }
+
+            DO_ANIM(obj);
+        }
+    }
 }
 
 //67D50
@@ -120,7 +194,17 @@ void INIT_WORLD_STAGE_NAME(void) {
 
 //68120
 void INIT_STAGE_NAME(void) {
-    //stub
+    INIT_TEXT_TO_DISPLAY();
+    INIT_LEVEL_STAGE_NAME();
+    INIT_WORLD_STAGE_NAME();
+    text_to_display[2].xpos = 160;
+    text_to_display[2].ypos = 250;
+    text_to_display[2].field_D5 = 0;
+    text_to_display[2].is_fond = 0;
+    text_to_display[4].xpos = 150;
+    text_to_display[4].ypos = -50;
+    text_to_display[4].field_D5 = 0;
+    text_to_display[4].is_fond = 0;
 }
 
 //6817C
@@ -253,22 +337,38 @@ void INIT_CHEMIN(void) {
 
 //68F38
 void RESPOND_TO_UP(void) {
-    //stub
+    num_world_choice = t_world_info[num_world_choice].index_up;
+    ChangeJumelleSizeOK &= ~4;
+    if (PositionStageNameCalcule == 1) {
+        PositionStageNameCalcule = 2;
+    }
 }
 
 //68F88
 void RESPOND_TO_DOWN(void) {
-    //stub
+    num_world_choice = t_world_info[num_world_choice].index_down;
+    ChangeJumelleSizeOK &= ~4;
+    if (PositionStageNameCalcule == 1) {
+        PositionStageNameCalcule = 2;
+    }
 }
 
 //68FD8
 void RESPOND_TO_RIGHT(void) {
-    //stub
+    num_world_choice = t_world_info[num_world_choice].index_right;
+    ChangeJumelleSizeOK &= ~4;
+    if (PositionStageNameCalcule == 1) {
+        PositionStageNameCalcule = 2;
+    }
 }
 
 //69028
 void RESPOND_TO_LEFT(void) {
-    //stub
+    num_world_choice = t_world_info[num_world_choice].index_left;
+    ChangeJumelleSizeOK &= ~4;
+    if (PositionStageNameCalcule == 1) {
+        PositionStageNameCalcule = 2;
+    }
 }
 
 //69078
@@ -304,13 +404,65 @@ void DO_RAYMAN_IN_WLD_MAP(void) {
         } else if (upjoy()) {
             RESPOND_TO_UP();
         }
+
+        if (num_world_choice != old_num_world) {
+            if (t_world_info[num_world_choice].state & 1) {
+                ray.timer = 0;
+                set_main_and_sub_etat(&ray, 1, 0);
+                CHANGE_STAGE_NAMES();
+            } else {
+                num_world_choice = old_num_world;
+            }
+        }
+    } else {
+        i16 diff_x = t_world_info[num_world_choice].xpos - t_world_info[old_num_world].xpos;
+        i16 diff_y = t_world_info[num_world_choice].ypos - t_world_info[old_num_world].ypos;
+        if (diff_x < 0) {
+            ray.flags &= ~obj_flags_8_flipped;
+        } else {
+            ray.flags |= obj_flags_8_flipped;
+        }
+        i16 xspeed = 0; // speed x?
+        i16 yspeed = 0; // speed y?
+        if (diff_x != 0 && diff_y != 0) {
+            if (abs(diff_y) > abs(diff_x)) {
+                xspeed = abs(ray.timer * diff_x / diff_y);
+                yspeed = ray.timer;
+            } else {
+                xspeed = ray.timer;
+                yspeed = abs(ray.timer * diff_y / diff_x);
+            }
+        } else if (diff_x == 0) {
+            yspeed = ray.timer;
+        } else /*if (diff_y == 0)*/ {
+            xspeed = ray.timer;
+        }
+        ++ray.timer;
+
+        ray.xspeed = t_world_info[old_num_world].xpos + xspeed * sgn(diff_x) - ray.offset_bx - ray.xpos;
+        ray.yspeed = t_world_info[old_num_world].xpos + yspeed * sgn(diff_y) - ray.offset_by - (ray.ypos - 8);
+
+        if (abs(xspeed) >= abs(diff_x) && abs(yspeed) >= abs(diff_y)) {
+            // arrived at new location
+            old_num_world = num_world_choice;
+            if (ray.main_etat != 0) {
+                set_main_and_sub_etat(&ray, 0, 0);
+                ray.xpos = t_world_info[num_world_choice].xpos - ray.offset_bx;
+                ray.ypos = t_world_info[num_world_choice].ypos - ray.offset_by + 8;
+            }
+        }
     }
-    //stub
 }
 
 //6947C
 void DO_CHEMIN(void) {
-    //stub
+    horloges(1);
+    RecaleRayPosInJumelle();
+    DoScrollInWorldMap(h_scroll_speed, v_scroll_speed);
+    MoveRayInWorldMap();
+    set_proj_center(ray.screen_x + ray.offset_bx, ray.screen_y + ray.offset_by);
+    DO_ANIM(&ray);
+    DO_MEDAILLONS();
 }
 
 //69518
