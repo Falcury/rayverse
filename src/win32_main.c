@@ -99,6 +99,13 @@ LRESULT CALLBACK main_window_callback(HWND window, UINT message, WPARAM wparam, 
 		win32_get_window_dimension(window, &client_width, &client_height);
 		surface_resize(&global_app_state.offscreen_surface, client_width, client_height);
 	} break;
+    case WM_SYSCOMMAND: {
+        if (wparam == SC_KEYMENU && (lparam>>16) <=0) {
+            // do nothing
+        } else {
+            result = DefWindowProc(window, message, wparam, lparam);
+        }
+    } break;
 	//case WM_ERASEBKGND: {
 	//	result = TRUE; // prevent flickering
 //						} break;
