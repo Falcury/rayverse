@@ -16,7 +16,35 @@ void DO_CONTINUE(void) {
 
 //34240
 i16 saisie_nom_prg(u32 a1) {
-    return 0; //stub
+    readinput();
+    button_released = ButtonReleasedSav3;
+    SAISIE_NOM();
+    ButtonReleasedSav3 = button_released;
+    if (ReInitPlasma) {
+        ReInitPlasma = 0;
+        endsynchro();
+        synchro();
+        InitPlasma(1);
+        AFFICHE_ECRAN_SAVE();
+        SWAP_BUFFERS();
+    } else {
+        AFFICHE_ECRAN_SAVE();
+    }
+    AFFICHE_ECRAN_SAVE();
+
+    if (action == 3) {
+        sortie_save = 1;
+    }
+
+    if (MENU_RETURN) {
+        if (action == 1) {
+            strncpy(save_ray[fichier_selectionne-1], save_ray_copy, 4);
+        } else {
+            save_ray[fichier_selectionne-1][0] = '\0';
+        }
+    }
+
+    return fin_saisie_nom || MENU_RETURN;
 }
 
 //34334
@@ -143,29 +171,46 @@ void AFFICHE_ECRAN_SAVE(void) {
             let_shadow = 1;
             display_text(language_txt[155], basex, debut_options + (ecarty + 23) * save_index, 1, 2);
         } else {
-            for (i32 j = 0; j < strlen(save_ray[save_index]); ++j) {
-                if (positionx == j && positiony == save_index + 1 && clignotement) {
-                    //stub
+            for (i32 cur_x = 1; cur_x <= strlen(save_ray[save_index]); ++cur_x) {
+                if (positionx == cur_x && positiony == save_index + 1 && clignotement) {
+                    u32 len = strlen(save_ray[save_index]);
+                    char temp[4] = {0};
+                    strncpy(temp, save_ray[save_index], 4);
+                    temp[cur_x] = '\0';
+
                     ktxtenx = 4096;
-                    i16 v15;
-                    if (coeffktxt > 511) {
+                    if (coeffktxt >= 512) {
                         coeffktxt = 0;
-                        v15 = 256;
-                    } else {
-                        v15 = coeffktxt + 256;
                     }
-                    //stub
+                    ktxteny = 8 * cosinus(coeffktxt);
+                    coeffktxt += (cosinus(coeffktxt + 256) >> 7) + 5;
+
+                    u8 c = temp[cur_x-1];
+                    if (c == '~') {
+                        display_deform_text("~", basex + ecartx * (cur_x - 1), debut_options + save_index * (ecarty + 23), 1, 2, rotationtxt, ktxtenx, ktxteny);
+                    } else {
+                        display_deform_text(temp + (cur_x - 1), basex + ecartx * (cur_x - 1), debut_options + save_index * (ecarty + 23), 1, colour, rotationtxt, ktxtenx, ktxteny);
+                    }
+
                 } else {
-                    char c_copy[2] = {0};
-                    c_copy[0] = save_ray[save_index][j];
+                    char temp[4] = {0};
+                    strncpy(temp, save_ray[save_index], 4);
+                    temp[cur_x] = '\0';
+                    u8 c = temp[cur_x-1];
+                    if (c == '~') {
+                        display_deform_text("~", basex + ecartx * (cur_x - 1), debut_options + save_index * (ecarty + 23), 1, 2, rotationtxt, ktxtenx, ktxteny);
+                    } else if (c == ' ') {
+                        display_text("", basex + ecartx * (cur_x - 1), debut_options + save_index * (ecarty + 23), 1, colour);
+                    } else {
+                        display_text(temp + (cur_x - 1), basex + ecartx * (cur_x - 1), debut_options + save_index * (ecarty + 23), 1, colour);
+                    }
 
                 }
-                //stub
             }
             DISPLAY_SAVE_SPRITES(basex + 3 * (ecartx + 11) - 30, save_index);
         }
     }
-    DISPLAY_SAVE_POING(); // TODO
+    DISPLAY_SAVE_POING();
 
 }
 

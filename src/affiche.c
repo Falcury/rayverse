@@ -261,7 +261,8 @@ void display_text(const char* text, i16 x, i16 y, u8 font_size, i8 color) {
 }
 
 //1A68C
-void display_deform_text(const char* text, i16 x, i16 y, u8 font_size, i8 color, i16 a6, i16 a7, i16 a8) {
+void display_deform_text(const char* text, i16 x, i16 y, u8 font_size, i8 color, i16 rotation, i16 enx, i16 eny) {
+    display_text(text, x, y, font_size, color); // TODO: implement deform effect
     //stub
 }
 

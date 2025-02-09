@@ -97,12 +97,12 @@ i32 sgn(i32 x) {
 }
 
 //5DFC0
-i32 sinus(i32 x) {
+i32 cosinus(i32 x) {
     return 0; //stub
 }
 
 //5E000
-i32 cosinus(i32 x) {
+i32 sinus(i32 x) {
     return 0; //stub
 }
 

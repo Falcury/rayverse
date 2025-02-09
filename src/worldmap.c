@@ -168,13 +168,13 @@ void INIT_WORLD_STAGE_NAME(void) {
                     strcpy(text_to_display[3].text, language_txt[161]); // /password/
                 } break;
                 case 1: {
-                    strncpy(text_to_display[3].text, save_ray[1], 4);
+                    strncpy(text_to_display[3].text, save_ray[0], 4);
                 } break;
                 case 2: {
-                    strncpy(text_to_display[3].text, save_ray[2], 4);
+                    strncpy(text_to_display[3].text, save_ray[1], 4);
                 } break;
                 case 3: {
-                    strncpy(text_to_display[3].text, save_ray[3], 4);
+                    strncpy(text_to_display[3].text, save_ray[2], 4);
                 } break;
                 default: break;
             }
@@ -663,7 +663,90 @@ void INIT_AFFICHE_ECRAN_SAVE(void) {
 
 //69DCC
 void SAISIE_NOM(void) {
-    //stub
+    TestCompteur();
+    if (!fichier_existant && action != 1) {
+        *(u32*)(save_ray[positiony]) = *(u32*)"AAA";
+    }
+    if (affiche_bon_ecran) {
+        fin_saisie_nom = 1;
+    }
+
+    if (ValidButPressed() && button_released) {
+        char* pos = save_ray[fichier_selectionne - 1] + positionx - 1;
+        if (*pos == '~') {
+            if (positionx != 1) {
+                *pos = 'a';
+                --positionx;
+                PlaySnd_old(68);
+            }
+        } else if (positionx >= 3) {
+            PlaySnd_old(68);
+            affiche_bon_ecran = 1;
+        } else {
+            ++positionx;
+            PlaySnd_old(68);
+        }
+        rotationtxt = 0;
+        ktxtenx = 4096;
+        ktxteny = 4096;
+        coeffktxt = 1;
+    }
+
+    if (upjoy() && !rightjoy() && !leftjoy() && (button_released || (compteur % 5 == 0))) {
+        char* pos = save_ray[fichier_selectionne - 1] + positionx - 1;
+        switch (*pos) {
+            case 'z': {
+                *pos = ' ';
+            } break;
+            case ' ': {
+                *pos = '~';
+            } break;
+            case '~': {
+                *pos  = 'a';
+            } break;
+            default: {
+                *pos += 1;
+            } break;
+        }
+        rotationtxt = 0;
+        ktxtenx = 4096;
+        ktxteny = 4096;
+        coeffktxt = 1;
+        PlaySnd_old(68);
+    }
+
+    if (downjoy() && !rightjoy() && !leftjoy() && (button_released || (compteur % 5 == 0))) {
+        char* pos = save_ray[fichier_selectionne - 1] + positionx - 1;
+        switch (*pos) {
+            case 'a': {
+                *pos = '~';
+            } break;
+            case '~': {
+                *pos = ' ';
+            } break;
+            case ' ': {
+                *pos  = 'z';
+            } break;
+            default: {
+                *pos -= 1;
+            } break;
+        }
+        rotationtxt = 0;
+        ktxtenx = 4096;
+        ktxteny = 4096;
+        coeffktxt = 1;
+        PlaySnd_old(68);
+    }
+
+    if (!upjoy() && !downjoy() && !rightjoy() && !leftjoy() && !affiche_bon_ecran && !fin_saisie_nom) {
+        clignotement = 1;
+    }
+
+    if (SelectButPressed()) {
+        MENU_RETURN = 1;
+        PlaySnd_old(77);
+    }
+    TestButtonReleased();
 }
 
 //6A0F4

@@ -1229,7 +1229,8 @@ i32 TempsDemo; //CD134
 u8* DrawBufferNormal; //CD138
 void* anim_func; //CD13C
 
-char save_ray[4][3]; //CD798
+char save_ray_copy[4]; //CD794
+char save_ray[3][4]; //CD798
 options_t options; //CD7A4
 u8* draw_buffer; //CD7B8
 u32 new_sprite_deform; //CD7BC
