@@ -290,7 +290,7 @@ typedef struct obj_t {
 	i16 xspeed;
 	i16 yspeed;
 	i16 nb_sprites;
-	i16 next_command_index;
+	i16 cmd_offset;
 	i16 nb_cmd;
 	i16 command_par2; // action (?) // command_par2? // field_4A
 	u16 follow_y;
@@ -492,6 +492,12 @@ typedef struct {
     void (*rayman_in_zone)(obj_t* obj);
     void (*u_turn)(obj_t* obj);
 } obj_procs_t;
+
+typedef struct {
+    u8 (*read_arg)(obj_t* obj);
+    u8 (*skip_arg)(obj_t* obj);
+    void (*handle)(obj_t* obj);
+} cptr_t;
 
 typedef struct {
     i16 field_0;

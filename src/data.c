@@ -713,7 +713,101 @@ const char* key_descriptions_qwerty[128] = {
         "z", "x", "c", "v", "b", "n", "m", 0/*comma*/, ".", "?", 0/*slash*/, 0/*rshift*/,
 };
 
+u8 dyingSequence[5] = {16, 23, 24, 22, 25}; //96F24
+u8 hitSequence[6] = {16, 17, 15, 26, 11, 5}; //96F29
+u8 arrivalSequence[4] = {13, 26, 14, 3}; //96F2F
 
+///96F33
+u8 firstEncounterSequence[40] = {
+        13, 26, 14, 4, 19, 21, 4, 20, 18, 21, 4, 20, 19, 21, 4, 20, 18, 21, 4, 20, 10, 26,
+        14, 4, 18, 21, 4, 20, 10, 26, 14, 4, 19, 21, 4, 20, 10, 26, 14, 2
+};
+
+u8 secondEncounterSequence1[13] = {13, 26, 14, 4, 7, 0, 7, 0, 10, 26, 14, 4, 3}; //96F5B
+u8 secondEncounterSequenceSuite[12] = {7, 4, 7, 8, 10, 26, 14, 13, 26, 14, 4, 2}; //96F68
+u8 secondEncounterSequence2[21] = {8, 0, 8, 0, 8, 0, 8, 4, 18, 21, 4, 20, 19, 21, 4, 20, 10, 26, 14, 4, 2}; //96F74
+u8 secondEncounterSequence3[19] = {9, 0, 18, 21, 4, 20, 9, 4, 18, 21, 4, 20, 10, 26, 14, 13, 14, 4, 2}; //96F89
+u8 secondEncounterSequence4[21] = {7, 8, 8, 8, 9, 0, 19, 21, 4, 20, 9, 8, 18, 21, 4, 20, 10, 26, 14, 4, 2}; //96F9C
+
+////96FB4
+u8* moskitoActionSequences[8] = {
+        arrivalSequence, secondEncounterSequence1, secondEncounterSequenceSuite, secondEncounterSequence2,
+        secondEncounterSequence3, secondEncounterSequence4, hitSequence, dyingSequence,
+};
+
+//96FE0
+i16 costab[130] = {
+        512, 512, 512, 512, 512, 512, 511, 511, 510, 509, 509,
+        508, 507, 506, 505, 504, 503, 501, 500, 499, 497, 496,
+        494, 492, 490, 489, 487, 485, 483, 480, 478, 476, 474,
+        471, 469, 466, 463, 461, 458, 455, 452, 449, 446, 443,
+        440, 436, 433, 430, 426, 423, 419, 415, 412, 408, 404,
+        400, 396, 392, 388, 384, 380, 376, 371, 367, 363, 358,
+        354, 349, 344, 340, 335, 330, 325, 320, 316, 311, 306,
+        300, 295, 290, 285, 280, 274, 269, 264, 258, 253, 247,
+        242, 236, 231, 225, 219, 214, 208, 202, 196, 191, 185,
+        179, 173, 167, 161, 155, 149, 143, 137, 131, 125, 119,
+        113, 107, 100, 94, 88, 82, 76, 69, 63, 57, 51, 44, 38,
+        32, 26, 19, 13, 7, 1, 0,
+};
+
+
+
+//970E4
+cptr_t cptr_tab[] = {
+        {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 0
+        {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 1
+        {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 2
+        {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 3
+        {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 4
+        {readOneArg, skipOneArg, handle_5_GO_SUBETAT}, // 5
+        {readOneArg, skipOneArg, handle_6_GO_SKIP}, // 6
+        {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 7
+        {readOneArg, skipOneArg, handle_8_GO_ETAT}, // 8
+        {readOneArg, skipOneArg, handle_9_GO_PREPARELOOP}, // 9
+        {readNoArg, skipNoArg, handle_10_GO_DOLOOP}, // 10
+        {readOneArg, skipOneArg, handle_11_GO_LABEL}, // 11
+        {readOneArg, skipOneArg, handle_12_GO_GOTO}, // 12
+        {readOneArg, skipOneArg, handle_13_GO_GOSUB}, // 13
+        {readNoArg, skipNoArg, handle_14_GO_RETURN}, // 14
+        {readOneArg, skipOneArg, handle_15_GO_BRANCHTRUE}, // 15
+        {readOneArg, skipOneArg, handle_16_GO_BRANCHFALSE}, // 16
+        {readTestArgs, skipTestArgs, handle_17_GO_TEST}, // 17
+        {readOneArg, skipOneArg, handle_18_GO_SETTEST}, // 18
+        {readOneArg, skipOneArg, handle_19_GO_WAITSTATE}, // 19
+        {readSpeedArgs, skipSpeedArgs, handle_SELF_HANDLED}, // 20
+        {readGoXYargs, skipGoXYArgs, handle_21_GO_X}, // 21
+        {readGoXYargs, skipGoXYArgs, handle_22_GO_Y}, // 22
+        {readOneArg, skipOneArg, handle_RESERVED_GO_SKIP_and_RESERVED_GO_GOTO}, // 23
+        {readOneArg, skipOneArg, handle_RESERVED_GO_SKIP_and_RESERVED_GO_GOTO}, // 24
+        {readOneArg, skipOneArg, handle_25_RESERVED_GO_GOSUB}, // 25
+        {readOneArg, skipOneArg, handle_26_RESERVED_GO_BRANCHTRUE}, // 26
+        {readOneArg, skipOneArg, handle_27_RESERVED_GO_BRANCHFALSE}, // 27
+        {readOneArg, skipOneArg, handle_28_RESERVED_GO_SKIPTRUE}, // 28
+        {readOneArg, skipOneArg, handle_29_RESERVED_GO_SKIPFALSE}, // 29
+        {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 30
+        {readOneArg, skipOneArg, handle_31_GO_SKIPTRUE}, // 31
+        {readOneArg, skipOneArg, handle_32_GO_SKIPFALSE}, // 32
+        {readInvalidArg, skipInvalidArg, handle_33_INVALID_CMD}, // 33
+};
+
+u8 pma_couteaux[6] = {3, 5, 5, 3, 3, 4}; //9727C
+u8 pma_sequence[8] = {0, 3, 5, 0, 5, 1, 4, 2}; //97282
+u8 place_sequence[5] = {3, 4, 2, 3, 2}; //9728A
+u8 pst2_sequence[26] = {1, 0, 21, 0, 156, 255, 8, 0, 1, 0, 0, 0, 18, 0, 160, 0, 8, 0, 3, 0, 42, 0, 19, 0, 14, 0}; //97290
+u8 moust1_sequence[18] = {1, 0, 21, 0, 156, 255, 8, 0, 6, 0, 15, 0, 18, 0, 74, 1, 14, 0}; //972AA
+u8 moust2_sequence[18] = {0, 0, 21, 0, 74, 1, 8, 0, 6, 0, 16, 0, 18, 0, 136, 255, 14, 0}; //972BC
+u8 pst1_sequence[26] = {0, 0, 21, 0, 64, 1, 8, 0, 1, 0, 0, 0, 18, 0, 248, 255, 8, 0, 3, 0, 41, 0, 19, 0, 14, 0}; //972CE
+u8 worry_sequence[24] = {0, 0, 21, 0, 100, 0, 8, 0, 3, 0, 43, 0, 19, 0, 8, 0, 3, 0, 44, 0, 19, 0, 14, 0}; //972E8
+
+//97300
+u8 car_sequence[66] = {
+        0, 0, 21, 0, 200, 0, 8, 0, 3, 0, 47, 0, 19, 0, 8, 0,
+        3, 0, 48, 0, 19, 0, 17, 0, 18, 0, 20, 0, 248, 255, 17,
+        0, 30, 0, 20, 0, 240, 255, 17, 0, 45, 0, 20, 0, 224,
+        255, 17, 0, 60, 0, 20, 0, 192, 255, 17, 0, 65, 0, 20,
+        0, 0, 0, 19, 0, 14, 0,
+};
 
 //97344
 i16 RandArray[256] = {

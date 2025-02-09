@@ -149,7 +149,7 @@ void obj_init(obj_t* obj) {
     obj->detect_zone = 0;
     obj->iframes_timer = -1;
     obj->command_par2 = -1;
-    obj->next_command_index = -1;
+    obj->cmd_offset = -1;
     obj->flags = (obj->flags & ~(obj_flags_0x10 | obj_flags_8_flipped)) | (obj_flags_0x10 * (obj->cmds != NULL));
     memset(obj->coll_btype, 0, 5);
     GET_OBJ_CMD(obj); //TODO

@@ -24,48 +24,78 @@ u8 skipNoArg(obj_t* obj) {
 }
 
 //60B00
-void readOneArg(obj_t* obj) {
-    //stub
+u8 readOneArg(obj_t* obj) {
+    ++obj->cmd_offset;
+    obj->nb_cmd = obj->cmds[obj->cmd_offset];
+    return 0;
 }
 
 //60B20
-void readTestArgs(obj_t* obj) {
-    //stub
+u8 readTestArgs(obj_t* obj) {
+    ++obj->cmd_offset;
+    obj->nb_cmd = obj->cmds[obj->cmd_offset];
+    if (obj->nb_cmd <= 4) {
+        ++obj->cmd_offset;
+        obj->cmd_arg_1 = obj->cmds[obj->cmd_offset];
+    }
+    return 0;
 }
 
 //60B5C
-void readGoXYargs(obj_t* obj) {
-    //stub
+u8 readGoXYargs(obj_t* obj) {
+    ++obj->cmd_offset;
+    obj->nb_cmd = char2short(obj->cmds[obj->cmd_offset]);
+
+    ++obj->cmd_offset;
+    obj->phase = char2short(obj->cmds[obj->cmd_offset]);
+    return 0;
 }
 
 //60BA8
-void readSpeedArgs(obj_t* obj) {
-    //stub
+u8 readSpeedArgs(obj_t* obj) {
+    ++obj->cmd_offset;
+    obj->nb_cmd = obj->cmds[obj->cmd_offset];
+
+    ++obj->cmd_offset;
+    obj->iframes_timer = char2short(obj->cmds[obj->cmd_offset]);
+
+    ++obj->cmd_offset;
+    obj->command_par2 = char2short(obj->cmds[obj->cmd_offset]);
+    return 0;
 }
 
 //60C14
-void readInvalidArg(obj_t* obj) {
-    //stub
+u8 readInvalidArg(obj_t* obj) {
+    --obj->cmd_offset;
+    readOneCommand(obj);
+    return 1;
 }
 
 //60C24
-void skipOneArg(obj_t* obj) {
-    //stub
+u8 skipOneArg(obj_t* obj) {
+    ++obj->cmd_offset;
+    return 0;
 }
 
 //60C2C
-void skipTestArgs(obj_t* obj) {
-    //stub
+u8 skipTestArgs(obj_t* obj) {
+    ++obj->cmd_offset;
+    if (obj->cmds[obj->cmd_offset] <= 4) {
+        ++obj->cmd_offset;
+    }
+    return 0;
 }
 
 //60C4C
-void skipGoXYArgs(obj_t* obj) {
-    //stub
+u8 skipGoXYArgs(obj_t* obj) {
+    obj->cmd_offset += 2;
+    return 0;
 }
 
 //60C54
-void skipSpeedArgs(obj_t* obj) {
-    //stub
+u8 skipSpeedArgs(obj_t* obj) {
+    obj->cmd_offset += 3;
+    return 0;
 }
 
 //60C5C
@@ -74,8 +104,9 @@ void handle_SELF_HANDLED(obj_t* obj) {
 }
 
 //60C60
-void skipInvalidArg(obj_t* obj) {
-    //stub
+u8 skipInvalidArg(obj_t* obj) {
+    --obj->cmd_offset;
+    return skipOneCommand(obj);
 }
 
 //60C6C
@@ -209,8 +240,8 @@ void readOneCommand(obj_t* obj) {
 }
 
 //61180
-void skipOneCommand(obj_t* obj) {
-    //stub
+u8 skipOneCommand(obj_t* obj) {
+    return 0; //stub
 }
 
 //611AC
