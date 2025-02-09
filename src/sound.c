@@ -285,7 +285,24 @@ void PlaySnd(u16 sound_id, i16 obj_id) {
 
 //72960
 void PlaySnd_old(u16 sound_id) {
-    //stub
+    i16 voice_index = -1;
+    if (CarteSonAutorisee) {
+        u8 prog = hard_sound_table[sound_id].prog;
+        if (prog != 255) {
+            voice_index = KeyOn(bank_to_use[sound_id], prog,
+                                hard_sound_table[sound_id].tone,
+                                hard_sound_table[sound_id].note,
+                                Volume_Snd * hard_sound_table[sound_id].volume >> 7, 64);
+            if (voice_index != -1) {
+                voice_table[voice_index].field_0 = -2;
+                voice_table[voice_index].field_2 = 64;
+                voice_table[voice_index].field_4 = 64;
+                if (sound_flags[sound_id] & 0x10) {
+                    voice_is_working[voice_index] = 1;
+                }
+            }
+        }
+    }
 }
 
 //72A1C

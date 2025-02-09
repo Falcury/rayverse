@@ -369,9 +369,6 @@ typedef struct voice_t {
 	i16 field_0;
 	i16 field_2;
 	i16 field_4;
-	i16 sound_to_play; //?
-	i16 field_8;
-	i16 field_A;
 } voice_t;
 
 typedef struct options_t {
@@ -508,6 +505,13 @@ typedef struct {
     u8 field_7;
     i16 field_8;
 } vitraux_info_t;
+
+typedef struct {
+    i32 offset;
+    i32 size;
+    i32 field_8;
+    i32 field_C;
+} bnk_header_t;
 
 
 enum obj_type_enum {

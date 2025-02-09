@@ -274,14 +274,20 @@ void updateLogo(i32 fade_duration, i32 a2, i32 a3) {
     for (i32 i = 0; i < fade_duration; ++i) {
         do_fade(&rvb_pres, &current_rvb);
         advance_frame();
-    }
-    while (is_ogg_playing) {
         readinput();
-        if (TOUCHE(SC_SPACE) || but0pressed() || but1pressed() || a3 == -1) {
-            break;
+        if (TOUCHE(SC_SPACE) || but0pressed() || but1pressed()) {
+            goto end;
         }
-        advance_frame();
     }
+    // TODO: wait for fixed duration if CD music not available
+    while (is_ogg_playing) {
+        advance_frame();
+        readinput();
+        if (TOUCHE(SC_SPACE) || but0pressed() || but1pressed()) {
+            goto end;
+        }
+    }
+    end:
     fade_out(2, &rvb_pres);
     WaitNSynchro(1);
 }

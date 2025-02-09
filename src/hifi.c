@@ -26,25 +26,53 @@ void sub_3E780(void) {
 }
 
 //3E820
-void LoadBnkFile(i32 sound_set, i32 a2, u8* headers, u8* data) {
+void LoadBnkFile(i32 header_index, i32 data_index, bnk_header_t* headers, u8** data) {
     // Load sound header
-    mem_t* mem = read_entire_file("SNDH8B.DAT", true);
-    if (!mem) fatal_error();
-
-    archive_header_t* header_info = &snd8b_header_infos[sound_set];
-
-    mem_seek(mem, header_info->offset);
-    mem_read(bnkHeaderFixe, mem, header_info->size); // always 0x800 bytes
-
-    u8 checksum = decode_xor(bnkHeaderFixe, header_info->size, header_info->xor_byte, header_info->checksum_byte);
-    if (checksum != 0) {
-        printf("[warning] LoadBnkFile(): incorrect checksum for SNDH8B.DAT\n");
+    FILE* fp = open_data_file("SNDH8B.DAT", false);
+    if (!fp) {
+        rayman_sound_fatal_error("Fichier data introuvable.\n");
     }
 
-    free(mem);
+    archive_header_t* header_info = snd8b_header_infos + header_index;
+    fseek(fp, header_info->offset, SEEK_SET);
+    fread(headers, 1, header_info->size, fp); // always 0x800 bytes
+    fclose(fp);
 
-    // stub
+    u8 checksum = decode_xor((u8*)headers, header_info->size, header_info->xor_byte, header_info->checksum_byte);
+    if (checksum != 0) {
+        rayman_sound_fatal_error("Load error in sndh8b.dat.\n");
+    }
 
+    stop_cd();
+    fp = open_data_file("SNDD8B.DAT", false);
+    if (!fp) {
+        rayman_sound_fatal_error("Fichier data introuvable.\n");
+    }
+    header_info = snd8b_data_infos + header_index;
+    if (*data != NULL) {
+        free(*data);
+    }
+    *data = malloc(header_info->size);
+    if (!*data) {
+        rayman_sound_fatal_error("Mmoire insuffisante pour charger les samples.\n");
+    }
+    fseek(fp, header_info->offset, SEEK_SET);
+    fread(*data, 1, header_info->size, fp);
+    fclose(fp);
+    checksum = decode_xor(*data, header_info->size, header_info->xor_byte, header_info->checksum_byte);
+    if (checksum != 0) {
+        rayman_sound_fatal_error("Load error in sndd8b.dat.\n");
+    }
+
+    // NOTE: here, apparently the game replaces the offsets in the header with pointers to live data
+    // We skip this because it obviously only works on 32-bit systems (for now; might need to change the code later).
+    // We should keep this difference in mind when we want to access the sound data.
+#if 0
+    for (i32 i = 1; i < 128; ++i) {
+        bnk_header_t* bnk_header = headers + i;
+        bnk_header[i].offset += (i32)*data;
+    }
+#endif
 
 }
 
@@ -58,7 +86,7 @@ void LoadBnkFile_debug(i32 sound_set, i32 a2, u8** sound_buffer) {
     mem_seek(mem, header_info->offset);
     mem_read(bnkHeaderFixe, mem, header_info->size); // always 0x800 bytes
 
-    u8 checksum = decode_xor(bnkHeaderFixe, header_info->size, header_info->xor_byte, header_info->checksum_byte);
+    u8 checksum = decode_xor((u8*)bnkHeaderFixe, header_info->size, header_info->xor_byte, header_info->checksum_byte);
     if (checksum != 0) {
         printf("[warning] LoadBnkFile(): incorrect checksum for SNDH8B.DAT\n");
     }
@@ -94,37 +122,42 @@ void LoadBnkFixe(void) {
     if (CarteSonAutorisee && !SonLimite) {
         LoadTchatchPerdu();
     }
-    LoadBnkFile(2, 2, bnkHeaderFixe, bnkDataFixe);
+    LoadBnkFile(2, 2, bnkHeaderFixe, &bnkDataFixe);
 }
 
 //3EA00
 void LoadBnkWorld(i16 world) {
     switch(world) {
         case 1: {
-            LoadBnkFile(4, 4, bnkHeaderWorld, bnkDataWorld);
+            LoadBnkFile(4, 4, bnkHeaderWorld, &bnkDataWorld);
         } break;
         case 2: {
-            LoadBnkFile(6, 6, bnkHeaderWorld, bnkDataWorld);
+            LoadBnkFile(6, 6, bnkHeaderWorld, &bnkDataWorld);
         } break;
         case 3: {
-            LoadBnkFile(5, 5, bnkHeaderWorld, bnkDataWorld);
+            LoadBnkFile(5, 5, bnkHeaderWorld, &bnkDataWorld);
         } break;
         case 4: {
-            LoadBnkFile(3, 3, bnkHeaderWorld, bnkDataWorld);
+            LoadBnkFile(3, 3, bnkHeaderWorld, &bnkDataWorld);
         } break;
         case 5: {
-            LoadBnkFile(1, 1, bnkHeaderWorld, bnkDataWorld);
+            LoadBnkFile(1, 1, bnkHeaderWorld, &bnkDataWorld);
         } break;
         case 6: {
-            LoadBnkFile(0, 0, bnkHeaderWorld, bnkDataWorld);
+            LoadBnkFile(0, 0, bnkHeaderWorld, &bnkDataWorld);
         } break;
         default: break;
     }
 }
 
 //3EABC
-void KeyOn(u8 bank, u8 prog, u8 tone, u8 note, u8 volume, u8 a6) {
-    //stub
+i16 KeyOn(u8 bank, u8 prog, u8 tone, u8 note, u8 volume, u8 a6) {
+    if (bank == 1) {
+        bnk_header_t* bnk_header = bnkHeaderWorld + prog;
+    } else {
+        bnk_header_t* bnk_header = bnkHeaderFixe + prog;
+    }
+    return -1; //stub
 }
 
 //3EC0C
@@ -148,9 +181,17 @@ void LoadTchatchPerdu(void) {
     FILE* fp = open_data_file("sndvig.dat", true);
     if (fp) {
         archive_header_t* sndvig_header = sndvig_infos + 6;
-        //stub
-//        ptrTchatch;
+        ptrTchatch = malloc(sndvig_header->size);
+        fseek(fp, sndvig_header->offset, SEEK_SET);
+        fread(ptrTchatch, 1, sndvig_header->size, fp);
         fclose(fp);
+        u8 checksum = decode_xor(ptrTchatch, sndvig_header->size, sndvig_header->xor_byte, sndvig_header->checksum_byte);
+        if (checksum != 0) {
+            rayman_sound_fatal_error("Load error in sndvig.dat.\n");
+        }
+        TchachPerduPtr = ptrTchatch;
+        TchachPerduSize = sndvig_header->size;
+        ptrTchatch = NULL;
     }
 }
 

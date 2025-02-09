@@ -6,7 +6,8 @@ void POINTEUR_BOUTONS_OPTIONS_BIS(void) {
 
 //41CA8
 u8 TestKeyWeapon(void) {
-    return key_fist;
+   // return key_fist; // this seems to be a bug in the original game
+    return Touche_Enfoncee[key_fist & 0x7F];
 }
 
 //41CB0

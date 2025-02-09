@@ -1808,14 +1808,14 @@ i16 level_select; //DF750
 u8 ButtonReleasedSav2; //DF756
 u8 ButtonReleasedSav1; //DF757
 
-u8 bnkHeaderFixe[0x800]; //DFAF0
-u8 bnkHeaderWorld[0x800]; //E02F0
+bnk_header_t bnkHeaderFixe[128]; //DFAF0
+bnk_header_t bnkHeaderWorld[128]; //E02F0
 i32 current_port; //E0AF0
 i32 current_irq; //E0AF4
 i32 current_dma; //E0AF8
 i32 current_param; //E0AFC
-i32 dword_E0B00; //E0B00
-i32 dword_E0B04; //E0B04
+u8* TchachPerduPtr; //E0B00
+i32 TchachPerduSize; //E0B04
 char current_device_name[100]; //E0B0A
 i32 current_device_id; //E0B6E
 
