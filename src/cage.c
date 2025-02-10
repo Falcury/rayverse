@@ -1,8 +1,8 @@
 
 //28B40
 void DO_CAGE2(obj_t* obj) {
-    obj->xspeed = 0;
-    obj->yspeed = -8;
+    obj->speed_x = 0;
+    obj->speed_y = -8;
 }
 
 //28B50

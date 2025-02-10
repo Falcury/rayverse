@@ -1,12 +1,12 @@
 
 //2B2D0
 i32 get_nb_zdc(obj_t* obj) {
-    return obj->zdc_meta >> 11;
+    return obj->zdc >> 11;
 }
 
 //2B2E0
 i32 get_zdc_index(obj_t* obj) {
-    return (i32)(obj->zdc_meta & 7);
+    return (i32)(obj->zdc & 7);
 }
 
 //2B2E8
@@ -162,11 +162,11 @@ void RAY_KO(obj_t* obj) {
 void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
     if (put_above_solid_tiles) {
         RAY_HURT();
-        i32 tile_x = (ray.xpos + ray.offset_bx) / 16;
+        i32 tile_x = (ray.x + ray.offset_bx) / 16;
         for (;;) {
-            i32 tile_y = (ray.ypos + ray.offset_by) / 16;
+            i32 tile_y = (ray.y + ray.offset_by) / 16;
             if (BTYP(tile_x, tile_y) != 10) {
-                --ray.ypos;
+                --ray.y;
             } else {
                 break;
             }
@@ -174,8 +174,8 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
     }
     if (ray.main_etat == 6) {
         set_main_and_sub_etat(&ray, 6, 8);
-        ray.yspeed = 0;
-        ray.xspeed = 0;
+        ray.speed_y = 0;
+        ray.speed_x = 0;
         poing.is_charging = 0;
     } else if (ray.flags & obj_flags_4_triggered) {
         if (!(ray.main_etat == 3 && (ray.sub_etat == 22 || ray.sub_etat == 32)) &&
@@ -188,8 +188,8 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
             }
             ray_speed_inv = 0;
             if (ray.main_etat == 0 && ray.sub_etat == 61) {
-                ray.xspeed = (ray.flags & obj_flags_8_flipped) ? -2 : 2;
-                ray.yspeed = -3;
+                ray.speed_x = (ray.flags & obj_flags_8_flipped) ? -2 : 2;
+                ray.speed_y = -3;
             } else {
                 if (other_obj != NULL) {
                     i32 bump_direction = -1;
@@ -212,7 +212,7 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
                     } else if (other_obj->type == TYPE_210_FIRE_RIGHT) {
                         bump_direction = -1;
                     } else {
-                        i32 xspeed_delta = other_obj->xspeed - ray.xspeed;
+                        i32 xspeed_delta = other_obj->speed_x - ray.speed_x;
                         if (xspeed_delta == 0) {
                             bump_direction = (ray.flags & obj_flags_8_flipped) ? 1 : -1;
                         } else {
@@ -227,8 +227,8 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
                     } else {
                         bump_speed = 2;
                     }
-                    ray.xspeed = bump_speed * bump_direction; // Note: can it be a different value except 1 or -1?
-                    ray.yspeed = -bump_speed;
+                    ray.speed_x = bump_speed * bump_direction; // Note: can it be a different value except 1 or -1?
+                    ray.speed_y = -bump_speed;
 
                 }
             }
@@ -315,12 +315,12 @@ void DoPTGRAPPINPoingCollision(obj_t* obj) {
 //2F44C
 void DO_ONE_CMD_WAIT(obj_t* obj) {
     if (obj->main_etat == 1) {
-        obj->xspeed = 0;
-        obj->yspeed = 0;
+        obj->speed_x = 0;
+        obj->speed_y = 0;
         set_main_and_sub_etat(obj, 0, 0);
     } else {
         if (!(obj->type == TYPE_10_FISH && obj->main_etat == 0 && obj->sub_etat == 0)) {
-            obj->yspeed = 0;
+            obj->speed_y = 0;
         }
     }
 }
@@ -333,34 +333,34 @@ void DO_ONE_CMD_LR_ATTENTE(obj_t* obj) {
 //2F594
 void DO_ONE_CMD_UPDOWN(obj_t* obj) {
     if (obj->type == TYPE_1_PLATFORM) {
-        if (obj->command == cmd_3_down) {
-            obj->yspeed = -2;
-        } else if (obj->command == cmd_4) {
-            obj->yspeed = 2;
+        if (obj->cmd == cmd_3_down) {
+            obj->speed_y = -2;
+        } else if (obj->cmd == cmd_4) {
+            obj->speed_y = 2;
         }
     } else if (obj->type == TYPE_10_FISH) {
         if (obj->main_etat == 0 && obj->sub_etat == 0) {
-            if (obj->command == cmd_3_down) {
-                obj->yspeed = -2;
+            if (obj->cmd == cmd_3_down) {
+                obj->speed_y = -2;
             } else {
-                obj->yspeed = 2;
+                obj->speed_y = 2;
             }
         }
     } else if (obj->type == TYPE_24_INTERACTPLT) {
         // This procedure is only called for commands 3 and 4, so, not sure why we are checking for command 2 here?
-        if (obj->command != cmd_2_up) {
+        if (obj->cmd != cmd_2_up) {
             --obj->nb_cmd;
             if (obj->nb_cmd <= 0) {
-                if (obj->command == cmd_3_down) {
-                    obj->yspeed = -1;
-                } else if (obj->command == cmd_4) {
-                    obj->yspeed = 1;
+                if (obj->cmd == cmd_3_down) {
+                    obj->speed_y = -1;
+                } else if (obj->cmd == cmd_4) {
+                    obj->speed_y = 1;
                 }
             } else {
-                obj->yspeed = 0;
+                obj->speed_y = 0;
                 obj->nb_cmd = 0;
-                obj->command = cmd_2_up;
-                obj->spawn_y = obj->ypos;
+                obj->cmd = cmd_2_up;
+                obj->init_y = obj->y;
             }
 
         }
@@ -377,7 +377,7 @@ void special_pour_liv(obj_t* event) {
 //2F658
 void DO_ONE_CMD(obj_t* obj) {
     special_pour_liv(obj);
-    u8 cmd = obj->command;
+    u8 cmd = obj->cmd;
     u8 etat = obj->main_etat;
     if (cmd == cmd_0_left || cmd == cmd_1_right) {
         if (cmd == cmd_0_left) {
@@ -399,8 +399,8 @@ void DO_ONE_CMD(obj_t* obj) {
     } else if (cmd == cmd_3_down || cmd == cmd_4) {
         DO_ONE_CMD_WAIT(obj);
     } else if (cmd == cmd_20_speed) {
-        obj->xspeed = obj->iframes_timer;
-        obj->yspeed = obj->command_par2;
+        obj->speed_x = obj->iframes_timer;
+        obj->speed_y = obj->cmd_arg_2;
     }
 }
 

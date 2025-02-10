@@ -299,7 +299,7 @@ void load_sav(u8 which_save) {
 		mem_read(&RayEvts, raw, 2);
 		mem_read(&poing, raw, 20);
 		mem_read(&status_bar, raw, 10);
-		mem_read(&ray.hitp, raw, 1);
+		mem_read(&ray.hit_points, raw, 1);
 		mem_read(collected_events_data, raw, 2592);
 		mem_read(bonus_completed_data, raw, 24);
 		u16 map_location = dans_la_map_monde ? num_world_choice : world_index;
@@ -318,7 +318,7 @@ void load_sav(u8 which_save) {
 void reset_items_and_bosses(void) {
 	memset(collected_events_data, 0, 2592);
 	memset(bonus_completed_data, 0, 24);
-    *(u16*)&finBosslevel = 0;
+    memset(&finBosslevel, 0, sizeof(finBosslevel));
 
 	for (i32 i = 0; i < 24; ++i) {
 		wi_save_zone[i] &= ~(7 << 2);
@@ -336,8 +336,8 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state) {
 	save_state->status_bar_tings = status_bar.num_wiz;
 	save_state->x_map = xmap;
 	save_state->y_map = ymap;
-	save_state->ray_x_pos = (i16)ray.xpos;
-	save_state->ray_y_pos = (i16)ray.ypos;
+	save_state->ray_x_pos = (i16)ray.x;
+	save_state->ray_y_pos = (i16)ray.y;
 	save_state->ray_screen_x = ray.screen_x;
 	save_state->ray_screen_y = ray.screen_y;
 	save_state->ray_flip_x = (ray.flags & obj_flags_8_flipped) != 0;
@@ -346,9 +346,9 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state) {
 	save_state->rayevts_poing = RayEvts.poing;
 	if (save_obj) {
 		save_state->save_obj_id = save_obj->obj_index;
-		save_state->save_obj_x_pos = (i16)save_obj->xpos;
-		save_state->save_obj_y_pos = (i16)save_obj->ypos;
-		save_state->save_obj_detect_zone = save_obj->detect_zone;
+		save_state->save_obj_x_pos = (i16)save_obj->x;
+		save_state->save_obj_y_pos = (i16)save_obj->y;
+		save_state->save_obj_detect_zone = save_obj->detect_zone; //TODO: check if correct
 		save_state->save_obj_flag_1 = save_obj->flags & obj_flags_1;
 	} else {
 		save_state->save_obj_id = -1;
@@ -393,8 +393,8 @@ void restoreGameState(save_state_t* save_state) {
         status_bar.num_wiz = save_state->status_bar_tings;
         xmap = save_state->x_map;
         ymap = save_state->y_map;
-        ray.xpos = save_state->ray_x_pos;
-        ray.ypos = save_state->ray_y_pos;
+        ray.x = save_state->ray_x_pos;
+        ray.y = save_state->ray_y_pos;
         ray.screen_x = save_state->ray_screen_x;
         ray.screen_y = save_state->ray_screen_y;
         ray.flags &= ~obj_flags_8_flipped;
@@ -406,9 +406,9 @@ void restoreGameState(save_state_t* save_state) {
         }
         if (save_state->save_obj_id != -1) {
             obj_t* save_obj = level.objects + save_state->save_obj_id;
-            save_obj->xpos = save_state->save_obj_x_pos;
-            save_obj->ypos = save_state->save_obj_y_pos;
-            save_obj->detect_zone = save_state->save_obj_detect_zone;
+            save_obj->x = save_state->save_obj_x_pos;
+            save_obj->y = save_state->save_obj_y_pos;
+            save_obj->detect_zone = save_state->save_obj_detect_zone; //TODO: check if correct
             save_obj->flags &= ~obj_flags_1;
             save_obj->flags |= obj_flags_1 * (save_state->save_obj_flag_1 & 1);
         }
@@ -435,7 +435,7 @@ void restoreGameState(save_state_t* save_state) {
                 } break;
             }
         }
-        poing_obj->spawn_sub_etat = save_state->poing_sub_etat;
+        poing_obj->init_sub_etat = save_state->poing_sub_etat;
         poing.sub_etat = save_state->poing_sub_etat;
         dead_time = save_state->dead_time;
         decalage_en_cours = 0;
@@ -444,8 +444,8 @@ void restoreGameState(save_state_t* save_state) {
             nb_floc[i] = save_state->nb_floc[i];
         }
         VENT_X = save_state->vent_x;
-        ray.xspeed = 0;
-        ray.yspeed = 0;
+        ray.speed_x = 0;
+        ray.speed_y = 0;
         ray.iframes_timer = -1;
         ray.is_active = 1;
         VENT_Y = save_state->vent_y;
@@ -550,7 +550,7 @@ void SaveGameOnDisk(u8 which_save) {
     mem_write(&RayEvts, raw, 2);
     mem_write(&poing, raw, 20);
     mem_write(&status_bar, raw, 10);
-    mem_write(&ray.hitp, raw, 1);
+    mem_write(&ray.hit_points, raw, 1);
     mem_write(collected_events_data, raw, 2592);
     mem_write(bonus_completed_data, raw, 24);
     u16 map_location = dans_la_map_monde ? num_world_choice : world_index;
@@ -596,7 +596,7 @@ bool LoadGameOnDisk(u8 which_save) {
             mem_read(&RayEvts, raw, 2);
             mem_read(&poing, raw, 20);
             mem_read(&status_bar, raw, 10);
-            mem_read(&ray.hitp, raw, 1);
+            mem_read(&ray.hit_points, raw, 1);
             mem_read(save_zone, raw, 2592);
             mem_read(bonus_perfect, raw, 24);
             // NOTE: the original code reads 2 bytes into world_index, even though it's a 1-byte value.

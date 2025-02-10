@@ -168,7 +168,7 @@ void GET_BB1_ZDCs(obj_t* obj, i16* a2, i16* a3, i16* a4, i16* a5, i16* a6, i16* 
 
 //1DFB8
 void calc_obj_dir(obj_t* obj) {
-    if (ray.xpos + ray.offset_bx > obj->xpos + obj->offset_bx) {
+    if (ray.x + ray.offset_bx > obj->x + obj->offset_bx) {
         obj->flags |= obj_flags_8_flipped;
     } else {
         obj->flags &= ~obj_flags_8_flipped;
@@ -182,8 +182,8 @@ void OBJ_IN_ZONE(obj_t* obj) {
 
 //1E030
 void calc_obj_pos(obj_t* obj) {
-    obj->screen_y = obj->ypos - ymap;
-    obj->screen_x = obj->xpos - xmap + 8;
+    obj->screen_y = obj->y - ymap;
+    obj->screen_x = obj->x - xmap + 8;
 }
 
 //1E05C
@@ -209,8 +209,8 @@ void calc_btyp_square(obj_t* obj) {
         x_offset = 16;
     }
 
-    i16 x = obj->xpos + obj->offset_bx;
-    i16 y = obj->ypos + obj->offset_by;
+    i16 x = obj->x + obj->offset_bx;
+    i16 y = obj->y + obj->offset_by;
     i16 tile_x = ashr16(y, 4);
     i16 tile_y = ashr16(x, 4);
     i16 tile_x_left = ashr16(x - x_offset, 4);
@@ -239,8 +239,8 @@ void DO_OBJ_REBOND_EN_X(obj_t* obj) {
 u8 calc_btyp(obj_t* obj) {
     u8 btyp = BTYP_NONE;
     calc_btyp_square(obj);
-    i32 x = obj->xpos + obj->offset_bx;
-    i32 y = obj->ypos + obj->offset_by;
+    i32 x = obj->x + obj->offset_bx;
+    i32 y = obj->y + obj->offset_by;
 
     if (obj->type == TYPE_RAYMAN) {
         ray.cmd_arg_1 = -1;
@@ -273,7 +273,7 @@ u8 calc_btyp(obj_t* obj) {
 
     if (!(block_flags[obj->coll_btype[0]] & 2)) {
         if (obj->type == TYPE_23_RAYMAN) {
-            btyp = mp.map[ray.rayman_distance].tile_type;
+            btyp = mp.map[ray.rayman_dist].tile_type;
         } else {
             btyp = BTYP(x >> 4, y >> 4);
         }
@@ -352,10 +352,10 @@ void switchOff(obj_t* obj) {
 
 //1EB80
 void obj_hurt(obj_t* target) {
-    if (poing.damage > target->hitp) {
-        target->hitp = 0;
+    if (poing.damage > target->hit_points) {
+        target->hit_points = 0;
     } else {
-        target->hitp -= poing.damage;
+        target->hit_points -= poing.damage;
     }
 }
 
@@ -824,8 +824,7 @@ void Bresenham(void (*func)(i16, i16), i16 origin_x, i16 origin_y, i16 dest_x, i
 
 //1F880
 void init_finBossLevel(void) {
-    ASSERT(sizeof(finBosslevel)==2);
-    *(u16*)(&finBosslevel) = 0;
+    memset(&finBosslevel, 0, sizeof(finBosslevel));
 }
 
 //1F8A4

@@ -267,10 +267,10 @@ void INIT_CHEMIN(void) {
     INIT_LITTLE_RAY();
     set_main_and_sub_etat(&ray, 0, 0);
     world_info_t* initial_world_info = t_world_info + num_world_choice;
-    ray.xpos = initial_world_info->xpos - ray.offset_bx + 4;
-    ray.ypos = initial_world_info->ypos - ray.offset_by + 8;
-    ray.xspeed = 0;
-    ray.yspeed = 0;
+    ray.x = initial_world_info->xpos - ray.offset_bx + 4;
+    ray.y = initial_world_info->ypos - ray.offset_by + 8;
+    ray.speed_x = 0;
+    ray.speed_y = 0;
     set_zoom_mode(0);
     chemin_percent = 0;
     Nb_total_cages = 0;
@@ -278,25 +278,25 @@ void INIT_CHEMIN(void) {
         obj_t* medaillon = mapobj + i;
         world_info_t* world_info = t_world_info + i;
         medaillon->type = TYPE_54_MEDAILLON;
-        medaillon->spawn_x = world_info->xpos - 78;
-        medaillon->spawn_y = world_info->ypos - 64;
-        medaillon->spawn_etat = 5;
+        medaillon->init_x = world_info->xpos - 78;
+        medaillon->init_y = world_info->ypos - 64;
+        medaillon->init_etat = 5;
         if (world_info->state & 4) {
-            medaillon->spawn_sub_etat = 46;
+            medaillon->init_sub_etat = 46;
         } else {
             i32 cages = world_info->nb_cages;
             if (cages != 0) {
                 Nb_total_cages += cages;
                 if (cages == 6) {
-                    medaillon->spawn_sub_etat = 52;
+                    medaillon->init_sub_etat = 52;
                 } else {
-                    medaillon->spawn_sub_etat = 47;
+                    medaillon->init_sub_etat = 47;
                 }
             } else if (i == 17) {
                 medaillon->sub_etat = 59;
-                medaillon->spawn_sub_etat = 59;
+                medaillon->init_sub_etat = 59;
             } else {
-                medaillon->spawn_sub_etat = 39;
+                medaillon->init_sub_etat = 39;
             }
         }
         medaillon->scale = 0;
@@ -439,16 +439,16 @@ void DO_RAYMAN_IN_WLD_MAP(void) {
         }
         ++ray.timer;
 
-        ray.xspeed = t_world_info[old_num_world].xpos + xspeed * sgn(diff_x) - ray.offset_bx - ray.xpos;
-        ray.yspeed = t_world_info[old_num_world].xpos + yspeed * sgn(diff_y) - ray.offset_by - (ray.ypos - 8);
+        ray.speed_x = t_world_info[old_num_world].xpos + xspeed * sgn(diff_x) - ray.offset_bx - ray.x;
+        ray.speed_y = t_world_info[old_num_world].xpos + yspeed * sgn(diff_y) - ray.offset_by - (ray.y - 8);
 
         if (abs(xspeed) >= abs(diff_x) && abs(yspeed) >= abs(diff_y)) {
             // arrived at new location
             old_num_world = num_world_choice;
             if (ray.main_etat != 0) {
                 set_main_and_sub_etat(&ray, 0, 0);
-                ray.xpos = t_world_info[num_world_choice].xpos - ray.offset_bx;
-                ray.ypos = t_world_info[num_world_choice].ypos - ray.offset_by + 8;
+                ray.x = t_world_info[num_world_choice].xpos - ray.offset_bx;
+                ray.y = t_world_info[num_world_choice].ypos - ray.offset_by + 8;
             }
         }
     }
@@ -515,7 +515,7 @@ void INIT_NEW_GAME(void) {
     new_level = 1;
     new_world = 1;
     status_bar.lives = 3;
-    ray.hitp = 2;
+    ray.hit_points = 2;
     fin_du_jeu = 0;
     nb_continue = 9;
     ray.flags &= ~obj_flags_1;
@@ -848,33 +848,33 @@ void INIT_LOADER_ANIM(void) {
     bigray.screen_x = 120;
     bigray.main_etat = 1;
     bigray.sub_etat = 0;
-    bigray.command = 0;
+    bigray.cmd = 0;
     bigray.flags &= ~obj_flags_8_flipped;
 }
 
 //6B258
 void DO_LOADER_ANIM(void) {
     eta_t* eta = get_eta(&bigray);
-    bigray.xspeed = 0;
+    bigray.speed_x = 0;
     if ((eta->anim_speed & 15) != 0 && (horloge[eta->anim_speed] == 0)) {
         SET_X_SPEED(&bigray);
     }
-    bigray.screen_x += bigray.xspeed;
+    bigray.screen_x += bigray.speed_x;
     if (PROC_EXIT == 1) {
         PROC_EXIT = 0;
-        bigray.command = 5;
+        bigray.cmd = 5;
         set_main_and_sub_etat(&bigray, 0, 2);
         bigray.timer = 2;
         bigray.flags &= ~obj_flags_8_flipped;
         bigray.screen_x = 160 - bigray.offset_bx - 16;
     }
 
-    if (bigray.command <= 5) {
-        switch(bigray.command) {
+    if (bigray.cmd <= 5) {
+        switch(bigray.cmd) {
             default: break;
             case 0: {
                 if (bigray.screen_x + bigray.offset_bx < -100) {
-                    ++bigray.command;
+                    ++bigray.cmd;
                     set_main_and_sub_etat(&bigray, 1, 1);
                     bigray.screen_x = (-bigray.offset_bx) - 60;
                     bigray.flags |= obj_flags_8_flipped;
@@ -885,7 +885,7 @@ void DO_LOADER_ANIM(void) {
             } break;
             case 1: {
                 if (bigray.screen_x + bigray.offset_bx > 400) {
-                    ++bigray.command;
+                    ++bigray.cmd;
                     set_main_and_sub_etat(&bigray, 1, 2);
                     bigray.anim_frame = 0;
                     bigray.screen_x = 350 - bigray.offset_bx;
@@ -897,7 +897,7 @@ void DO_LOADER_ANIM(void) {
             } break;
             case 2: {
                 if (bigray.main_etat == 0 && bigray.sub_etat == 0) {
-                    ++bigray.command;
+                    ++bigray.cmd;
                     DO_ANIM(&bigray);
                 } else {
                     DO_ANIM(&bigray);
@@ -905,7 +905,7 @@ void DO_LOADER_ANIM(void) {
             } break;
             case 3: {
                 if (EOA(&bigray)) {
-                    ++bigray.command;
+                    ++bigray.cmd;
                     set_main_and_sub_etat(&bigray, 1, 3);
                     bigray.screen_x = -60 - bigray.offset_bx;
                     bigray.flags |= obj_flags_8_flipped;
@@ -916,7 +916,7 @@ void DO_LOADER_ANIM(void) {
             } break;
             case 4: {
                 if (bigray.screen_x + bigray.offset_bx > 400) {
-                    ++bigray.command;
+                    ++bigray.cmd;
                     set_main_and_sub_etat(&bigray, 0, 1);
                     bigray.screen_x = 160 - bigray.offset_bx - 16;
                     bigray.flags &= ~obj_flags_8_flipped;

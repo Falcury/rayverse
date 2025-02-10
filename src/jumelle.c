@@ -264,8 +264,8 @@ void RecaleRayPosInJumelle(void) {
         if (v_scroll_speed != 255 || decalage_en_cours != 0) {
             i32 v14 = ray.screen_y - v13;
             v_scroll_speed = ashr16(ray.screen_x - v13, 2);
-            if (abs(ray.yspeed) <= abs(v_scroll_speed)) {
-                i32 v16 = MAX(3, abs(ray.yspeed));
+            if (abs(ray.speed_y) <= abs(v_scroll_speed)) {
+                i32 v16 = MAX(3, abs(ray.speed_y));
                 if (v_scroll_speed <= 0) {
                     if (v_scroll_speed != 0) {
                         v_scroll_speed = MAX(v_scroll_speed, -v16);
@@ -298,14 +298,14 @@ void RecaleRayPosInJumelle(void) {
         }
         i32 v5 = (v4 >> 3) - ray.offset_bx;
 
-        if (decalage_en_cours > 0 || ray.xspeed > 0) {
+        if (decalage_en_cours > 0 || ray.speed_x > 0) {
             i16 unk_x_3 = ashr16(ray.screen_x - v3, 2);
             if (unk_x_3 > dhspeed) {
                 dhspeed++;
             } else if (unk_x_3 < dhspeed) {
                 dhspeed--;
             }
-        } else if (decalage_en_cours < 0 || ray.xspeed < 0) {
+        } else if (decalage_en_cours < 0 || ray.speed_x < 0) {
             i16 unk_x_3 = ashr16(ray.screen_x - v4, 2);
             if (unk_x_3 > dhspeed) {
                 dhspeed++;
@@ -335,8 +335,8 @@ void RecaleRayPosInJumelle(void) {
         }
         h_scroll_speed += ashr16(dhspeed, 2);
 
-        if ((v5 > ray.screen_x && ray.xspeed < 0) || (v3 < ray.screen_x && ray.xspeed > 0)) {
-            h_scroll_speed += ray.xspeed;
+        if ((v5 > ray.screen_x && ray.speed_x < 0) || (v3 < ray.screen_x && ray.speed_x > 0)) {
+            h_scroll_speed += ray.speed_x;
         }
 
     }
@@ -358,8 +358,8 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
     i32 delta_pos_x = 0;
     i32 delta_pos_y = 0;
     if (ChangeJumelleSizeOK != 4) {
-        if (ray.xspeed != 0 || ray.yspeed != 0) {
-            i32 ray_x = ray.offset_bx + ray.xpos;
+        if (ray.speed_x != 0 || ray.speed_y != 0) {
+            i32 ray_x = ray.offset_bx + ray.x;
             if (ray_x > scroll_start_x && ray_x < scroll_end_x) {
                 delta_pos_x = 16 * (ray.offset_bx + ray.screen_x - LargeurJumelle / 2);
                 if (ChangeDeltaPosXJumelleWithLimit(delta_pos_x)) {
@@ -370,7 +370,7 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
                 ChangeDeltaPosXJumelleWithoutLimit(delta_pos_x);
             }
 
-            i32 ray_y = ray.offset_by + ray.ypos;
+            i32 ray_y = ray.offset_by + ray.y;
             if (ray_y > scroll_start_y && ray_y < scroll_end_y) {
                 delta_pos_y = 16 * (ray.screen_y + ray.offset_by - ((3 * HauteurJumelle) >> 2));
                 if (ChangeDeltaPosYJumelleWithLimit(delta_pos_y)) {
@@ -420,7 +420,7 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
             ChangeJumelleSizeOK &= ~2;
         }
 
-        if (delta_pos_x == 0 && delta_pos_y == 0 && ray.yspeed == 0 && ray.xspeed == 0 && ChangeJumelleSizeOK != 4) {
+        if (delta_pos_x == 0 && delta_pos_y == 0 && ray.speed_y == 0 && ray.speed_x == 0 && ChangeJumelleSizeOK != 4) {
             if (RayonJumelle < 64 && !ModeAutoJumelle) {
                 ChangeDeltaSizeJumelle(1);
             }
@@ -439,7 +439,7 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
                 ChangeJumelleSizeOK = 4;
             }
 
-        } else if (ray.xspeed != 0 || ray.yspeed != 0) {
+        } else if (ray.speed_x != 0 || ray.speed_y != 0) {
             ChangeJumelleSizeOK &= ~4;
         }
 
@@ -510,16 +510,16 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
 
 //444D4
 void CalcObjPosInWorldMap(obj_t* obj) {
-    obj->screen_x = obj->xpos + 8 - xmap + JumellePosX - JumelleXMin;
-    obj->screen_y = obj->ypos - ymap + JumellePosY - JumelleYMin;
+    obj->screen_x = obj->x + 8 - xmap + JumellePosX - JumelleXMin;
+    obj->screen_y = obj->y - ymap + JumellePosY - JumelleYMin;
 }
 
 //44524
 void MoveRayInWorldMap(void) {
     h_scroll_speed = 0;
     v_scroll_speed = 0;
-    ray.xpos += ray.xspeed;
-    ray.ypos += ray.yspeed;
-    decalage_en_cours = ray.xspeed;
+    ray.x += ray.speed_x;
+    ray.y += ray.speed_y;
+    decalage_en_cours = ray.speed_x;
 }
 

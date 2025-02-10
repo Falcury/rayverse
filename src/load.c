@@ -47,11 +47,11 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
 
             u8 sprite_is_always_used; // bg clearing flag?
             mem_read(&sprite_is_always_used, mem, 1);
-            mem_read(&cur_wldobj->xpos, mem, 4); // NOTE: this is read, but cur_wldobj->xpos is used instead
+            mem_read(&cur_wldobj->x, mem, 4); // NOTE: this is read, but cur_wldobj->xpos is used instead
 
             if (sprite_is_always_used || ToutSpriteAutorise) {
-                cur_wldobj->img_buffer = (u8*) block_malloc(mem_sprite, cur_wldobj->xpos);
-                mem_read(cur_wldobj->img_buffer, mem, cur_wldobj->xpos);
+                cur_wldobj->img_buffer = (u8*) block_malloc(mem_sprite, cur_wldobj->x);
+                mem_read(cur_wldobj->img_buffer, mem, cur_wldobj->x);
 
                 u8 img_buffer_checksum;
                 mem_read(&img_buffer_checksum, mem, 1);
@@ -91,7 +91,7 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
                     }
                 }
             } else {
-                mem->cursor += cur_wldobj->xpos; // skip
+                mem->cursor += cur_wldobj->x; // skip
                 u8 img_buffer_checksum;
                 mem_read(&img_buffer_checksum, mem, 1);
                 mem_read(&cur_wldobj->nb_sprites, mem, 2);
@@ -225,7 +225,7 @@ void load_big_ray(mem_t* buffer) {
         obj_t* sprite_group = wldobj + nb_des;
         u32 sprite_group_size = 0;
         fread(&sprite_group_size, 4, 1, fp);
-        sprite_group->xpos = (i32)sprite_group_size; // why is this saved in the xpos field??
+        sprite_group->x = (i32)sprite_group_size; // why is this saved in the xpos field??
         u8* image_atlas = block_malloc(buffer, sprite_group_size);
         fread(image_atlas, sprite_group_size, 1, fp);
         for (u32 i = 0; i < sprite_group_size; ++i) {
@@ -325,7 +325,7 @@ void LOAD_ALL_FIX(void) {
 
             u32 sprite_group_size = 0;
             mem_read(&sprite_group_size, mem, 4);
-            obj->xpos = (i32)sprite_group_size; // why is this saved in the xpos field??
+            obj->x = (i32)sprite_group_size; // why is this saved in the xpos field??
             u8* image_atlas = block_malloc(main_mem_sprite, sprite_group_size);
             i32 saved_cursor = mem->cursor; // in the original, this is a call to ftell()
             mem_read(image_atlas, mem, sprite_group_size);

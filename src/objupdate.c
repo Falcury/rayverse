@@ -60,7 +60,7 @@ u8 readSpeedArgs(obj_t* obj) {
     obj->iframes_timer = char2short(obj->cmds[obj->cmd_offset]);
 
     ++obj->cmd_offset;
-    obj->command_par2 = char2short(obj->cmds[obj->cmd_offset]);
+    obj->cmd_arg_2 = char2short(obj->cmds[obj->cmd_offset]);
     return 0;
 }
 
@@ -301,19 +301,19 @@ void allocate_badguy(obj_t* tentacle_obj, i16 which_enemy, i16 xspeed, i16 yspee
     for (i32 event_index = 0; event_index < level.nb_objects; ++event_index) {
         obj_t* spawned = level.objects + event_index;
         if (((which_enemy == 1 && spawned->type == TYPE_0_BADGUY1) || (which_enemy == 2 && spawned->type == TYPE_9_BADGUY2))
-            && spawned->spawn_x <= 0 && spawned->is_active == 0
+            && spawned->init_x <= 0 && spawned->is_active == 0
                 ) {
             spawned->flags &= ~(obj_flags_4_triggered | obj_flags_0x40);
             spawned->is_active = 1;
             spawned->flags |= obj_flags_4_triggered; // Note: this does not make sense, this bit was cleared just before!
             spawned->active_timer = 0;
-            spawned->field_30 = 1;
+            spawned->active_flag = 1;
             set_main_and_sub_etat(spawned, 2, 2); // thrown up in air
-            spawned->xpos = tentacle_obj->xpos + tentacle_obj->offset_bx - spawned->offset_bx;
-            spawned->ypos = tentacle_obj->ypos - (spawned->offset_by / 4);
+            spawned->x = tentacle_obj->x + tentacle_obj->offset_bx - spawned->offset_bx;
+            spawned->y = tentacle_obj->y - (spawned->offset_by / 4);
             calc_obj_dir(spawned);
-            spawned->yspeed = yspeed;
-            spawned->xspeed = obj_flipped(spawned) ? xspeed : -xspeed;
+            spawned->speed_y = yspeed;
+            spawned->speed_x = obj_flipped(spawned) ? xspeed : -xspeed;
             calc_obj_pos(spawned);
             spawned->flags &= ~obj_flags_0x10;
             return;
@@ -374,9 +374,9 @@ void DoPoingPowerupRaymanCollision(obj_t* obj) {
 //61EA0
 void DoPowerupRaymanCollision(obj_t* obj) {
     DO_NOVA(obj);
-    ray.hitp += obj->hitp;
-    if (ray.hitp > ray_max_hitp) {
-        ray.hitp = ray_max_hitp;
+    ray.hit_points += obj->hit_points;
+    if (ray.hit_points > ray_max_hitp) {
+        ray.hit_points = ray_max_hitp;
     }
     obj->flags &= ~obj_flags_4_triggered;
     PlaySnd(8, obj->obj_index);
@@ -446,9 +446,9 @@ void DoMusicienRaymanInZDD(obj_t* obj) {
 //62658
 // sub_62658
 void DO_TEN_COMMAND(obj_t* obj) {
-    if (obj->command == cmd_0_left) {
+    if (obj->cmd == cmd_0_left) {
         obj_set_not_flipped(obj);
-    } else if (obj->command == cmd_1_right) {
+    } else if (obj->cmd == cmd_1_right) {
         obj_set_flipped(obj);
     }
     if (obj->main_etat == 0 && obj->sub_etat == 11) {
@@ -458,7 +458,7 @@ void DO_TEN_COMMAND(obj_t* obj) {
             if (obj->configuration > 2) {
                 obj->configuration = 1;
             }
-            if (obj->hitp == 1) {
+            if (obj->hit_points == 1) {
                 allocate_badguy(obj, 2 /*small livingstone*/, 1, -2);
                 allocate_badguy(obj, 1 /*livingstone*/      , 2, -1);
             } else {
@@ -493,8 +493,8 @@ void DO_TEN_COMMAND(obj_t* obj) {
             //DO_INTERACT_PLAT(obj); // TODO: fix this
             obj->configuration = saved_configuration;
         }
-        obj->xspeed = 0;
-        obj->yspeed = 0;
+        obj->speed_x = 0;
+        obj->speed_y = 0;
         if (obj->anim_frame > 12) {
             obj->anim_frame = 3;
         } else if (obj->anim_frame <= 1){
@@ -524,26 +524,26 @@ void DoGeneBadGuyRaymanZDD(obj_t* obj) {
 void DoChasseurPoingCollision(obj_t* obj, i16 a2) {
     if (get_eta(obj)->interaction_flags & 1) {
         obj_hurt(obj);
-        if (obj->hitp != 0) {
-            obj->xspeed = 0;
-            obj->yspeed = 0;
+        if (obj->hit_points != 0) {
+            obj->speed_x = 0;
+            obj->speed_y = 0;
             set_main_and_sub_etat(obj, 0, 1); // startled
         } else {
             set_main_and_sub_etat(obj, 0, 3); // dead
         }
-        obj->command = obj_flipped(obj) ? cmd_0_left : cmd_1_right;
+        obj->cmd = obj_flipped(obj) ? cmd_0_left : cmd_1_right;
     }
 }
 
 //62928
 void DoChasseurRaymanZDD(obj_t* obj) {
     if (obj->main_etat == 0 && (obj->sub_etat == 0 || obj->sub_etat == 2)) {
-        obj->xspeed = 0;
-        obj->yspeed = 0;
+        obj->speed_x = 0;
+        obj->speed_y = 0;
         set_main_and_sub_etat(obj, 0, 2);
         obj->flags &= ~obj_flags_0x10;
         calc_obj_dir(obj);
-        obj->command = obj_flipped(obj) ? cmd_1_right : cmd_0_left;
+        obj->cmd = obj_flipped(obj) ? cmd_1_right : cmd_0_left;
     }
 }
 
@@ -556,10 +556,10 @@ void DO_CHASSEUR_COMMAND(obj_t* obj) {
 void DoBadGuy23PoingCollision(obj_t* obj, i16 a2) {
     if (a2 == 255 || !(get_eta(obj)->interaction_flags & 1)) {
         obj_hurt(obj);
-        if (obj->hitp == 0) {
+        if (obj->hit_points == 0) {
             set_main_and_sub_etat(obj, 0, 3);
             skipToLabel(obj, 2, 1);
-            obj->ypos -= 2;
+            obj->y -= 2;
             obj->flags &= ~obj_flags_0x10;
         } else {
             //stub
@@ -583,19 +583,19 @@ void DoBadGuy23RaymanZDD(obj_t* obj) {
 // sub_62B54
 void DoBadGuy1PoingCollision(obj_t* obj, i16 a2) {
     obj_hurt(obj);
-    if (poing_obj->xspeed > 0) {
+    if (poing_obj->speed_x > 0) {
         skipToLabel(obj, 3, 1);
-    } else if (poing_obj->xspeed < 0) {
+    } else if (poing_obj->speed_x < 0) {
         skipToLabel(obj, 2, 1);
     }
-    obj->xspeed = 0;
-    obj->ypos -= 2;
-    if (obj->hitp != 0) {
-        obj->yspeed = -4;
+    obj->speed_x = 0;
+    obj->y -= 2;
+    if (obj->hit_points != 0) {
+        obj->speed_y = -4;
         set_main_and_sub_etat(obj, 2, (get_eta(obj)->interaction_flags & 0x40) ? 10 : 2);
         PlaySnd(28, obj->obj_index);
     } else {
-        obj->yspeed = -8;
+        obj->speed_y = -8;
         set_main_and_sub_etat(obj, 0, (get_eta(obj)->interaction_flags & 0x40) ? 6 : 3);
     }
 
@@ -606,8 +606,8 @@ void DoBadGuy1RaymanZDD(obj_t* obj) {
     if ((obj->flags & obj_flags_8_flipped) != (ray.flags & obj_flags_8_flipped)) {
         if ((obj->main_etat == 1 && obj->sub_etat == 0) || (obj->main_etat == 0 && obj->sub_etat == 0)) {
             if (ray.main_etat == 0 && ray.sub_etat == 18 /* stick out tongue */) {
-                obj->xspeed = 0;
-                obj->yspeed = 0;
+                obj->speed_x = 0;
+                obj->speed_y = 0;
                 set_main_and_sub_etat(obj, 0, 2);
                 skipToLabel(obj, (obj->flags & obj_flags_8_flipped) ? 8 : 7, 1);
             }
@@ -693,9 +693,9 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
 //643BC
 void DoPlatformPoingCollision(obj_t* obj, i16 a2) {
     if (obj->hit_sprite == a2) {
-        if (poing_obj->xspeed > 0) {
+        if (poing_obj->speed_x > 0) {
             set_sub_etat(obj, 25);
-        } else if (poing_obj->xspeed < 0) {
+        } else if (poing_obj->speed_x < 0) {
             set_sub_etat(obj, 26);
         }
     }

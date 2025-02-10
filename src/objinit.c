@@ -19,7 +19,7 @@ u8 Prio(obj_t* obj) {
             res = 0;
             break;
         case TYPE_MST_SCROLL:
-            res = (obj->hitp == 0) ? 2 : 0;
+            res = (obj->hit_points == 0) ? 2 : 0;
             break;
         case TYPE_BOUM:
         case TYPE_SPLASH:
@@ -131,16 +131,16 @@ void obj_init(obj_t* obj) {
     obj->nb_cmd = 0;
     obj->is_active = 0;
     obj->display_prio = Prio(obj);
-    obj->zdc_meta = type_zdc[obj->type];
+    obj->zdc = type_zdc[obj->type];
     if (obj->type != TYPE_163_INDICATOR) {
-        obj->main_etat = obj->spawn_etat;
-        obj->sub_etat = obj->spawn_sub_etat;
+        obj->main_etat = obj->init_etat;
+        obj->sub_etat = obj->init_sub_etat;
     }
     obj->anim_frame = 0;
-    obj->xspeed = 0;
-    obj->yspeed = 0;
-    obj->xpos = obj->spawn_x;
-    obj->ypos = obj->spawn_y;
+    obj->speed_x = 0;
+    obj->speed_y = 0;
+    obj->x = obj->init_x;
+    obj->y = obj->init_y;
     obj->anim_index = obj->eta[obj->main_etat][obj->sub_etat].anim_index;
     obj->flags &= ~obj_flags_8_flipped;
     obj->change_anim_mode = 0; //ANIMMODE_NONE;
@@ -148,7 +148,7 @@ void obj_init(obj_t* obj) {
     obj->gravity_value_2 = 0;
     obj->detect_zone = 0;
     obj->iframes_timer = -1;
-    obj->command_par2 = -1;
+    obj->cmd_arg_2 = -1;
     obj->cmd_offset = -1;
     obj->flags = (obj->flags & ~(obj_flags_0x10 | obj_flags_8_flipped)) | (obj_flags_0x10 * (obj->cmds != NULL));
     memset(obj->coll_btype, 0, 5);
@@ -157,10 +157,9 @@ void obj_init(obj_t* obj) {
     obj->test_block_index = 0;
     obj->cmd_context_depth = -1;
     obj->active_flag = 1; //ACTIVE_DEAD;
-    obj->field_30 = 1;
     obj->timer = 0;
     obj->configuration = 0;
-    obj->hitp = obj->spawn_hitp;
+    obj->hit_points = obj->init_hit_points;
     obj->field_82 &= ~1;
 
     switch (obj->type)
@@ -175,18 +174,18 @@ void obj_init(obj_t* obj) {
             {
                 prise_branchee = true;
                 set_main_and_sub_etat(obj, 0, 2);
-                obj->spawn_sub_etat = 2;
+                obj->init_sub_etat = 2;
                 skipToLabel(obj, 1, true);
                 break;
             }
             break;
         case TYPE_251_VAGUE_DEVANT:
         case TYPE_252_VAGUE_DERRIERE:
-            obj->xpos = -15;
-            obj->spawn_x = -15;
+            obj->x = -15;
+            obj->init_x = -15;
             break;
         case TYPE_218_HYBRIDE_MOSAMS:
-            bossXToReach = obj->xpos;
+            bossXToReach = obj->x;
             bossYToReach = firstFloorBelow(&ray) - obj->offset_by + 16; // TODO
             bossSpeedFactor = 0x4000;
             alternateBossSpeedFactor = 0;
@@ -197,13 +196,13 @@ void obj_init(obj_t* obj) {
             break;
         case TYPE_191_FALLING_CRAYON:
         case TYPE_235_PUNAISE4:
-            obj->anim_frame = obj->hitp;
+            obj->anim_frame = obj->hit_points;
             break;
         case TYPE_175_PUNAISE1:
         case TYPE_229_PUNAISE2:
         case TYPE_230_PUNAISE3:
         case TYPE_250_PUNAISE5:
-            obj->flags = (obj->flags & ~obj_flags_8_flipped) | (obj->hitp & 1) * obj_flags_8_flipped;
+            obj->flags = (obj->flags & ~obj_flags_8_flipped) | (obj->hit_points & 1) * obj_flags_8_flipped;
             break;
         case TYPE_51_MST_FRUIT1:
         case TYPE_53_MST_SHAKY_FRUIT:
@@ -264,37 +263,34 @@ void obj_init(obj_t* obj) {
         case TYPE_123_BLACKTOON1:
             switch (obj->follow_sprite)
             {
-                // TODO: figure out discrepancy between PS1 and PC/Android object state layouts.
-                // In the switch statement below, the PS1 decomp has:  obj->detect_zone
-                // In the PC/Android decomps: obj->active_flag (?)
                 case 1:
                     obj->configuration = 2;
-                    obj->detect_zone = 0; //TODO: check if correct
+                    obj->detect_zone = 0;
                     break;
                 case 2:
                     obj->configuration = 8;
-                    obj->detect_zone = 60; //TODO: check if correct
+                    obj->detect_zone = 60;
                     break;
                 case 3:
                     obj->configuration = 24;
-                    obj->detect_zone = 170; //TODO: check if correct
+                    obj->detect_zone = 170;
                     break;
                 case 4:
                     obj->configuration = 10;
-                    obj->detect_zone = 100; //TODO: check if correct
+                    obj->detect_zone = 100;
                     break;
                 case 5:
-                    obj->command_par2 = 0;
+                    obj->cmd_arg_2 = 0;
                     obj->configuration = 1;
-                    obj->detect_zone = 0; //TODO: check if correct
+                    obj->detect_zone = 0;
                     break;
                 case 6:
                     obj->configuration = 4;
-                    obj->detect_zone = 60; //TODO: check if correct
+                    obj->detect_zone = 60;
                     break;
                 case 7:
                     obj->configuration = 36;
-                    obj->detect_zone = 120; //TODO: check if correct
+                    obj->detect_zone = 120;
                     break;
             }
             break;
@@ -307,13 +303,13 @@ void obj_init(obj_t* obj) {
             break;
         case TYPE_77_PIRATE_GUETTEUR:
         case TYPE_239_PIRATE_GUETTEUR2:
-            swapGuetteurCollZones(obj, obj->spawn_sub_etat == 14); //TODO
+            swapGuetteurCollZones(obj, obj->init_sub_etat == 14); //TODO
             obj->iframes_timer = 0;
             obj->detect_zone = 80;
             break;
         case TYPE_28_ONOFF_PLAT:
             obj->iframes_timer = 100;
-            obj->command_par2 = 100;
+            obj->cmd_arg_2 = 100;
             obj->flags |= obj_flags_4_triggered;
             break;
         case TYPE_26_CRUMBLE_PLAT:
@@ -330,7 +326,7 @@ void obj_init(obj_t* obj) {
             break;
         case TYPE_25_INST_PLAT:
             obj->iframes_timer = 15;
-            obj->command_par2 = 15;
+            obj->cmd_arg_2 = 15;
             obj->flags |= obj_flags_4_triggered;
             break;
         case TYPE_29_AUTOJUMP_PLAT:
@@ -339,7 +335,7 @@ void obj_init(obj_t* obj) {
         case TYPE_237_GOMME:
         case TYPE_243_MARK_AUTOJUMP_PLAT:
             obj->iframes_timer = 1;
-            obj->command_par2 = 1;
+            obj->cmd_arg_2 = 1;
             obj->flags |= obj_flags_4_triggered;
             break;
         case TYPE_116_CLOWN_TNT:
@@ -355,7 +351,7 @@ void obj_init(obj_t* obj) {
             obj->phase = 0;
             break;
         case TYPE_150_SCORPION:
-            obj->detect_zone = 160; //TODO: check if correct
+            obj->detect_zone = 160;
             sko_phase = 0;
             break;
         case TYPE_7_MORNINGSTAR:
@@ -372,7 +368,7 @@ void obj_init(obj_t* obj) {
         case TYPE_217_MITE2:
             obj->eta[1][0].interaction_flags &= ~0x10;
             obj->eta[1][2].interaction_flags &= ~0x10;
-            obj->command_par2 = 0;
+            obj->cmd_arg_2 = 0;
             break;
         case TYPE_202_RAY_ETOILES:
             if (obj->main_etat == 0 && obj->sub_etat == 57)

@@ -20,7 +20,7 @@ bool can_free_fish(obj_t* piranha) {
     bool result = true;
     for (i32 i = 0; i < level.nb_objects; ++i) {
         obj_t* event = level.objects + i;
-        if (event->type == TYPE_10_FISH && event->spawn_x == piranha->spawn_x && !event->is_active && event->timer >= 100) {
+        if (event->type == TYPE_10_FISH && event->init_x == piranha->init_x && !event->is_active && event->timer >= 100) {
             result = false;
             break;
         }
@@ -39,19 +39,19 @@ void DO_PYRANHA(obj_t* obj) {
     DO_ONE_CMD(obj);
     bool respawn = false;
     if (obj->main_etat == 0) {
-        i32 y_offset_by = obj->ypos + obj->offset_by;
+        i32 y_offset_by = obj->y + obj->offset_by;
         if (y_offset_by + 20 < ymap + 200) {
             ++obj->timer;
         }
         if (obj->sub_etat == 3) {
-            obj->yspeed = 0;
+            obj->speed_y = 0;
         } else if (obj->sub_etat == 9) {
-            obj->yspeed = 6;
-            if ((obj->ypos + obj->offset_hy > ymap + 200) || (y_offset_by + 14 > mp.height * 16)) {
+            obj->speed_y = 6;
+            if ((obj->y + obj->offset_hy > ymap + 200) || (y_offset_by + 14 > mp.height * 16)) {
                 if (y_offset_by + 14 > mp.height * 16) {
                     //allocate_splash(obj); // TODO: fix this
                 }
-                obj->ypos = ymap + 200;
+                obj->y = ymap + 200;
                 obj->is_active = 0;
                 obj->flags &= ~obj_flags_4_triggered;
                 obj->timer = 0;
@@ -59,7 +59,7 @@ void DO_PYRANHA(obj_t* obj) {
             }
         } else {
             if (y_offset_by < ymap) { //?
-                obj->ypos = ymap + 200;
+                obj->y = ymap + 200;
                 obj->is_active = 0;
                 obj->flags &= ~obj_flags_4_triggered;
                 respawn = can_free_fish(obj);
@@ -78,15 +78,15 @@ void DO_PYRANHA(obj_t* obj) {
 //676EC
 void DoFishPoingCollision(obj_t* obj, i16 a2) {
     obj_hurt(obj);
-    if (obj->hitp != 0) {
-        obj->xspeed = 0;
-        obj->yspeed = 0;
+    if (obj->hit_points != 0) {
+        obj->speed_x = 0;
+        obj->speed_y = 0;
         set_main_and_sub_etat(obj, 0, 1);
     } else {
         set_main_and_sub_etat(obj, 0, 3);
     }
     DESACTIVE_FISH_COLLIS(obj);
-    obj->command = obj_flipped(obj) ? cmd_1_right : cmd_0_left;
+    obj->cmd = obj_flipped(obj) ? cmd_1_right : cmd_0_left;
 }
 
 //6773C

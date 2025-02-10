@@ -94,7 +94,7 @@ void SET_X_SPEED(obj_t* obj) {
             xspeed /= 2;
         }
     }
-    obj->xspeed = (i16)xspeed;
+    obj->speed_x = (i16)xspeed;
 }
 
 //55F9C
@@ -407,7 +407,7 @@ void INIT_RAY(u8 level_index) {
     compteur_attente = 0;
     ray_mode = (ray.main_etat == 6) + 1;
     if (RayEvts.tiny) {
-        rms.hitp = ray.hitp;
+        rms.hit_points = ray.hit_points;
         ray = rms;
     }
     xmap = 0;
@@ -415,11 +415,11 @@ void INIT_RAY(u8 level_index) {
     ray.type = TYPE_23_RAYMAN;
     ray.screen_x = 0;
     ray.screen_y = 0;
-    ray.xspeed = 0;
-    ray.yspeed = 0;
-    ray.xpos = 100;
+    ray.speed_x = 0;
+    ray.speed_y = 0;
+    ray.x = 100;
     ray.offset_hy = 20;
-    ray.ypos = 10;
+    ray.y = 10;
     ray.anim_index = 0;
     ray.anim_frame = 0;
     ray.main_etat = 2;
@@ -428,7 +428,7 @@ void INIT_RAY(u8 level_index) {
     ray.timer = 0;
     ray.offset_bx = 80;
     ray.offset_by = 78;
-    ray.command_par2 = -1;
+    ray.cmd_arg_2 = -1;
     ray.phase = -1;
     ray.iframes_timer = -1;
     ray.is_active = 1;
@@ -443,7 +443,7 @@ void INIT_RAY(u8 level_index) {
     ray_in_fee_zone = 1;
     fin_dark = 0;
     for (i32 i = 0; i < 10; ++i) {
-        pos_stack[i] = ray.xpos;
+        pos_stack[i] = ray.x;
     }
     poing.is_active = 0;
     poing.is_charging = 0;
@@ -483,8 +483,8 @@ void INIT_RAY(u8 level_index) {
             ray.flags &= ~obj_flags_4_triggered;
             ray.is_active = 0;
         }
-        xmap = obj->xpos + obj->offset_bx - 160;
-        ymap = obj->ypos - 10;
+        xmap = obj->x + obj->offset_bx - 160;
+        ymap = obj->y - 10;
         if (GameModeVideo) {
             if (xmap >= xmapmax) {
                 xmap = xmapmax;
@@ -501,8 +501,8 @@ void INIT_RAY(u8 level_index) {
         } else {
             set_xymap();
         }
-        ray.xpos = obj->xpos + obj->offset_bx - ray.offset_bx;
-        ray.ypos = obj->ypos + obj->offset_by - ray.offset_by;
+        ray.x = obj->x + obj->offset_bx - ray.offset_bx;
+        ray.y = obj->y + obj->offset_by - ray.offset_by;
     }
 
     if (RaymanDansUneMapDuJeu) {
@@ -547,7 +547,7 @@ void INIT_MOTEUR_BEGIN(void) {
     new_level = 1;
     new_world = 1;
     status_bar.lives = 3;
-    ray.hitp = 2;
+    ray.hit_points = 2;
     gele = 0;
     departlevel = 1;
     poing.sub_etat = 1;

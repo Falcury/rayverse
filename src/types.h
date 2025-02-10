@@ -267,6 +267,18 @@ typedef struct pcx_header_t {
 	u8 reserved2[54];
 } pcx_header_t;
 
+typedef struct obj_flags_t {
+    u8 flag_1 : 1;          // 1
+    u8 command_test : 1;    // 2
+    u8 alive : 1;           // 4
+    u8 flip_x : 1;          // 8
+    u8 read_commands : 1;   // 0x10
+    u8 follow_enabled : 1;  // 0x20
+    u8 flag_0x40 : 1;       // 0x40
+    u8 flag_0x80 : 1;       // 0x80
+    u8 flag_0x100 : 1;      // 0x100
+} obj_flags_t;
+
 typedef struct obj_t {
 	sprite_t* sprites; // ImgDescriptorsPointer
 	anim_t* animations; // AnimDescriptorsPointer
@@ -277,31 +289,31 @@ typedef struct obj_t {
 	u8* cmd_contexts;
 	u32 field_1C; // 0x1C
 	u32 link_has_gendoor; // 0x20 - ?
-	i32 is_active;
-	i32 xpos;
-	i32 ypos;
-	u32 field_30;
+	i32 is_active; // 24
+	i32 x; // 28
+	i32 y; // 2C
+	i32 active_flag; // 30
 	i16 obj_index;
 	i16 screen_x;
 	i16 screen_y;
 	u16 field_3A;
-	i16 spawn_x;
-	i16 spawn_y;
-	i16 xspeed;
-	i16 yspeed;
+	i16 init_x;
+	i16 init_y;
+	i16 speed_x;
+	i16 speed_y;
 	i16 nb_sprites;
 	i16 cmd_offset;
 	i16 nb_cmd;
-	i16 command_par2; // action (?) // command_par2? // field_4A
+	i16 cmd_arg_2; // action (?) // command_par2? // field_4A
 	u16 follow_y;
 	u16 follow_x;
 	u16 cmd_arg_1;
 	i16 phase; // 52
-	u16 rayman_distance; //54
+	u16 rayman_dist; //54
 	i16 iframes_timer; // timer (?)
 	u16 test_block_index;
 	u16 scale; // 5A
-	u16 zdc_meta; // ?
+	u16 zdc; // ?
 	u16 active_timer;
 	u16 type;
 	u8 coll_btype[5]; // 0 = center, 1 = left, 2 = right, 3 = up, 4 = down
@@ -312,26 +324,26 @@ typedef struct obj_t {
 	u8 anim_frame;
 	u8 sub_etat; // 6C
 	u8 main_etat; // 6D
-	u8 spawn_sub_etat; // 6E
-	u8 spawn_etat; // 6F
-	u8 command; // 70
+	u8 init_sub_etat; // 6E
+	u8 init_etat; // 6F
+	u8 cmd; // 70
 	u8 gravity_value_1; // 71
 	u8 gravity_value_2; // 72
 	u8 change_anim_mode; // etat updated (?) // 73
 	i8 offset_hy;
 	u8 follow_sprite; // the sprite index which uses the obj collision
-	u8 hitp;
-	u8 spawn_hitp;
-	u8 init_flag; // display_prio? //78
+	u8 hit_points;
+	u8 init_hit_points;
+	u8 init_flag; // 78
 	u8 hit_sprite; // 79
-	u8 active_flag; // 7A // TODO: check if this is correct? discrepancy between PS1 and PC/Android struct layouts
-	u8 detect_zone; // 7B // TODO: check if this is correct? discrepancy between PS1 and PC/Android struct layouts
+	u8 detect_zone; // 7A
+	u8 detect_zone_flag; // 7B
 	i8 cmd_context_depth; // 7C
 	u8 configuration; // 7D
 	u8 display_prio; // layer the obj sprites get drawn to, between 1 and 7; 0 means it doesn't get drawn
 	i8 timer; // 7F
 	u8 anim_count;
-	u8 flags;
+    u8 flags;
 	u8 field_82;
 	u8 field_83;
 } obj_t;

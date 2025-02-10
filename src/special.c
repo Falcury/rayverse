@@ -1,8 +1,8 @@
 
 //7A340
 void new_level_init(void) {
-    ray_X_main_pos_init = ray.xpos;
-    ray_Y_main_pos_init = ray.ypos;
+    ray_X_main_pos_init = ray.x;
+    ray_Y_main_pos_init = ray.y;
     xmapsave = xmap;
     ymapsave = ymap;
     departlevel = 1;
