@@ -251,7 +251,10 @@ void INIT_LITTLE_RAY(void) {
 
 //68C8C
 void RESTORE_RAY(void) {
-    //stub
+    ray.sprites = raytmp.sprites;
+    ray.img_buffer = raytmp.img_buffer;
+    ray.scale = 0;
+    ray.nb_sprites = raytmp.nb_sprites;
 }
 
 //68CB8
@@ -332,7 +335,7 @@ void INIT_CHEMIN(void) {
     }
 
     INIT_PASTILLES_SAUVE();
-    INIT_STAGE_NAME(); //TODO
+    INIT_STAGE_NAME();
 }
 
 //68F38
@@ -484,7 +487,18 @@ void PASTILLES_SAUVE_SAVED(i16 world) {
 
 //69570
 void FIN_WORLD_CHOICE(void) {
-    //stub
+    DO_FADE_OUT();
+    xwldmapsave = xmap;
+    ywldmapsave = ymap;
+    xmap = xmapinit;
+    ymap = ymapinit;
+    dir_on_wldmap = ray.flags.flip_x;
+    RESTORE_RAY();
+    INIT_PASTILLES_SAUVE();
+    PROC_EXIT = 0;
+    if (ray.hit_points == -1) {
+        ray.hit_points = 0;
+    }
 }
 
 //695DC
@@ -568,7 +582,7 @@ void INIT_SAVE_CHOICE(void) {
     basex = 40;
     sortie_save = 0;
     for (i32 i = 0; i < NBRE_SAVE; ++i) {
-        LoadInfoGame(i);
+        LoadInfoGame(i + 1);
     }
 }
 

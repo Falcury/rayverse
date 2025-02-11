@@ -12,15 +12,20 @@ void DisplayJumellesNormal(i32 x, i32 y, i32 rayon, i32 a4, u8* effet_buf, u8* d
     if (skip_jumelle) {
 #if 0
         for (i32 i = 0; i < HauteurJumelle; ++i) {
-            if (JumelleYMin + i >= 0 && JumelleYMin + i < 320) {
-                memcpy(draw_buf + 320 * (JumelleYMin + i) + JumelleXMin, effet_buf + 320 * i, LargeurJumelle);
+            if (JumelleYMin + i >= 0 && JumelleYMin + i < 200) {
+                i32 width = LargeurJumelle;
+                if (JumelleXMin + LargeurJumelle > 320) {
+                    width = 320 - JumelleXMin;
+                }
+                memcpy(draw_buf + 320 * (JumelleYMin + i) + JumelleXMin, effet_buf + 320 * i, width);
             } else {
-                printf("out of bounds!\n");
+//                printf("out of bounds!\n");
                 break;
             }
         }
-#endif
+#else
         memcpy(draw_buf, effet_buf, 320*200);
+#endif
         return;
     }
 

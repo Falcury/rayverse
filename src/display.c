@@ -306,7 +306,7 @@ void DO_WORLD_MAP(void) {
     SAVE_PALETTE(&rvb_pres);
     INIT_FADE_IN();
     INIT_CHEMIN();
-    if (xwldmapsave != 0 && ywldmapsave != 0) {
+    if (xwldmapsave == 0 && ywldmapsave == 0) {
         xmap = (scroll_end_x + scroll_start_x) / 2;
         ymap = (scroll_end_y + scroll_start_y) / 2;
         DefaultJumelleVariable();

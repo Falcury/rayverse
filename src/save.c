@@ -564,7 +564,7 @@ void SaveGameOnDisk(u8 which_save) {
 
 
     char filename[512];
-    snprintf(filename, 512, "RAYMAN%d_.SAV", which_save);
+    snprintf(filename, 512, "RAYMAN%d.SAV", which_save);
     // stub: writing out to a temporary file for encryption
 
     FILE* fp = fopen(filename, "wb");

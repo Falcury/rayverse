@@ -581,11 +581,10 @@ void LoadPlan2InVignet(mem_t* buffer, i32 resource_id) {
     //LoadPcxPaletteInVignet(resource_id, &current_rvb); // we already loaded the palette in LoadPcxInVignet(), so we can skip this
     rvb_pres = current_rvb;
     plan2_width = width;
+    plan2_height = height;
     plan2bit_length = width * height;
     plan2bit_nb_bytes = width >> 2;
     PLAN2BIT = PLAN2;
-
-    //stub
 }
 
 //47DD8
