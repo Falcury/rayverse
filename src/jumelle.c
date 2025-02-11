@@ -313,7 +313,7 @@ void RecaleRayPosInJumelle(void) {
                 dhspeed--;
             }
         } else {
-            if (ray.flags & obj_flags_8_flipped) {
+            if (ray.flags.flip_x) {
                 i16 unk_x_3 = ashr16(ray.screen_x - v3, 2);
                 if (unk_x_3 > dhspeed) {
                     dhspeed++;

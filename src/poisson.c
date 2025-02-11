@@ -53,7 +53,7 @@ void DO_PYRANHA(obj_t* obj) {
                 }
                 obj->y = ymap + 200;
                 obj->is_active = 0;
-                obj->flags &= ~obj_flags_4_triggered;
+                obj->flags.alive = false;
                 obj->timer = 0;
                 respawn = can_free_fish(obj);
             }
@@ -61,7 +61,7 @@ void DO_PYRANHA(obj_t* obj) {
             if (y_offset_by < ymap) { //?
                 obj->y = ymap + 200;
                 obj->is_active = 0;
-                obj->flags &= ~obj_flags_4_triggered;
+                obj->flags.alive = false;
                 respawn = can_free_fish(obj);
             }
         }
@@ -86,7 +86,7 @@ void DoFishPoingCollision(obj_t* obj, i16 a2) {
         set_main_and_sub_etat(obj, 0, 3);
     }
     DESACTIVE_FISH_COLLIS(obj);
-    obj->cmd = obj_flipped(obj) ? cmd_1_right : cmd_0_left;
+    obj->cmd = obj->flags.flip_x ? cmd_1_right : cmd_0_left;
 }
 
 //6773C

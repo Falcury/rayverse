@@ -321,7 +321,7 @@ void INIT_CHEMIN(void) {
     special_ray_mov_win_x_right = 30;
     scroll_x = -1;
     scroll_y = -1;
-    ray.flags = (ray.flags & ~obj_flags_8_flipped) | ((dir_on_wldmap & 1) * obj_flags_8_flipped);
+    ray.flags.flip_x = dir_on_wldmap & 1;
 
     // If it's a new game, create the new save file on disk
     if (nouvelle_partie) {
@@ -418,9 +418,9 @@ void DO_RAYMAN_IN_WLD_MAP(void) {
         i16 diff_x = t_world_info[num_world_choice].xpos - t_world_info[old_num_world].xpos;
         i16 diff_y = t_world_info[num_world_choice].ypos - t_world_info[old_num_world].ypos;
         if (diff_x < 0) {
-            ray.flags &= ~obj_flags_8_flipped;
+            ray.flags.flip_x = false;
         } else {
-            ray.flags |= obj_flags_8_flipped;
+            ray.flags.flip_x = true;
         }
         i16 xspeed = 0; // speed x?
         i16 yspeed = 0; // speed y?
@@ -518,7 +518,7 @@ void INIT_NEW_GAME(void) {
     ray.hit_points = 2;
     fin_du_jeu = 0;
     nb_continue = 9;
-    ray.flags &= ~obj_flags_1;
+    ray.flags.flag_1 = false;
     poing.sub_etat = 1;
     departlevel = 1;
     memset(wi_save_zone, 0, sizeof(wi_save_zone));
@@ -849,7 +849,7 @@ void INIT_LOADER_ANIM(void) {
     bigray.main_etat = 1;
     bigray.sub_etat = 0;
     bigray.cmd = 0;
-    bigray.flags &= ~obj_flags_8_flipped;
+    bigray.flags.flip_x = false;
 }
 
 //6B258
@@ -865,7 +865,7 @@ void DO_LOADER_ANIM(void) {
         bigray.cmd = 5;
         set_main_and_sub_etat(&bigray, 0, 2);
         bigray.timer = 2;
-        bigray.flags &= ~obj_flags_8_flipped;
+        bigray.flags.flip_x = false;
         bigray.screen_x = 160 - bigray.offset_bx - 16;
     }
 
@@ -877,7 +877,7 @@ void DO_LOADER_ANIM(void) {
                     ++bigray.cmd;
                     set_main_and_sub_etat(&bigray, 1, 1);
                     bigray.screen_x = (-bigray.offset_bx) - 60;
-                    bigray.flags |= obj_flags_8_flipped;
+                    bigray.flags.flip_x = true;
                     DO_ANIM(&bigray);
                 } else {
                     DO_ANIM(&bigray);
@@ -889,7 +889,7 @@ void DO_LOADER_ANIM(void) {
                     set_main_and_sub_etat(&bigray, 1, 2);
                     bigray.anim_frame = 0;
                     bigray.screen_x = 350 - bigray.offset_bx;
-                    bigray.flags &= ~obj_flags_8_flipped;
+                    bigray.flags.flip_x = false;
                     DO_ANIM(&bigray);
                 } else {
                     DO_ANIM(&bigray);
@@ -908,7 +908,7 @@ void DO_LOADER_ANIM(void) {
                     ++bigray.cmd;
                     set_main_and_sub_etat(&bigray, 1, 3);
                     bigray.screen_x = -60 - bigray.offset_bx;
-                    bigray.flags |= obj_flags_8_flipped;
+                    bigray.flags.flip_x = true;
                     DO_ANIM(&bigray);
                 } else {
                     DO_ANIM(&bigray);
@@ -919,7 +919,7 @@ void DO_LOADER_ANIM(void) {
                     ++bigray.cmd;
                     set_main_and_sub_etat(&bigray, 0, 1);
                     bigray.screen_x = 160 - bigray.offset_bx - 16;
-                    bigray.flags &= ~obj_flags_8_flipped;
+                    bigray.flags.flip_x = false;
                     DO_ANIM(&bigray);
                 } else {
                     DO_ANIM(&bigray);

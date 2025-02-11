@@ -142,7 +142,6 @@ void obj_init(obj_t* obj) {
     obj->x = obj->init_x;
     obj->y = obj->init_y;
     obj->anim_index = obj->eta[obj->main_etat][obj->sub_etat].anim_index;
-    obj->flags &= ~obj_flags_8_flipped;
     obj->change_anim_mode = 0; //ANIMMODE_NONE;
     obj->gravity_value_1 = 0;
     obj->gravity_value_2 = 0;
@@ -150,17 +149,19 @@ void obj_init(obj_t* obj) {
     obj->iframes_timer = -1;
     obj->cmd_arg_2 = -1;
     obj->cmd_offset = -1;
-    obj->flags = (obj->flags & ~(obj_flags_0x10 | obj_flags_8_flipped)) | (obj_flags_0x10 * (obj->cmds != NULL));
+    obj->flags.flip_x = false;
+    obj->flags.read_commands = (obj->cmds != NULL);
     memset(obj->coll_btype, 0, 5);
     GET_OBJ_CMD(obj); //TODO
-    obj->flags &= (obj_flags_0x80_anim_changed | obj_flags_0x40);
+    obj->flags.anim_changed = false;
+    obj->flags.flag_0x40 = false;
+    obj->flags.flag_0x100 = false;
     obj->test_block_index = 0;
     obj->cmd_context_depth = -1;
     obj->active_flag = 1; //ACTIVE_DEAD;
     obj->timer = 0;
     obj->configuration = 0;
     obj->hit_points = obj->init_hit_points;
-    obj->field_82 &= ~1;
 
     switch (obj->type)
     {
@@ -202,7 +203,7 @@ void obj_init(obj_t* obj) {
         case TYPE_229_PUNAISE2:
         case TYPE_230_PUNAISE3:
         case TYPE_250_PUNAISE5:
-            obj->flags = (obj->flags & ~obj_flags_8_flipped) | (obj->hit_points & 1) * obj_flags_8_flipped;
+            obj->flags.flip_x = (obj->hit_points & 1);
             break;
         case TYPE_51_MST_FRUIT1:
         case TYPE_53_MST_SHAKY_FRUIT:
@@ -255,7 +256,7 @@ void obj_init(obj_t* obj) {
             break;
         case TYPE_0_BADGUY1:
             obj->offset_hy = 30;
-            obj->flags &= ~obj_flags_0x20_follow_enabled;
+            obj->flags.follow_enabled = false;
             break;
         case TYPE_144_LIDOLPINK2:
             obj->iframes_timer = 0;
@@ -310,7 +311,7 @@ void obj_init(obj_t* obj) {
         case TYPE_28_ONOFF_PLAT:
             obj->iframes_timer = 100;
             obj->cmd_arg_2 = 100;
-            obj->flags |= obj_flags_4_triggered;
+            obj->flags.alive = true;
             break;
         case TYPE_26_CRUMBLE_PLAT:
             if (num_world != 1) {
@@ -322,12 +323,13 @@ void obj_init(obj_t* obj) {
                 obj->iframes_timer = 20;
             }
             obj->phase = 20;
-            obj->flags |= obj_flags_4_triggered | obj_flags_0x20_follow_enabled;
+            obj->flags.alive = true;
+            obj->flags.follow_enabled = true;
             break;
         case TYPE_25_INST_PLAT:
             obj->iframes_timer = 15;
             obj->cmd_arg_2 = 15;
-            obj->flags |= obj_flags_4_triggered;
+            obj->flags.alive = true;
             break;
         case TYPE_29_AUTOJUMP_PLAT:
         case TYPE_34_MOVE_AUTOJUMP_PLAT:
@@ -336,7 +338,7 @@ void obj_init(obj_t* obj) {
         case TYPE_243_MARK_AUTOJUMP_PLAT:
             obj->iframes_timer = 1;
             obj->cmd_arg_2 = 1;
-            obj->flags |= obj_flags_4_triggered;
+            obj->flags.alive = true;
             break;
         case TYPE_116_CLOWN_TNT:
         case TYPE_117_CLOWN_TNT2:
@@ -356,11 +358,11 @@ void obj_init(obj_t* obj) {
             break;
         case TYPE_7_MORNINGSTAR:
         case TYPE_21_PHOTOGRAPHE:
-            obj->flags |= obj_flags_4_triggered;
+            obj->flags.alive = true;
             break;
         case TYPE_184_PIRATE_POELLE_D:
         case TYPE_226_PIRATE_P_D_45:
-            obj->flags |= obj_flags_8_flipped;
+            obj->flags.flip_x = true;
             break;
         case TYPE_212_DARK:
             obj->cmd_arg_1 = 0;
@@ -379,7 +381,7 @@ void obj_init(obj_t* obj) {
             // fallthrough
         case TYPE_170_RAYON:
         case TYPE_197_MEDAILLON_TOON:
-            obj->flags &= ~obj_flags_4_triggered;
+            obj->flags.alive = false;
             obj->is_active = 0;
             break;
     }

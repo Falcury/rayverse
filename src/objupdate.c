@@ -266,9 +266,8 @@ void pushToLabel(obj_t* obj, u8 a2, u8 a3) {
 
 //612F0
 void ObjectUTurnDefault(obj_t* obj) {
-    obj->flags ^= obj_flags_8_flipped;
+    obj->flags.flip_x = !obj->flags.flip_x;
 }
-
 
 //61320
 void DO_WIZARD(obj_t* obj) {
@@ -303,9 +302,10 @@ void allocate_badguy(obj_t* tentacle_obj, i16 which_enemy, i16 xspeed, i16 yspee
         if (((which_enemy == 1 && spawned->type == TYPE_0_BADGUY1) || (which_enemy == 2 && spawned->type == TYPE_9_BADGUY2))
             && spawned->init_x <= 0 && spawned->is_active == 0
                 ) {
-            spawned->flags &= ~(obj_flags_4_triggered | obj_flags_0x40);
+            spawned->flags.alive = false;
+            spawned->flags.flag_0x40 = false;
             spawned->is_active = 1;
-            spawned->flags |= obj_flags_4_triggered; // Note: this does not make sense, this bit was cleared just before!
+            spawned->flags.alive = true; // Note: this does not make sense, this bit was cleared just before!
             spawned->active_timer = 0;
             spawned->active_flag = 1;
             set_main_and_sub_etat(spawned, 2, 2); // thrown up in air
@@ -313,9 +313,9 @@ void allocate_badguy(obj_t* tentacle_obj, i16 which_enemy, i16 xspeed, i16 yspee
             spawned->y = tentacle_obj->y - (spawned->offset_by / 4);
             calc_obj_dir(spawned);
             spawned->speed_y = yspeed;
-            spawned->speed_x = obj_flipped(spawned) ? xspeed : -xspeed;
+            spawned->speed_x = spawned->flags.flip_x ? xspeed : -xspeed;
             calc_obj_pos(spawned);
-            spawned->flags &= ~obj_flags_0x10;
+            spawned->flags.read_commands = false;
             return;
         }
     }
@@ -378,7 +378,7 @@ void DoPowerupRaymanCollision(obj_t* obj) {
     if (ray.hit_points > ray_max_hitp) {
         ray.hit_points = ray_max_hitp;
     }
-    obj->flags &= ~obj_flags_4_triggered;
+    obj->flags.alive = false;
     PlaySnd(8, obj->obj_index);
 
 }
@@ -531,7 +531,7 @@ void DoChasseurPoingCollision(obj_t* obj, i16 a2) {
         } else {
             set_main_and_sub_etat(obj, 0, 3); // dead
         }
-        obj->cmd = obj_flipped(obj) ? cmd_0_left : cmd_1_right;
+        obj->cmd = obj->flags.flip_x ? cmd_0_left : cmd_1_right;
     }
 }
 
@@ -541,9 +541,9 @@ void DoChasseurRaymanZDD(obj_t* obj) {
         obj->speed_x = 0;
         obj->speed_y = 0;
         set_main_and_sub_etat(obj, 0, 2);
-        obj->flags &= ~obj_flags_0x10;
+        obj->flags.read_commands = false;
         calc_obj_dir(obj);
-        obj->cmd = obj_flipped(obj) ? cmd_1_right : cmd_0_left;
+        obj->cmd = obj->flags.flip_x ? cmd_1_right : cmd_0_left;
     }
 }
 
@@ -560,7 +560,7 @@ void DoBadGuy23PoingCollision(obj_t* obj, i16 a2) {
             set_main_and_sub_etat(obj, 0, 3);
             skipToLabel(obj, 2, 1);
             obj->y -= 2;
-            obj->flags &= ~obj_flags_0x10;
+            obj->flags.read_commands = false;
         } else {
             //stub
         }
@@ -573,8 +573,8 @@ void DoBadGuy23RaymanZDD(obj_t* obj) {
         set_sub_etat(obj, 14);
     } else if ((obj->main_etat == 0 && obj->sub_etat == 0) || (obj->main_etat == 1 && obj->sub_etat == 0)) {
         set_main_and_sub_etat(obj, 1, 11);
-        obj->flags &= ~obj_flags_0x10;
-        skipToLabel(obj, obj_flipped(obj) ? 3 : 2, 1);
+        obj->flags.read_commands = false;
+        skipToLabel(obj, obj->flags.flip_x ? 3 : 2, 1);
     }
 }
 
@@ -603,13 +603,13 @@ void DoBadGuy1PoingCollision(obj_t* obj, i16 a2) {
 
 //62C40
 void DoBadGuy1RaymanZDD(obj_t* obj) {
-    if ((obj->flags & obj_flags_8_flipped) != (ray.flags & obj_flags_8_flipped)) {
+    if (obj->flags.flip_x != ray.flags.flip_x) {
         if ((obj->main_etat == 1 && obj->sub_etat == 0) || (obj->main_etat == 0 && obj->sub_etat == 0)) {
             if (ray.main_etat == 0 && ray.sub_etat == 18 /* stick out tongue */) {
                 obj->speed_x = 0;
                 obj->speed_y = 0;
                 set_main_and_sub_etat(obj, 0, 2);
-                skipToLabel(obj, (obj->flags & obj_flags_8_flipped) ? 8 : 7, 1);
+                skipToLabel(obj, obj->flags.flip_x ? 8 : 7, 1);
             }
         }
     }

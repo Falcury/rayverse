@@ -275,7 +275,7 @@ typedef struct obj_flags_t {
     u8 read_commands : 1;   // 0x10
     u8 follow_enabled : 1;  // 0x20
     u8 flag_0x40 : 1;       // 0x40
-    u8 flag_0x80 : 1;       // 0x80
+    u8 anim_changed : 1;       // 0x80
     u8 flag_0x100 : 1;      // 0x100
 } obj_flags_t;
 
@@ -343,8 +343,7 @@ typedef struct obj_t {
 	u8 display_prio; // layer the obj sprites get drawn to, between 1 and 7; 0 means it doesn't get drawn
 	i8 timer; // 7F
 	u8 anim_count;
-    u8 flags;
-	u8 field_82;
+    obj_flags_t flags;
 	u8 field_83;
 } obj_t;
 
@@ -437,7 +436,7 @@ typedef struct save_state_t {
 	i16 save_obj_x_pos; //0x44
 	i16 save_obj_y_pos; //0x46
 	u16 link_init[256]; //0x48
-	u8 save_obj_detect_zone; //0x248
+	u8 save_obj_detect_zone_flag; //0x248
 	u8 save_obj_flag_1;
 	u8 ray_coll_btype[5];
 	u8 ray_anim_index;
@@ -1233,7 +1232,7 @@ enum event_flags_enum {
 	obj_flags_2 = 2,
 	obj_flags_4_triggered = 4,
 	obj_flags_8_flipped = 8,
-	obj_flags_0x10 = 0x10,
+	obj_flags_0x10_read_commands = 0x10,
 	obj_flags_0x20_follow_enabled = 0x20,
 	obj_flags_0x40 = 0x40,
 	obj_flags_0x80_anim_changed = 0x80,

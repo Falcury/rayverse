@@ -85,7 +85,7 @@ void SET_X_SPEED(obj_t* obj) {
     u8 horloge_index = ((anim->layers_per_frame & 0xC000) >> 14) + 1;
     if (horloge[horloge_index] == 0) {
         eta_t* eta = get_eta(obj);
-        if (obj->flags & obj_flags_8_flipped) {
+        if (obj->flags.flip_x) {
             xspeed = eta->right_speed * horloge_index;
         } else {
             xspeed = eta->left_speed * horloge_index;
@@ -182,15 +182,14 @@ void DO_ANIM(obj_t* obj) {
         }
     }
     obj->change_anim_mode = 0;
-    if (obj->flags & obj_flags_0x20_follow_enabled) {
+    if (obj->flags.follow_enabled) {
         //calc_follow_sprite_speed(); //STUB
     }
     u8 anim_changed_bit = 0;
     if (obj->anim_frame != prev_anim_frame || obj->anim_index != prev_anim_index) {
         anim_changed_bit = 1;
     }
-    obj->flags &= ~obj_flags_0x80_anim_changed;
-    obj->flags |= (anim_changed_bit << 7);
+    obj->flags.anim_changed = anim_changed_bit;
 
 }
 
@@ -398,7 +397,7 @@ void INIT_RAY_BEGIN(void) {
     ray_max_hitp = 2;
     status_bar.num_wiz = 0;
     fin_continue = 0;
-    ray.flags &= ~obj_flags_1;
+    ray.flags.flag_1 = false;
 }
 
 //59948
@@ -432,7 +431,9 @@ void INIT_RAY(u8 level_index) {
     ray.phase = -1;
     ray.iframes_timer = -1;
     ray.is_active = 1;
-    ray.flags = (ray.flags | (obj_flags_4_triggered | obj_flags_8_flipped)) & ~obj_flags_0x40;
+    ray.flags.alive = true;
+    ray.flags.flip_x = true;
+    ray.flags.flag_0x40 = false;
     ray_stack_is_full = 0;
     no_ray_landing_smoke = 0;
     in_air_because_hit = 0;
@@ -480,7 +481,7 @@ void INIT_RAY(u8 level_index) {
         }
         // NOTE: if the rayman start position doesn't exist, the first object is used instead
         if (!fin_continue) {
-            ray.flags &= ~obj_flags_4_triggered;
+            ray.flags.alive = false;
             ray.is_active = 0;
         }
         xmap = obj->x + obj->offset_bx - 160;

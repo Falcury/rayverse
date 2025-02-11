@@ -169,9 +169,9 @@ void GET_BB1_ZDCs(obj_t* obj, i16* a2, i16* a3, i16* a4, i16* a5, i16* a6, i16* 
 //1DFB8
 void calc_obj_dir(obj_t* obj) {
     if (ray.x + ray.offset_bx > obj->x + obj->offset_bx) {
-        obj->flags |= obj_flags_8_flipped;
+        obj->flags.flip_x = true;
     } else {
-        obj->flags &= ~obj_flags_8_flipped;
+        obj->flags.flip_x = false;
     }
 }
 
@@ -301,14 +301,14 @@ u8 calc_btyp(obj_t* obj) {
                         i32 ground_x = left_or_right ? x + 16 : x - 16;
                         if (!(block_flags[BTYP(ground_x >> 4, y >> 6)] & 2)) {
                             if (ray.main_etat != 2) {
-                                obj->cmd_arg_1 = (left_or_right == ((ray.flags & obj_flags_8_flipped) != 0));
+                                obj->cmd_arg_1 = (left_or_right == ray.flags.flip_x);
                             }
                             ray.coll_btype[0] = ray.coll_btype[1 + (left_or_right != 0)];
                         }
                     }
-                } else if (left_or_right != ((ray.flags & obj_flags_8_flipped) != 0) && obj->main_etat != 2) {
+                } else if (left_or_right != ray.flags.flip_x && obj->main_etat != 2) {
                     if (
-                            (obj->type == TYPE_BADGUY1 && obj->flags & obj_flags_8_flipped) ||
+                            (obj->type == TYPE_BADGUY1 && obj->flags.flip_x) ||
                             obj->type == TYPE_BADGUY2 || obj->type == TYPE_BADGUY3 || obj->type == TYPE_GENEBADGUY ||
                             obj->type == TYPE_STONEMAN1 || obj->type == TYPE_STONEMAN2 ||
                             obj->type == TYPE_BIG_CLOWN || obj->type == TYPE_WAT_CLOWN ||

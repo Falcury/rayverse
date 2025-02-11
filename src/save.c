@@ -340,7 +340,7 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state) {
 	save_state->ray_y_pos = (i16)ray.y;
 	save_state->ray_screen_x = ray.screen_x;
 	save_state->ray_screen_y = ray.screen_y;
-	save_state->ray_flip_x = (ray.flags & obj_flags_8_flipped) != 0;
+	save_state->ray_flip_x = ray.flags.flip_x;
 	save_state->rayevts_reverse = RayEvts.reverse;
 	save_state->rayevts_super_helico = RayEvts.super_helico;
 	save_state->rayevts_poing = RayEvts.poing;
@@ -348,8 +348,8 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state) {
 		save_state->save_obj_id = save_obj->obj_index;
 		save_state->save_obj_x_pos = (i16)save_obj->x;
 		save_state->save_obj_y_pos = (i16)save_obj->y;
-		save_state->save_obj_detect_zone = save_obj->detect_zone; //TODO: check if correct
-		save_state->save_obj_flag_1 = save_obj->flags & obj_flags_1;
+		save_state->save_obj_detect_zone_flag = save_obj->detect_zone_flag;
+		save_state->save_obj_flag_1 = save_obj->flags.flag_1;
 	} else {
 		save_state->save_obj_id = -1;
 	}
@@ -372,7 +372,7 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state) {
 		if (obj->type == TYPE_141_NEIGE || obj->type == TYPE_164_GENERATING_DOOR || obj->type == TYPE_179_HERSE_BAS_NEXT || obj->type == TYPE_242_HERSE_HAUT_NEXT) {
 			u32 bit = 1 << (obj_id & 0x1F);
 			u32 index = obj_id >> 5;
-			if (obj->flags & obj_flags_4_triggered) {
+			if (obj->flags.alive) {
 				save_state->triggered_objects[index] |= bit;
 			} else {
 				save_state->triggered_objects[index] &= ~bit;
@@ -397,8 +397,7 @@ void restoreGameState(save_state_t* save_state) {
         ray.y = save_state->ray_y_pos;
         ray.screen_x = save_state->ray_screen_x;
         ray.screen_y = save_state->ray_screen_y;
-        ray.flags &= ~obj_flags_8_flipped;
-        ray.flags |= obj_flags_8_flipped * (save_state->ray_flip_x & 1);
+        ray.flags.flip_x = save_state->ray_flip_x;
         RayEvts.super_helico = save_state->rayevts_super_helico;
         if (num_world == world_6_cake && num_level == 3) {
             RayEvts.poing = save_state->rayevts_poing;
@@ -408,9 +407,8 @@ void restoreGameState(save_state_t* save_state) {
             obj_t* save_obj = level.objects + save_state->save_obj_id;
             save_obj->x = save_state->save_obj_x_pos;
             save_obj->y = save_state->save_obj_y_pos;
-            save_obj->detect_zone = save_state->save_obj_detect_zone; //TODO: check if correct
-            save_obj->flags &= ~obj_flags_1;
-            save_obj->flags |= obj_flags_1 * (save_state->save_obj_flag_1 & 1);
+            save_obj->detect_zone_flag = save_state->save_obj_detect_zone_flag;
+            save_obj->flags.flag_1 = save_state->save_obj_flag_1;
         }
         if (save_state == &save1) {
             for (i32 i = 0; i < level.nb_objects; ++i) {
@@ -449,7 +447,7 @@ void restoreGameState(save_state_t* save_state) {
         ray.iframes_timer = -1;
         ray.is_active = 1;
         VENT_Y = save_state->vent_y;
-        ray.flags |= obj_flags_4_triggered;
+        ray.flags.alive = true;
         for (i32 obj_id = 0; obj_id < level.nb_objects; ++obj_id) {
             obj_t* obj = level.objects + obj_id;
             u16 type = obj->type;
@@ -462,7 +460,7 @@ void restoreGameState(save_state_t* save_state) {
                 || type == TYPE_62_DROP
                 || type == TYPE_99_RAY_POS
             ) {
-                obj->flags &= ~obj_flags_4_triggered;
+                obj->flags.alive = false;
             } else {
                 if (type != TYPE_141_NEIGE && type != TYPE_164_GENERATING_DOOR) {
                     bool need_check_triggered;
@@ -477,9 +475,9 @@ void restoreGameState(save_state_t* save_state) {
                     }
                 }
                 if (((1 << (obj_id & 0x1F)) & (save_state->triggered_objects[obj_id >> 5])) == 0) {
-                    obj->flags &= ~obj_flags_4_triggered;
+                    obj->flags.alive = false;
                 } else {
-                    obj->flags |= obj_flags_4_triggered;
+                    obj->flags.alive = true;
                 }
             }
         }

@@ -10,7 +10,7 @@ void display2(obj_t* obj) {
             sprite_t* sprite = obj->sprites + layer->sprite_index;
             if (sprite->unk_index != 0) {
                 i32 x;
-                if (obj->flags & obj_flags_8_flipped) {
+                if (obj->flags.flip_x) {
                     if (obj->scale == 256 && layer_index == 5 && obj->anim_index >= 14 && obj->anim_index <= 16) {
                         x = -16;
                     } else {
@@ -22,7 +22,7 @@ void display2(obj_t* obj) {
                 }
 
                 draw_func_t* draw_func = NULL;
-                if ((obj->flags & obj_flags_8_flipped) ^ layer->mirrored) {
+                if (obj->flags.flip_x ^ layer->mirrored) {
                     draw_func = DrawSpriteFlipNormalEtX;
                 } else {
                     draw_func = DrawSpriteNormalEtX;

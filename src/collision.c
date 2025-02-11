@@ -177,7 +177,7 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
         ray.speed_y = 0;
         ray.speed_x = 0;
         poing.is_charging = 0;
-    } else if (ray.flags & obj_flags_4_triggered) {
+    } else if (ray.flags.alive) {
         if (!(ray.main_etat == 3 && (ray.sub_etat == 22 || ray.sub_etat == 32)) &&
             !(ray.main_etat == 2 && ray.sub_etat == 31)
                 ) {
@@ -188,7 +188,7 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
             }
             ray_speed_inv = 0;
             if (ray.main_etat == 0 && ray.sub_etat == 61) {
-                ray.speed_x = (ray.flags & obj_flags_8_flipped) ? -2 : 2;
+                ray.speed_x = ray.flags.flip_x ? -2 : 2;
                 ray.speed_y = -3;
             } else {
                 if (other_obj != NULL) {
@@ -202,7 +202,7 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
                     } else if (other_obj->type == TYPE_200_BB13) {
                         bump_direction = -1;
                     } else if (other_obj->type == TYPE_100_MITE) {
-                        bump_direction = (other_obj->flags & obj_flags_8_flipped) ? 1 : -1;
+                        bump_direction = other_obj->flags.flip_x ? 1 : -1;
                     } else if (other_obj->type == TYPE_120_BATTEUR_FOU) {
                         // bump_direction = sub_2008C(other_event);
                     } else if (other_obj->type == TYPE_187_MAMA_PIRATE) {
@@ -214,7 +214,7 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
                     } else {
                         i32 xspeed_delta = other_obj->speed_x - ray.speed_x;
                         if (xspeed_delta == 0) {
-                            bump_direction = (ray.flags & obj_flags_8_flipped) ? 1 : -1;
+                            bump_direction = ray.flags.flip_x ? 1 : -1;
                         } else {
                             bump_direction = xspeed_delta > 0 ? 1 : -1;
                         }
@@ -370,7 +370,7 @@ void DO_ONE_CMD_UPDOWN(obj_t* obj) {
 //2F63C
 void special_pour_liv(obj_t* event) {
     if (event->type == TYPE_0_BADGUY1 && event->main_etat == 1 && event->sub_etat == 11) {
-        event->flags &= ~0x10;
+        event->flags.read_commands = false;
     }
 }
 
@@ -381,9 +381,9 @@ void DO_ONE_CMD(obj_t* obj) {
     u8 etat = obj->main_etat;
     if (cmd == cmd_0_left || cmd == cmd_1_right) {
         if (cmd == cmd_0_left) {
-            obj->flags &= ~obj_flags_8_flipped;
+            obj->flags.flip_x = false;
         } else {
-            obj->flags |= obj_flags_8_flipped;
+            obj->flags.flip_x = true;
         }
         if (etat == 1) {
             // stub
