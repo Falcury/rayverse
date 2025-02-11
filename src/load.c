@@ -84,7 +84,7 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
                         mem_read(anim->layers, mem, layer_table_size);
                         if (frames_ptr != -1) {
                             ASSERT(sizeof(anim_frame_t) == 4);
-                            anim->frames = (anim_frame_t*) block_malloc(main_mem_fix, anim->frame_count * sizeof(anim_frame_t));
+                            anim->frames = (anim_frame_t*) block_malloc(mem_world, anim->frame_count * sizeof(anim_frame_t));
                             mem_read(anim->frames, mem, anim->frame_count * sizeof(anim_frame_t));
                         }
 

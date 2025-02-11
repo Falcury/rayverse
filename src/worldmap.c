@@ -665,7 +665,8 @@ void INIT_AFFICHE_ECRAN_SAVE(void) {
 void SAISIE_NOM(void) {
     TestCompteur();
     if (!fichier_existant && action != 1) {
-        *(u32*)(save_ray[positiony]) = *(u32*)"AAA";
+        *(u32*)(save_ray[positiony-1]) = *(u32*)"aaa";
+        fichier_existant = 1;
     }
     if (affiche_bon_ecran) {
         fin_saisie_nom = 1;
@@ -761,7 +762,15 @@ void REALISATION_ACTION(void) {
         } break;
         case 2: {
             // Erase
-            //stub
+            if (save_ray[positiony-1][0] == '\0') {
+                break;
+            }
+            if (confirmation_msg(1)) {
+                fichier_selectionne = positiony;
+                REMOVE_FICHIER(); //TODO
+                save_ray[fichier_selectionne-1][0] = '\0';
+            }
+            realisation_effectuee = 1;
         } break;
         case 3: {
             // Start

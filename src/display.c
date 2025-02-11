@@ -36,6 +36,7 @@ i16 saisie_nom_prg(u32 a1) {
         sortie_save = 1;
     }
 
+    bool finished = fin_saisie_nom || MENU_RETURN;
     if (MENU_RETURN) {
         if (action == 1) {
             strncpy(save_ray[fichier_selectionne-1], save_ray_copy, 4);
@@ -44,7 +45,7 @@ i16 saisie_nom_prg(u32 a1) {
         }
     }
 
-    return fin_saisie_nom || MENU_RETURN;
+    return finished;
 }
 
 //34334
