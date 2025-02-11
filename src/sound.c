@@ -116,18 +116,95 @@ void debug_produce_test_sound(game_sound_buffer_t* sound_buffer) {
 	}
 }
 
-void game_get_sound_samples(game_sound_buffer_t* sound_buffer) {
+
+i16 play_digi_snd(snd_t* snd) {
+    for (i32 i = 0; i < COUNT(digi_voices); ++i) {
+        snd_t* voice = digi_voices + i;
+        if (!voice->is_playing) {
+            *voice = *snd;
+            voice->cursor = 0;
+            voice->is_playing = true;
+            break;
+        }
+    }
+    return -1; // NOTE: should we return something more appropriate here?
+}
+
+void lock_audio(void) {
+    //stub // TODO: prevent reading after sound banks have been freed (need to acquire a lock!)
+}
+
+void unlock_audio(void) {
+    //stub // TODO: prevent reading after sound banks have been freed (need to acquire a lock!)
+}
+
+void game_get_sound_samples(game_sound_buffer_t* output_buffer) {
+    // Play music
 	if (is_ogg_playing) {
 		if (ogg_cd_track.decoder) {
-			play_ogg(sound_buffer, &ogg_cd_track);
+			play_ogg(output_buffer, &ogg_cd_track);
 		}
 	} else {
         i32 bytes_per_sample = sizeof(short) * 2;
-        memset(sound_buffer->samples, 0, sound_buffer->sample_count * bytes_per_sample);
+        memset(output_buffer->samples, 0, output_buffer->sample_count * bytes_per_sample);
 	}
+
+    // Play digi sounds
+    lock_audio();
+    for (i32 i = 0; i < COUNT(digi_voices); ++i) {
+        snd_t* voice = digi_voices + i;
+        if (voice->is_playing) {
+            // Source sample rate is 11025 Hz, target sample rate is 44100 Hz
+            // We can implement a simple upsampling with linear interpolation
+            // TODO: more advanced upsampling to account for pitch differences
+            i32 total_source_samples = voice->sample_count * 4;
+            i32 dest_samples_remaining = total_source_samples - voice->dest_cursor;
+            if (dest_samples_remaining > 0) {
+
+                i32 dest_samples_to_output = MIN(output_buffer->sample_count, dest_samples_remaining);
+                i32 prev_source_sample = (voice->cursor > 0) ? (i32)voice->data[voice->cursor - 1] - 128 : 0;
+                i32 next_source_sample = (i32)(voice->data[voice->cursor]) - 128;
+                i16* dest_pos = output_buffer->samples;
+                for (i32 j = 0; j < dest_samples_to_output; ++j) {
+
+                    // Do the linear interpolation while also converting from 8-bit to 16-bit samples
+                    // TODO: account for volume
+                    i32 dest_sample;
+                    switch(voice->dest_cursor % 4) {
+                        default:
+                        case 0: {
+                            dest_sample = prev_source_sample * (256/2);
+                        } break;
+                        case 1: {
+                            dest_sample = prev_source_sample * (192/2) + next_source_sample * (64/2);
+                        } break;
+                        case 2: {
+                            dest_sample = prev_source_sample * (128/2) + next_source_sample * (128/2);
+                        } break;
+                        case 3: {
+                            dest_sample = prev_source_sample * (64/2) + next_source_sample * (192/2);
+                            // we're done with this source sample, move to the next one
+                            prev_source_sample = next_source_sample;
+                            next_source_sample = (i32)voice->data[voice->cursor] - 128;
+                            ++voice->cursor;
+                        } break;
+                    }
+
+                    // Mix sound by adding together voices, then cap between INT16_MIN and INT16_MAX to prevent rollover
+                    i32 mixed = *dest_pos + dest_sample;
+                    mixed = MIN(32767, MAX(-32768, mixed));
+
+                    *dest_pos++ = (i16)mixed;
+                    *dest_pos++ = (i16)mixed;
+                    ++voice->dest_cursor;
+                }
+            } else {
+                voice->is_playing = false; // sound finished playing
+            }
+        }
+    }
+    unlock_audio();
 }
-
-
 
 //71C00
 void manage_snd_event(void) {

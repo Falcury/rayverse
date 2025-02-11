@@ -27,6 +27,8 @@ void sub_3E780(void) {
 
 //3E820
 void LoadBnkFile(i32 header_index, i32 data_index, bnk_header_t* headers, u8** data) {
+    lock_audio(); // added
+
     // Load sound header
     FILE* fp = open_data_file("SNDH8B.DAT", false);
     if (!fp) {
@@ -74,6 +76,7 @@ void LoadBnkFile(i32 header_index, i32 data_index, bnk_header_t* headers, u8** d
     }
 #endif
 
+    unlock_audio(); // added
 }
 
 void LoadBnkFile_debug(i32 sound_set, i32 a2, u8** sound_buffer) {
@@ -152,12 +155,27 @@ void LoadBnkWorld(i16 world) {
 
 //3EABC
 i16 KeyOn(u8 bank, u8 prog, u8 tone, u8 note, u8 volume, u8 a6) {
+    snd_t snd = {0};
     if (bank == 1) {
         bnk_header_t* bnk_header = bnkHeaderWorld + prog;
+        snd.data = bnkDataWorld + bnk_header->offset;
+        snd.offset = bnk_header->offset;
+        snd.size = bnk_header->size;
+        snd.bytes_per_sample = 1;
+        snd.sample_count = snd.size;
+        snd.bnk_field_C = bnk_header->field_C;
+        snd.sample_rate = 11025;
     } else {
         bnk_header_t* bnk_header = bnkHeaderFixe + prog;
+        snd.data = bnkDataFixe + bnk_header->offset;
+        snd.offset = bnk_header->offset;
+        snd.size = bnk_header->size;
+        snd.sample_count = snd.size;
+        snd.sample_rate = 11025;
+        snd.bytes_per_sample = 1;
     }
-    return -1; //stub
+    i16 voice_index = play_digi_snd(&snd);
+    return voice_index;
 }
 
 //3EC0C

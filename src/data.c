@@ -10,7 +10,7 @@ game_state_t* global_game;
 ogg_t ogg_cd_track;
 bool is_ogg_playing;
 bool is_ogg_finished;
-
+snd_t digi_voices[32];
 
 
 

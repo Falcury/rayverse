@@ -1510,7 +1510,10 @@ void destroy_image(image_t* image);
 i64 get_clock(void);
 float get_seconds_elapsed(i64 start, i64 end);
 // sound.c
-void game_get_sound_samples(game_sound_buffer_t* sound_buffer);
+void lock_audio(void);
+void unlock_audio(void);
+void game_get_sound_samples(game_sound_buffer_t* output_buffer);
+i16 play_digi_snd(snd_t* snd);
 void play_cd_track(i32 track_number);
 void stop_cd_music(void);
 ogg_t open_cd_vorbis(i32 track_number);

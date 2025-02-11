@@ -49,6 +49,21 @@ typedef struct game_sound_buffer_t {
 	i16* samples;
 } game_sound_buffer_t;
 
+
+typedef struct snd_t {
+    u8* data;
+    i32 offset;
+    i32 size;
+    i32 sample_count;
+    i32 bnk_field_C;
+    i32 cursor;
+    i32 dest_cursor;
+    i32 sample_rate;
+    u8 bytes_per_sample;
+    u8 is_playing;
+} snd_t;
+
+
 typedef struct game_state_t {
 	bool initialized;
 	image_t draw_buffer; // draw_buffer
