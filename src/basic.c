@@ -99,7 +99,10 @@ i32 inverse_proj_y(i16 a1, i16 a2) {
 
 //1D6C8
 i32 vblToEOA(obj_t* obj, u8 a2) {
-    return 0; //stub
+    eta_t* eta = get_eta(obj);
+    i32 anim_speed = eta->anim_speed & 15;
+    i32 result = obj->animations[eta->anim_index].frame_count * anim_speed * a2 - horloge[anim_speed] + 1;
+    return (result <= 0) ? 1 : result;
 }
 
 //1D738
@@ -176,8 +179,16 @@ void calc_obj_dir(obj_t* obj) {
 }
 
 //1DFF4
-void OBJ_IN_ZONE(obj_t* obj) {
-    //stub
+u8 OBJ_IN_ZONE(obj_t* obj) {
+    switch(obj->type) {
+        case TYPE_BADGUY2:
+        case TYPE_BADGUY3:
+        case TYPE_LIDOLPINK:
+        case TYPE_LIDOLPINK2:
+            return obj->detect_zone_flag == 1;
+        default:
+            return obj->detect_zone_flag != 0;
+    }
 }
 
 //1E030

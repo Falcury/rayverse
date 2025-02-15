@@ -333,14 +333,14 @@ void DO_ONE_CMD_LR_ATTENTE(obj_t* obj) {
 //2F594
 void DO_ONE_CMD_UPDOWN(obj_t* obj) {
     if (obj->type == TYPE_1_PLATFORM) {
-        if (obj->cmd == cmd_3_down) {
+        if (obj->cmd == cmd_3_up) {
             obj->speed_y = -2;
-        } else if (obj->cmd == cmd_4) {
+        } else if (obj->cmd == cmd_4_down) {
             obj->speed_y = 2;
         }
     } else if (obj->type == TYPE_10_FISH) {
         if (obj->main_etat == 0 && obj->sub_etat == 0) {
-            if (obj->cmd == cmd_3_down) {
+            if (obj->cmd == cmd_3_up) {
                 obj->speed_y = -2;
             } else {
                 obj->speed_y = 2;
@@ -348,18 +348,18 @@ void DO_ONE_CMD_UPDOWN(obj_t* obj) {
         }
     } else if (obj->type == TYPE_24_INTERACTPLT) {
         // This procedure is only called for commands 3 and 4, so, not sure why we are checking for command 2 here?
-        if (obj->cmd != cmd_2_up) {
+        if (obj->cmd != cmd_2_wait) {
             --obj->nb_cmd;
             if (obj->nb_cmd <= 0) {
-                if (obj->cmd == cmd_3_down) {
+                if (obj->cmd == cmd_3_up) {
                     obj->speed_y = -1;
-                } else if (obj->cmd == cmd_4) {
+                } else if (obj->cmd == cmd_4_down) {
                     obj->speed_y = 1;
                 }
             } else {
                 obj->speed_y = 0;
                 obj->nb_cmd = 0;
-                obj->cmd = cmd_2_up;
+                obj->cmd = cmd_2_wait;
                 obj->init_y = obj->y;
             }
 
@@ -386,17 +386,16 @@ void DO_ONE_CMD(obj_t* obj) {
             obj->flags.flip_x = true;
         }
         if (etat == 1) {
-            // stub
             SET_X_SPEED(obj);
             CALC_MOV_ON_BLOC(obj);
         } else if (etat == 2) {
             SET_X_SPEED(obj);
         } else if (etat == 0) {
-            //sub_2F488()
+            DO_ONE_CMD_LR_ATTENTE(obj);
         }
-    } else if (cmd == cmd_2_up) {
+    } else if (cmd == cmd_2_wait) {
         DO_ONE_CMD_WAIT(obj);
-    } else if (cmd == cmd_3_down || cmd == cmd_4) {
+    } else if (cmd == cmd_3_up || cmd == cmd_4_down) {
         DO_ONE_CMD_WAIT(obj);
     } else if (cmd == cmd_20_speed) {
         obj->speed_x = obj->iframes_timer;

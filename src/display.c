@@ -313,7 +313,7 @@ void DO_WORLD_MAP(void) {
     }
     if (!ModeDemo) {
         //InitPcSoundCard?
-        SYNCHRO_LOOP(WORLD_CHOICE); // TODO
+        SYNCHRO_LOOP(WORLD_CHOICE);
     }
     if (JeuCracker && num_world_choice > world_3_mountain) {
         fin_de_rayman = 1;

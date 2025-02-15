@@ -290,9 +290,14 @@ typedef struct obj_flags_t {
     u8 read_commands : 1;   // 0x10
     u8 follow_enabled : 1;  // 0x20
     u8 flag_0x40 : 1;       // 0x40
-    u8 anim_changed : 1;       // 0x80
+    u8 anim_changed : 1;    // 0x80
     u8 flag_0x100 : 1;      // 0x100
 } obj_flags_t;
+
+typedef struct cmd_context_t {
+    i16 cmd_offset;
+    i16 count;
+} cmd_context_t;
 
 typedef struct obj_t {
 	sprite_t* sprites; // ImgDescriptorsPointer
@@ -301,7 +306,7 @@ typedef struct obj_t {
 	eta_t** eta;
 	u8* cmds;
 	u8* cmd_labels;
-	u8* cmd_contexts;
+	cmd_context_t* cmd_contexts;
 	u32 field_1C; // 0x1C
 	u32 link_has_gendoor; // 0x20 - ?
 	i32 is_active; // 24
@@ -320,9 +325,9 @@ typedef struct obj_t {
 	i16 cmd_offset;
 	i16 nb_cmd;
 	i16 cmd_arg_2; // action (?) // command_par2? // field_4A
-	u16 follow_y;
-	u16 follow_x;
-	u16 cmd_arg_1;
+	i16 follow_y;
+	i16 follow_x;
+	i16 cmd_arg_1;
 	i16 phase; // 52
 	u16 rayman_dist; //54
 	i16 iframes_timer; // timer (?)
@@ -517,9 +522,9 @@ typedef struct {
 } obj_procs_t;
 
 typedef struct {
-    u8 (*read_arg)(obj_t* obj);
-    u8 (*skip_arg)(obj_t* obj);
-    void (*handle)(obj_t* obj);
+    u8 (*read)(obj_t* obj);
+    u8 (*skip)(obj_t* obj);
+    u8 (*handle)(obj_t* obj);
 } cptr_t;
 
 typedef struct {
@@ -1143,12 +1148,12 @@ enum world_enum {
 enum cmd_enum {
 	cmd_0_left       = 0,
 	cmd_1_right      = 1,
-	cmd_2_up         = 2,
-	cmd_3_down       = 3,
-	cmd_4            = 4,
-	cmd_5_subetat    = 5,
+	cmd_2_wait         = 2,
+	cmd_3_up       = 3,
+	cmd_4_down            = 4,
+	cmd_5_substate    = 5,
 	cmd_6_skip       = 6,
-	cmd_7            = 7,
+	cmd_7_add            = 7,
 	cmd_8_etat       = 8,
 	cmd_9_prepareloop  = 9,
 	cmd_10_doloop    = 10,

@@ -1,7 +1,7 @@
 
 //60AD0
 void popCmdContext(obj_t* obj) {
-    //stub
+    obj->cmd_offset = obj->cmd_contexts[(i32)obj->cmd_context_depth--].cmd_offset;
 }
 
 //60AE4
@@ -99,8 +99,8 @@ u8 skipSpeedArgs(obj_t* obj) {
 }
 
 //60C5C
-void handle_SELF_HANDLED(obj_t* obj) {
-    //stub
+u8 handle_SELF_HANDLED(obj_t* obj) {
+    return 0;
 }
 
 //60C60
@@ -110,158 +110,290 @@ u8 skipInvalidArg(obj_t* obj) {
 }
 
 //60C6C
-void handle_11_GO_LABEL(obj_t* obj) {
-    //stub
+u8 handle_11_GO_LABEL(obj_t* obj) {
+    return 1;
 }
 
 //60C70
-void handle_19_GO_WAITSTATE(obj_t* obj) {
-    //stub
+u8 handle_19_GO_WAITSTATE(obj_t* obj) {
+    obj->change_anim_mode = 1;
+    obj->cmd = cmd_2_wait;
+    obj->nb_cmd = vblToEOA(obj, obj->nb_cmd) - 1;
+    return 0;
 }
 
 //60C90
-void handle_25_RESERVED_GO_GOSUB(obj_t* obj) {
-    //stub
+u8 handle_25_RESERVED_GO_GOSUB(obj_t* obj) {
+    pushCmdContext(obj, 1);
+    obj->cmd_offset = obj->cmd_labels[obj->nb_cmd];
+    return 1;
 }
 
 //60CBC
-void handle_RESERVED_GO_SKIP_and_RESERVED_GO_GOTO(obj_t* obj) {
-    //stub
+u8 handle_RESERVED_GO_SKIP_and_RESERVED_GO_GOTO(obj_t* obj) {
+    obj->cmd_offset = obj->cmd_labels[obj->nb_cmd];
+    return 1;
 }
 
 //60CDC
-void handle_26_RESERVED_GO_BRANCHTRUE(obj_t* obj) {
-    //stub
+u8 handle_26_RESERVED_GO_BRANCHTRUE(obj_t* obj) {
+    if (obj->flags.command_test) {
+        obj->cmd_offset = obj->cmd_labels[obj->nb_cmd];
+    }
+    return 1;
 }
 
 //60D04
-void handle_27_RESERVED_GO_BRANCHFALSE(obj_t* obj) {
-    //stub
+u8 handle_27_RESERVED_GO_BRANCHFALSE(obj_t* obj) {
+    if (!obj->flags.command_test) {
+        obj->cmd_offset = obj->cmd_labels[obj->nb_cmd];
+    }
+    return 1;
 }
 
 //60D2C
-void handle_28_RESERVED_GO_SKIPTRUE(obj_t* obj) {
-    //stub
+u8 handle_28_RESERVED_GO_SKIPTRUE(obj_t* obj) {
+    if (obj->flags.command_test) {
+        obj->cmd_offset = obj->cmd_labels[obj->nb_cmd];
+    }
+    return 1;
 }
 
 //60D54
-void handle_29_RESERVED_GO_SKIPFALSE(obj_t* obj) {
-    //stub
+u8 handle_29_RESERVED_GO_SKIPFALSE(obj_t* obj) {
+    if (!obj->flags.command_test) {
+        obj->cmd_offset = obj->cmd_labels[obj->nb_cmd];
+    }
+    return 1;
 }
 
 //60D7C
-void handle_21_GO_X(obj_t* obj) {
-    //stub
+u8 handle_21_GO_X(obj_t* obj) {
+    obj->x = obj->nb_cmd * 100 + obj->phase;
+    return 1;
 }
 
 //60DA8
-void handle_22_GO_Y(obj_t* obj) {
-    //stub
+u8 handle_22_GO_Y(obj_t* obj) {
+    obj->y = obj->nb_cmd * 100 + obj->phase;
+    return 1;
 }
 
 //60DD4
-void handle_12_GO_GOTO(obj_t* obj) {
-    //stub
+u8 handle_12_GO_GOTO(obj_t* obj) {
+    skipToLabel(obj, obj->nb_cmd, true);
+    return 0;
 }
 
 //60DEC
-void handle_8_GO_ETAT(obj_t* obj) {
-    //stub
+u8 handle_8_GO_STATE(obj_t* obj) {
+    set_main_etat(obj, obj->nb_cmd);
+    obj->speed_x = 0;
+    obj->speed_y = 0;
+    return 1;
 }
 
 //60E0C
-void handle_5_GO_SUBETAT(obj_t* obj) {
-    //stub
+u8 handle_5_GO_SUBSTATE(obj_t* obj) {
+    set_sub_etat(obj, obj->nb_cmd);
+    obj->speed_x = 0;
+    obj->speed_y = 0;
+    return 1;
 }
 
 //60E2C
-void handle_6_GO_SKIP(obj_t* obj) {
-    //stub
+u8 handle_6_GO_SKIP(obj_t* obj) {
+    for (i32 i = 0; i < obj->nb_cmd; ++i) {
+        skipOneCommand(obj);
+    }
+    return 1;
 }
 
 //60E50
-void handle_9_GO_PREPARELOOP(obj_t* obj) {
-    //stub
+u8 handle_9_GO_PREPARELOOP(obj_t* obj) {
+    pushCmdContext(obj, obj->nb_cmd);
+    return 1;
 }
 
 //60E60
-void handle_13_GO_GOSUB(obj_t* obj) {
-    //stub
+u8 handle_13_GO_GOSUB(obj_t* obj) {
+    pushCmdContext(obj, 1);
+    skipToLabel(obj, obj->nb_cmd, true);
+    return 0;
 }
 
 //60E88
-void handle_14_GO_RETURN(obj_t* obj) {
-    //stub
+u8 handle_14_GO_RETURN(obj_t* obj) {
+    popCmdContext(obj);
+    return 1;
 }
 
 //60E90
-void handle_10_GO_DOLOOP(obj_t* obj) {
-    //stub
+u8 handle_10_GO_DOLOOP(obj_t* obj) {
+    ASSERT(obj->cmd_contexts);
+    cmd_context_t* cmd_context = obj->cmd_contexts + obj->cmd_context_depth;
+    --cmd_context->count;
+
+    if (cmd_context->count > 0) {
+        obj->cmd_offset = cmd_context->cmd_offset;
+    } else {
+        --obj->cmd_context_depth;
+    }
+    return 1;
 }
 
 //60EC4
-void handle_33_INVALID_CMD(obj_t* obj) {
-    //stub
+u8 handle_33_INVALID_CMD(obj_t* obj) {
+    obj->cmd_offset = -1;
+    return 1;
 }
 
 //60ED0
-void handle_15_GO_BRANCHTRUE(obj_t* obj) {
-    //stub
+u8 handle_15_GO_BRANCHTRUE(obj_t* obj) {
+    if (obj->flags.command_test) {
+        skipToLabel(obj, obj->nb_cmd, true);
+        return 0;
+    } else {
+        return 1;
+    }
 }
 
 //60EF4
-void handle_16_GO_BRANCHFALSE(obj_t* obj) {
-    //stub
+u8 handle_16_GO_BRANCHFALSE(obj_t* obj) {
+    if (!obj->flags.command_test) {
+        skipToLabel(obj, obj->nb_cmd, true);
+        return 0;
+    } else {
+        return 1;
+    }
 }
 
 //60F18
-void handle_31_GO_SKIPTRUE(obj_t* obj) {
-    //stub
+u8 handle_31_GO_SKIPTRUE(obj_t* obj) {
+    if (obj->flags.command_test) {
+        for (i32 i = 0; i < obj->nb_cmd; ++i) {
+            skipOneCommand(obj);
+        }
+    }
+    return 1;
 }
 
 //60F44
-void handle_32_GO_SKIPFALSE(obj_t* obj) {
-    //stub
+u8 handle_32_GO_SKIPFALSE(obj_t* obj) {
+    if (!obj->flags.command_test) {
+        for (i32 i = 0; i < obj->nb_cmd; ++i) {
+            skipOneCommand(obj);
+        }
+    }
+    return 1;
 }
 
 //60F70
-void handle_18_GO_SETTEST(obj_t* obj) {
-    //stub
+u8 handle_18_GO_SETTEST(obj_t* obj) {
+    // NOTE: this doesn't make sense to me (?), the flag gets set only if obj->nb_cmd is uneven? (did they intend > 0?)
+    obj->flags.command_test = obj->nb_cmd & 1;
+    return 1;
 }
 
 //60F98
-void handle_17_GO_TEST(obj_t* obj) {
-    //stub
+u8 handle_17_GO_TEST(obj_t* obj) {
+    switch(obj->nb_cmd) {
+        case 0: {
+            obj->flags.command_test = (obj->flags.flip_x == obj->cmd_arg_1);
+        } break;
+        case 1: {
+            obj->flags.command_test = (myRand(obj->cmd_arg_1) == 0);
+        } break;
+        case 2: {
+            u8 saved_flip_x = obj->flags.flip_x;
+            calc_obj_dir(obj);
+            obj->flags.command_test = (obj->flags.flip_x == obj->cmd_arg_1);
+            obj->flags.flip_x = saved_flip_x;
+        } break;
+        case 3: {
+            obj->flags.command_test = (obj->main_etat == obj->cmd_arg_1);
+        } break;
+        case 4: {
+            obj->flags.command_test = (obj->sub_etat == obj->cmd_arg_1);
+        } break;
+        case 70: {
+            obj->flags.command_test = OBJ_IN_ZONE(obj);
+        } break;
+        case 71: {
+            obj->flags.command_test = obj->flags.flag_1;
+        } break;
+        case 72: {
+            obj->flags.command_test = obj->flags.read_commands;
+        } break;
+        default: break;
+    }
+    return 1;
 }
 
 //61154
-void readOneCommand(obj_t* obj) {
-    //stub
+u8 readOneCommand(obj_t* obj) {
+    ++obj->cmd_offset;
+    obj->cmd = obj->cmds[obj->cmd_offset];
+    return cptr_tab[obj->cmd].read(obj);
 }
 
 //61180
 u8 skipOneCommand(obj_t* obj) {
-    return 0; //stub
+    ++obj->cmd_offset;
+    obj->cmd = obj->cmds[obj->cmd_offset];
+    return cptr_tab[obj->cmd].skip(obj);
 }
 
 //611AC
 void GET_OBJ_CMD(obj_t* obj) {
-    //stub
+    if (obj->cmds) {
+        if (obj->flags.read_commands && obj->nb_cmd-- == 0) {
+            do {
+                readOneCommand(obj);
+            } while (cptr_tab[obj->cmd].handle(obj));
+        }
+    } else {
+        obj->cmd = cmd_30_idle;
+    }
 }
 
 //611F4
 void pushCmdContext(obj_t* obj, u8 count) {
-    //stub
+    ++obj->cmd_context_depth;
+    cmd_context_t* cmd_context = obj->cmd_contexts + obj->cmd_context_depth;
+    cmd_context->cmd_offset = obj->cmd_offset;
+    cmd_context->count = count;
 }
 
 //61220
-void skipToLabel(obj_t* obj, u8 a2, u8 a3) {
-    //stub
+void skipToLabel(obj_t* obj, u8 label, u8 skip_label_cmd) {
+    u8 initial_read_commands = obj->flags.read_commands;
+    i16 initial_offset = obj->cmd_offset;
+    while (1) {
+        skipOneCommand(obj);
+        if (initial_offset == obj->cmd_offset) {
+            break;
+        }
+        if (obj->cmd == cmd_11_label && obj->cmds[obj->cmd_offset] == label) {
+            break;
+        }
+    }
+    if (skip_label_cmd) {
+        if (initial_offset != obj->cmd_offset) {
+            obj->nb_cmd = 0;
+            obj->flags.read_commands = true;
+            GET_OBJ_CMD(obj);
+            obj->flags.read_commands = initial_read_commands;
+        }
+    } else {
+        obj->cmd = cmd_30_idle;
+    }
 }
 
 //612C0
-void pushToLabel(obj_t* obj, u8 a2, u8 a3) {
-    //stub
+void pushToLabel(obj_t* obj, u8 label, u8 skip_label_cmd) {
+    pushCmdContext(obj, 1);
+    skipToLabel(obj, label, skip_label_cmd);
 }
 
 //612F0

@@ -760,10 +760,10 @@ cptr_t cptr_tab[] = {
         {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 2
         {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 3
         {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 4
-        {readOneArg, skipOneArg, handle_5_GO_SUBETAT}, // 5
+        {readOneArg, skipOneArg, handle_5_GO_SUBSTATE}, // 5
         {readOneArg, skipOneArg, handle_6_GO_SKIP}, // 6
         {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 7
-        {readOneArg, skipOneArg, handle_8_GO_ETAT}, // 8
+        {readOneArg, skipOneArg, handle_8_GO_STATE}, // 8
         {readOneArg, skipOneArg, handle_9_GO_PREPARELOOP}, // 9
         {readNoArg, skipNoArg, handle_10_GO_DOLOOP}, // 10
         {readOneArg, skipOneArg, handle_11_GO_LABEL}, // 11
