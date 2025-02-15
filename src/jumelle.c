@@ -10,7 +10,7 @@ bool skip_jumelle = true;
 void DisplayJumellesNormal(i32 x, i32 y, i32 rayon, i32 a4, u8* effet_buf, u8* draw_buf) {
     // NOTE: this is debug code!
     if (skip_jumelle) {
-#if 0
+#if 1
         for (i32 i = 0; i < HauteurJumelle; ++i) {
             if (JumelleYMin + i >= 0 && JumelleYMin + i < 200) {
                 i32 width = LargeurJumelle;

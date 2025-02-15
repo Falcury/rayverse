@@ -219,6 +219,35 @@ void CHANGE_STAGE_NAMES(void) {
 
 //68208
 void DO_STAGE_NAMES(void) {
+    if (ModeAutoJumelle) {
+        // World map idle animation with letters bouncing everywhere
+        //stub
+    } else {
+        if (text_to_display[1].xpos > 160) {
+            text_to_display[1].xpos -= 6;
+            text_to_display[1].centered_x_pos -= 6;
+        }
+        if (text_to_display[3].xpos > 160) {
+            text_to_display[3].xpos -= 6;
+            text_to_display[3].centered_x_pos -= 6;
+        }
+        if (text_to_display[2].ypos < 293) {
+            text_to_display[2].ypos += 2;
+            text_to_display[2].centered_y_pos += 2;
+        }
+        if (text_to_display[4].ypos > -70) {
+            text_to_display[4].ypos -= 2;
+            text_to_display[4].centered_y_pos -= 2;
+        }
+    }
+
+    switch(PositionStageNameCalcule) {
+        case 1: {
+            //stub
+        } break;
+
+    }
+
     //stub
 }
 
