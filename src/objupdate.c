@@ -117,7 +117,7 @@ u8 handle_11_GO_LABEL(obj_t* obj) {
 //60C70
 u8 handle_19_GO_WAITSTATE(obj_t* obj) {
     obj->change_anim_mode = 1;
-    obj->cmd = cmd_2_wait;
+    obj->cmd = GO_WAIT;
     obj->nb_cmd = vblToEOA(obj, obj->nb_cmd) - 1;
     return 0;
 }
@@ -353,7 +353,7 @@ void GET_OBJ_CMD(obj_t* obj) {
             } while (cptr_tab[obj->cmd].handle(obj));
         }
     } else {
-        obj->cmd = cmd_30_idle;
+        obj->cmd = GO_NOP;
     }
 }
 
@@ -374,7 +374,7 @@ void skipToLabel(obj_t* obj, u8 label, u8 skip_label_cmd) {
         if (initial_offset == obj->cmd_offset) {
             break;
         }
-        if (obj->cmd == cmd_11_label && obj->cmds[obj->cmd_offset] == label) {
+        if (obj->cmd == GO_LABEL && obj->cmds[obj->cmd_offset] == label) {
             break;
         }
     }
@@ -386,7 +386,7 @@ void skipToLabel(obj_t* obj, u8 label, u8 skip_label_cmd) {
             obj->flags.read_commands = initial_read_commands;
         }
     } else {
-        obj->cmd = cmd_30_idle;
+        obj->cmd = GO_NOP;
     }
 }
 
@@ -578,9 +578,9 @@ void DoMusicienRaymanInZDD(obj_t* obj) {
 //62658
 // sub_62658
 void DO_TEN_COMMAND(obj_t* obj) {
-    if (obj->cmd == cmd_0_left) {
+    if (obj->cmd == GO_LEFT) {
         obj_set_not_flipped(obj);
-    } else if (obj->cmd == cmd_1_right) {
+    } else if (obj->cmd == GO_RIGHT) {
         obj_set_flipped(obj);
     }
     if (obj->main_etat == 0 && obj->sub_etat == 11) {
@@ -663,7 +663,7 @@ void DoChasseurPoingCollision(obj_t* obj, i16 a2) {
         } else {
             set_main_and_sub_etat(obj, 0, 3); // dead
         }
-        obj->cmd = obj->flags.flip_x ? cmd_0_left : cmd_1_right;
+        obj->cmd = obj->flags.flip_x ? GO_LEFT : GO_RIGHT;
     }
 }
 
@@ -675,7 +675,7 @@ void DoChasseurRaymanZDD(obj_t* obj) {
         set_main_and_sub_etat(obj, 0, 2);
         obj->flags.read_commands = false;
         calc_obj_dir(obj);
-        obj->cmd = obj->flags.flip_x ? cmd_1_right : cmd_0_left;
+        obj->cmd = obj->flags.flip_x ? GO_RIGHT : GO_LEFT;
     }
 }
 

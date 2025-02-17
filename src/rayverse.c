@@ -88,6 +88,7 @@
 #include "cymbal.c"
 #include "dark.c"
 #include "display.c"
+#include "effect.c"
 #include "fee.c"
 #include "frame.c"
 #include "guetteur.c"

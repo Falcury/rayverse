@@ -1146,41 +1146,40 @@ enum world_enum {
 };
 
 enum cmd_enum {
-	cmd_0_left       = 0,
-	cmd_1_right      = 1,
-	cmd_2_wait         = 2,
-	cmd_3_up       = 3,
-	cmd_4_down            = 4,
-	cmd_5_substate    = 5,
-	cmd_6_skip       = 6,
-	cmd_7_add            = 7,
-	cmd_8_etat       = 8,
-	cmd_9_prepareloop  = 9,
-	cmd_10_doloop    = 10,
-	cmd_11_label     = 11,
-	cmd_12_goto      = 12,
-	cmd_13_gosub     = 13,
-	cmd_14_return    = 14,
-	cmd_15_branchtrue  = 15,
-	cmd_16_branchfalse  = 16,
-	cmd_17_test      = 17,
-	cmd_18_settest   = 18,
-	cmd_19_waitstate  = 19,
-	cmd_20_speed     = 20,
-	cmd_21_go_x      = 21,
-	cmd_22_go_y      = 22,
-	cmd_23_reserved_skip  = 23,
-	cmd_24_reserved_goto  = 24,
-	cmd_25_reserved_gosub  = 25,
-	cmd_26_reserved_branchtrue  = 26,
-	cmd_27_reserved_branchfalse  = 27,
-	cmd_28_reserved_skiptrue  = 28,
-	cmd_29_reserved_skipfalse  = 29,
-	cmd_30_idle      = 30,
-	cmd_31_skiptrue  = 31,
-	cmd_32_skipfalse  = 32,
-	cmd_33_invalid_cmd  = 33,
-
+	GO_LEFT = 0, // Self-handled
+	GO_RIGHT = 1, // Self-handled
+	GO_WAIT = 2, // Self-handled
+	GO_UP = 3, // Self-handled
+	GO_DOWN = 4, // Self-handled
+	GO_SUBSTATE = 5, // Set sub etat to {arg1}
+	GO_SKIP = 6, // Skips {arg1} arguments
+	GO_ADD = 7, // Unused, does nothing
+	GO_STATE = 8, // Set main etat to {arg1}
+	GO_PREPARELOOP = 9, // Saves the current command position and prepares a loop which loops {arg1} times
+	GO_DOLOOP = 10, // Perform the loop
+	GO_LABEL = 11, // Defines label {arg1}
+	GO_GOTO = 12, // Skips to label {arg1}
+	GO_GOSUB = 13, // Saves the current command position and starts executing from label {arg1} until "GO_RETURN"
+	GO_RETURN = 14, // Returns from a "GO_GOSUB" command execution
+	GO_BRANCHTRUE  = 15, // Skips to label {arg1} if TEST flag is true
+	GO_BRANCHFALSE  = 16, // Skips to label {arg1} if TEST flag is false
+	GO_TEST = 17, // Sets the TEST flag depending on {arg1}. If {arg1} is less than 5 then {arg2} is used in the validation, otherwise only one argument is expected.
+	GO_SETTEST = 18, // Sets the TEST flag to {arg1}
+	GO_WAITSTATE = 19, // Waits for the animation to play {arg1} times. The command gets set to "GO_WAIT" while waiting.
+	GO_SPEED = 20, // Self-handled. Usually {arg2} is speed x and {arg3} is speed y
+	GO_X = 21, // Sets the x position to {arg1}{arg2}
+	GO_Y = 22, // Sets the y position to {arg1}{arg2}
+	RESERVED_GO_SKIP = 23, // Skips to label offset index {arg1}
+	RESERVED_GO_GOTO = 24, // Same as "RESERVED_GO_SKIP"
+	RESERVED_GO_GOSUB = 25, // Saves the current command position and starts executing from label offset index {arg1} until "GO_RETURN"
+	RESERVED_GO_GOTOT = 26, // Skips to label offset index {arg1} if TEST is true
+    RESERVED_GO_GOTOF = 27, // Skips to label offset index {arg1} if TEST is false
+    RESERVED_GO_SKIPT = 28, // Same as "RESERVED_GO_GOTOT"
+    RESERVED_GO_SKIPF = 29, // Same as "RESERVED_GO_GOTOF"
+	GO_NOP = 30, // Self-handled
+	GO_SKIPTRUE = 31, // Skips {arg1} commands if TEST is true
+	GO_SKIPFALSE = 32, // Skips {arg1} commands if TEST is false
+	INVALID_CMD = 33, // Terminates the commands and loops back, {arg1} is always 0xFF which is used as the command array terminator
 };
 
 enum sound_enum {

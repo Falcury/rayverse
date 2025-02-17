@@ -619,6 +619,11 @@ u8 dark_attaque = 0; //9637D
 u8 type_dark_attaque = 0; //9637E
 u8 ButtonReleasedSav3 = 0; //96380
 
+u8 effect_choice; //964C9
+u8 byte_964CA; //964CA
+u8 effect_speed; //964CC
+u8 effect_pause_bloque; //964CE
+
 u8 playing_intro_video = 0; //964DD
 
 i32 prev_Bloc_lim_W1; //9654C
@@ -1637,7 +1642,7 @@ u8 DosDetect; //CFA11
 u8 WindowsLance; //CFA12
 u8 SonLimite; //CFA13
 u8 byte_CFA14; //CFA14
-u8 byte_CFA15; //CFA15
+u8 need_check_cheats; //CFA15
 u8 HVerDos; //CFA16
 u8 CarteSonAutorisee; //CFA17
 u8 ToutSpriteAutorise; //CFA18 // is background clearing needed
@@ -1807,6 +1812,31 @@ i16 level_select; //DF750
 
 u8 ButtonReleasedSav2; //DF756
 u8 ButtonReleasedSav1; //DF757
+
+u8* cheat_code_programmer_mode; //DF760
+u8* cheat_code_win_map_alt; //DF764
+u8* cheat_code_10_wiz_alt; //DF768
+u8* cheat_code_all_powers_alt; //DF76C
+u8* cheat_code_breakout_alt; //DF770
+u8* cheat_code_golden_fist_alt; //DF774
+u8* cheat_code_10_wiz; //DF778
+u8* cheat_code_win_map; //DF77C
+u8* cheat_code_unlock_all_levels_alt; //DF780
+u8* cheat_code_99_lives_alt; //DF784
+u8* cheat_code_5hp_alt; //DF788
+u8* cheat_code_golden_fist; //DF78C
+u8* cheat_code_unlock_all_levels; //DF790
+u8* cheat_code_breakout; //DF794
+u8* cheat_code_all_powers; //DF798
+u8* cheat_code_99_lives; //DF79C
+u8* cheat_code_free_movement; //DF7A0
+u8* cheat_code_5hp; //DF7A4
+u8* cheat_code_freq80; //DF7A8
+u8* cheat_code_lens; //DF7AC
+u8* cheat_code_breakout_before_victory; //DF7B0
+u8* cheat_code_level_select; //DF7B4
+i32 freq_from_cheat_code; //DF7B8
+u8* cheat_code_freq100; //DF7BC
 
 bnk_header_t bnkHeaderFixe[128]; //DFAF0
 bnk_header_t bnkHeaderWorld[128]; //E02F0

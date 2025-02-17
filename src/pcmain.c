@@ -128,7 +128,7 @@ void PcMain(void) {
             LoadBnkWorld(num_world_choice);
         }
 
-        while (!(fin_du_jeu || new_world == 0 || new_level == 0)) {
+        while (!(fin_du_jeu || new_world || new_level == 0)) {
             WaitNSynchro(5);
 //			speaker_enable();
             DEPART_LEVEL();

@@ -86,7 +86,7 @@ void DoFishPoingCollision(obj_t* obj, i16 a2) {
         set_main_and_sub_etat(obj, 0, 3);
     }
     DESACTIVE_FISH_COLLIS(obj);
-    obj->cmd = obj->flags.flip_x ? cmd_1_right : cmd_0_left;
+    obj->cmd = obj->flags.flip_x ? GO_RIGHT : GO_LEFT;
 }
 
 //6773C

@@ -585,8 +585,34 @@ void DISPLAY_AND_FADE_PLAN3(void) {
 }
 
 //36554
-void LOAD_VIGNET_PC(i32 a1, i16 a2) {
-    //stub
+void LOAD_VIGNET_PC(mem_t* mem, i16 world) {
+    if (get_casse_brique_active()) {
+        LoadPlan3InVignet(mem, 64);
+    } else {
+        switch(world) {
+            case 1: {
+                LoadPlan3InVignet(mem, 68);
+            } break;
+            case 2: {
+                LoadPlan3InVignet(mem, 70);
+            } break;
+            case 3: {
+                LoadPlan3InVignet(mem, 69);
+            } break;
+            case 4: {
+                LoadPlan3InVignet(mem, 66);
+            } break;
+            case 5: {
+                LoadPlan3InVignet(mem, 63);
+            } break;
+            case 6: {
+                LoadPlan3InVignet(mem, 62);
+            } break;
+            default: {
+                LoadPlan3InVignet(mem, 61);
+            } break;
+        }
+    }
 }
 
 //365E0
@@ -739,7 +765,13 @@ void FIN_GAME_LOOP(void) {
 }
 //36D58
 void FIN_MAP_LOOP(void) {
-    //stub
+    if (RayEvts.tiny) {
+        RAY_DEMIRAY();
+    }
+    textmode();
+    if (JeuCracker) {
+        exit(0);
+    }
 }
 
 //36D8C
@@ -759,17 +791,53 @@ void INIT_EXTENSIONS(void) {
 
 //36E20
 void DISPLAY_LOADING(void) {
-    //stub
+    DISPLAY_FOND3();
+    i16 text_x = 160;
+    i16 text_y = 190;
+    if (get_casse_brique_active()) {
+        text_x = 240;
+        text_y = 160;
+    }
+    display_text(language_txt[149], text_x, text_y, 2, 0); // /loading../
 }
 
 //36E60
 void START_WORLD_VIGNET(void) {
-    //stub
+    LOAD_VIGNET_PC(main_mem_level, num_world_choice);
+    rvb_save = current_rvb;
+    current_rvb = rvb_plan3;
+    start_fade_in(2);
+    synchro();
+    endsynchro();
+    SWAP_BUFFERS();
+    DISPLAY_LOADING();
+
+    // Do loading screen effect (TODO)
+    if (sub_38208(9, 100, DrawBufferNormal, DrawBufferNormal)) {
+        sub_38258();
+        sub_38290();
+        DISPLAY_LOADING();
+    }
+
+    endsynchro();
+    synchro();
+    SWAP_BUFFERS();
+    while (nb_fade != 0) {
+        endsynchro();
+        synchro();
+        do_fade(&rvb_plan3, &current_rvb);
+    }
 }
 
 //36F48
 void END_WORLD_VIGNET(void) {
-    //stub
+    // Do loading screen effect (TODO)
+    if (sub_38220(9, 100, display_buffer, DrawBufferNormal)) {
+        sub_38258();
+        sub_38290();
+    }
+    fade_out(2, &rvb_plan3);
+    current_rvb = rvb_save;
 }
 
 //36FAC
