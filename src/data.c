@@ -1201,7 +1201,8 @@ i16 was_in_freeze = 0; //97F76
 u8 flagCDPlay; //97F78
 u8 phaseCd; //97F79
 
-u8 BIG_MAP[32]; //C21D8
+
+big_map_t BIG_MAP; //C21D8
 i32 Scroll_Masque[20]; //C21F8
 i32 VitesseYStageNameLevel[30]; //C2248
 i32 VitesseXStageNameWorld[30]; //C22C0
@@ -1225,10 +1226,11 @@ i16 options_jeu_music_enabled; //C2F90
 i16 options_jeu_sound_volume; //C2F92
 i16 options_jeu_is_stereo; //C2F94
 
+u32 gros_patai_src[1200]; //C2FA8
 i32 block_add[1200]; //C4268
-i32 PLANVIGBIT[8]; //C5528
+u8* PLANVIGBIT[8]; //C5528
 i32 planVigbit_length[8]; //C5548
-u8 rvb_Vig[0x1800]; //C5568
+rgb_palette_t rvb_Vig[8]; //C5568
 i32 planVigbit_nb_bytes[8]; //C6D68
 rgb_palette_t rvb_save; //C6D88
 rgb_palette_t rvb_pres; //C7088
@@ -1255,9 +1257,9 @@ display_item_t info_dialog_text; //CBB58 //?
 display_item_t msg_to_display; //CBC30
 display_item_t menu_to_display[9]; //CBD08
 display_item_t text_to_display[11]; //CC4A0
-
+level_obj_t level_alw; //CCDE8
 level_t level; //CCDF0
-level_t level_obj; //CCDFC
+level_obj_t level_obj; //CCDFC
 u8 ecroule_rubis_list[8]; //CCE00
 u8 saveobj[64]; //CCE08
 eta_t** loaded_eta[100]; //CCE48
@@ -1334,11 +1336,11 @@ options_t options; //CD7A4
 u8* draw_buffer; //CD7B8
 u32 new_sprite_deform; //CD7BC
 u8* PLANTMPBIT; //CD7C0
-u8* x_unk_table; //CD7C4
+u8* blocks_code; //CD7C4
 i32 plantmp_length; //CD7C8
 i32 plantmp_nb_bytes; //CD7CC
 u8* display_buffer; //CD7D0
-u8 x_textures; //CD7D4
+x_texture_t* gros_patai_block; //CD7D4
 char world_filename[20]; //CD7D8
 i32 plan2_width; //CD7EC
 i32 plan3bit_nb_bytes; //CD7F0
@@ -1387,7 +1389,7 @@ i32 alternateBossSpeedFactor; //CE5B4
 i16 pos_stack[10]; //CE5B8
 i16 cymbal_obj_id[2]; //CE5CC
 i16 scroll_obj_id[50]; //CE5D0
-u32 ScrollDiffSprites; //CE634
+obj_t* ScrollDiffSprites; //CE634
 map_data_t mp; //CE638
 obj_t* alpha_numbers; //CE644
 u32 dword_CE648; //CE648
@@ -1409,7 +1411,7 @@ obj_t* alpha2; //CEDC8
 u8* alpha2_image_atlas; //CEDCC
 i16 alpha2_sprite_count; //CEDD0
 obj_t rms; //CEDD4
-u16* link_init; //CEE58
+i16* link_init; //CEE58
 obj_t raytmp; //CEE5C
 u8 skops_lave_obj[20]; //CEEE0
 i32 pixels_enfonce; //CEEF4
@@ -1752,7 +1754,7 @@ u8 hand_btypg; //CFA7F
 u8 hand_btypd; //CFA80
 u8 nb_cymbal_in_map; //CFA81
 u8 current_pal_id; //CFA82
-u8 active_palette; //CFA83
+u8 last_plan1_palette; //CFA83
 u8 pal_id_at_wizard; //CFA84
 u8 save_save; //CFA85
 u8 NewMs; //CFA86

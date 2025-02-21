@@ -145,75 +145,297 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
 }
 
 //45688
-void load_level(mem_t* mem_level, const char* filename) {
-    mem_t* mem = read_entire_file(filename, true);
-    if (mem) {
-        //stream_t stream = mem_create_stream(mem);
+void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
 
+    // NOTE: function signature changed: world_id and filename parameters added to allow more flexibility.
+
+    static const char* world_names[] = {"JUNGLE", "MUSIC", "MOUNTAIN", "IMAGE", "CAVE", "CAKE"};
+    if (!(world_id > 0 && world_id <= COUNT(world_names))) {
+        return;
+    }
+
+    char full_filename[64];
+    snprintf(full_filename, 64, "PCMAP" PATH_SEP "%s" PATH_SEP "%s", world_names[world_id - 1], filename);
+
+    mem_t* mem = read_entire_file(full_filename, true);
+    if (mem) {
         // Header
-        u32 event_block_offset;
-        u32 texture_block_offset;
+        i32 event_block_offset;
+        i32 texture_block_offset;
         mem_read(&event_block_offset, mem, 4);
         mem_read(&texture_block_offset, mem, 4);
         mem_read(&mp.width, mem, 2);
         mem_read(&mp.height, mem, 2);
         mem_read(rvb, mem, sizeof(rvb));
-        mem_read(&active_palette, mem, 1);
+        mem_read(&last_plan1_palette, mem, 1);
+        current_rvb = rvb[last_plan1_palette];
 
         // Map
         mp.length = mp.width * mp.height;
-        map_tile_t* tiles = (map_tile_t*) malloc(mp.length * sizeof(map_tile_t));
-        mem_read(tiles, mem, mp.length * sizeof(map_tile_t));
+        mp.map = (map_tile_t*) block_malloc(mem_level, mp.length * sizeof(map_tile_t));
+        mem_read(mp.map, mem, mp.length * sizeof(map_tile_t));
 
         u8 background_image_static;
         u8 background_image_scrolling;
-        u32 background_DES;
+        i32 ScrollDiffSprites_value = 0;
         mem_read(&background_image_static, mem, 1);
         mem_read(&background_image_scrolling, mem, 1);
-        mem_read(&background_DES, mem, 4);
+        mem_read(&ScrollDiffSprites_value, mem, 4);
 
-        // X Mode Textures
-        u32 x_texture_count;
-        u32 x_unk_table_size;
-        u8 x_texture_checksum;
-        u32 x_texture_index_table[1200];
-        mem_read(&x_texture_count, mem, 4);
-        mem_read(&x_unk_table_size, mem, 4);
-        x_texture_t* x_textures = (x_texture_t*) malloc(x_texture_count * sizeof(x_texture_t));
-        mem_read(x_textures, mem, x_texture_count * sizeof(x_texture_t));
-        mem_read(&x_texture_checksum, mem, 1);
-        mem_read(x_texture_index_table, mem, sizeof(x_texture_index_table));
+        if (ScrollDiffSprites_value == -1) {
+            ScrollDiffSprites = NULL;
+        } else {
+            ScrollDiffSprites = wldobj + ScrollDiffSprites_value;
+            if (GameModeVideo == 0 && ScrollDiffOn) {
+                MaskScrollDiffSprites(mem_level); //TODO
+            }
+        }
 
-        u8* x_unk_table = (u8*) malloc(x_unk_table_size);
-        u8 x_unk_table_checksum;
-        u32 x_unk_offsets[1200];
-        mem_read(x_unk_table, mem, x_unk_table_size);
-        mem_read(&x_unk_table_checksum, mem, 1);
-        mem_read(x_unk_offsets, mem, sizeof(x_unk_offsets));
+        if (GameModeVideo == 1 || !ScrollDiffOn) {
+            no_fnd = background_image_static;
+        } else if (GameModeVideo == 0 && ScrollDiffOn) {
+            no_fnd = background_image_scrolling;
+        }
 
-        // Normal Mode Textures
-        u32 texture_offsets[1200];
-        u32 texture_count;
-        u32 opaque_texture_count;
-        u32 texture_data_size;
-        u8 texture_data_checksum;
-        mem_read(texture_offsets, mem, sizeof(texture_offsets));
-        mem_read(&texture_count, mem, 4);
-        mem_read(&opaque_texture_count, mem, 4);
-        mem_read(&texture_data_size, mem, 4);
-        u8* texture_data = (u8*) malloc(texture_data_size);
-        mem_read(texture_data, mem, texture_data_size);
-        mem_read(&texture_data_checksum, mem, 1);
-        // TODO: further parse texture data block
+        if (GameModeVideo == 1) {
+            // X Mode Textures
+            u32 x_texture_count;
+            u32 x_unk_table_size;
+            u8 x_texture_checksum;
+            mem_read(&x_texture_count, mem, 4);
+            mem_read(&x_unk_table_size, mem, 4);
+            if (x_texture_count != 0) {
+                gros_patai_block = (x_texture_t*) block_malloc(mem_level, x_texture_count * sizeof(x_texture_t));
+                mem_read(gros_patai_block, mem, x_texture_count * sizeof(x_texture_t));
+            } else {
+                gros_patai_block = NULL;
+            }
 
+            mem_read(&x_texture_checksum, mem, 1);
+            u8* pos = (u8*) gros_patai_block;
+            for (i32 i = 0; i < x_texture_count * sizeof(x_texture_t); ++i) {
+                x_texture_checksum -= *pos;
+                *pos ^= 0x7D;
+                ++pos;
+            }
+            if (x_texture_checksum != 0) {
+                printf("%s : File integrity fault.\n", full_filename);
+                fatal_error();
+            }
+
+            mem_read(gros_patai_src, mem, sizeof(gros_patai_src));
+
+            if (x_unk_table_size != 0) {
+                blocks_code = (u8*) block_malloc(mem_level, x_unk_table_size);
+                mem_read(blocks_code, mem, x_unk_table_size);
+            } else {
+                blocks_code = NULL;
+            }
+            u8 x_unk_table_checksum;
+            mem_read(&x_unk_table_checksum, mem, 1);
+            pos = blocks_code;
+            for (i32 i = 0; i < x_unk_table_size; ++i) {
+                x_unk_table_checksum -= *pos;
+                *pos ^= 0xF3;
+                ++pos;
+            }
+            if (x_unk_table_checksum != 0) {
+                printf("%s : File integrity fault.\n", full_filename);
+                fatal_error();
+            }
+
+            mem_read(block_add, mem, sizeof(block_add));
+            // NOTE: the game uses a direct pointer here, but we can't do that on a 64-bit system
+            // so we're using an offset instead (need to keep this in mind when we want to use it)
+            // Also we need to check for the value -1
+#if 0
+            for (i32 i = 0; i < 1200; ++i) {
+                i32 value = block_add[i];
+                if (value == -1) {
+                    block_add[i] = 0;
+                } else {
+
+                    block_add[i] = blocks_code + value;
+                }
+            }
+#endif
+            mem_seek(mem, event_block_offset);
+        } else if (GameModeVideo == 0) {
+            // Normal Mode Textures
+
+            mem_seek(mem, texture_block_offset);
+
+            u32 texture_data_size;
+            u8 texture_data_checksum;
+            // offset table for the textures, based from the start of the tile texture arrays
+            mem_read(block_add, mem, sizeof(block_add));
+
+            mem_read(&nb_total_blocks, mem, 4);
+            mem_read(&nb_blocks_plein, mem, 4); // opaque blocks
+            mem_read(&texture_data_size, mem, 4);
+            MAP_BLOCKS = (u8*) block_malloc(mem_level, texture_data_size);
+            mem_read(MAP_BLOCKS, mem, texture_data_size);
+            mem_read(&texture_data_checksum, mem, 1);
+            u8* pos = MAP_BLOCKS;
+            for (i32 i = 0; i < texture_data_size; ++i) {
+                texture_data_checksum -= *pos;
+                *pos ^= 0xFF;
+                ++pos;
+            }
+            if (texture_data_checksum != 0) {
+                printf("%s : File integrity fault (Block Normal).\n", full_filename);
+                fatal_error();
+            }
+            construct_MAP(mem_level, &BIG_MAP, MAP_BLOCKS);
+        } else {
+            fatal_error();
+        }
 
         // Events
+        mem_read(&level.nb_objects, mem, 2);
+        level.objects = (obj_t*)block_malloc(mem_level, sizeof(obj_t) * level.nb_objects);
+        level_obj.field_0 = (i16*)block_malloc(mem_level, 2 * level.nb_objects);
+        level_alw.field_0 = (i16*)block_malloc(mem_level, 2 * level.nb_objects);
+        memset(level.objects, 0, sizeof(obj_t) * level.nb_objects);
 
+        link_init = (i16*)block_malloc(mem_level, 2 * level.nb_objects);
+        mem_read(link_init, mem, 2 * level.nb_objects);
 
+        // We can't directly read the obj_t because the pointer size is not 4 bytes on all systems.
+        // So we read everything field by field
+        // TODO: make it work on big-endian systems
+        i32 cursor = mem->cursor;
+        for (i32 i = 0; i < level.nb_objects; ++i) {
+            obj_t* obj = level.objects + i;
 
+            // The wldobj index is stored only in the lower 2 bytes of the pointer values for sprites, animations, img_buffer and eta
+            i16 sprites_value;
+            i16 animations_value;
+            i16 img_buffer_value;
+            i16 eta_value;
+            mem_read(&sprites_value, mem, 2);
+            mem->cursor += 2;
+            mem_read(&animations_value, mem, 2);
+            mem->cursor += 2;
+            mem_read(&img_buffer_value, mem, 2);
+            mem->cursor += 2;
+            mem_read(&eta_value, mem, 2);
+            mem->cursor += 2;
 
+            mem_read(&obj->cmds, mem, 4);
+            mem_read(&obj->cmd_labels, mem, 4);
+            mem_read(&obj->cmd_contexts, mem, 4);
+            mem_read(&obj->field_1C, mem, 4);
+            mem_read(&obj->link_has_gendoor, mem, 4);
+            mem_read(&obj->is_active, mem, 4);
+            mem_read(&obj->x, mem, 4);
+            mem_read(&obj->y, mem, 4);
+            mem_read(&obj->active_flag, mem, 4);
+            mem_read(&obj->obj_index, mem, 2);
+            mem_read(&obj->screen_x, mem, 2);
+            mem_read(&obj->screen_y, mem, 2);
+            mem_read(&obj->field_3A, mem, 2);
+            mem_read(&obj->init_x, mem, 2);
+            mem_read(&obj->init_y, mem, 2);
+            mem_read(&obj->speed_x, mem, 2);
+            mem_read(&obj->speed_y, mem, 2);
+            mem_read(&obj->nb_sprites, mem, 2);
+            mem_read(&obj->cmd_offset, mem, 2);
+            mem_read(&obj->nb_cmd, mem, 2);
+            mem_read(&obj->cmd_arg_2, mem, 2);
+            mem_read(&obj->follow_y, mem, 2);
+            mem_read(&obj->follow_x, mem, 2);
+            mem_read(&obj->cmd_arg_1, mem, 2);
+            mem_read(&obj->phase, mem, 2);
+            mem_read(&obj->rayman_dist, mem, 2);
+            mem_read(&obj->iframes_timer, mem, 2);
+            mem_read(&obj->test_block_index, mem, 2);
+            mem_read(&obj->scale, mem, 2);
+            mem_read(&obj->zdc, mem, 2);
+            mem_read(&obj->active_timer, mem, 2);
+            mem_read(&obj->type, mem, 2);
+            mem_read(&obj->coll_btype, mem, 5);
+            mem_read(&obj->field_67, mem, 1);
+            mem_read(&obj->offset_bx, mem, 1);
+            mem_read(&obj->offset_by, mem, 1);
+            mem_read(&obj->anim_index, mem, 1);
+            mem_read(&obj->anim_frame, mem, 1);
+            mem_read(&obj->sub_etat, mem, 1);
+            mem_read(&obj->main_etat, mem, 1);
+            mem_read(&obj->init_sub_etat, mem, 1);
+            mem_read(&obj->init_etat, mem, 1);
+            mem_read(&obj->cmd, mem, 1);
+            mem_read(&obj->gravity_value_1, mem, 1);
+            mem_read(&obj->gravity_value_2, mem, 1);
+            mem_read(&obj->change_anim_mode, mem, 1);
+            mem_read(&obj->offset_hy, mem, 1);
+            mem_read(&obj->follow_sprite, mem, 1);
+            mem_read(&obj->hit_points, mem, 1);
+            mem_read(&obj->init_hit_points, mem, 1);
+            mem_read(&obj->init_flag, mem, 1);
+            mem_read(&obj->hit_sprite, mem, 1);
+            mem_read(&obj->detect_zone, mem, 1);
+            mem_read(&obj->detect_zone_flag, mem, 1);
+            mem_read(&obj->cmd_context_depth, mem, 1);
+            mem_read(&obj->configuration, mem, 1);
+            mem_read(&obj->display_prio, mem, 1);
+            mem_read(&obj->timer, mem, 1);
+            mem_read(&obj->anim_count, mem, 1);
 
+            // The exact bit field layout isn't guaranteed by the C standard (make extra effort to deserialize properly).
+            u8 flags_lo;
+            u8 flags_hi;
+            mem_read(&flags_lo, mem, 1);
+            mem_read(&flags_hi, mem, 1);
+            obj_flags_t flags = {0};
+            flags.flag_1 = flags_lo & 1u;
+            flags.command_test = flags_lo & 2u;
+            flags.alive = flags_lo & 4u;
+            flags.flip_x = flags_lo & 8u;
+            flags.read_commands = flags_lo & 0x10u;
+            flags.follow_enabled = flags_lo & 0x20u;
+            flags.flag_0x40 = flags_lo & 0x40u;
+            flags.anim_changed = flags_lo & 0x80u;
+            flags.flag_0x100 = flags_hi & 1u;
+            obj->flags = flags;
 
+            mem_read(&obj->field_83, mem, 1);
+
+            // correct pointers
+            obj->sprites = wldobj[sprites_value].sprites;
+            obj->animations = wldobj[animations_value].animations;
+            obj->img_buffer = wldobj[img_buffer_value].img_buffer;
+            obj->eta = loaded_eta[eta_value];
+        }
+
+        for (i32 i = 0; i < level.nb_objects; ++i) {
+            obj_t* obj = level.objects + i;
+
+            u16 cmd_count = 0;
+            u16 cmd_label_count = 0;
+            mem_read(&cmd_count, mem, 2);
+            mem_read(&cmd_label_count, mem, 2);
+
+            if (cmd_count > 0) {
+                obj->cmds = block_malloc(mem_level, cmd_count);
+                mem_read(obj->cmds, mem, cmd_count);
+            } else {
+                obj->cmds = NULL;
+            }
+
+            if (cmd_label_count > 0) {
+                obj->cmd_labels = (i16*)block_malloc(mem_level, 2 * cmd_label_count);
+                mem_read(obj->cmd_labels, mem, 2 * cmd_label_count);
+            } else {
+                obj->cmd_labels = NULL;
+            }
+
+        }
+
+        free(mem);
+    } else {
+        printf("Can not open file %s (load_level).\n", full_filename);
+        fatal_error();
     }
 }
 

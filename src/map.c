@@ -18,12 +18,34 @@ void Copy_Blocks(mem_t* buffer, void* a2, i16 a3, i16 a4) {
 }
 
 //5C82C
-void construct_MAP(mem_t* buffer, void* a2, void* a3) {
-    //stub
+void construct_MAP(mem_t* mem, big_map_t* big_map, void* map_blocks) {
+    big_map->map = mp.map;
+    big_map->tile_texture_offsets = (u8**)block_malloc(mem, mp.length * sizeof(u8*));
+    big_map->map_blocks = (u8*)map_blocks;
+    big_map->field_8 = block_malloc(mem, 8);
+    for (i32 i = 0; i < mp.length; ++i) {
+        i32 texture_offset = block_add[big_map->map[i].texture_id];
+        big_map->tile_texture_offsets[i] = big_map->map_blocks + texture_offset;
+        u32 v11;
+        if (texture_offset > 288 * nb_blocks_plein) {
+            v11 = *(u32*)(big_map->tile_texture_offsets[i] + 512);
+        } else {
+            v11 = *(u32*)(big_map->tile_texture_offsets[i] + 256);
+        }
+        u8 transparency;
+        if (v11 == 0xAAAAAAAA) {
+            transparency = 1;
+        } else if (v11 == 0x55555555) {
+            transparency = 0;
+        } else {
+            transparency = 2;
+        }
+        big_map->map[i].transparency = transparency;
+    }
 }
 
 //5C8FC
-void init_build_map(void* a1) {
+void init_build_map(big_map_t* a1) {
     //stub
 }
 
@@ -184,7 +206,7 @@ void INIT_GAME_MODE_NORMAL(void) {
     DrawBufferNormalIni = DrawBufferNormal;
     DrawBufferNormal += 4; //?
 //    Copy_Plan0_To_Buf = (void*)&Copy_Plan0Diff_To_Buf; // TODO
-    init_build_map(BIG_MAP);
+    init_build_map(&BIG_MAP); //TODO
     N_CLRSCR(DrawBufferNormal);
 }
 

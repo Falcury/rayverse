@@ -675,7 +675,7 @@ void wait_until(i32 target /*ebx*/) {
 
 //16F78
 void speaker_enable(void) {
-    //stub
+    set_speaker_on();
 }
 
 

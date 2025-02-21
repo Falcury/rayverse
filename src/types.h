@@ -305,7 +305,7 @@ typedef struct obj_t {
 	u8* img_buffer; // ImageBufferPointer
 	eta_t** eta;
 	u8* cmds;
-	u8* cmd_labels;
+	i16* cmd_labels;
 	cmd_context_t* cmd_contexts;
 	u32 field_1C; // 0x1C
 	u32 link_has_gendoor; // 0x20 - ?
@@ -381,6 +381,11 @@ typedef struct level_t {
 	u16 nb_objects;
 } level_t;
 
+typedef struct level_obj_t {
+    i16* field_0;
+    u16 field_4;
+} level_obj_t;
+
 typedef struct map_tile_t {
 	u16 texture_id;
 	u8 tile_type;
@@ -395,6 +400,14 @@ typedef struct map_data_t {
 	i32 length;
 	map_tile_t* map;
 } map_data_t;
+
+typedef struct big_map_t {
+    map_tile_t* map;
+    u8** tile_texture_offsets;
+    u8* field_8;
+    u8* map_blocks;
+    //stub
+} big_map_t;
 
 typedef struct voice_t {
 	i16 field_0;

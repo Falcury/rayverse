@@ -556,13 +556,13 @@ void init_divers_level_PC(u8* a1) {
 }
 
 //3631C
-void file_level(void) {
-    //stub
+void file_level(i32 level_id, char* filename) {
+    snprintf(filename, 20, "RAY%d.LEV", level_id);
 }
 
 //36394
-void world_level(i32 world, char* filename) {
-    snprintf(filename, 20, "RAY%d.WLD", world);
+void world_level(i32 world_id, char* filename) {
+    snprintf(filename, 20, "RAY%d.WLD", world_id);
 }
 
 //3640C
@@ -643,13 +643,57 @@ void DISPLAY_FOND_CONTINUE(void) {
 }
 
 //36678
-void SwapPlan2PlanVignInVignet(i32 a1, i32 a2, i16 a3) {
-    //stub
+void SwapPlan2PlanVignInVignet(mem_t* mem, i32 resource_id, i16 vig_index) {
+    u8* saved_plan2bit = PLAN2BIT;
+    i32 saved_plan2bit_length = plan2bit_length;
+    i32 saved_plan2bit_nb_bytes = plan2bit_nb_bytes;
+    rgb_palette_t saved_palette = rvb_pres;
+    LoadPlan2InVignet(mem, resource_id);
+    PLANVIGBIT[vig_index] = PLAN2BIT;
+    planVigbit_length[vig_index] = plan2bit_length;
+    planVigbit_nb_bytes[vig_index] = plan2bit_nb_bytes;
+    rvb_Vig[vig_index] = rvb_pres;
+    PLAN2BIT = saved_plan2bit;
+    plan2bit_length = saved_plan2bit_length;
+    plan2bit_nb_bytes = saved_plan2bit_nb_bytes;
+    rvb_pres = saved_palette;
 }
 
 //36788
-void LOAD_VIGNET_GAME(i32 a1) {
-    //stub
+void LOAD_VIGNET_GAME(mem_t* mem) {
+    i16 vignet = -1;
+    switch(num_world) {
+        case 1: {
+            if (num_level == 9) {
+                vignet = 74;
+            }
+        } break;
+        case 3: {
+            if (num_level == 6) {
+                vignet = 60;
+            }
+        } break;
+        case 4: {
+            if (num_level == 11) {
+                vignet = 72;
+            }
+        } break;
+        case 5: {
+            if (num_level == 3) {
+                vignet = 67;
+            } else if (num_level == 11) {
+                vignet = 51;
+            }
+        } break;
+        case 6: {
+            if (num_level == 4) {
+                vignet = 65;
+            }
+        } break;
+    }
+    if (vignet != -1) {
+        SwapPlan2PlanVignInVignet(mem, vignet, 0);
+    }
 }
 
 //3681C
@@ -697,7 +741,48 @@ void DEPART_WORLD(void) {
 
 //36998
 void DEPART_LEVEL(void) {
-    //stub
+    if (MusicCdActive) {
+        stop_cd();
+    }
+    //sub_6BAE0();
+    new_world = 0;
+    num_world = num_world_choice;
+    new_level = 1;
+    num_level = num_level_choice;
+    if (!fin_du_jeu) {
+
+        if (byte_CFA2A) {
+            i16 text_x = 160;
+            i16 text_y = 190;
+            if (get_casse_brique_active()) {
+                text_x = 240;
+                text_y = 160;
+            }
+            memset(draw_buffer, 0, 320*200);
+            start_fade_in(2);
+            display_text(language_txt[149], text_x, text_y, 2, 0); // /loading../
+            synchro();
+            endsynchro();
+            SWAP_BUFFERS();
+            do {
+                synchro();
+                endsynchro();
+                do_fade(&rvb_plan3, &current_rvb);
+            } while (nb_fade != 0);
+        }
+
+        if (MusicCdActive) {
+            cdTime = 0;
+        }
+
+        file_level(num_level, level_filename);
+        block_free(main_mem_level);
+        SpriteWorldBlocksFree(main_mem_sprite);
+        LOAD_VIGNET_GAME(main_mem_level);
+        load_level(main_mem_level, num_world, level_filename);
+        INIT_FND(); //TODO
+
+    }
 }
 
 //36B0C

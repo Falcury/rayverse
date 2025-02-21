@@ -130,7 +130,7 @@ void PcMain(void) {
 
         while (!(fin_du_jeu || new_world || new_level == 0)) {
             WaitNSynchro(5);
-//			speaker_enable();
+			speaker_enable();
             DEPART_LEVEL();
             init_divers_level_PC(&v1);
             if ((GameModeVideo == 0 && num_world == 6 && num_level == 4) || get_casse_brique_active()) {
