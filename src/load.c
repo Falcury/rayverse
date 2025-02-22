@@ -28,6 +28,7 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
                 PLAN0 = allocate_PLAN0(mem_world, background_width, background_height);
             }
         } else {
+            // NOTE: is the background buffer wider to allow for differential scrolling?
             PLAN0 = allocate_PLAN0(mem_world, background_width * 2, background_height);
         }
         mem_read(&plan0_num_pcx_count, mem, 1);
@@ -134,7 +135,18 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
         nb_loaded_eta += nb_fix_eta;
 
         if (FondAutorise != 2) {
-            //LoadPlan0InVignet(Plan0NumPcx[0]);
+            // NOTE: I am not sure why exactly this is here. However, it seems that LoadPlan0InVignet should
+            // ALWAYS fail the first time it is called because that erroneously sets PLAN0BIT = PLAN0 at the end, which
+            // leaks away everything that was loaded into PLAN0, *UNLESS* they were the same buffer to begin with.
+            // However, that will only be the case from the second time LoadPlan0InVignet is called.
+            // Also, every time allocate_PLAN0() is called, the problem reappears, because then PLAN0 no longer equals
+            // PLAN0BIT.
+
+            // So, my guess is that they put this here as a workaround for the PLAN0BIT = PLAN0 bug, which they never
+            // found the root cause for.
+
+            // --> After the bug is fixed it should be safe to delete this?
+            LoadPlan0InVignet(Plan0NumPcx[0]);
         }
 
         free(mem);
@@ -676,7 +688,14 @@ image_t LoadPcxInVignet(mem_t* buffer, i32 resource_id, i16* width, i16* height,
             fatal_error();
         } else {
             i32 decompressed_byte_count = image.width * image.height;
-            image.memory = (u8*)block_malloc(buffer, decompressed_byte_count);
+            if (buffer) {
+                // Allocate image memory using a memory pool (will be deallocated on block_free())
+                image.memory = (u8*)block_malloc(buffer, decompressed_byte_count);
+            } else {
+                // Allocate image memory using malloc()
+                // NOTE: if used in this mode we need to remember to manually free the memory!
+                image.memory = (u8*)malloc(decompressed_byte_count);
+            }
             image.memory_size = decompressed_byte_count;
             // run-length decoding
             u8* pos = pcx_buf + 128;
@@ -770,7 +789,52 @@ void LoadPcxPaletteInVignet(i32 resource_id, rgb_palette_t* palette) {
 
 //473D0
 void LoadPlan0InVignet(i32 resource_id) {
-    //stub
+    if (FondAutorise != 0) {
+        if (FondAutorise == 2) {
+            // In low memory mode the background gets read into DrawBufferNormal / EffetBufferNormal as scratch space.
+            printf("Error: low memory mode not implemented.\n");
+            fatal_error();
+        }
+        ASSERT(FondAutorise == 1);
+        stop_cd();
+        i16 width = 0;
+        i16 height = 0;
+        image_t image = LoadPcxInVignet(NULL, resource_id, &width, &height, NULL /* the palette is not used */);
+        ASSERT(image.is_valid);
+
+        u8* dest_buffer = PLAN0; // Notice that we're loading into PLAN0 here, and not PLAN0BIT.
+
+        if (GameModeVideo != 0) {
+            memcpy(dest_buffer, image.memory, width * height);
+        } else {
+            // We need to blit the image data into PLAN0 which has been allocated to be twice as wide.
+            // (Maybe for the differential scrolling? Need to check later.)
+            u8* source_row = image.memory;
+            u8* dest_row = dest_buffer;
+            for (i32 y = 0; y < height; ++y) {
+                memcpy(dest_row, source_row, width);
+                source_row += width;
+                dest_row += 2 * width;
+            }
+        }
+        free(image.memory);
+
+        if (GameModeVideo != 0) {
+            PLAN0FND_to_bits_planes(PLAN0, width, height);
+        } else {
+            // NOTE: this is a bug!!
+            // We just loaded everything into PLAN0, but then here proceed to leak away everything by overwriting the pointer.
+            // However: if you call LoadPlan0InVignet() multiple times, it will work the second time because the pointers
+            // will be equal so this statement has no effect.
+            // My guess is that this is the reason that LoadPlan0InVignet() is called from load_world(), even though
+            // there seems to be no good reason to do that there. Because LoadPlan0InVignet() has already been called once
+            // once we reach LOAD_FND(), the pointers will be equal so PLAN0 doesn't get overwritten.
+            PLAN0 = PLAN0BIT;
+
+            plan0_width = 2 * width;
+            plan0_height = height;
+        }
+    }
 }
 
 //47BB0
@@ -781,6 +845,9 @@ u8* allocate_PLAN0(mem_t* mem_world, i32 width, i32 height) {
         buffer1 = DrawBufferNormal;
         buffer2 = EffetBufferNormal;
     } else {
+        // NOTE: In Normal mode, only one of these buffers is used.
+        // Actually, one of the buffers is leaked in Normal mode, because in LoadPlan0InVignet we're setting PLAN0 = PLAN0BIT
+        // (I think that is a bug in the game.)
         buffer1 = block_malloc(mem_world, width * height);
         buffer2 = block_malloc(mem_world, 2 * width * height + 8 * width);
     }
@@ -790,6 +857,7 @@ u8* allocate_PLAN0(mem_t* mem_world, i32 width, i32 height) {
 
 //47C10
 void PLAN0FND_to_bits_planes(u8* buffer, i16 width, i16 height) {
+    // NOTE: this procedure is only used for EGA (X) mode.
     //stub
 }
 

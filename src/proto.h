@@ -1,5 +1,5 @@
 
-// (win32) rayverse.cpp
+// (win32/linux)_main.cpp
 #ifdef _WIN32
 void win32_advance_frame(app_state_t* app_state);
 void win32_prepare_frame(app_state_t* app_state);
@@ -1438,6 +1438,14 @@ void DO_SAXO_MARCHE(obj_t* obj);
 void DO_SAXO3_COMMAND(obj_t* obj);
 void DO_SAXO3_DEBUT(obj_t* obj);
 void saxo2_get_eject_sens(obj_t* obj);
+
+// screen.c
+void Init_Bande(u8 fnd, i16 width, i16 height, u8* source_buf, u8* dest_buf);
+void Display_Back_Screen(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6);
+void Display_Sprite_On_Front(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6);
+void Calcul_Deplacement_Bande(i16 a1, i16 a2, i16 a3);
+void Init_Effet_Chaleur(i16 width, i16 height, u8* source_buf, u8* dest_buf);
+void Do_Effet_Chaleur(i16 a1, i16 a2);
 
 // skops.c
 void swap(i32 a1, i32 a2);

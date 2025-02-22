@@ -1,12 +1,98 @@
 
 //48EF0
 void LOAD_FND(void) {
-    //stub
+    if (Plan0NumPcx[no_fnd] != -1) {
+        LoadPlan0InVignet(Plan0NumPcx[no_fnd]);
+    }
+    if (GameModeVideo == 0) {
+        Init_Bande(no_fnd, plan0_width, plan0_height, PLAN0BIT, DrawBufferNormal); //TODO
+    }
 }
 
 //49098
 void INIT_FND(void) {
-    //stub
+    sp_y = 0;
+    type_fnd = 16 * mp.height >= plan0_height ? 0 : 3;
+    type_fndscrX = 0;
+    switch (num_world) {
+        case 1: {
+            switch (num_level) {
+                case 6:
+                case 9: {
+                    type_fndscrX = 1;
+                    sp_y = 2;
+                    type_fnd = 1;
+                } break;
+                case 7:
+                case 10: {
+                    type_fnd = 3;
+                } break;
+                case 16:
+                case 22: {
+                    type_fndscrX = 1;
+                    type_fnd = 3;
+                } break;
+                default: break;
+            }
+        } break;
+        case 2: {
+            switch (num_level) {
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 18: {
+                    type_fnd = 1;
+                    sp_y = 4;
+                } break;
+                default: break;
+            }
+        } break;
+        case 3: {
+            switch (num_level) {
+                case 7: {
+                    type_fnd = 1;
+                    sp_y = 4;
+                } break;
+                case 10: {
+                    type_fnd = 3;
+                } break;
+                default: break;
+            }
+        } break;
+        case 4: {
+            switch (num_level) {
+                case 4:
+                case 11: {
+                    type_fndscrX = 1;
+                    type_fnd = 3;
+                } break;
+                default: break;
+            }
+        } break;
+        case 5: {
+            switch (num_level) {
+                case 3:
+                case 11: {
+                    type_fndscrX = 1;
+                    type_fnd = 3;
+                } break;
+                default: break;
+            }
+        } break;
+        case 6: {
+            if (num_level == 4) {
+                type_fndscrX = 1;
+                type_fnd = 3;
+            }
+        } break;
+        default:break;
+    }
+    if (GameModeVideo == 0) {
+        type_fndscrX = 0;
+    }
+    LOAD_FND();
 }
 
 //491D4

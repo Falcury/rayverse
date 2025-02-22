@@ -1201,6 +1201,27 @@ i16 was_in_freeze = 0; //97F76
 u8 flagCDPlay; //97F78
 u8 phaseCd; //97F79
 
+//97F7E
+i16 atak[34] = {
+        1, -1, 0, 0, 1, 1, -3, 60, 0, 2, 2, -2, 0, 0, 1, 3, -4,
+        30, 0, 1, 2, -4, 30, 0, 1, 2, -3, 42, 0, 1, 1, -4, 80, 0
+};
+
+//98084
+u8 Type_Scroll[60] = {
+        0, 0, 1, 2, 2, 0, 1, 2, 2, 2, 0, 0, 2, 0, 0, 0, 2, 2,
+        2, 2, 0, 0, 1, 0, 0, 1, 2, 0, 2, 2, 0, 0, 2, 2, 0, 0,
+        0, 0, 2, 2, 0, 0, 0, 0, 2, 0, 2, 2, 2, 2, 0, 0, 2, 0,
+        0, 2, 2, 2, 2, 2,
+};
+
+//980C0
+u8 Tab_NbBande[60] = {
+        1, 1, 1, 1, 1, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1,
+        1, 1, 1, 1, 1, 1, 2, 10, 1, 2, 1, 1, 1, 1, 1, 1, 1,
+        2, 4, 5, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1,
+        2, 3, 1, 1, 1, 1, 1,
+};
 
 big_map_t BIG_MAP; //C21D8
 i32 Scroll_Masque[20]; //C21F8
@@ -1920,6 +1941,7 @@ i32 CompteurJumelle; //E0D0C
 i32* ExpPoint; //E0D10
 i32 dword_E0D14; //E0D14
 obj_t wldobj[100]; //E0D18
+u8 sp_y; //E40A9
 
 rgb_palette_t menu_rvb; //E43AC (?)
 rgb_palette_t rvb_options_in_game; //E46AC (?)
@@ -1958,6 +1980,9 @@ i16 indice_trz_wait; //E5754
 i16 pt_pile_snd; //E5756
 i16 indice_snd_wiz; //E575A
 
+i16 Val_Div_Scroll_Y; //E7444
+i16 NbSprite; //E7446
+i16 Val_Add_Scroll_Y; //E7448
 i16 NbBande; //E744A
 i16 Num_Fond; //E744C
 i32 skops_screen_tremble; //E7450
