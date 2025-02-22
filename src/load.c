@@ -813,6 +813,7 @@ void LoadPlan0InVignet(i32 resource_id) {
             u8* dest_row = dest_buffer;
             for (i32 y = 0; y < height; ++y) {
                 memcpy(dest_row, source_row, width);
+                memcpy(dest_row + width, source_row, width); // draw the image twice next to each other
                 source_row += width;
                 dest_row += 2 * width;
             }

@@ -620,7 +620,7 @@ void DO_TEN_COMMAND(obj_t* obj) {
         }
     } else if (obj->main_etat == 0 && obj->sub_etat == 3) {
         ++obj->timer;
-        if (!(obj->configuration == 0 || obj->timer < -3)) {
+        if (!(obj->configuration == 0 || obj->timer < 253)) {
             u8 saved_configuration = obj->configuration;
             //DO_INTERACT_PLAT(obj); // TODO: fix this
             obj->configuration = saved_configuration;
@@ -634,7 +634,7 @@ void DO_TEN_COMMAND(obj_t* obj) {
         }
     } else if (obj->main_etat == 1) {
         if (obj->phase != 0) ++obj->timer;
-        if (obj->timer >= -2) {
+        if (obj->timer >= 254) {
             skipToLabel(obj, 2, 1);
         }
         SET_X_SPEED(obj);

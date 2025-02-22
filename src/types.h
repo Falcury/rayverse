@@ -361,7 +361,7 @@ typedef struct obj_t {
 	i8 cmd_context_depth; // 7C
 	u8 configuration; // 7D
 	u8 display_prio; // layer the obj sprites get drawn to, between 1 and 7; 0 means it doesn't get drawn
-	i8 timer; // 7F
+	u8 timer; // 7F
 	u8 anim_count;
     obj_flags_t flags;
 	u8 field_83;

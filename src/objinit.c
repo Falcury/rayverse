@@ -222,7 +222,7 @@ void obj_init(obj_t* obj) {
             laserSourceSprNumInAnim = -1;
             IsBossThere = false;
             scrollLocked = false;
-            obj->timer = -76;
+            obj->timer = 180;
             saveBossEncounter = -1;
             currentBossAction = 0;
             currentBossActionIsOver = false;
