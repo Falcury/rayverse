@@ -611,6 +611,37 @@ u8 ReInitPlasma = 0; //95EB1
 u8 Main_Control = 0; //95EB2
 i16 During_The_Menu = 1; //95EB4
 u8 OptionMusicCdActive = 1; //95EB6
+u8 text_input_buffer[9]; //95EB7
+u8 byte_95EC0; //95EC0
+u8 byte_95EC1; //95EC1
+
+i16 niveau; //95EC4
+
+//95EC6
+i16 SerieAtakBB[85] = {
+        0, 2, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1,
+        3, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 2, 2, 2, 0, 1,
+        1, 1, 0, 0, 255, 0, 0, 0, 3, 0, 0, 1, 1, 1, 255, 0,
+        0, 0, 0, 0, 0, 0, 5, 1, 2, 3, 0, 0, 3, 1, 4, 0, 255,
+        0, 0, 0, 7, 0, 3, 0, 6, 0, 3, 0, 0, 1, 4, 0, 255, 0, 0,
+};
+
+//95F70
+rgb_t PalPlasma[16] = {
+        {32, 7, 63}, {31, 7, 61}, {32, 7, 58}, {33, 7, 56},
+        {36, 10, 53}, {37, 12, 51}, {45, 15, 48}, {52, 17, 46},
+        {45, 15, 48}, {40, 15, 51}, {35, 12, 53}, {35, 10, 56},
+        {32, 7, 58}, {30, 5, 61}, {27, 5, 61}, {32, 7, 63},
+};
+i16 word_95FA0; //95FA0
+i16 word_95FA2; //95FA2
+i16 word_95FA4; //95FA4
+i16 word_95FA6; //95FA6
+i16 word_95FA8; //95FA8
+i16 word_95FAA; //95FAA
+i16 word_95FAC; //95FAC
+i16 word_95FAE; //95FAE
+i16 word_95FB0; //95FB0
 
 u8 casse_brique_active = 0; //962B8
 u8 CasseBriqueON = 0; //962B9
@@ -1803,7 +1834,18 @@ u8 nb_loaded_eta; //CFA9B
 u8 position_ray; //CFA9C
 i32 CompteurTrameAudio; //CFAA0
 
+u8 byte_DA43C[128*128]; //DA43C
 rgb_palette_t MenuPalette; //DE43C
+u8 plasma_palette_color_index; //DE73C
+
+u16 word_DE73E; //DE73E
+u16 word_DE740; //DE740
+u16 word_DE742; //DE742
+u16 word_DE744; //DE744
+u16 word_DE746; //DE746
+u16 word_DE748; //DE748
+u16 word_DE74A; //DE74A
+u16 word_DE74C; //DE74C
 
 i16 old_num_world_choice; //DE80C
 i16 old_num_level_choice; //DE80E

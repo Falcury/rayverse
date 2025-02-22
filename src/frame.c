@@ -135,7 +135,7 @@ void start_fade_in(i16 speed) {
     fade = 1; // fade in
     clear_palette(&current_rvb);
     fade_speed = speed;
-    // apply palette
+    SetPalette(&current_rvb, 0, 256);
 }
 
 //3C5A4
@@ -168,7 +168,7 @@ void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal) {
             u16 temp = rvb_fade[i] >> 6;
             ((u8*)(dest_pal->colors))[i] = (u8)temp;
         }
-        // (apply palette)
+        SetPalette(&current_rvb, 0, 256);
         if (nb_fade == 0) {
             fade |= 0x40;
         }

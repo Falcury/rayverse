@@ -1,22 +1,94 @@
 
 //23F30
 void CalcTab(void) {
-    //stub
+    u8* row = byte_DA43C;
+    for (i32 j = 64; j > -64; --j) {
+        u8* pos = row;
+        for (i32 i = 64; i > -64; --i) {
+            double v = sin(sqrt(j*j + i*i) / 9.5);
+            *pos++ = (u8)((v + 1.0) * 40.0);
+        }
+        row += 128;
+    }
 }
 
 //23FDC
-void InitPlasma(u8 a1) {
-    //stub
+void InitPlasma(u8 need_set_palette) {
+    plasma_palette_color_index = (menuEtape == 0) ? 112 : 74;
+    for (i32 i = 0; i < 16; ++i) {
+        rgb_t* color = rvb[0].colors + plasma_palette_color_index + i;
+        // NOTE: these are 6-bit colors; we convert to 8-bit by multiplying by 4
+        // https://retrocomputing.stackexchange.com/questions/27400/what-is-the-most-accurate-way-to-map-6-bit-vga-palette-to-8-bit
+        // Also, for some reason the blue and red channels are swapped here.
+        color->r = PalPlasma[i].b << 2;
+        color->g = PalPlasma[i].g << 2;
+        color->b = PalPlasma[i].r << 2;
+    }
+    if (need_set_palette) {
+        SetPalette(&rvb[0], plasma_palette_color_index, 16);
+    }
 }
 
 //24068
-void Plasma(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7, i16 a8, i16 a9, u8 a10, i16 a11, i8 a12, i16 a13) {
-    //stub
+void Plasma(i16 x, i16 y, i16 width, i16 height, u8 a5, u8 a6, u8 a7, u8 a8, u8 a9, u8 a10, u8 a11, u8 a12, u8 a13) {
+    u8* row = draw_buffer + 320 * y + x;
+    u32 v17 = a6 | (a8 << 8) | (a10 << 16) | (a12 << 24);
+    for (i32 j = 0; j < height; ++j) {
+        v17 = (v17 + 0x01010101) & 0x7F7F7F7F;
+        u32 v18 = a5 | (a7 << 8) | (a9 << 16) | (a11 << 24);
+        u8* pos = row;
+        for (i32 i = 0; i < width; ++i) {
+            v18 = (v18 + 0x01010101) & 0x7F7F7F7F;
+            u8 v22 = a13 + byte_DA43C[128 * (u8)v17 + (u8)v18];
+            v22 += byte_DA43C[128 * (u8)(v17 >> 8) + (u8)(v18 >> 8)];
+            v22 += byte_DA43C[128 * (u8)(v17 >> 16) + (u8)(v18 >> 16)];
+            v22 += byte_DA43C[128 * (u8)(v17 >> 24) + (u8)(v18 >> 24)];
+            v22 >>= 4;
+            v22 += plasma_palette_color_index;
+            *pos++ = v22;
+        }
+        row += 320;
+    }
 }
 
 //241FC
-void PlasmaBox(i16 a1, i16 a2, i16 a3, i16 a4, u8 a5) {
-    //stub
+void PlasmaBox(i16 x, i16 y, i16 width, i16 height, u8 a5) {
+    if (a5 != 0) {
+        word_95FA0 += 1;
+        word_95FA2 -= 2;
+        word_95FA4 += 1;
+        word_95FA6 -= 2;
+        word_95FA8 += 3;
+        word_95FAA -= 2;
+        word_95FAC += 1;
+        word_95FAE -= 3;
+        word_95FB0 += 5;
+        word_DE748 = (sinus(word_95FA0) + 32) >> 4;
+        word_DE746 = (cosinus(word_95FA2) + 32) >> 4;
+        word_DE74C = (cosinus(word_95FA4) + 32) >> 4;
+        word_DE74A = (sinus(word_95FA6) + 32) >> 4;
+        word_DE744 = (cosinus(word_95FA8) + 32) >> 4;
+        word_DE742 = (sinus(word_95FAA) + 32) >> 4;
+        word_DE740 = (cosinus(word_95FAC) + 32) >> 4;
+        word_DE73E = (sinus(word_95FAE) + 32) >> 4;
+    }
+    x -= 3;
+    y -= 3;
+    width += 6;
+    height += 6;
+    if (x < 0) {
+        width += x;
+        x = 0;
+    } else if (x + width > 320) {
+        width = 320 - x;
+    }
+    if (y < 0) {
+        height += y;
+        y = 0;
+    } else if (y + height > 200) {
+        height = 200 - y;
+    }
+    Plasma(x, y, width, height, word_DE74C, word_DE74A, word_DE748, word_DE746, word_DE744, word_DE742, word_DE740, word_DE73E, word_95FB0);
 }
 
 //243E0

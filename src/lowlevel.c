@@ -71,7 +71,7 @@ void DrawWldPointPlan2Normal(u8* buffer, i32 x, i32 y) {
 }
 
 //14AEF
-void DrawBlackBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width) {
+void DrawBlackBoxNormal(u8* buffer /*edi*/, i32 x /*edx*/, i32 y /*ecx*/, i32 height /*ebx*/, i32 width /*eax*/) {
     if (x < 0) {
         width += x;
         x = 0;
@@ -94,7 +94,17 @@ void DrawBlackBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width) {
 }
 
 //14B2C
-void DrawFondBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width) {
+void DrawFondBoxNormal(u8* buffer /*edi*/, i32 x /*edx*/, i32 y /*ecx*/, i32 height /*ebx*/, i32 width /*esi*/, u8 fond_type /*eax*/) {
+    if (fond_type == 2) {
+        u8* last_line = buffer + 320 * (y + height) + width - 321;
+        u8* second_to_last_line = last_line - 321;
+        i32 skip_amount = 320 - x;
+
+        //stub
+
+    } else {
+
+    }
     //stub
 }
 

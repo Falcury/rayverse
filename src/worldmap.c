@@ -699,7 +699,7 @@ void INIT_AFFICHE_ECRAN_SAVE(void) {
     display_item_t* to_display = menu_to_display;
     to_display->font_size = 1;
     to_display->is_fond = 1;
-    to_display->field_D5 = 1;
+    to_display->field_D5 = 0;
     to_display->ypos = debut_sortie;
     to_display->color = 5;
     ecartx = 21;

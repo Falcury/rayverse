@@ -143,7 +143,7 @@ void display_pix_gerbes(void) {
 }
 
 //1A1C4
-void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, i8 color) {
+void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, u8 is_fond) {
     i32 clip_height = height;
     i32 clip_width = width;
     i32 clip_x = x;
@@ -172,10 +172,10 @@ void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, i8 col
             if (ModeVideoActuel == 1) {
                 //stub
             } else {
-                if (color == 0) {
+                if (is_fond == 0) {
                     DrawBlackBoxNormal(draw_buffer, clip_x, clip_y, clip_height, clip_width);
                 } else {
-                    DrawFondBoxNormal(draw_buffer, clip_x, clip_y, clip_height, clip_width);
+                    DrawFondBoxNormal(draw_buffer, clip_x, clip_y, clip_height, clip_width, is_fond);
                 }
             }
         }
@@ -278,7 +278,7 @@ void display_box_text(display_item_t* box) {
     i16 blackbox_width = (i16)(box->width + 6);
     i16 blackbox_height = (i16)(box->height + 6);
     if (box->field_D5) {
-        DISPLAY_BLACKBOX(blackbox_x, blackbox_y, blackbox_width, blackbox_height, -1, box->color);
+        DISPLAY_BLACKBOX(blackbox_x, blackbox_y, blackbox_width, blackbox_height, -1, box->is_fond);
         if (box->is_fond == 1) {
             display_text(box->text, box->xpos - 1, box->ypos - 1, box->font_size, box->color);
         } else if (box->is_fond == 2) {
@@ -288,7 +288,7 @@ void display_box_text(display_item_t* box) {
         }
     } else {
         if (box->is_fond != 0) {
-            DISPLAY_BLACKBOX(blackbox_x, blackbox_y, blackbox_width, blackbox_height, -2, box->color);
+            DISPLAY_BLACKBOX(blackbox_x, blackbox_y, blackbox_width, blackbox_height, -2, box->is_fond);
         }
         display_text(box->text, box->xpos, box->ypos, box->font_size, box->color);
     }

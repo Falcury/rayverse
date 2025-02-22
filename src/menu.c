@@ -346,8 +346,8 @@ void INIT_GENERAL_CHOICE(void) {
         display_item->xpos = basex;
         display_item->font_size = 1;
         display_item->is_fond = 1;
-        display_item->field_D5 = 1;
-        INIT_TXT_BOX(display_item); // TODO
+        display_item->field_D5 = 0;
+        INIT_TXT_BOX(display_item);
     }
     positiony = 0;
     button_released = 1;
@@ -804,7 +804,6 @@ void display_box_text_plasma(display_item_t* box, u8 a2) {
         PlasmaBox(box->centered_x_pos, box->centered_y_pos, box->width, box->height, a2);
         display_box_text(box);
     }
-    //stub
 }
 
 //4F878

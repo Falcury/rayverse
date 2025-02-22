@@ -45,7 +45,6 @@ void game_init(game_state_t* game) {
 	load_sav(1); // debug
 
 	game->draw_buffer = create_palettized_image(320, 200);
-    game->draw_palette = &current_rvb;
 
 	game->initialized = true;
 	global_game = game;
@@ -57,7 +56,7 @@ void advance_frame(void) {
 	game_state_t* game = &app_state->game;
 	rgb_t clear_color = { 0, 0, 0 };
 	render_clear(app_state->active_surface, clear_color);
-    surface_blit_palettized_image(&game->draw_buffer, game->draw_palette, NULL, app_state->active_surface, NULL);
+    surface_blit_palettized_image(&game->draw_buffer, &game->draw_palette, NULL, app_state->active_surface, NULL);
 #if _WIN32
 	win32_advance_frame(app_state);
 #else

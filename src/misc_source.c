@@ -59,8 +59,8 @@ u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte) {
 
 
 //inlined
-void SetPalette(void) {
-    //stub
+void SetPalette(rgb_palette_t* palette, u8 first_color, i32 num_colors) {
+    memcpy(global_game->draw_palette.colors + first_color, palette->colors + first_color, num_colors * sizeof(rgb_t));
 }
 
 

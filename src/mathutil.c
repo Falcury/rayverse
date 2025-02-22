@@ -120,7 +120,23 @@ i32 cosinus(i32 x) {
 
 //5E000
 i32 sinus(i32 x) {
-    return 0; //stub
+    i32 result;
+    x &= (512-1);
+    if (x >= 256) {
+        i32 index = x - 384;
+        if (index < 0) {
+            index = -index;
+        }
+        result = -costab[index];
+    } else {
+        i32 index = x - 128;
+        if (index < 0) {
+            index = -index;
+        }
+        result = costab[index];
+
+    }
+    return result;
 }
 
 //5E03C
