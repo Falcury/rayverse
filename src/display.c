@@ -787,7 +787,9 @@ void DEPART_LEVEL(void) {
 
 //36B0C
 void REMOVE_FICHIER(void) {
-    //stub
+    char filename[512];
+    snprintf(filename, 512, "RAYMAN%d.SAV", fichier_selectionne);
+    remove(filename);
 }
 
 //36BBC

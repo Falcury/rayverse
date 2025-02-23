@@ -812,7 +812,7 @@ void REALISATION_ACTION(void) {
             }
             if (confirmation_msg(1)) {
                 fichier_selectionne = positiony;
-                REMOVE_FICHIER(); //TODO
+                REMOVE_FICHIER();
                 save_ray[fichier_selectionne-1][0] = '\0';
             }
             realisation_effectuee = 1;
