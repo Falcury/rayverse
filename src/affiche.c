@@ -170,13 +170,24 @@ void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, u8 is_
     if (clip_width > 0 && clip_height > 0) {
         if (font_size == -1) {
             if (ModeVideoActuel == 1) {
-                //stub
+                //draw_borderbox();
             } else {
                 if (is_fond == 0) {
                     DrawBlackBoxNormal(draw_buffer, clip_x, clip_y, clip_height, clip_width);
                 } else {
                     DrawFondBoxNormal(draw_buffer, clip_x, clip_y, clip_height, clip_width, is_fond);
                 }
+            }
+        }
+        if (is_fond == 1) {
+            if (ModeVideoActuel != 1) {
+                DrawBorderBoxNormal(draw_buffer, clip_x, clip_y, clip_height, clip_width, 0x2026);
+            }
+        } else if (is_fond == 2) {
+            if (ModeVideoActuel != 1) {
+                DrawBorderBoxNormal(draw_buffer, clip_x, clip_y, clip_height, clip_width, 0x2020);
+            } else {
+                //draw_borderbox();
             }
         }
     }

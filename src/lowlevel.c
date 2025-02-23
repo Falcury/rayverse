@@ -109,8 +109,26 @@ void DrawFondBoxNormal(u8* buffer /*edi*/, i32 x /*edx*/, i32 y /*ecx*/, i32 hei
 }
 
 //14BBB
-void DrawBorderBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width, i32 a6) {
-    //stub
+void DrawBorderBoxNormal(u8* buffer /*edi*/, i32 x, i32 y, i32 height, i32 width, u16 colors /*eax*/) {
+    u8* pos = buffer + 320 * y + x;
+    u8 light_color = (u8)colors;
+    u8 dark_color = colors >> 8;
+
+    // draw the left and right vertical lines
+    for (i32 i = height; i != 0; --i) {
+        *pos = light_color;
+        *(pos + width - 1) = dark_color;
+        *(pos + width) = dark_color;
+        pos += 320;
+    }
+
+    // draw the bottom 2 darker lines
+    memset(pos, dark_color, width);
+    memset(pos - 320 + 1, dark_color, width);
+
+    // draw the top line (light color)
+    pos = buffer + 320 * y + x;
+    memset(pos, light_color, width); // draw the top line
 }
 
 //14C19

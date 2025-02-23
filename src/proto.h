@@ -26,7 +26,7 @@ void DisplayBufferModeNormal(u8* source, u8* dest);
 void DrawWldPointPlan2Normal(u8* buffer, i32 x, i32 y);
 void DrawBlackBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width);
 void DrawFondBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width, u8 fond_type);
-void DrawBorderBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width, i32 a6);
+void DrawBorderBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width, u16 colors);
 void DisplayAnyPictureNormal(u8* source_buffer, u8* dest_buffer, i32 source_x, i32 source_y, i32 dest_x, i32 dest_y, i32 stride, i32 width, i32 height);
 void ClearDrawAndDisplayBufferNormal(u8* draw_buf, u8* display_buf);
 void N_CLRSCR(u8* buffer);
