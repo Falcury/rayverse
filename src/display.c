@@ -68,7 +68,7 @@ i16 selection_save_option_prg(u32 a1) {
     readinput();
     button_released = ButtonReleasedSav2;
     SELECTION_SAVE_OPTION();
-    ButtonReleasedSav1 = button_released;
+    ButtonReleasedSav2 = button_released;
     REALISATION_ACTION();
     if ((action == 1 || (action == 3 && !fichier_existant)) && fichier_selectionne) {
         if (!fin_saisie_nom) {
