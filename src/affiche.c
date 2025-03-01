@@ -114,6 +114,8 @@ void DISPLAY_PTS_TO(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 a5) 
 
 //198C4
 void DISPLAY_PTS_TO_PLAN2(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 percent) {
+    //TODO: figure out why too many points are being drawn
+    percent = MIN(100, percent); // this fixes the too many points issue but is not present in the original code.
     Bresenham(DISPLAY_POINT, origin_x + 8, origin_y, dest_x + 8, dest_y, 7, percent);
 }
 

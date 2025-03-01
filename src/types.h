@@ -526,7 +526,7 @@ typedef struct display_item_t {
 } display_item_t;
 
 
-typedef struct {
+typedef struct obj_procs_t {
     void (*command)(obj_t* obj);
     void (*poing_collision)(obj_t* obj, i16 unk);
     void (*rayman_collision)(obj_t* obj);
@@ -534,13 +534,13 @@ typedef struct {
     void (*u_turn)(obj_t* obj);
 } obj_procs_t;
 
-typedef struct {
+typedef struct cptr_t {
     u8 (*read)(obj_t* obj);
     u8 (*skip)(obj_t* obj);
     u8 (*handle)(obj_t* obj);
 } cptr_t;
 
-typedef struct {
+typedef struct vitraux_info_t {
     i16 field_0;
     i16 field_2;
     u8 field_4;
@@ -550,12 +550,45 @@ typedef struct {
     i16 field_8;
 } vitraux_info_t;
 
-typedef struct {
+typedef struct bnk_header_t {
     i32 offset;
     i32 size;
     i32 field_8;
     i32 field_C;
 } bnk_header_t;
+
+typedef struct bande_t {
+    i16 field_0;
+    i16 field_2;
+    u8 field_4;
+    //u8 field_5_align;
+    i16 field_6;
+    u8 field_8;
+    u8 field_9;
+    //u8 field_A_align;
+    //u8 field_B_align;
+    u8* source_buffer_pos;
+    u8* draw_buffer_pos;
+    i16 field_14;
+    //i16 field_16_align;
+} bande_t;
+
+typedef struct def_bande_t {
+    i16 field_0;
+    u8 field_2;
+    //u8 field_3_align;
+    u8 field_4;
+    //u8 field_5_align;
+    u8 field_6;
+    //u8 field_7_align;
+} def_bande_t;
+
+typedef struct def_sprite_t {
+    i16 field_0;
+    i16 field_2;
+    i16 field_4;
+    //i16 field_6_align;
+} def_sprite_t;
 
 
 enum obj_type_enum {

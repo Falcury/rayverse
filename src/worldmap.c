@@ -39,7 +39,7 @@ void DISPLAY_PLAT_WAY(void) {
     for (i32 i = 0; i < 24; ++i) {
         world_info_t* world_info = t_world_info + i;
         obj_t* obj = mapobj + i;
-        if ((world_info->state & 2) || i == 17) {
+        if ((world_info->state & 1) || i == 17) {
             i32 x = obj->screen_x + obj->offset_bx + 8;
             if (x > -8 && x < LargeurJumelle + 14) {
                 i32 y = obj->screen_y + obj->offset_by;
@@ -332,7 +332,7 @@ void INIT_CHEMIN(void) {
             }
         }
         medaillon->scale = 0;
-        medaillon->offset_bx = 0;
+        medaillon->offset_bx = 80;
         medaillon->offset_by = 64;
         obj_init(medaillon);
         CalcObjPosInWorldMap(medaillon);

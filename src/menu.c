@@ -5,7 +5,7 @@ void LOAD_FND(void) {
         LoadPlan0InVignet(Plan0NumPcx[no_fnd]);
     }
     if (GameModeVideo == 0) {
-        Init_Bande(no_fnd, plan0_width, plan0_height, PLAN0BIT, DrawBufferNormal); //TODO
+        Init_Bande(no_fnd, plan0_width, plan0_height, PLAN0BIT, DrawBufferNormal);
     }
 }
 
