@@ -643,6 +643,43 @@ i16 word_95FAC; //95FAC
 i16 word_95FAE; //95FAE
 i16 word_95FB0; //95FB0
 
+//95FB2
+rgb_t PalFire[16] = {
+        {0, 0, 9}, {15, 5, 19}, {20, 10, 21}, {25, 10, 34},
+        {30, 10, 36}, {35, 10, 39}, {40, 10, 41}, {45, 10, 41},
+        {50, 10, 46}, {55, 10, 49}, {60, 10, 51}, {60, 10, 54},
+        {60, 10, 56}, {60, 10, 59}, {60, 10, 61}, {60, 10, 63},
+};
+
+i16 no_sound = 0; //95FE4
+u8 InvadersMode = 0; //95FE6
+u8 BonusMode = 0; //95FE7
+u8 BonusBrik = 20; //95FE8
+u8 BonusBrikType = 0; //95FE9
+u8 NbClassicBrik = 0; //95FEA
+u8 NbBrikTouched = 0; //95FEB
+i16 CasseBriqueOffsetX[7] = {0, 0, 6, 2, 5, 4, 8}; //95FEC
+i16 CasseBriqueOffsetY[7] = {16, 16, 8, 8, 16, 16, 8}; //95FFA
+i16 LastTouched = 20; //96008
+i16 NoCB = 0; //9600A
+i16 NoCBInit = 0; //9600C
+i16 tempo = 500; //9600E
+i16 CBoffsetX = 0; //96010
+i16 CBoffsetY = 0; //96012
+i16 Xdir = 0; //96014
+i16 Ydir = 0; //96016
+
+i16 speed_ball_angle = 18; //9629E
+i16 speed_ball_level = 0; //962A0
+i16 speed_ball_x = 0; //962A2
+i16 speed_ball_y = 0; //962A4
+i32 ball_x = 0; //962A8
+i32 ball_y = 0; //962AC
+i32 dword_962B0 = 441; //962B0
+u8 nb_max_collis = 0; //962B4
+u8 cbout = 0; //962B5
+u8 undestroy = 0; //962B6
+u8 upscreen = 0; //962B7
 u8 casse_brique_active = 0; //962B8
 u8 CasseBriqueON = 0; //962B9
 
@@ -1894,6 +1931,12 @@ u8 nb_loaded_eta; //CFA9B
 u8 position_ray; //CFA9C
 i32 CompteurTrameAudio; //CFAA0
 
+i32 SpeedYLine[10]; //CFAC4
+i32 PosXLine[10]; //CFAEC
+i32 PosYLine[320]; //CFB14
+char bonus_time_display_text[20]; //D0014
+
+i16 p1[21000]; //D002C
 u8 byte_DA43C[128*128]; //DA43C
 rgb_palette_t MenuPalette; //DE43C
 u8 plasma_palette_color_index; //DE73C

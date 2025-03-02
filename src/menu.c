@@ -868,7 +868,7 @@ void display_box_msg_commande(display_item_t* box, void_func_t commande_box_func
         DO_FADE();
         SWAP_BUFFERS();
         readinput();
-    } while (!ValidButPressed() || nb_fade != 0);
+    } while (ValidButPressed() || nb_fade != 0);
 
     RESET_ALL_TOUCHE(); // added: fix enter not released leading to immediate closure of dialog //TODO: find out the cause of this bug?
 

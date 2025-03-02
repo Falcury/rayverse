@@ -93,12 +93,69 @@ void PlasmaBox(i16 x, i16 y, i16 width, i16 height, u8 a5) {
 
 //243E0
 void InitFire(void) {
-    //stub
+    MakeMyRand(1);
+    plasma_palette_color_index = (menuEtape != 0) ? 112 : 74;
+    for (i32 i = 0; i < 16; ++i) {
+        rgb_t* color = rvb[0].colors + plasma_palette_color_index + i;
+        // NOTE: I don't understand the swapping of the channels here.
+        color->r = PalFire[i].b; // << 2;
+        color->g = PalFire[i].r; // << 2;
+        color->b = PalFire[i].g; // << 2;
+    }
+    SetPalette(&rvb[0], plasma_palette_color_index, 16);
+    for (i32 i = 0; i < COUNT(p1); ++i) {
+        p1[i] = plasma_palette_color_index;
+    }
 }
 
 //244C4
 void Fire(i16 x, i16 y, i16 width, i16 height) {
-    //stub
+    u8* row = draw_buffer + 320 * y + x;
+    MakeMyRand(0);
+    u8 c = plasma_palette_color_index;
+    for (i32 i = 0; i < width; ++i) {
+        i16 r = myRand(10);
+        if (r < 5) {
+            c = 15 * myRand(1) + plasma_palette_color_index;
+        }
+        p1[300 * height + i] = c;
+        p1[300 * height + 300 + i] = c;
+    }
+
+    for (i32 i = 1; i <= height; ++i) {
+        for (i32 j = 0; j < width; ++j){
+            if (j != 0) {
+                if (j == width - 1) {
+                    p1[300 * i - 300 + j] =
+                            (p1[300 * i + 300] +
+                             p1[300 * i + j] +
+                             p1[300 * i + j - 1] +
+                             p1[300 * i + j + 300]) >> 2;
+                } else {
+                    p1[300 * i - 300 + j] =
+                            (p1[300 * i + j + 1] +
+                            p1[300 * i + j] +
+                            p1[300 * i + j - 1] +
+                            p1[300 * i + j + 300]) >> 2;
+                }
+            } else {
+                p1[300 * i - 300 + j] =
+                        (p1[300 * i - 301 + width] +
+                         p1[300 * i] +
+                         p1[300 * i - 1] +
+                         p1[300 * i + 300]) >> 2;
+            }
+        }
+    }
+
+    for (i32 j = 0; j < height; ++j) {
+        u8* pos = row;
+        for (i32 i = 0; i < width; ++i) {
+            *pos++ = p1[300 * j + i];
+        }
+        row += 320;
+    }
+
 }
 
 //24738

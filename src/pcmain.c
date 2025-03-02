@@ -85,7 +85,7 @@ int main_Ray(int argc, char** argv) {
 
 //18420
 void PcMain(void) {
-    MakeMyRand();
+    MakeMyRand(1);
     InitMusic();
     input_mode = 1;
     atexit(ToDoAtExit);
@@ -127,7 +127,7 @@ void PcMain(void) {
             continue;
         }
 
-        MakeMyRand();
+        MakeMyRand(1);
         SPECIAL_INIT();
         default_sprite_clipping();
         DO_WORLD_MAP();

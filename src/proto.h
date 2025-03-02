@@ -1333,7 +1333,7 @@ void FIN_LEVEL_ANIM(void);
 
 // rand.c
 i16 myRand(i16 max);
-void MakeMyRand(void);
+void MakeMyRand(i32 set_seed);
 
 // ray.c
 void allocateRayLandingSmoke(void);
