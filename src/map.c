@@ -65,7 +65,20 @@ void set_default_Bloc_clipping(void) {
 
 //5CA24
 void set_xymapini(void) {
-    //stub
+    xmapmax = 16 * mp.width - Bloc_lim_W2;
+    ymapmax = 16 * mp.height - Bloc_lim_H2;
+    xmapmaxini = 16 * mp.width - 320;
+    ymapmaxini = 16 * mp.height - 200;
+    if (xmapmax < 0) {
+        xmapmax = 0;
+    }
+    if (ymapmax < 0) {
+        ymapmax = 0;
+    }
+    scroll_start_x = 8 - Bloc_lim_W1;
+    scroll_end_x = xmapmax + 8;
+    scroll_start_y = -Bloc_lim_H1;
+    scroll_end_y = ymapmax;
 }
 
 //5CAD0
@@ -92,7 +105,14 @@ void set_whmap(i32 a1, i32 a2, void* a3) {
 
 //5CD64
 void recaleRaysurlesBords(void) {
-    //stub
+    if (ray.x + ray.offset_bx <= xmap + Bloc_lim_W1 +16) {
+        ray.x = xmap + Bloc_lim_W1 - ray.offset_bx + 16;
+        ray.screen_x = ray.x - scroll_start_x + 8;
+    }
+    if (ray.x + ray.offset_bx >= xmap + Bloc_lim_W2 - 23) {
+        ray.x = xmap + Bloc_lim_W2 - 32;
+        ray.screen_x = ray.x - xmap + 8;
+    }
 }
 
 //5CE08
@@ -185,9 +205,6 @@ void set_xywhmap(i16 xmin, i16 xmax, i16 ymin, i16 ymax) {
     if (OptionGame) {
         recaleRaysurlesBords();
     }
-
-
-    //stub
 }
 
 //5D144

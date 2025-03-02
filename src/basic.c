@@ -18,12 +18,24 @@ bool EOA(obj_t* obj) {
 
 //1D0EC
 void save_objects_flags(void) {
-    //stub
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        obj_t* obj = level.objects + i;
+        set2bits((u32*) &saveobj[i >> 4], i & 0xF, 2 * (obj->is_active & 1) + obj->flags.alive);
+    }
 }
 
 //1D15C
-void restore_objects_flags(obj_t* obj) {
-    //stub
+void restore_objects_flags(void) {
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        obj_t* obj = level.objects + i;
+        if (obj->type != TYPE_58_CAGE) {
+            u32 high_bit = 0;
+            u32 low_bit = 0;
+            read2bits((u32*) &saveobj[i >> 4], i & 0xF, &high_bit, &low_bit);
+            obj->is_active = high_bit;
+            obj->flags.alive = low_bit;
+        }
+    }
 }
 
 //1D204
@@ -64,8 +76,8 @@ i32 get_proj_dist(i16 scale, i16 outer_dim) {
 }
 
 //1D5B0
-i32 get_proj_dist2(i16 a1, i16 a2) {
-    return 0; //stub
+i32 get_proj_dist2(i16 scale, i16 a2) {
+    return (a2 * ((256*256) / (scale + 256))) >> 8;
 }
 
 //1D5D8
@@ -88,13 +100,13 @@ void set_zoom_mode(u8 mode) {
 }
 
 //1D658
-i32 inverse_proj_x(i16 a1, i16 a2) {
-    return 0; //stub
+i32 inverse_proj_x(i16 scale, i16 a2) {
+    return PROJ_CENTER_X + ((a2 - PROJ_CENTER_X) << 8) / ((256*256) / (scale + 256));
 }
 
 //1D690
-i32 inverse_proj_y(i16 a1, i16 a2) {
-    return 0; //stub
+i32 inverse_proj_y(i16 scale, i16 a2) {
+    return PROJ_CENTER_Y + ((a2 - PROJ_CENTER_Y) << 8) / ((256*256) / (scale + 256));
 }
 
 //1D6C8

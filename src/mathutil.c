@@ -33,13 +33,17 @@ u32 next_power_of_2(u32 x) {
 }
 
 //5DEF0
-void set2bits(u32 x) {
-    //stub
+void set2bits(u32 * x, u8 index, u32 value) {
+    u32 new_x = (value << (2 * (15 - index))) | (*x & ~(3 << (2 * (15 - index))));
+    *x = new_x;
 }
 
 //5DF24
-u32 read2bits(u32 x) {
-    return 0; //stub
+u32 read2bits(u32* x, u8 index, u32* high_bit, u32* low_bit) {
+    u32 result = ((3 << (2 * (15 - index))) & *x) >> (2 * (15 - index));
+    *high_bit = (result & 2) >> 1;
+    *low_bit = result & 1;
+    return result;
 }
 
 //5DF58

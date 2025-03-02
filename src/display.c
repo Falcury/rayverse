@@ -552,7 +552,7 @@ void init_divers_level_PC(u8* a1) {
     if (record.current_offset != 0 || record.is_playing || record.is_recording) {
         return;
     }
-    //sub_42490(&record);
+    do_record(&record); //TODO
 }
 
 //3631C
@@ -706,7 +706,7 @@ void DEPART_WORLD(void) {
     if (MusicCdActive) {
         stop_cd();
     }
-    if (!NormalModeAutorise) {
+    if (!ModeNormalAutorise) {
         GameModeVideo = 1;
     }
     if (FondAutorise == 2) {
@@ -780,7 +780,7 @@ void DEPART_LEVEL(void) {
         SpriteWorldBlocksFree(main_mem_sprite);
         LOAD_VIGNET_GAME(main_mem_level);
         load_level(main_mem_level, num_world, level_filename);
-        INIT_FND(); //TODO
+        INIT_FND();
 
     }
 }

@@ -1349,7 +1349,10 @@ rgb_palette_t rvb_plan3; //C7C88
 rgb_palette_t rvb[3]; //C7F88
 
 i16 notbut[4]; //C97F0
-
+i32 SNSEQ_list[128]; //C97F8
+u8 grp_stars[120]; //C99F8
+i16 invpy0[8]; //C9A70
+pix_gerbe_t pix_gerbe[8]; //C9A80 // 2568 == 321*8
 i16 invpx0[8]; //CAE90
 i16 invpy200[8]; //CAEA0
 i16 nb_floc[8]; //CAEB0
@@ -1357,7 +1360,7 @@ i16 invpx320[8]; //CAEC0
 i16 SNSEQ_len[64]; //CAED0
 record_t record; //CAF50
 i16 tot_nb_flocs[8]; //CAF68
-i16 floc_ind; //CAF78
+i16 floc_ind[8]; //CAF78
 u8 wi_save_zone[24]; //CAF88
 u8 save_zone[2592]; //CAFA0
 i16 allowed_time[192]; //CB9C0
@@ -1370,7 +1373,7 @@ level_obj_t level_alw; //CCDE8
 level_t level; //CCDF0
 level_obj_t level_obj; //CCDFC
 u8 ecroule_rubis_list[8]; //CCE00
-u8 saveobj[64]; //CCE08
+u8 saveobj[64+3]; //CCE08 //NOTE: originally 64 bytes - I added some safety bytes because read/set2bits might access out of bounds
 eta_t** loaded_eta[100]; //CCE48
 i32 idle_ticks; //CCFD8
 char CheminSauvegarde[100]; //CCFDC
@@ -1488,7 +1491,7 @@ mem_t* main_mem_tmp; //CD8A0
 
 loadinforay_t LoadInfoRay[3]; //CD8AC
 
-u32 flocon_tab; //CD8BC
+flocon_t* flocon_tab; //CD8BC
 u32 map_time; //CD8C0
 u32 left_time; //CD8C4
 u32 lidol_source_obj; //CD8C8
@@ -1527,7 +1530,7 @@ i32 pixels_enfonce; //CEEF4
 
 i8 Plan0NumPcx[10]; //CEF47
 status_bar_t status_bar; //CEF52
-u8 ray_max_hitp; //CEF5B
+i16 actobj[101]; //CEF5C
 
 i16 numero_palette_special; //CF740
 i16 ProchainEclair; //CF742
@@ -1732,7 +1735,7 @@ u16 moskitosaxo_obj_id; //CF8D6
 u16 moskitomama_right_obj_id; //CF8D8
 u16 nb_fade; //CF8DA
 u16 sko_last_action; //CF8DC
-u16 skops_beam_on; //CF8DE
+u16 sko_rayon_on; //CF8DE
 i16 skops_final_y; //CF8E0
 i16 skops_final_x; //CF8E2
 u16 word_CF8E4; //CF8E4
@@ -1748,7 +1751,7 @@ u8 saved_argv[255]; //CF8F6
 u8 horloge[25]; //CF9F5
 u8 HVersionWindows; //CFA0E
 u8 NVersionWindows; //CFA0F
-u8 is_master_mode; //CFA10
+u8 MessageProgram; //CFA10
 u8 DosDetect; //CFA11
 u8 WindowsLance; //CFA12
 u8 SonLimite; //CFA13
@@ -1783,7 +1786,7 @@ u8 ChangeJumelleSizeOK; //CFA2F
 u8 JumelleZoomActif; //CFA30
 u8 ParamZoomChange; //CFA31
 u8 JumelleEffetAutorise; //CFA32 // zoom effect available
-u8 NormalModeAutorise; //CFA33    // normal mode available
+u8 ModeNormalAutorise; //CFA33    // normal mode available
 u8 first_credit; //CFA34
 u8 language; //CFA35
 u8 ModeDemo; //CFA36
@@ -1847,7 +1850,7 @@ u8 currentBossAction; //CFA6F
 u8 gerbe; //CFA70
 u8 first_boss_meet; //CFA71
 u8 ray_last_ground_btyp; //CFA72
-u8 ray_mode_speed; //CFA73
+u8 RAY_MODE_SPEED; //CFA73
 u8 fin_de_rayman; //CFA74
 u8 ray_superhelico_bis; //CFA75
 u8 fin_boss; //CFA76
@@ -1875,7 +1878,7 @@ u8 ray_pos_in_stack; //CFA8B
 u8 in_air_because_hit; //CFA8C
 u8 dark_phase; //CFA8D
 u8 IsBossThere; //CFA8E
-u8 skops_enfonce_enable; //CFA8F
+u8 sko_enfonce_enable; //CFA8F
 u8 WaitForAnim; //CFA90
 u8 ecroule_plat_index; //CFA91
 u8 byte_CFA92; //CFA92

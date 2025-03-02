@@ -507,8 +507,8 @@ void DoPoingPowerupRaymanCollision(obj_t* obj) {
 void DoPowerupRaymanCollision(obj_t* obj) {
     DO_NOVA(obj);
     ray.hit_points += obj->hit_points;
-    if (ray.hit_points > ray_max_hitp) {
-        ray.hit_points = ray_max_hitp;
+    if (ray.hit_points > status_bar.max_hitp) {
+        ray.hit_points = status_bar.max_hitp;
     }
     obj->flags.alive = false;
     PlaySnd(8, obj->obj_index);

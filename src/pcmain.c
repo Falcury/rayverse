@@ -37,7 +37,7 @@ void PrintDosInfo(void) {
 //17F00
 void InitMemoryVariable(void) {
     P486 = 0;
-    NormalModeAutorise = 1;
+    ModeNormalAutorise = 1;
     JumelleEffetAutorise = 0; // TODO: re-enable once implemented
     CarteSonAutorisee = 1;
     SonLimite = 0;
@@ -48,22 +48,31 @@ void InitMemoryVariable(void) {
     TailleMainMemLevel = 0x87C00;
     TailleMainMemSprite = 0xDF400;
     TailleMainMemFix = 0x4D800;
+    AllocVariablesAutorisee();
 }
 
 //18228
 void AllocVariablesAutorisee(void) {
-    //stub
+    MessageProgram = 0;
+    flocon_tab = calloc(512, sizeof(flocon_t));
+    if (!flocon_tab) {
+        fatal_error();
+    }
+    GameModeVideo = (ModeNormalAutorise == 0);
+    MenuCredits = 0;
 }
 
 //18290
-void AfficheEntente(void) {
+void AfficheEntete(void) {
+    InitTextMode();
+    printf("RAYMAN (US) v1.21\n");
     //stub
 }
 
 //1836C
 int main_Ray(int argc, char** argv) {
     //unlink("C:\\raytmp.tmp");
-    AfficheEntente();
+    AfficheEntete();
     WindowsLance = 131; //detect_windows();
     HVersionWindows = 4;
     NVersionWindows = 0;
@@ -146,13 +155,13 @@ void PcMain(void) {
                 fade_out(2, &rvb_plan3);
             }
 
-            while(!(fin_du_jeu || new_level == 0 || new_world == 0)) {
+            while(!(fin_du_jeu || new_level || new_world)) {
                 WaitNSynchro(15);
                 INIT_MOTEUR_DEAD();
                 INIT_RAY_ON_MS();
                 START_LEVEL_ANIM();
                 BackgroundOn = IsBackgroundOn();
-                if (GameModeVideo == 0) {
+                if (GameModeVideo != 0) {
                     default_sprite_clipping();
                     InitModeXWithFrequency(VGA_FREQ);
                     NewFrequency(Frequence);

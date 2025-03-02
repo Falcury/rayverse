@@ -1,4 +1,7 @@
 
+#define SCREEN_HEIGHT 200
+#define SCREEN_WIDTH 320
+
 #pragma pack(push,1)
 typedef struct vec2b_t {
 	u8 x, y;
@@ -329,7 +332,7 @@ typedef struct obj_t {
 	i16 follow_x;
 	i16 cmd_arg_1;
 	i16 phase; // 52
-	u16 rayman_dist; //54
+	u16 rayman_dist; //54 // tile index?
 	i16 iframes_timer; // timer (?)
 	u16 test_block_index;
 	u16 scale; // 5A
@@ -589,6 +592,28 @@ typedef struct def_sprite_t {
     i16 field_4;
     //i16 field_6_align;
 } def_sprite_t;
+
+typedef struct flocon_t {
+    i16 field_0;
+    i16 field_2;
+    i16 field_4;
+    u8 field_6;
+    u8 field_7;
+} flocon_t;
+
+typedef struct pix_gerbe_item_t {
+    i16 x_pos;
+    i16 y_pos;
+    i16 speed_x;
+    i16 speed_y;
+    u8 y_accel;
+    u8 unk_1;
+} pix_gerbe_item_t;
+
+typedef struct pix_gerbe_t {
+    pix_gerbe_item_t items[64];
+    i16 is_active;
+} pix_gerbe_t;
 
 
 enum obj_type_enum {

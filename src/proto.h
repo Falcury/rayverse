@@ -103,7 +103,7 @@ void init_arg(i32 argc, char** argv);
 void PrintDosInfo(void);
 void InitMemoryVariable(void);
 void AllocVariablesAutorisee(void);
-void AfficheEntente(void);
+void AfficheEntete(void);
 int main_Ray(int argc, char** argv);
 void PcMain(void);
 
@@ -180,19 +180,19 @@ bool cd_playing(void);
 // basic.c
 bool EOA(obj_t* obj);
 void save_objects_flags(void);
-void restore_objects_flags(obj_t* obj);
+void restore_objects_flags(void);
 void snapToSprite(obj_t* obj1, obj_t* obj2, u8 a3, i16 a4, i16 a5);
 void findfirstObject(i16 a1);
 void findfirstInactiveObject(i16 a1);
 void sinYspeed(obj_t* obj, i16 a2, i16 a3, i16* a4);
 void set_proj_center(i16 x, i16 y);
 i32 get_proj_dist(i16 scale, i16 outer_dim);
-i32 get_proj_dist2(i16 a1, i16 a2);
+i32 get_proj_dist2(i16 scale, i16 a2);
 i32 get_proj_x(i16 scale, i16 a2);
 i32 get_proj_y(i16 scale, i16 a2);
 void set_zoom_mode(u8 mode);
-i32 inverse_proj_x(i16 a1, i16 a2);
-i32 inverse_proj_y(i16 a1, i16 a2);
+i32 inverse_proj_x(i16 scale, i16 a2);
+i32 inverse_proj_y(i16 scale, i16 a2);
 i32 vblToEOA(obj_t* obj, u8 a2);
 void GET_ANIM_POS(obj_t* obj, i16* a2, i16* a3, i16* a4, i16* a5);
 void add_actobj(i16 a1);
@@ -1041,7 +1041,7 @@ void is_icy_pente(u8 a1);
 void STOPPE_RAY_EN_XY(void);
 void DO_PLACE_RAY(void);
 void DO_AUTO_SCROLL(void);
-void INIT_MOTEUR(u8 a1);
+void INIT_MOTEUR(u8 new_lvl);
 void INIT_MOTEUR_BEGIN(void);
 void INIT_MOTEUR_WORLD(void);
 void INIT_MOTEUR_LEVEL(i16 a1);
@@ -1063,8 +1063,8 @@ void add_256_flocs(void);
 void sub_5B910(void);
 void init_flocons(void);
 void do_flocons(i16 a1, i16 a2, i16 a3, i16 a4);
-void set_snow_sequence(i16 a1, i16 a2);
-void set_SNSEQ_list(void);
+void set_snow_sequence(i16 seq, i16 len);
+void set_SNSEQ_list(i16 a1);
 void DO_SNOW_SEQUENCE(void);
 void DoNeigeRaymanCollision(obj_t* obj);
 
@@ -1097,8 +1097,8 @@ void DO_NGW_POING_COLLISION(obj_t* obj);
 void DO_ONE_NGW_RING_COMMAND(obj_t* obj);
 
 // mathutil.c
-void set2bits(u32 x);
-u32 read2bits(u32 x);
+void set2bits(u32 * x, u8 index, u32 value);
+u32 read2bits(u32* x, u8 index, u32* high_bit, u32* low_bit);
 void setbit(u32 x);
 u32 getbit(u32 x);
 i32 reflexion(i32 a1, i32 a2);
@@ -1396,6 +1396,7 @@ void sub_71A98(void);
 void DO_UBI_LOGO(void);
 
 // save.c
+void initGameSave(void);
 void doneGameSave(void);
 void saveGameState(obj_t* save_obj, save_state_t* save_state);
 void restoreGameState(save_state_t* save_state);

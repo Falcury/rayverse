@@ -21,6 +21,7 @@ typedef long long s64;
 #endif
 
 #define COUNT(array) (sizeof(array) / sizeof((array)[0]))
+#define LEN COUNT
 #ifndef MIN
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #endif

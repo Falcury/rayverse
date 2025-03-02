@@ -327,6 +327,11 @@ void reset_items_and_bosses(void) {
 }
 
 //73B80
+void initGameSave(void) {
+    save1.is_just_saved = 0;
+}
+
+//73B80
 void doneGameSave(void) {
 	save1.is_just_saved = 0;
 }

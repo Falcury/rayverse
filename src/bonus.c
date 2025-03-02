@@ -1,7 +1,7 @@
 
 //23A00
 i16 get_allowed_time(void) {
-    return 0; //stub
+    return allowed_time[32 * (num_world - 1) - num_level - 1];
 }
 
 //23A28

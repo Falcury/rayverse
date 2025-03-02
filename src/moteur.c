@@ -1,7 +1,7 @@
 
 //55480
 void INIT_HORLOGES(void) {
-    //stub
+    memset(horloge, 0, sizeof(horloge));
 }
 
 //55498
@@ -376,7 +376,41 @@ void linkListHoldsAGendoor(obj_t* obj) {
 
 //596C0
 void correct_gendoor_link(u8 a1) {
-    //stub
+    for (i16 i = 0; i < level.nb_objects; ++i) {
+        obj_t* obj = level.objects + i;
+        if (obj->type == TYPE_164_GENERATING_DOOR) {
+            i16 link = link_init[i];
+            i16 last_link = i;
+
+            // NOTE: I'm not too sure about this part, might need checking
+            while (link != i && link != last_link) {
+                if (obj->flags.alive && obj->type == TYPE_164_GENERATING_DOOR) {
+                    level.objects[link].flags.alive = 0;
+                }
+                last_link = link;
+                link = link_init[link];
+            }
+
+            if (link == i) {
+                link_init[last_link] = link_init[i];
+                if (last_link == link_init[i]) {
+                    level.objects[last_link].link_has_gendoor = 0;
+                }
+                obj->phase = link;
+                obj->link_has_gendoor = 0;
+            }
+
+            if (a1 && !obj->flags.alive) {
+                i16 init_link = obj->phase;
+                i16 linked_obj_id;
+                do {
+                    linked_obj_id = link_init[init_link];
+                    suppressFromLinkList(level.objects + linked_obj_id); //TODO
+                } while (init_link != linked_obj_id);
+            }
+
+        }
+    }
 }
 
 //597FC
@@ -394,7 +428,7 @@ void INIT_RAY_BEGIN(void) {
     RayEvts.super_helico = 0;
     RayEvts.magicseed = 0;
     RayEvts.tiny = 0;
-    ray_max_hitp = 2;
+    status_bar.max_hitp = 2;
     status_bar.num_wiz = 0;
     fin_continue = 0;
     ray.flags.flag_1 = false;
@@ -452,7 +486,7 @@ void INIT_RAY(u8 level_index) {
         RayEvts.super_helico = 0;
     }
     if (!(num_world == world_1_jungle && num_level == 9) && !ModeDemo && !record.is_recording) {
-        RayEvts.magicseed= 0;
+        RayEvts.magicseed = 0;
     }
     if (RayEvts.squashed) {
         RayEvts.tiny = RayEvts.squashed;
@@ -463,18 +497,18 @@ void INIT_RAY(u8 level_index) {
     if (save1.rayevts_reverse && save1.save_obj_id != -1) {
         RayEvts.reverse = 0;
         if (num_world == world_6_cake && num_level == 3) {
-            RAY_REVERSE_COMMANDS();
+            RAY_REVERSE_COMMANDS(); //TODO
         }
     } else {
         RayEvts.reverse = 1;
-        RAY_REVERSE_COMMANDS();
+        RAY_REVERSE_COMMANDS(); //TODO
     }
 
     if (level.objects && level.nb_objects > 0) {
 
         obj_t* obj = level.objects;
         for (i32 i = 0; i < level.nb_objects; ++i) {
-            if (obj->type != TYPE_99_RAY_POS) {
+            if (obj->type == TYPE_99_RAY_POS) {
                 break;
             }
             ++obj;
@@ -536,8 +570,118 @@ void DO_AUTO_SCROLL(void) {
 }
 
 //5A1E0
-void INIT_MOTEUR(u8 a1) {
-    //stub
+void INIT_MOTEUR(u8 new_lvl) {
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        level.objects[i].field_1C = 0;
+    }
+
+    memset(pix_gerbe, 0, sizeof(pix_gerbe));
+
+    if (!fin_continue) {
+        init_flocons();
+    }
+    if (num_world == world_1_jungle && num_level == 9) {
+        set_SNSEQ_list(11);
+    }
+    scrollLocked = 0;
+    loop_time = 0;
+    dans_la_map_monde = 0;
+    sko_rayon_on = 0;
+    rubis_list_calculated = 0;
+    Vignet_To_Display = 0;
+    sko_last_action = 0;
+    sko_enfonce_enable = 0;
+    joe_exp_probleme = finBosslevel.helped_joe_2;
+    pixels_enfonce = 0;
+    if (num_world == world_5_cave && num_level == 10) {
+        mp.height = 32;
+        scroll_end_y = 312;
+        ymapmax = 312;
+    }
+    in_pause = 0;
+    map_time = 0;
+    left_time = -2;
+    INIT_HORLOGES();
+    ray.obj_index = -1;
+    actobj[0] = -1;
+    actobj[100] = 0;
+    xmap = 0;
+    ymap = 0;
+
+    if (GameModeVideo != 0) {
+        ymapmax = 16 * mp.height - 200;
+        xmapmax = 16 * mp.width - 305;
+        if (xmapmax < 0) {
+            xmapmax = 0;
+        }
+        if (ymapmax < 0) {
+            ymapmax = 0;
+        }
+        scroll_start_x = 0;
+        scroll_end_x = xmapmax;
+        scroll_start_y = 0;
+        scroll_end_y = ymapmax;
+    } else {
+        set_xymapini();
+    }
+    v_scroll_speed = 0;
+    h_scroll_speed = 0;
+    dvspeed = 0;
+    dhspeed = 0;
+    jump_time = 0;
+    gerbe = 0;
+    decalage_en_cours = 0;
+    ray_wind_force = 0;
+    screen_trembling = 0;
+    helico_time = -1;
+    weather_wind = 0;
+    lidol_to_allocate = 0;
+    fin_boss = 0;
+    boss_mort = 0;
+    TextDark2_Affiche = 0;
+    if (!fin_du_jeu) {
+        dead_time = 64;
+    }
+    INIT_RAY(new_lvl);
+    if (!bonus_map && departlevel && save1.is_just_saved) {
+        i16 saved_tings = status_bar.num_wiz;
+        restoreGameState(&save1);
+        status_bar.num_wiz = saved_tings;
+    }
+    if (departlevel) {
+        nb_wiz_collected = 0;
+    } else {
+        save1.is_just_saved = save_save;
+        ray.x = ray_X_main_pos_init;
+        ray.y = ray_Y_main_pos_init;
+        ray.is_active = 1;
+        ray.flags.alive = 1;
+        current_pal_id = pal_id_at_wizard + 1;
+        actualize_palette(pal_id_at_wizard);
+        xmap = xmapsave;
+        ymap = ymapsave;
+    }
+    INIT_OBJECTS(new_lvl); //TODO
+    correct_link(); //TODO
+    deactivate_ship_links(); //TODO
+    special_flags_init(); //TODO
+    if (num_world_choice == world_5_cave && num_level_choice == 4 && finBosslevel.helped_joe_1) {
+        RayEvts.firefly = 1;
+    } else {
+        RayEvts.firefly = 0;
+    }
+    if (RayEvts.firefly) {
+        INIT_LUCIOLE(); //TODO
+    }
+    DO_OBJECTS(); //TODO
+    if (mp.width <= 20 && (SizeScreen == 0 || GameModeVideo == 1)) {
+        scroll_start_x = scroll_end_x;
+        xmap = scroll_end_x;
+    }
+    if (type_fndscrX != 0) {
+        scroll_end_x = scroll_start_x;
+        xmap = scroll_start_x;
+    }
 }
 
 //5A5B4
@@ -584,7 +728,33 @@ void INIT_MOTEUR_WORLD(void) {
 
 //5A6F4
 void INIT_MOTEUR_LEVEL(i16 a1) {
-    //stub
+    Bloc_lim_W1_Aff = Bloc_lim_W1;
+    Bloc_lim_W2_Aff = Bloc_lim_W2;
+    Bloc_lim_H1_Aff = Bloc_lim_H1;
+    Bloc_lim_H2_Aff = Bloc_lim_H2;
+    if (!fin_du_jeu) {
+        bonus_map = (get_allowed_time() != -2);
+        bool need_save_game_state = (!bonus_map && departlevel && !fin_continue);
+        if (need_save_game_state) {
+            initGameSave();
+            MapAvecPluieOuNeige = 0;
+        }
+        INIT_MOTEUR(a1); //TODO
+        if (need_save_game_state) {
+            saveGameState(NULL, &save1);
+        }
+        if (departlevel) {
+            nb_wiz_collected = 0;
+        } else  {
+            departlevel = 1;
+            restore_objects_flags();
+        }
+        correct_gendoor_link(0);
+        ray_mode = 1;
+        RAY_MODE_SPEED = 16;
+        new_level = 0;
+        build_active_table(); //TODO
+    }
 }
 
 //5A7DC
