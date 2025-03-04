@@ -584,7 +584,7 @@ void SaveGameOnDisk(u8 which_save) {
 //746D0
 bool LoadGameOnDisk(u8 which_save) {
     char save_filename[32];
-    snprintf(save_filename, 64, "RAYMAN%d.SAV", which_save);
+    snprintf(save_filename, sizeof(save_filename), "RAYMAN%d.SAV", which_save);
     mem_t* encoded = read_entire_file(save_filename, false);
     bool has_error = false;
     if (encoded) {
@@ -632,7 +632,7 @@ bool LoadGameOnDisk(u8 which_save) {
 //749C8
 bool LoadInfoGame(u8 which_save) {
     char save_filename[32];
-    snprintf(save_filename, 64, "RAYMAN%d.SAV", which_save);
+    snprintf(save_filename, sizeof(save_filename), "RAYMAN%d.SAV", which_save);
     mem_t* encoded = read_entire_file(save_filename, false);
     bool has_error = false;
     if (encoded) {

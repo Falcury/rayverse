@@ -1,6 +1,6 @@
 
 
-i64 get_clock() {
+i64 get_clock(void) {
     struct timespec t = {0};
     clock_gettime(CLOCK_MONOTONIC, &t);
     return t.tv_nsec + 1000000000 * t.tv_sec;
@@ -27,7 +27,36 @@ void toggle_fullscreen(SDL_Window* window) {
     //stub
 }
 
-
+void linux_process_keyboard_event(SDL_Scancode scancode, bool is_down) {
+    static u8 sdl_scancode_to_dos_scancode[256] = {
+            0, 0, 0, 0, SC_A, SC_B, SC_C, SC_D, SC_E, SC_F,
+            SC_G, SC_H, SC_I, SC_J, SC_K, SC_L, SC_M, SC_N, SC_O,
+            SC_P, SC_Q, SC_R, SC_S, SC_T, SC_U, SC_V, SC_W, SC_X,
+            SC_Y, SC_Z, SC_1, SC_2, SC_3, SC_4, SC_5, SC_6, SC_7,
+            SC_8, SC_9, SC_0, SC_ENTER, SC_ESCAPE, SC_BACKSPACE, SC_TAB, SC_SPACE,
+            SC_MINUS, SC_EQUALS, SC_LEFTBRACKET, SC_RIGHTBRACKET, SC_BACKSLASH, SC_BACKSLASH,
+            SC_SEMICOLON, SC_QUOTE, SC_TILDE, SC_COMMA, SC_PERIOD, SC_SLASH, SC_CAPSLOCK,
+            SC_F1, SC_F2, SC_F3, SC_F4, SC_F5, SC_F6, SC_F7,SC_F8,
+            SC_F9, SC_F10, SC_F11, SC_F12, 0, SC_SCROLLLOCK, 0, SC_INSERT,
+            SC_HOME, SC_PAGEUP, SC_DELETE, SC_END, SC_PAGEDOWN, SC_RIGHT, SC_LEFT,
+            SC_DOWN, SC_UP, SC_NUMLOCK, SC_SLASH, SC_MULTIPLY, SC_MINUS, SC_PLUS,
+            SC_ENTER, SC_1, SC_2, SC_3, SC_4, SC_5, SC_6, SC_7, SC_8, SC_9, SC_0,
+            SC_PERIOD, SC_TILDE, 0, 0, SC_EQUALS, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SC_COMMA, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, SC_CONTROL, SC_LSHIFT, SC_ALT, 0, SC_CONTROL,
+            SC_RSHIFT, SC_ALT, 0, 0,
+    };
+    u8 dos_scancode = sdl_scancode_to_dos_scancode[scancode & 0xFF];
+    Touche_Enfoncee[dos_scancode & 0x7F] = is_down;
+}
 
 bool process_input(SDL_Window* window) {
     SDL_PumpEvents();
@@ -38,6 +67,10 @@ bool process_input(SDL_Window* window) {
             global_app_state.running = false;
         } else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window)) {
             global_app_state.running = false;
+        } else if (event.type == SDL_KEYDOWN) {
+            linux_process_keyboard_event(event.key.keysym.scancode, true);
+        } else if (event.type == SDL_KEYUP) {
+            linux_process_keyboard_event(event.key.keysym.scancode, false);
         }
     }
     return true; //stub
