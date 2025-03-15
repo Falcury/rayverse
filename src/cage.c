@@ -11,7 +11,7 @@ void DO_CAGE(obj_t* obj) {
 }
 
 //28BA4
-void DoCagePoingCollision(obj_t* obj) {
+void DoCagePoingCollision(obj_t* obj, i16 a2) {
     //stub
 }
 
@@ -47,7 +47,7 @@ void DO_ONE_PINK_CMD(obj_t* obj) {
 
 //2937C
 void DoLidolPinkRaymanZDD(obj_t* obj) {
-    if (get_eta(obj)->interaction_flags & 1) {
+    if (get_eta(obj)->flags & 1) {
         skipToLabel(obj, 0, 1);
     }
 }

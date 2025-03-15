@@ -461,8 +461,8 @@ void obj_init(obj_t* obj) {
             obj->cmd_arg_1 = 0;
             break;
         case TYPE_217_MITE2:
-            obj->eta[1][0].interaction_flags &= ~0x10;
-            obj->eta[1][2].interaction_flags &= ~0x10;
+            obj->eta[1][0].flags &= ~0x10;
+            obj->eta[1][2].flags &= ~0x10;
             obj->cmd_arg_2 = 0;
             break;
         case TYPE_202_RAY_ETOILES:

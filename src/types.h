@@ -174,7 +174,7 @@ typedef struct eta_t {
 	u8 next_subetat;
 	u8 anim_speed;
 	u8 sound_index;
-	u8 interaction_flags;
+	u8 flags;
 } eta_t;
 
 typedef struct world_info_t {
@@ -388,6 +388,11 @@ typedef struct level_obj_t {
     i16* obj_ids;
     i16 nb_objects;
 } level_obj_t;
+
+typedef struct active_objects_t {
+    i16 objects[100];
+    i16 num_active_objects;
+} active_objects_t;
 
 typedef struct map_tile_t {
 	u16 texture_id;
@@ -672,7 +677,7 @@ enum obj_type_enum {
 	TYPE_52_MST_FRUIT2 = 52, // moskito fruit medium
 	TYPE_53_MST_SHAKY_FRUIT = 53, // shaky fruit
 	TYPE_54_MEDAILLON = 54, // medaillon
-	TYPE_55_MUS_WAIT = 55, // mucisian
+	TYPE_55_MUS_WAIT = 55, // musician
 	TYPE_56_STONEWOMAN2 = 56, // nonmoving stoneman
 	TYPE_57_STALAG = 57, // stake
 	TYPE_58_CAGE = 58, // cage
@@ -1358,7 +1363,7 @@ enum obj_type_flags_enum {
 	obj_type_flags_bit_24                       = 1 << 24, // byte 3, 0x1
 	obj_type_flags_bit_25                       = 1 << 25, // byte 3, 0x2
 	obj_type_flags_bit_26                       = 1 << 26, // byte 3, 0x4
-	obj_type_flags_bit_27                       = 1 << 27, // byte 3, 0x8
+	obj_type_flags_bit_27_switch_off            = 1 << 27, // byte 3, 0x8
 	obj_type_flags_bit_28                       = 1 << 28, // byte 3, 0x10
 	obj_type_flags_bit_29_link_requires_gendoor = 1 << 29, // byte 3, 0x20    Indicates if the object requires a gendoor in the link group to be valid
 	obj_type_flags_bit_30_no_link               = 1 << 30, // byte 3, 0x40    Indicates that the event can't be linked

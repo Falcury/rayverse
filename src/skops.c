@@ -101,7 +101,7 @@ void SKO_ray_in_zone(obj_t* obj) {
 }
 
 //7A264
-void DO_SKO_HIT(obj_t* obj) {
+void DO_SKO_HIT(obj_t* obj, i16 a2) {
     //stub
 }
 

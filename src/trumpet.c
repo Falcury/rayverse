@@ -20,7 +20,7 @@ void trompetteAtter(obj_t* obj) {
 }
 
 //7E6BC
-void DoTrumpetPoingCollision(obj_t* obj) {
+void DoTrumpetPoingCollision(obj_t* obj, i16 a2) {
     //stub
 }
 

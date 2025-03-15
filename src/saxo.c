@@ -40,7 +40,7 @@ void BonneNote(obj_t* obj) {
 }
 
 //760CC
-void DO_NOTE_TOUCHEE(obj_t* obj) {
+void DO_NOTE_TOUCHEE(obj_t* obj, i16 a2) {
     //stub
 }
 

@@ -40,12 +40,12 @@ void Clown_Music_Atter(obj_t* obj) {
 }
 
 //2B18C
-void DoWatAndBigClownPoingCollision(obj_t* obj) {
+void DoWatAndBigClownPoingCollision(obj_t* obj, i16 a2) {
     //stub
 }
 
 //2B1FC
-void DoTntClownPoingCollision(obj_t* obj) {
+void DoTntClownPoingCollision(obj_t* obj, i16 a2) {
     //stub
 }
 

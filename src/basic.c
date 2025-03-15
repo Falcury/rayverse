@@ -3,7 +3,7 @@
 bool EOA(obj_t* obj) {
     eta_t* eta = get_eta(obj);
     bool on_last_frame;
-    if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
+    if (eta->flags & eta_flags_0x10_anim_reverse) {
         on_last_frame = (obj->anim_frame == 0);
     } else {
         anim_t* anim = obj->animations + obj->anim_index;
@@ -370,7 +370,17 @@ void make_my_fruit_go_down(obj_t* obj, i16 a2) {
 
 //1EB18
 void switchOff(obj_t* obj) {
-    //stub
+    if (EOA(obj)) {
+        obj->flags.alive = 0;
+        obj->is_active = 0;
+        if (!(ray_mode == 5 && obj->type == TYPE_161_WIZ)) {
+            del_alwobj(obj->id);
+        }
+        if (obj->type == TYPE_75_PAILETTE || obj->type == TYPE_170_RAYON) {
+            obj->x = -32000;
+            obj->y = -32000;
+        }
+    }
 }
 
 //1EB80
@@ -857,12 +867,22 @@ void Change_Wait_Anim(void) {
 
 //1F8E8
 void add_alwobj(obj_t* obj) {
-    //stub
+    level_obj.obj_ids[level_obj.nb_objects++] = obj->id;
 }
 
 //1F918
 void del_alwobj(i16 obj_index) {
-    //stub
+    i32 found_index = -1;
+    for (i32 i = 0; i < level_obj.nb_objects; ++i) {
+        if (level_obj.obj_ids[i] == i) {
+            found_index = i;
+            break;
+        }
+    }
+    if (found_index >= 0 && found_index < level_obj.nb_objects) {
+        --level_obj.nb_objects;
+        level_obj.obj_ids[found_index] = level_obj.obj_ids[level_obj.nb_objects];
+    }
 }
 
 //1F988

@@ -84,7 +84,7 @@ void fitSaveCurrentAction(obj_t* obj) {
 }
 
 //52AF4
-void doMereDenisHit(obj_t* obj) {
+void doMereDenisHit(obj_t* obj, i16 a1) {
     //stub
 }
 

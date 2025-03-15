@@ -181,7 +181,7 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
         if (!(ray.main_etat == 3 && (ray.sub_etat == 22 || ray.sub_etat == 32)) &&
             !(ray.main_etat == 2 && ray.sub_etat == 31)
                 ) {
-            if ((get_eta(&ray)->interaction_flags & 0x40) && (block_flags[calc_typ_trav(&ray, 2)] & 0x10)) {
+            if ((get_eta(&ray)->flags & 0x40) && (block_flags[calc_typ_trav(&ray, 2)] & 0x10)) {
                 set_main_and_sub_etat(&ray, 0, 61);
             } else {
                 set_main_and_sub_etat(&ray, 2, 8);
@@ -271,7 +271,7 @@ void DO_COLLISIONS(void) {
 
 //2ED74
 void DoRaymanCollisionDefault(obj_t* obj) {
-    if ((flags[obj->type] & obj_type_flags_bit_20) && get_eta(obj)->interaction_flags & 0x20) {
+    if ((flags[obj->type] & obj_type_flags_bit_20) && get_eta(obj)->flags & 0x20) {
         if (!(ray.main_etat == 3 && ray.sub_etat == 32)) {
             i16 command_par3 = ray.iframes_timer;
             if (command_par3 >= 60 || command_par3 == -1) {
@@ -308,7 +308,7 @@ void DO_MOVING_PLATFORM_COMMAND(obj_t* obj) {
 }
 
 //2F378
-void DoPTGRAPPINPoingCollision(obj_t* obj) {
+void DoPTGRAPPINPoingCollision(obj_t* obj, i16 a2) {
     //stub
 }
 
@@ -409,7 +409,7 @@ void DO_ROLL_EYES(obj_t* obj) {
 }
 
 //2F978
-void DoKillingEyesPoingCollision(obj_t* obj) {
+void DoKillingEyesPoingCollision(obj_t* obj, i16 a2) {
     //stub
 }
 

@@ -30,7 +30,7 @@ void DO_BLKTOON_COMMAND(obj_t* obj) {
 }
 
 //234FC
-void DoBlackToonPoingCollision(obj_t* obj) {
+void DoBlackToonPoingCollision(obj_t* obj, i16 a2) {
     //stub
 }
 

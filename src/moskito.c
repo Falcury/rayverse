@@ -51,12 +51,12 @@ void changeMoskitoPhase(obj_t* obj) {
 }
 
 //55144
-void doMoskitoHit(obj_t* obj) {
+void doMoskitoHit(obj_t* obj, i16 a2) {
     //stub
 }
 
 //55230
-void DO_MST_SCROLL_COMMAND(obj_t* obj, i32 a2) {
+void DO_MST_SCROLL_COMMAND(obj_t* obj) {
     //stub
 }
 

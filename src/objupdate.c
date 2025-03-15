@@ -654,7 +654,7 @@ void DoGeneBadGuyRaymanZDD(obj_t* obj) {
 
 //628C0
 void DoChasseurPoingCollision(obj_t* obj, i16 a2) {
-    if (get_eta(obj)->interaction_flags & 1) {
+    if (get_eta(obj)->flags & 1) {
         obj_hurt(obj);
         if (obj->hit_points != 0) {
             obj->speed_x = 0;
@@ -686,7 +686,7 @@ void DO_CHASSEUR_COMMAND(obj_t* obj) {
 
 //629D8
 void DoBadGuy23PoingCollision(obj_t* obj, i16 a2) {
-    if (a2 == 255 || !(get_eta(obj)->interaction_flags & 1)) {
+    if (a2 == 255 || !(get_eta(obj)->flags & 1)) {
         obj_hurt(obj);
         if (obj->hit_points == 0) {
             set_main_and_sub_etat(obj, 0, 3);
@@ -724,11 +724,11 @@ void DoBadGuy1PoingCollision(obj_t* obj, i16 a2) {
     obj->y -= 2;
     if (obj->hit_points != 0) {
         obj->speed_y = -4;
-        set_main_and_sub_etat(obj, 2, (get_eta(obj)->interaction_flags & 0x40) ? 10 : 2);
+        set_main_and_sub_etat(obj, 2, (get_eta(obj)->flags & 0x40) ? 10 : 2);
         PlaySnd(28, obj->id);
     } else {
         obj->speed_y = -8;
-        set_main_and_sub_etat(obj, 0, (get_eta(obj)->interaction_flags & 0x40) ? 6 : 3);
+        set_main_and_sub_etat(obj, 0, (get_eta(obj)->flags & 0x40) ? 6 : 3);
     }
 
 }

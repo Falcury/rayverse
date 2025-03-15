@@ -245,7 +245,7 @@ void DO_BAT_LEFT_RIGHT_FLASH(obj_t* obj);
 void bat_dir(obj_t* obj);
 void DO_BAT_COMMAND(obj_t* obj);
 void BAT_ray_in_zone(obj_t* obj);
-void DO_BAT_POING_COLLISION(obj_t* obj);
+void DO_BAT_POING_COLLISION(obj_t* obj, i16 a2);
 void bat_get_eject_sens(obj_t* obj);
 
 // bbmont.c
@@ -286,7 +286,7 @@ void blkUTurn(obj_t* obj);
 void DO_BLK_LR_COMMAND(obj_t* obj);
 void DO_BLK_NOP_COMMAND(obj_t* obj);
 void DO_BLKTOON_COMMAND(obj_t* obj);
-void DoBlackToonPoingCollision(obj_t* obj);
+void DoBlackToonPoingCollision(obj_t* obj, i16 a2);
 void DoBlackToonRaymanZDD(obj_t* obj);
 
 // blood.c
@@ -385,7 +385,7 @@ void DO_RAY_CASSE_BRIQUE(obj_t* obj);
 // cage.c
 void DO_CAGE2(obj_t* obj);
 void DO_CAGE(obj_t* obj);
-void DoCagePoingCollision(obj_t* obj);
+void DoCagePoingCollision(obj_t* obj, i16 a2);
 void DO_MEDAILLON_TOON(obj_t* obj);
 void DO_MEDAILLON_TOON_GELE(void);
 void ALLOCATE_MEDAILLON_TOON(void);
@@ -403,8 +403,8 @@ void allocatedrop(obj_t* obj);
 void DO_WAT_CLOWN_ATTAK(obj_t* obj);
 void DO_CLOWN_TNT_ATTACK(obj_t* obj);
 void Clown_Music_Atter(obj_t* obj);
-void DoWatAndBigClownPoingCollision(obj_t* obj);
-void DoTntClownPoingCollision(obj_t* obj);
+void DoWatAndBigClownPoingCollision(obj_t* obj, i16 a2);
+void DoTntClownPoingCollision(obj_t* obj, i16 a2);
 void DoWatAndBigClownRaymanZDD(obj_t* obj);
 void DoTntClownRaymanZDD(obj_t* obj);
 
@@ -449,14 +449,14 @@ void DO_OBJ_COLLISIONS(obj_t* obj, i16 a2);
 void test_allowed(obj_t* obj, i16 center_x, i16 center_y);
 void obj_jump(obj_t* obj);
 void DO_MOVING_PLATFORM_COMMAND(obj_t* obj);
-void DoPTGRAPPINPoingCollision(obj_t* obj);
+void DoPTGRAPPINPoingCollision(obj_t* obj, i16 a2);
 void DO_ONE_CMD_WAIT(obj_t* obj); // TODO: maybe make a split here: command.c?
 void DO_ONE_CMD_LR_ATTENTE(obj_t* obj);
 void DO_ONE_CMD_UPDOWN(obj_t* obj);
 void special_pour_liv(obj_t* event);
 void DO_ONE_CMD(obj_t* obj);
 void DO_ROLL_EYES(obj_t* obj);
-void DoKillingEyesPoingCollision(obj_t* obj);
+void DoKillingEyesPoingCollision(obj_t* obj, i16 a2);
 void YaUnBloc(obj_t* obj);
 void DO_BAG1_COMMAND(obj_t* obj);
 void DoRaymanBag1Collision(obj_t* obj);
@@ -706,7 +706,7 @@ void DO_ONE_PAR_COMMAND(obj_t* obj);
 void hasGuetteurABomb(obj_t* obj);
 void allocatePirateGuetteurBomb(obj_t* obj);
 void DO_PAR_TIR(obj_t* obj);
-void DO_PAR_POING_COLLISION(obj_t* obj);
+void DO_PAR_POING_COLLISION(obj_t* obj, i16 a2);
 void PAR_REACT_TO_RAY_IN_ZONE(obj_t* obj);
 void DO_PAR_BOMB_COMMAND(obj_t* obj);
 
@@ -942,7 +942,7 @@ void allocateSpaceMamaLaser(obj_t* obj);
 void doMereDenisCommand(obj_t* obj);
 void changeMereDenisPhase(obj_t* obj);
 void fitSaveCurrentAction(obj_t* obj);
-void doMereDenisHit(obj_t* obj);
+void doMereDenisHit(obj_t* obj, i16 a1);
 void mereDenisBigLaserCommand(obj_t* obj);
 void mereDenisBombCommand(obj_t* obj);
 
@@ -970,8 +970,8 @@ void moskitoDropFruitOnRay(obj_t* obj);
 void doMoskitoCommand(obj_t* obj);
 void tellNextMoskitoAction(obj_t* obj);
 void changeMoskitoPhase(obj_t* obj);
-void doMoskitoHit(obj_t* obj);
-void DO_MST_SCROLL_COMMAND(obj_t* obj, i32 a2);
+void doMoskitoHit(obj_t* obj, i16 a2);
+void DO_MST_SCROLL_COMMAND(obj_t* obj);
 void DO_MST_CHANGE_COMMAND(obj_t* obj);
 void DoMstShakyFruitRaymanZDD(obj_t* obj);
 
@@ -1093,7 +1093,7 @@ void allocatePirateNgaweRing(obj_t* obj, i16 a2, u8 a3);
 void DO_NGW_TIR(obj_t* obj);
 void NGW_REACT_TO_RAY_IN_ZONE(obj_t* obj);
 void DO_ONE_NGW_COMMAND(obj_t* obj);
-void DO_NGW_POING_COLLISION(obj_t* obj);
+void DO_NGW_POING_COLLISION(obj_t* obj, i16 a2);
 void DO_ONE_NGW_RING_COMMAND(obj_t* obj);
 
 // mathutil.c
@@ -1422,7 +1422,7 @@ void DO_NOTE_CMD(obj_t* obj);
 void Cree_Eclat_Note(obj_t* obj, obj_t* a2);
 void DO_EXPLOSE_NOTE1(obj_t* obj);
 void BonneNote(obj_t* obj);
-void DO_NOTE_TOUCHEE(obj_t* obj);
+void DO_NOTE_TOUCHEE(obj_t* obj, i16 a2);
 void DO_NOTE_REBOND(obj_t* obj);
 void allocateNote(obj_t* obj);
 void PrepareAtak(obj_t* obj);
@@ -1469,7 +1469,7 @@ void DO_SCORPION_COLLISION(obj_t* obj);
 void DO_SCORPION_MORT(obj_t* obj);
 void DO_SKO(obj_t* obj);
 void SKO_ray_in_zone(obj_t* obj);
-void DO_SKO_HIT(obj_t* obj);
+void DO_SKO_HIT(obj_t* obj, i16 a2);
 i16 Get_PosLave_Y(void);
 
 // special.c
@@ -1507,7 +1507,7 @@ void test_fin_cling(void);
 // stoneman.c
 void DO_STONEMAN_COMMAND(obj_t* obj);
 void DO_STONEDOG_COMMAND(obj_t* obj);
-void DoStoneDogPoingCollision(obj_t* obj);
+void DoStoneDogPoingCollision(obj_t* obj, i16 a2);
 void DO_STONEBOMB_COMMAND(obj_t* obj);
 void IS_STONEWOMAN_WAIT(obj_t* obj);
 void DO_STONEWOMAN_COMMAND(obj_t* obj);
@@ -1515,7 +1515,7 @@ void DO_NOMOVE_STONEWOMAN_COMMAND(obj_t* obj);
 void DO_ONE_STONECHIP_COMMAND(obj_t* obj);
 void setStoneChipPos(obj_t* obj);
 void allocateStoneChips(obj_t* obj);
-void DO_STONE_EXPLOSION(obj_t* obj);
+void DO_STONE_EXPLOSION(obj_t* obj, i16 a2);
 void allocateStonemanStone(obj_t* obj);
 void DO_STONEMAN1_TIR(obj_t* obj);
 void DO_STONEMAN2_TIR(obj_t* obj);
@@ -1523,10 +1523,10 @@ void allocateStonewomanStone(obj_t* obj);
 void DO_STONEWOMAN_TIR(obj_t* obj);
 void allocateEclatPS(obj_t* obj);
 void DO_PI_EXPLOSION(obj_t* obj);
-void DoPiMusPoingCollision(obj_t* obj);
-void DoPiPoingCollision(obj_t* obj);
-void DO_PNG_COLL_STONEMAN(obj_t* obj);
-void DO_PNG_COLL_STONEWOMAN(obj_t* obj);
+void DoPiMusPoingCollision(obj_t* obj, i16 a2);
+void DoPiPoingCollision(obj_t* obj, i16 a2);
+void DO_PNG_COLL_STONEMAN(obj_t* obj, i16 a2);
+void DO_PNG_COLL_STONEWOMAN(obj_t* obj, i16 a2);
 void DoStoneMan1et2RaymanZDD(obj_t* obj);
 void DoStoneDogRaymanZDD(obj_t* obj);
 
@@ -1535,7 +1535,7 @@ void DO_TRP_COMMAND(obj_t* obj);
 void trompetteWind(obj_t* obj, u8 a2);
 void DO_TRP_ATTAK(obj_t* obj);
 void trompetteAtter(obj_t* obj);
-void DoTrumpetPoingCollision(obj_t* obj);
+void DoTrumpetPoingCollision(obj_t* obj, i16 a2);
 void DoTrompetteRaymanZDD(obj_t* obj);
 
 // ufo.c

@@ -30,7 +30,7 @@ void DO_ONE_NGW_COMMAND(obj_t* obj) {
 }
 
 //5DC90
-void DO_NGW_POING_COLLISION(obj_t* obj) {
+void DO_NGW_POING_COLLISION(obj_t* obj, i16 a2) {
     //stub
 }
 

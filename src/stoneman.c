@@ -11,7 +11,7 @@ void DO_STONEDOG_COMMAND(obj_t* obj) {
 }
 
 //7CCF0
-void DoStoneDogPoingCollision(obj_t* obj) {
+void DoStoneDogPoingCollision(obj_t* obj, i16 a2) {
     //stub
 }
 
@@ -51,7 +51,7 @@ void allocateStoneChips(obj_t* obj) {
 }
 
 //7D43C
-void DO_STONE_EXPLOSION(obj_t* obj) {
+void DO_STONE_EXPLOSION(obj_t* obj, i16 a2) {
     //stub
 }
 
@@ -91,22 +91,22 @@ void DO_PI_EXPLOSION(obj_t* obj) {
 }
 
 //7E000
-void DoPiMusPoingCollision(obj_t* obj) {
+void DoPiMusPoingCollision(obj_t* obj, i16 a2) {
     //stub
 }
 
 //7E120
-void DoPiPoingCollision(obj_t* obj) {
+void DoPiPoingCollision(obj_t* obj, i16 a2) {
     //stub
 }
 
 //7E190
-void DO_PNG_COLL_STONEMAN(obj_t* obj) {
+void DO_PNG_COLL_STONEMAN(obj_t* obj, i16 a2) {
     //stub
 }
 
 //7E258
-void DO_PNG_COLL_STONEWOMAN(obj_t* obj) {
+void DO_PNG_COLL_STONEWOMAN(obj_t* obj, i16 a2) {
     //stub
 }
 

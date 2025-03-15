@@ -141,7 +141,7 @@ void DO_ANIM(obj_t* obj) {
     anim_t* anim = obj->animations + obj->anim_index;
     u8 anim_speed = eta->anim_speed & 15;
     if (anim_speed != 0 && horloge[anim_speed] == 0) {
-        if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
+        if (eta->flags & eta_flags_0x10_anim_reverse) {
             --obj->anim_frame;
         } else {
             ++obj->anim_frame;
@@ -150,7 +150,7 @@ void DO_ANIM(obj_t* obj) {
     obj->anim_index = eta->anim_index;
     anim = obj->animations + obj->anim_index;
     if ((obj->change_anim_mode == 1 && obj->anim_index != prev_anim_index) || obj->change_anim_mode == 2) {
-        if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
+        if (eta->flags & eta_flags_0x10_anim_reverse) {
             obj->anim_frame = anim->frame_count - 1;
         } else {
             obj->anim_frame = 0;
@@ -172,7 +172,7 @@ void DO_ANIM(obj_t* obj) {
                 ray.timer = 60;
             }
         }
-        if (eta->interaction_flags & eta_flags_0x10_anim_reverse) {
+        if (eta->flags & eta_flags_0x10_anim_reverse) {
             obj->anim_frame = anim->frame_count - 1;
         } else {
             obj->anim_frame = 0;
@@ -291,6 +291,21 @@ void DoRaymanInZDDDefault(obj_t* obj) {
 
 //582A0
 void DO_ONE_OBJECT(obj_t* obj) {
+    if (flags[ot] & obj_type_flags_bit_1_is_balle) {
+        DO_BALLE(obj); //TODO
+    }
+    if (flags[ot] & obj_type_flags_bit_5_has_detect_zone) {
+        SET_DETECT_ZONE_FLAG(obj); //TODO
+    }
+    if (flags[ot] & obj_type_flags_bit_16_check_tile_type) {
+        calc_btyp(obj);
+    }
+    if (flags[ot] & obj_type_flags_bit_15_do_cmds) {
+        GET_OBJ_CMD(obj);
+    } else {
+        obj->cmd = GO_NOP;
+    }
+    ObjectsFonctions[ot].command(obj);
     //stub
 }
 
@@ -316,7 +331,30 @@ void DO_OBJECTS_ANIMS(void) {
 
 //587C8
 void DO_OBJECTS(void) {
-    //stub
+    if (id_Cling_1up == -1 && id_Cling_Pow == -1) {
+        DO_CLING_ANIMS(); //TODO
+    }
+    if (lidol_to_allocate != 0) {
+        allocate_toons(lidol_source_obj, 7); //TODO
+        lidol_to_allocate = 0;
+    }
+    for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+        obj_t* obj = level.objects + actobj.objects[i];
+        ot = obj->type;
+        if ((flags[ot] & obj_type_flags_bit_27_switch_off) ||
+                (ot == TYPE_161_WIZ && obj->sub_etat == 2) ||
+                (ot == TYPE_83_EXPLOSION && obj->sub_etat == 1) ||
+                (ot == TYPE_33_DARK2_SORT && obj->sub_etat == 35)
+        ) {
+            switchOff(obj);
+        }
+        if (ot != TYPE_161_WIZ && obj->is_active) {
+            DO_ONE_OBJECT(obj); //TODO
+            if (!(flags[ot] & obj_type_flags_bit_7_is_boss) && obj->hit_points == 0 && (get_eta(obj)->flags & 8)) {
+                ++obj->hit_points;
+            }
+        }
+    }
 }
 
 //58908
@@ -603,8 +641,8 @@ void INIT_MOTEUR(u8 new_lvl) {
     left_time = -2;
     INIT_HORLOGES();
     ray.id = -1;
-    actobj[0] = -1;
-    actobj[100] = 0;
+    actobj.objects[0] = -1;
+    actobj.num_active_objects = 0;
     xmap = 0;
     ymap = 0;
 
