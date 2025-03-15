@@ -1,7 +1,16 @@
 
 //50B60
-void findMereDenisWeapon(obj_t* obj) {
-    //stub
+void findMereDenisWeapon(void) {
+    mereDenis_weapon_id = -1;
+    machine_obj_id = -1;
+    for (i16 i = 0; i < level.nb_objects; ++i) {
+        u16 type = level.objects[i].type;
+        if (type == TYPE_203_SMA_WEAPON) {
+            machine_obj_id = i;
+        } else if (type == TYPE_112_WASHING_MACHINE) {
+            mereDenis_weapon_id = i;
+        }
+    }
 }
 
 //50BB8

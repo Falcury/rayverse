@@ -306,8 +306,8 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
         // Events
         mem_read(&level.nb_objects, mem, 2);
         level.objects = (obj_t*)block_malloc(mem_level, sizeof(obj_t) * level.nb_objects);
-        level_obj.field_0 = (i16*)block_malloc(mem_level, 2 * level.nb_objects);
-        level_alw.field_0 = (i16*)block_malloc(mem_level, 2 * level.nb_objects);
+        level_obj.obj_ids = (i16*)block_malloc(mem_level, 2 * level.nb_objects);
+        level_alw.obj_ids = (i16*)block_malloc(mem_level, 2 * level.nb_objects);
         memset(level.objects, 0, sizeof(obj_t) * level.nb_objects);
 
         link_init = (i16*)block_malloc(mem_level, 2 * level.nb_objects);
@@ -343,7 +343,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             mem_read(&obj->x, mem, 4);
             mem_read(&obj->y, mem, 4);
             mem_read(&obj->active_flag, mem, 4);
-            mem_read(&obj->obj_index, mem, 2);
+            mem_read(&obj->id, mem, 2);
             mem_read(&obj->screen_x, mem, 2);
             mem_read(&obj->screen_y, mem, 2);
             mem_read(&obj->field_3A, mem, 2);
@@ -358,7 +358,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             mem_read(&obj->follow_y, mem, 2);
             mem_read(&obj->follow_x, mem, 2);
             mem_read(&obj->cmd_arg_1, mem, 2);
-            mem_read(&obj->phase, mem, 2);
+            mem_read(&obj->link, mem, 2);
             mem_read(&obj->rayman_dist, mem, 2);
             mem_read(&obj->iframes_timer, mem, 2);
             mem_read(&obj->test_block_index, mem, 2);
@@ -375,7 +375,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             mem_read(&obj->sub_etat, mem, 1);
             mem_read(&obj->main_etat, mem, 1);
             mem_read(&obj->init_sub_etat, mem, 1);
-            mem_read(&obj->init_etat, mem, 1);
+            mem_read(&obj->init_main_etat, mem, 1);
             mem_read(&obj->cmd, mem, 1);
             mem_read(&obj->gravity_value_1, mem, 1);
             mem_read(&obj->gravity_value_2, mem, 1);

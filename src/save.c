@@ -350,7 +350,7 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state) {
 	save_state->rayevts_super_helico = RayEvts.super_helico;
 	save_state->rayevts_poing = RayEvts.poing;
 	if (save_obj) {
-		save_state->save_obj_id = save_obj->obj_index;
+		save_state->save_obj_id = save_obj->id;
 		save_state->save_obj_x_pos = (i16)save_obj->x;
 		save_state->save_obj_y_pos = (i16)save_obj->y;
 		save_state->save_obj_detect_zone_flag = save_obj->detect_zone_flag;
@@ -495,8 +495,20 @@ void restoreGameState(save_state_t* save_state) {
 }
 
 //741C8
-i32 get_offset_in_safe_zone(i16 a1) {
-    return 0; //stub
+i32 get_offset_in_safe_zone(i16 obj_id) {
+    i32 offset = 0;
+    if (num_world > 1) {
+        for (i32 w = 1; w < num_world; ++w) {
+            offset += 32 * nb_levels_in_world[w];
+        }
+    }
+    if (num_level > 1) {
+        for (i32 l = 1; l < num_level; ++l) {
+            offset += 32;
+        }
+    }
+    offset += ashr16(obj_id, 3);
+    return offset;
 }
 
 //74250
@@ -510,8 +522,9 @@ void take_bonus(i16 a1) {
 }
 
 //742A8
-void bonus_taken(i16 a1) {
-    //stub
+u8 bonus_taken(i16 obj_id) {
+    u8 result = save_zone[get_offset_in_safe_zone(obj_id)] & (0x80 >> (obj_id & 7));
+    return result;
 }
 
 //742E0

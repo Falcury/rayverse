@@ -312,7 +312,7 @@ void INIT_CHEMIN(void) {
         medaillon->type = TYPE_54_MEDAILLON;
         medaillon->init_x = world_info->xpos - 78;
         medaillon->init_y = world_info->ypos - 64;
-        medaillon->init_etat = 5;
+        medaillon->init_main_etat = 5;
         if (world_info->state & 4) {
             medaillon->init_sub_etat = 46;
         } else {

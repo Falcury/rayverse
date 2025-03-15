@@ -866,7 +866,12 @@ void del_alwobj(i16 obj_index) {
 }
 
 //1F988
-void FatalError(obj_t* obj) {
+void FatalError(char* message) {
+    stop_cd();
+    InitTextMode();
+    printf("Rayman says fatal error :\n%s\n", message);
+    //PrintMemInfo();
+    exit(-1);
     //stub
 }
 

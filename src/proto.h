@@ -234,7 +234,7 @@ void init_finBossLevel(void);
 void Change_Wait_Anim(void);
 void add_alwobj(obj_t* obj);
 void del_alwobj(i16 obj_index);
-void FatalError(obj_t* obj);
+void FatalError(char* message);
 u8 sprite_of_ref(obj_t* obj, u8 a2);
 
 // bat.c
@@ -927,7 +927,7 @@ bool FonduPixel_prg(void);
 void FonduPixel(i16 a1, i16 a2, i16 a3, i16 a4);
 
 // meredenis.c
-void findMereDenisWeapon(obj_t* obj);
+void findMereDenisWeapon(void);
 void mereDenisCanAttak(obj_t* obj);
 void setMereDenisAtScrollBorder(obj_t* obj);
 void setCirclePointToReach(obj_t* obj);
@@ -1400,10 +1400,10 @@ void initGameSave(void);
 void doneGameSave(void);
 void saveGameState(obj_t* save_obj, save_state_t* save_state);
 void restoreGameState(save_state_t* save_state);
-i32 get_offset_in_safe_zone(i16 a1);
+i32 get_offset_in_safe_zone(i16 obj_id);
 void reset_save_zone_level(void);
 void take_bonus(i16 a1);
-void bonus_taken(i16 a1);
+u8 bonus_taken(i16 obj_id);
 void storeWorldInfoAcces(void);
 void retrieveWorldInfoAccess(void);
 void file_size(void);

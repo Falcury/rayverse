@@ -316,7 +316,7 @@ typedef struct obj_t {
 	i32 x; // 28
 	i32 y; // 2C
 	i32 active_flag; // 30
-	i16 obj_index;
+	i16 id;
 	i16 screen_x;
 	i16 screen_y;
 	u16 field_3A;
@@ -331,7 +331,7 @@ typedef struct obj_t {
 	i16 follow_y;
 	i16 follow_x;
 	i16 cmd_arg_1;
-	i16 phase; // 52
+	i16 link; // 52
 	u16 rayman_dist; //54 // tile index?
 	i16 iframes_timer; // timer (?)
 	u16 test_block_index;
@@ -348,7 +348,7 @@ typedef struct obj_t {
 	u8 sub_etat; // 6C
 	u8 main_etat; // 6D
 	u8 init_sub_etat; // 6E
-	u8 init_etat; // 6F
+	u8 init_main_etat; // 6F
 	u8 cmd; // 70
 	u8 gravity_value_1; // 71
 	u8 gravity_value_2; // 72
@@ -381,12 +381,12 @@ typedef struct zdc_t {
 
 typedef struct level_t {
 	obj_t* objects;
-	u16 nb_objects;
+	i16 nb_objects;
 } level_t;
 
 typedef struct level_obj_t {
-    i16* field_0;
-    u16 field_4;
+    i16* obj_ids;
+    i16 nb_objects;
 } level_obj_t;
 
 typedef struct map_tile_t {
@@ -631,7 +631,7 @@ enum obj_type_enum {
 	TYPE_11_BOUM = 11, // hit effect
 	TYPE_12_CHASSEUR1 = 12, // hunter 1
 	TYPE_13_BALLE1 = 13, // hunter bullet
-	TYPE_14_CHASSEUR = 14, // hunter 2 (shoots upward)
+	TYPE_14_CHASSEUR2 = 14, // hunter 2 (shoots upward)
 	TYPE_15_BALLE2 = 15,
 	TYPE_16_FALLPLAT = 16, // falling platform
 	TYPE_17_LIFTPLAT = 17, // rising platform
@@ -1348,7 +1348,7 @@ enum obj_type_flags_enum {
 	obj_type_flags_bit_14_is_special_platform   = 1 << 14, // byte 1, 0x40    Indicates if DO_SPECIAL_PLATFORM should be called
 	obj_type_flags_bit_15_do_cmds               = 1 << 15, // byte 1, 0x80    Indicates if commands should be read for the event, otherwise the command is set to 30 (NOP)
 	obj_type_flags_bit_16_check_tile_type       = 1 << 16, // byte 2, 0x1     Indicates if the object reacts to block types (tile collision), thus calling calc_btyp
-	obj_type_flags_bit_17                       = 1 << 17, // byte 2, 0x2
+	obj_type_flags_bit_17_bonus                 = 1 << 17, // byte 2, 0x2
 	obj_type_flags_bit_18                       = 1 << 18, // byte 2, 0x4
 	obj_type_flags_bit_19_can_jump              = 1 << 19, // byte 2, 0x8     Indicates if obj_jump gets called when on a ressort (spring) block
 	obj_type_flags_bit_20                       = 1 << 20, // byte 2, 0x10

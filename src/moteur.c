@@ -156,7 +156,7 @@ void DO_ANIM(obj_t* obj) {
             obj->anim_frame = 0;
         }
         if (obj->is_active != 0) {
-            PlaySnd(eta->sound_index, obj->obj_index);
+            PlaySnd(eta->sound_index, obj->id);
         }
     }
     if (obj->anim_frame >= anim->frame_count || obj->anim_frame == 255) {
@@ -178,7 +178,7 @@ void DO_ANIM(obj_t* obj) {
             obj->anim_frame = 0;
         }
         if (obj->is_active != 0) {
-            PlaySnd(eta->sound_index, obj->obj_index);
+            PlaySnd(eta->sound_index, obj->id);
         }
     }
     obj->change_anim_mode = 0;
@@ -396,12 +396,12 @@ void correct_gendoor_link(u8 a1) {
                 if (last_link == link_init[i]) {
                     level.objects[last_link].link_has_gendoor = 0;
                 }
-                obj->phase = link;
+                obj->link = link;
                 obj->link_has_gendoor = 0;
             }
 
             if (a1 && !obj->flags.alive) {
-                i16 init_link = obj->phase;
+                i16 init_link = obj->link;
                 i16 linked_obj_id;
                 do {
                     linked_obj_id = link_init[init_link];
@@ -462,7 +462,7 @@ void INIT_RAY(u8 level_index) {
     ray.offset_bx = 80;
     ray.offset_by = 78;
     ray.cmd_arg_2 = -1;
-    ray.phase = -1;
+    ray.link = -1;
     ray.iframes_timer = -1;
     ray.is_active = 1;
     ray.flags.alive = true;
@@ -602,7 +602,7 @@ void INIT_MOTEUR(u8 new_lvl) {
     map_time = 0;
     left_time = -2;
     INIT_HORLOGES();
-    ray.obj_index = -1;
+    ray.id = -1;
     actobj[0] = -1;
     actobj[100] = 0;
     xmap = 0;
@@ -661,10 +661,10 @@ void INIT_MOTEUR(u8 new_lvl) {
         xmap = xmapsave;
         ymap = ymapsave;
     }
-    INIT_OBJECTS(new_lvl); //TODO
+    INIT_OBJECTS(new_lvl);
     correct_link(); //TODO
     deactivate_ship_links(); //TODO
-    special_flags_init(); //TODO
+    special_flags_init();
     if (num_world_choice == world_5_cave && num_level_choice == 4 && finBosslevel.helped_joe_1) {
         RayEvts.firefly = 1;
     } else {

@@ -127,7 +127,7 @@ u8 block_flags[64] = {
 };
 
 //9257C
-u32 obj_type_flags[262] = {
+u32 flags[262] = {
         0x23038028, 0x02030004, 0x42020000, 0x42218021, 0x42020004, 0x02020020, 0x26471008, 0x02020008, 0x20431100,
         0x23038028, 0x02018018, 0x4A000005, 0x03028028, 0x4222800B, 0x03028028, 0x4222800B, 0x02028104, 0x02028104,
         0x02038004, 0x4A200001, 0x03039128, 0x02028020, 0x02038100, 0x02038040, 0x02038000, 0x02020000, 0x02024000, 0x202C000,
@@ -157,6 +157,32 @@ u32 obj_type_flags[262] = {
         0x12060008, 0x12060008, 0x0206C008, 0x42229019, 0x02028000, 0x42038000, 0x02038000, 0x42029009, 0x4202A004,
         0x02020008, 0x42020004, 0x42020004, 0x42020004, 0x02038000, 0x02038000, 0x4203B001, 0x0203B000, 0x02038800,
         0x02038000, 0x02038000, 0x02038000,
+};
+
+//92996
+i16 zonediffx[262] = {
+        0, 0, 0, 0, 0, -50, 0, 0, -80, 0, 0, 0, 250, 0, 250, 0, -60, -60, 0, 0, 60, 0, 0, 0, 0, 0, -60, 0, 0, 0,
+        0, -50, 0, 0, 0, 0, 0, 0, -50, 0, 0, 0, -50, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, 0, -50, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 0, 150, 0, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 450,
+        -50, 0, 100, 0, -50, 200, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 150, -50,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, -80, 0, 0, 0, 0, 0, 0, -50, -50, 0, 0, 0, 0, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, -50, -50, -50, 0, 0, -80, 0, 0, 0, 0, 200, 40, 200, 0, 0, 0, -50, -50, 0, 0, 0, 0, 200, 0, 0, 0,
+        0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 450, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 200, 200, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -50, -50, -50, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+//92BA2
+i16 zonediffy[262] = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, -50, 0, 0, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 300, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 120, -50, 0, 150, 0, 0, 200, 200, 0, 0, 0, 0, 0, 350, -50, 0, 300,
+        0, 0, 200, 140, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 0, -50, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 120, -50, -50, 0, 0, 0, 100, 300, 0, 200, 0, 0, 120, 0, 0, 0, 0, 0, 0, 150, 150,
+        0, -50, -50, 0, 0, 0, 0, 120, 120, 0, 0, 120, 200, 200, 0, 0, 0, 20, 20, 0, 0, 0, 0, 200, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 150, 0, 50, 0, 0, 0, 0, 0, 350, 0, 0, 0, 0, 0, 150, 0, 0, 0, 0, 0, 50, 100, 150, 0,
+        0, 0, 0, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 20, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0,
 };
 
 //92DAE
@@ -1525,9 +1551,8 @@ mem_t* temp_mem_buf; //CD88C
 u32 TailleMainMemFix; //CD898
 u32 TailleMainMemWorld; //CD89C
 mem_t* main_mem_tmp; //CD8A0
-
-loadinforay_t LoadInfoRay[3]; //CD8AC
-
+i32 nb_wiz_save; //CD8AC
+loadinforay_t LoadInfoRay[3]; //CD8B0
 flocon_t* flocon_tab; //CD8BC
 u32 map_time; //CD8C0
 u32 left_time; //CD8C4
@@ -1697,7 +1722,7 @@ i16 ymapinit; //CF83E
 i16 ray_clic; //CF840
 i16 id_obj_grabbed; //CF842
 i16 xmapinit; //CF844
-i16 id_Cling_pow; //CF846
+i16 id_Cling_Pow; //CF846
 i16 ray_between_clic; //CF848
 i16 bossYToReach; //CF84A
 i16 screen_trembling3; //CF84C
@@ -1713,7 +1738,7 @@ i16 scroll_end_y; //CF85E
 i16 ray_zdc_x; //CF860
 i16 ray_zdc_h; //CF862
 i16 ray_zdc_w; //CF864
-u16 decalage_en_cours; //CF866
+i16 decalage_en_cours; //CF866
 i16 ray_mode; //CF868
 i16 remoteRayXToReach; //CF86A
 i16 scroll_start_x; //CF86E
@@ -1721,22 +1746,22 @@ i16 ray_wind_force; //CF870
 i16 scroll_end_x; //CF872
 i16 weather_wind; //CF874
 i16 ray_zdc_y; //CF876
-u16 mst_scroll_obj_id; //CF878
-u16 num_scroll_obj; //CF87A
+i16 mst_scroll_obj_id; //CF878
+u16 NumScrollObj; //CF87A
 i16 num_level; //CF87C
-u16 word_CF87E; //CF87E
+i16 sbar_obj_id; //CF87E
 i16 new_level; //CF880
-u16 water_obj_id; //CF882
+i16 eau_obj_id; //CF882
 i16 ymapmax; //CF884
-u16 reduced_rayman_id; //CF886
-u16 fee_obj_id; //CF888
-u16 word_CF88A; //CF88A
+i16 reduced_rayman_id; //CF886
+i16 fee_obj_id; //CF888
+i16 poing_obj_id; //CF88A
 i16 num_world; // 0xCF88C
-u16 pierre_acorde_obj_id; // CF88E
-u16 xmapmax; //CF890
+i16 pierreAcorde_obj_id; // CF88E
+i16 xmapmax; //CF890
 i16 new_world; // 0xCF892
-u16 rayman_obj_id; //CF894
-u16 mus_obd_id; //CF896
+i16 rayman_obj_id; //CF894
+i16 Mus_obj_id; //CF896
 i16 helico_time; //CF898
 u16 word_CF89A; //CF89A
 u16 word_CF89C; //CF89C
@@ -1755,21 +1780,21 @@ i16 v_scroll_speed; //CF8B4
 i16 xmapsave; //CF8B6
 i16 ymapsave; //CF8B8
 i16 scroll_y; //CF8BA
-u16 black_ray_obj_id; //CF8BC
-u16 word_CF8BE; //CF8BE
+i16 black_ray_obj_id; //CF8BC
+u16 black_fist_obj_id; //CF8BE
 u16 final_pass_n; //CF8C0
 u16 final_pass_a; //CF8C2
 u16 ray_old_etat; //CF8C4
 u16 final_pass_f; //CF8C6
-u16 moskitomama_left_obj_id; //CF8C8
+i16 moskitomama_gauche_obj_id; //CF8C8
 u16 final_pass_x; //CF8CA
-u16 rideau_obj_id; //CF8CC
-u16 corde_dark_obj_id; //CF8CE
-u16 stosko_obj_id; //CF8D0
+i16 rideau_obj_id; //CF8CC
+i16 corde_dark_obj_id; //CF8CE
+i16 stosko_obj_id; //CF8D0
 i16 scroll_x; //CF8D2
 u16 ray_old_subetat; //CF8D4
-u16 moskitosaxo_obj_id; //CF8D6
-u16 moskitomama_right_obj_id; //CF8D8
+i16 moskitosaxo_obj_id; //CF8D6
+i16 moskitomama_droite_obj_id; //CF8D8
 u16 nb_fade; //CF8DA
 u16 sko_last_action; //CF8DC
 u16 sko_rayon_on; //CF8DE
@@ -2108,11 +2133,47 @@ i16 xFondu; //E4CE4
 i16 yFondu; //E4CE6
 i16 wFondu; //E4CE8
 i16 EtapeFondu; //E4CEA
-
+i16 word_E4CEC; //E4CEC
+i16 word_E4CEE; //E4CEE
+i16 word_E4CF0; //E4CF0
+i16 VideoSpeed; //E4CF2
+i16 word_E4CF4; //E4CF4
+u8 but_options[4]; //E4CF6
 u8 InOut; //E4CFB
 u8 byte_E4CFC; //E4CFC
 u8 byte_E4CFD; //E4CFD
 u8 byte_E4CFE; //E4CFE
+
+i16 droppedBombIds[64]; //E4D00
+u8 lastDroppedBombIdInSequence[8]; //E4D80
+u32 dword_E4D88; //E4D88
+i16 mereDenis_weapon_id; //E4D8C
+i16 lastDroppedBombXCenterPos; //E4D8E
+i16 machine_obj_id; //E4D90
+i16 circle_x; //E4D92
+i16 circle_y; //E4D94
+i16 circle_index; //E4D96
+u8 byte_E4D98; //E4D98
+u8 currentLaserSize; //E4D99
+u8 currentPhaseHitCounter; //E4D9A
+u8 stepsForward; //E4D9B
+u8 currentBombSequence; //E4D9C
+u8 curAct; //E4DA0
+u8 fistAvoided; //E4DA1
+u8 mstMustLeaveScreenToProceed; //E4DA2
+i16 ot; //E4DA4
+u8 oldPrio; //E4DA6
+u32 dword_E4DA8; //E4DA8
+
+i16 cou_tempo; //E4E10
+i16 pma_tempo; //E4E12
+i16 pma_touched; //E4E14
+i16 pma_nb_couteau; //E4E15
+i16 pma_phase; //E4E16
+i16 pma_attaque; //E4E17
+i16 cou_place; //E4E18
+i16 pma_groupe; //E4E19
+i16 pma_type_attaque; //E4E1A
 
 i32 RandomIndex; //E548C
 i16 stk_obj[20]; //E5490

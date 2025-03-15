@@ -47,7 +47,7 @@ u8 readGoXYargs(obj_t* obj) {
     obj->nb_cmd = char2short(obj->cmds[obj->cmd_offset]);
 
     ++obj->cmd_offset;
-    obj->phase = char2short(obj->cmds[obj->cmd_offset]);
+    obj->link = char2short(obj->cmds[obj->cmd_offset]);
     return 0;
 }
 
@@ -169,13 +169,13 @@ u8 handle_29_RESERVED_GO_SKIPFALSE(obj_t* obj) {
 
 //60D7C
 u8 handle_21_GO_X(obj_t* obj) {
-    obj->x = obj->nb_cmd * 100 + obj->phase;
+    obj->x = obj->nb_cmd * 100 + obj->link;
     return 1;
 }
 
 //60DA8
 u8 handle_22_GO_Y(obj_t* obj) {
-    obj->y = obj->nb_cmd * 100 + obj->phase;
+    obj->y = obj->nb_cmd * 100 + obj->link;
     return 1;
 }
 
@@ -511,7 +511,7 @@ void DoPowerupRaymanCollision(obj_t* obj) {
         ray.hit_points = status_bar.max_hitp;
     }
     obj->flags.alive = false;
-    PlaySnd(8, obj->obj_index);
+    PlaySnd(8, obj->id);
 
 }
 
@@ -633,7 +633,7 @@ void DO_TEN_COMMAND(obj_t* obj) {
             obj->timer = 0;
         }
     } else if (obj->main_etat == 1) {
-        if (obj->phase != 0) ++obj->timer;
+        if (obj->link != 0) ++obj->timer;
         if (obj->timer >= 254) {
             skipToLabel(obj, 2, 1);
         }
@@ -649,7 +649,7 @@ void DoGeneBadGuyPoingCollision(obj_t* obj, i16 a2) {
 
 //628B8
 void DoGeneBadGuyRaymanZDD(obj_t* obj) {
-    obj->phase = 1;
+    obj->link = 1;
 }
 
 //628C0
@@ -725,7 +725,7 @@ void DoBadGuy1PoingCollision(obj_t* obj, i16 a2) {
     if (obj->hit_points != 0) {
         obj->speed_y = -4;
         set_main_and_sub_etat(obj, 2, (get_eta(obj)->interaction_flags & 0x40) ? 10 : 2);
-        PlaySnd(28, obj->obj_index);
+        PlaySnd(28, obj->id);
     } else {
         obj->speed_y = -8;
         set_main_and_sub_etat(obj, 0, (get_eta(obj)->interaction_flags & 0x40) ? 6 : 3);
