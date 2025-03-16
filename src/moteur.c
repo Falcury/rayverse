@@ -98,28 +98,171 @@ void SET_X_SPEED(obj_t* obj) {
 }
 
 //55F9C
-void make_active2(obj_t* obj, u8 a2) {
-    //stub
+void make_active2(obj_t* obj, u8 do_nova) {
+    obj->is_active = 0;
+    obj->field_1C = 1;
+    obj->active_flag = 0;
+    if (do_nova) {
+        DO_NOVA(obj);
+    }
 }
 
 
 //55FBC
-void make_active(obj_t* obj, u8 a2) {
-    //stub
+void make_active(obj_t* obj, u8 do_nova) {
+    if (obj->flags.alive) {
+        obj->is_active = 0;
+        obj->field_1C = 1;
+        obj->active_flag = 0;
+        if (do_nova) {
+            DO_NOVA(obj);
+        }
+    }
 }
 
 //55FE4
-void in_action_zone(i16 a1, i16 a2, obj_t* obj, u8 a4) {
-    //stub
+bool in_action_zone(i16 screen_x, i16 screen_y, obj_t* obj, u8 active) {
+    i32 in_zone = 0;
+    i16 zdiff_x = zonediffx[ot];
+    i16 zdiff_y = zonediffy[ot];
+    u8 offset_bx = obj->offset_bx;
+    if (flags[ot] & flags0_0x10_keep_active) {
+        if ((flags[ot] & flags0_0x80_boss) && IsBossThere) {
+            in_zone = 1;
+        } else {
+            //TODO: check that this is right for the PC version, there seem to be some oddities here but PC/Android sadly don't decompile cleanly
+            switch(ot) {
+                case TYPE_153_FEE:
+                case TYPE_94_POING:
+                case TYPE_120_BATTEUR_FOU:
+                case TYPE_204_BLACK_RAY:
+                case TYPE_205_BLACK_FIST:
+                case TYPE_190_COUTEAU:
+                case TYPE_215_DARK_SORT:
+                case TYPE_143_NOVA2:
+                    in_zone = 1;
+                    break;
+                case TYPE_10_FISH:
+                case TYPE_97_BBL:
+                    if ((u16) (screen_x + 283) < 727)
+                        in_zone = 1;
+                    break;
+                case TYPE_220_PIERREACORDE:
+                    if (((s16) screen_y + zdiff_y > -50) && (u16) (screen_x + 283) < 783)
+                    {
+                        if (level.objects[pierreAcorde_obj_id].hit_points == 0)
+                        {
+                            level.objects[pierreAcorde_obj_id].hit_points = 10;
+                            set_main_and_sub_etat(&level.objects[pierreAcorde_obj_id], 2, 4);
+                        }
+                    }
+                case TYPE_219_CORDE:
+                    if (level.objects[pierreAcorde_obj_id].hit_points != 0)
+                        in_zone = 1;
+                    break;
+                case TYPE_157_EAU:
+                    if ((u16) (screen_x + 283) < 783)
+                        in_zone = 1;
+                    break;
+                case TYPE_122_STONEDOG2:
+                    if (((u16) (screen_x + 283) < 727) && ((u16) (screen_y + 99) < 349))
+                        in_zone = 1;
+                    break;
+                case TYPE_244_SMA_PETIT_LASER:
+                case TYPE_192_SMA_GRAND_LASER:
+                    offset_bx = 128;
+                    break;
+                // NOTE: the below cases only seems to be present in the PS1 version?
+                /*case TYPE_75_PAILLETTE:
+                case TYPE_76_DESTROYING_DOOR:
+                    if (((u16) (obj->y - 50) > 320) || !IsBossThere)
+                    {
+                        if (ray.cmd_arg_2 == obj->id)
+                        {
+                            ray.cmd_arg_2 = -1;
+                            obj->ray_dist = 1000;
+                            set_main_and_sub_etat(&ray, 2, 2);
+                        }
+                        in_zone = 2;
+                    }
+                    else
+                        in_zone = 1;
+                    break;*/
+                default: break;
+            }
+        }
+    }
+
+    if (in_zone == 0) {
+        if (active) {
+            zdiff_x += 60;
+            zdiff_y += 60;
+        }
+        in_zone = 1;
+        if (((s16) screen_x < -284 - zdiff_x) || ((s16) screen_x > zdiff_x + 444) ||
+                ((s16) screen_y < -144 - zdiff_y) || ((s16) screen_y > zdiff_y + 304) ||
+                (obj->y + obj->offset_by < -30) || (obj->y > mp.height * 16 + 30) ||
+                (obj->x + offset_bx * 2 < 0) || (obj->x > mp.width * 16)
+        ) {
+            in_zone = 0;
+        }
+    }
+
+    if (in_zone && (flags[ot] & flags0_0x80_boss)) {
+        IsBossThere = true;
+        if ((!first_boss_meet && obj->hit_points != 0 && scrollLocked) || (first_boss_meet && obj->hit_points == 0)) {
+            Change_Wait_Anim();
+        }
+    }
+
+    return in_zone;
 }
 
 //56310
 void kill_obj(obj_t* obj) {
-    //stub
+    obj->x = -32000;
+    obj->y = -32000;
+    obj->flags.alive = 0;
+    obj->active_flag = 1;
 }
 
 //56338
-void SET_ACTIVE_FLAG(i16 a1, i16 a2, obj_t* obj) {
+void SET_ACTIVE_FLAG(i16 screen_x, i16 screen_y, obj_t* obj) {
+    ot = obj->type;
+    i32 was_active = obj->is_active;
+    obj->is_active = 0;
+    if (obj->flags.alive) {
+        if (in_action_zone(screen_x, screen_y, obj, was_active)) {
+            if (obj->active_timer != 0 ||
+                    (!(flags[ot] & flags1_1_keep_linked_objects_active) &&
+                    obj->active_flag >= 2 &&
+                     (obj->active_flag == 2 || ot != TYPE_10_FISH))
+            ) {
+                if (obj->active_timer > 0) {
+                    --obj->active_timer;
+                }
+            } else {
+                obj->is_active = was_active;
+                if ((flags[ot] & flags0_1_always) || (flags[ot] & flags3_0x40_no_link)) {
+                    make_active2(obj, !obj->is_active && (flags[ot] & flags1_1_keep_linked_objects_active));
+                } else {
+                    i16 id = obj->id;
+                    do {
+                        obj_t* cur_obj = level.objects + id;
+                        make_active(cur_obj, !cur_obj->is_active && (flags[obj->type] & flags1_1_keep_linked_objects_active));
+                        id = link_init[cur_obj->id];
+                    } while (id != obj->id);
+                }
+            }
+        } else {
+            if (obj->active_flag != 1) {
+                obj->active_timer = 0;
+                if (flags[ot] & flags2_0x20_kill_if_outside_active_zone) {
+                    kill_obj(obj);
+                }
+            }
+        }
+    }
     //stub
 }
 
@@ -291,27 +434,77 @@ void DoRaymanInZDDDefault(obj_t* obj) {
 
 //582A0
 void DO_ONE_OBJECT(obj_t* obj) {
-    if (flags[ot] & obj_type_flags_bit_1_is_balle) {
+    if (flags[ot] & flags0_2_balle) {
         DO_BALLE(obj); //TODO
     }
-    if (flags[ot] & obj_type_flags_bit_5_has_detect_zone) {
+    if (flags[ot] & flags0_0x20_has_detect_zone) {
         SET_DETECT_ZONE_FLAG(obj); //TODO
     }
-    if (flags[ot] & obj_type_flags_bit_16_check_tile_type) {
+    if (flags[ot] & flags2_1_check_tile_type) {
         calc_btyp(obj);
     }
-    if (flags[ot] & obj_type_flags_bit_15_do_cmds) {
+    if (flags[ot] & flags1_0x80_read_cmd) {
         GET_OBJ_CMD(obj);
     } else {
         obj->cmd = GO_NOP;
     }
     ObjectsFonctions[ot].command(obj);
-    //stub
+    if (obj->main_etat == 2) {
+        OBJ_IN_THE_AIR(obj); //TODO
+    }
+    if (obj->flags.follow_enabled) {
+        SET_RAY_DIST(obj); //TODO
+    } else {
+        obj->ray_dist = 10000;
+    }
+    if (flags[ot] & flags1_0x40_special_platform) {
+        DO_SPECIAL_PLATFORM(obj); //TODO
+    }
+    if (flags[ot] & flags2_0x20_kill_if_outside_active_zone) {
+        DO_RAY_IN_ZONE(obj); //TODO
+    }
 }
 
 //58388
 void build_active_table(void) {
-    //stub
+    actobj.objects[0] = -1;
+    actobj.num_active_objects = 0;
+    i32 screen_center_x = xmap + 160;
+    i32 screen_center_y = ymap + 100;
+    for (i32 i = 0; i < level_obj.nb_objects; ++i) {
+        obj_t* obj = &level.objects[level_obj.obj_ids[i]];
+        obj->field_1C = 0;
+    }
+
+    for (i32 i = level_obj.nb_objects-1; i >= 0; --i) {
+        obj_t* obj = &level.objects[level_obj.obj_ids[i]];
+        if (obj->field_1C == 0) {
+            if ((abs(obj->x - screen_center_x) < 660 && abs(obj->y - screen_center_y) < 600) || (flags[obj->type] & flags2_0x10_do_not_check_ray_collision)) {
+                SET_ACTIVE_FLAG(obj->x - xmap + 8, obj->y - ymap, obj); //TODO
+            } else {
+                obj->is_active = 0;
+            }
+        }
+    }
+
+    for (i32 i = level_obj.nb_objects-1; i >= 0; --i) {
+        obj_t* obj = &level.objects[level_obj.obj_ids[i]];
+        if (obj->is_active) {
+            obj->screen_x = obj->x - xmap + 8;
+            obj->screen_y = obj->y - ymap;
+            actobj.objects[actobj.num_active_objects++] = obj->id;
+            if (actobj.num_active_objects > COUNT(actobj.objects)) {
+                FatalError("Error On MAX_ACTOBJ.");
+            }
+        } else {
+            if (flags[obj->type] & flags2_1_check_tile_type) {
+                del_alwobj(obj->id);
+            }
+        }
+    }
+    if (actobj.num_active_objects < COUNT(actobj.objects)) {
+        actobj.objects[actobj.num_active_objects] = -1;
+    }
 }
 
 //58644
@@ -341,16 +534,16 @@ void DO_OBJECTS(void) {
     for (i32 i = 0; i < actobj.num_active_objects; ++i) {
         obj_t* obj = level.objects + actobj.objects[i];
         ot = obj->type;
-        if ((flags[ot] & obj_type_flags_bit_27_switch_off) ||
-                (ot == TYPE_161_WIZ && obj->sub_etat == 2) ||
-                (ot == TYPE_83_EXPLOSION && obj->sub_etat == 1) ||
-                (ot == TYPE_33_DARK2_SORT && obj->sub_etat == 35)
+        if ((flags[ot] & flags3_8_switch_off) ||
+            (ot == TYPE_161_WIZ && obj->sub_etat == 2) ||
+            (ot == TYPE_83_EXPLOSION && obj->sub_etat == 1) ||
+            (ot == TYPE_33_DARK2_SORT && obj->sub_etat == 35)
         ) {
             switchOff(obj);
         }
         if (ot != TYPE_161_WIZ && obj->is_active) {
             DO_ONE_OBJECT(obj); //TODO
-            if (!(flags[ot] & obj_type_flags_bit_7_is_boss) && obj->hit_points == 0 && (get_eta(obj)->flags & 8)) {
+            if (!(flags[ot] & flags0_0x80_boss) && obj->hit_points == 0 && (get_eta(obj)->flags & 8)) {
                 ++obj->hit_points;
             }
         }

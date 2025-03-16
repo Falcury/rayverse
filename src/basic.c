@@ -296,7 +296,7 @@ u8 calc_btyp(obj_t* obj) {
 
     if (!(block_flags[obj->coll_btype[0]] & 2)) {
         if (obj->type == TYPE_23_RAYMAN) {
-            btyp = mp.map[ray.rayman_dist].tile_type;
+            btyp = mp.map[ray.ray_dist].tile_type;
         } else {
             btyp = BTYP(x >> 4, y >> 4);
         }
@@ -376,7 +376,7 @@ void switchOff(obj_t* obj) {
         if (!(ray_mode == 5 && obj->type == TYPE_161_WIZ)) {
             del_alwobj(obj->id);
         }
-        if (obj->type == TYPE_75_PAILETTE || obj->type == TYPE_170_RAYON) {
+        if (obj->type == TYPE_75_PAILLETTE || obj->type == TYPE_170_RAYON) {
             obj->x = -32000;
             obj->y = -32000;
         }
@@ -862,7 +862,12 @@ void init_finBossLevel(void) {
 
 //1F8A4
 void Change_Wait_Anim(void) {
-    //stub
+    eta_t** ray_eta = ray.eta;
+    u8 prev_00 = ray_eta[0][0].anim_index;
+    ray_eta[3][20].anim_index = ray_eta[0][56].anim_index;
+    ray_eta[0][0].anim_index = ray_eta[0][56].anim_index;
+    ray_eta[0][56].anim_index = prev_00;
+    first_boss_meet = 1 - first_boss_meet;
 }
 
 //1F8E8

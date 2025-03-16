@@ -220,7 +220,7 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
                         }
                     }
                     i32 bump_speed;
-                    if (flags[other_obj->type] & obj_type_flags_bit_10_fast_bump) {
+                    if (flags[other_obj->type] & flags1_4_fast_bump) {
                         bump_speed = 5;
                     } else if (other_obj->type == TYPE_180_SAXO2) {
                         bump_speed = 4;
@@ -271,7 +271,7 @@ void DO_COLLISIONS(void) {
 
 //2ED74
 void DoRaymanCollisionDefault(obj_t* obj) {
-    if ((flags[obj->type] & obj_type_flags_bit_20) && get_eta(obj)->flags & 0x20) {
+    if ((flags[obj->type] & flags2_0x10_do_not_check_ray_collision) && get_eta(obj)->flags & 0x20) {
         if (!(ray.main_etat == 3 && ray.sub_etat == 32)) {
             i16 command_par3 = ray.iframes_timer;
             if (command_par3 >= 60 || command_par3 == -1) {

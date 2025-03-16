@@ -238,7 +238,7 @@ void obj_init(obj_t* obj) {
     obj->change_anim_mode = 0; //ANIMMODE_NONE;
     obj->gravity_value_1 = 0;
     obj->gravity_value_2 = 0;
-    obj->detect_zone = 0;
+    obj->detect_zone_flag = 0;
     obj->iframes_timer = -1;
     obj->cmd_arg_2 = -1;
     obj->cmd_offset = -1;
@@ -490,8 +490,8 @@ void init_struct_level(void) {
     }
     for (i16 i = 0; i < level.nb_objects; ++i) {
         obj_t* obj = level.objects + i;
-        if (bonus_map || (flags[obj->type] & obj_type_flags_bit_17_bonus) == 0 || bonus_taken(obj->id)) {
-            if (flags[obj->type] & obj_type_flags_bit_0_is_always) {
+        if (bonus_map || (flags[obj->type] & flags1_2_is_collectible) == 0 || bonus_taken(obj->id)) {
+            if (flags[obj->type] & flags0_1_always) {
                 level_alw.obj_ids[level_alw.nb_objects++] = i;
             } else {
                 level_obj.obj_ids[level_obj.nb_objects++] = i;
@@ -927,7 +927,7 @@ void INIT_OBJECTS(u8 a1) {
         }
 
         // Disable bonuses (collectibles) that were already taken
-        if (!bonus_map && (flags[obj->type] & obj_type_flags_bit_17_bonus) && bonus_taken(obj->id)) {
+        if (!bonus_map && (flags[obj->type] & flags1_2_is_collectible) && bonus_taken(obj->id)) {
             obj->flags.alive = 0;
             obj->is_active = 0;
         }
@@ -978,9 +978,9 @@ void special_flags_init(void) {
         }
         if (i == TYPE_17_LIFTPLAT || i == TYPE_16_FALLPLAT || i == TYPE_24_INTERACTPLT) {
             if (num_world == world_1_jungle) {
-                flags[i] |= obj_type_flags_bit_19_can_jump;
+                flags[i] |= flags2_8_can_jump;
             } else {
-                flags[i] &= obj_type_flags_bit_19_can_jump;
+                flags[i] &= flags2_8_can_jump;
             }
         }
     }

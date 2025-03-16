@@ -332,7 +332,7 @@ typedef struct obj_t {
 	i16 follow_x;
 	i16 cmd_arg_1;
 	i16 link; // 52
-	u16 rayman_dist; //54 // tile index?
+	u16 ray_dist; //54 // tile index?
 	i16 iframes_timer; // timer (?)
 	u16 test_block_index;
 	u16 scale; // 5A
@@ -697,7 +697,7 @@ enum obj_type_enum {
 	TYPE_72_PIRATE_NGAWE = 72, // pirate with earring
 	TYPE_73_RING = 73, // earring
 	TYPE_74_SAXO = 74, // Mr Sax
-	TYPE_75_PAILETTE = 75, // bounce glitter
+	TYPE_75_PAILLETTE = 75, // bounce glitter
 	TYPE_76_DESTROYING_DOOR = 76, // kildoor
 	TYPE_77_PIRATE_GUETTEUR = 77, // bomber pirate
 	TYPE_78_PIRATE_BOMB = 78, // pirate bomb
@@ -1336,38 +1336,38 @@ enum event_flags_enum {
 // Also see:
 // https://github.com/Adsolution/Ray1Map/blob/master/Assets/Scripts/DataTypes/Rayman1/Common/Events/Flags/R1_EventFlags.cs
 enum obj_type_flags_enum {
-	obj_type_flags_bit_0_is_always              = 1 << 0,  // byte 0, 0x1     If true the game sets the pos to (-32000, -32000) on init
-	obj_type_flags_bit_1_is_balle               = 1 << 1,  // byte 0, 0x2     Indicates if the event is TYPE_BALLE1 or TYPE_BALLE2
-	obj_type_flags_bit_2_no_collision           = 1 << 2,  // byte 0, 0x4     Indicates if the event has no collision - does not include follow
-	obj_type_flags_bit_3_hurts_rayman           = 1 << 3,  // byte 0, 0x8     Indicates if the event damages Rayman
-	obj_type_flags_bit_4                        = 1 << 4,  // byte 0, 0x10
-	obj_type_flags_bit_5_has_detect_zone        = 1 << 5,  // byte 0, 0x20    Indicates if the detect zone should be set
-	obj_type_flags_bit_6                        = 1 << 6,  // byte 0, 0x40
-	obj_type_flags_bit_7_is_boss                = 1 << 7,  // byte 0, 0x80    Indicates if the boss bar should show
-	obj_type_flags_bit_8                        = 1 << 8,  // byte 1, 0x1
-	obj_type_flags_bit_9_is_collectible         = 1 << 9,  // byte 1, 0x2     Indicates if the event can be collected and thus not respawn again
-	obj_type_flags_bit_10_fast_bump             = 1 << 10, // byte 1, 0x4
-	obj_type_flags_bit_11                       = 1 << 11, // byte 1, 0x8
-	obj_type_flags_bit_12_move_x                = 1 << 12, // byte 1, 0x10    Indicates if the object x position should be changed by SpeedX in MOVE_OBJECT
-	obj_type_flags_bit_13_move_y                = 1 << 13, // byte 1, 0x20    Indicates if the object y position should be changed by SpeedY in MOVE_OBJECT
-	obj_type_flags_bit_14_is_special_platform   = 1 << 14, // byte 1, 0x40    Indicates if DO_SPECIAL_PLATFORM should be called
-	obj_type_flags_bit_15_do_cmds               = 1 << 15, // byte 1, 0x80    Indicates if commands should be read for the event, otherwise the command is set to 30 (NOP)
-	obj_type_flags_bit_16_check_tile_type       = 1 << 16, // byte 2, 0x1     Indicates if the object reacts to block types (tile collision), thus calling calc_btyp
-	obj_type_flags_bit_17_bonus                 = 1 << 17, // byte 2, 0x2
-	obj_type_flags_bit_18                       = 1 << 18, // byte 2, 0x4
-	obj_type_flags_bit_19_can_jump              = 1 << 19, // byte 2, 0x8     Indicates if obj_jump gets called when on a ressort (spring) block
-	obj_type_flags_bit_20                       = 1 << 20, // byte 2, 0x10
-	obj_type_flags_bit_21                       = 1 << 21, // byte 2, 0x20
-	obj_type_flags_bit_22                       = 1 << 22, // byte 2, 0x40
-	obj_type_flags_bit_23                       = 1 << 23, // byte 2, 0x80
-	obj_type_flags_bit_24                       = 1 << 24, // byte 3, 0x1
-	obj_type_flags_bit_25                       = 1 << 25, // byte 3, 0x2
-	obj_type_flags_bit_26                       = 1 << 26, // byte 3, 0x4
-	obj_type_flags_bit_27_switch_off            = 1 << 27, // byte 3, 0x8
-	obj_type_flags_bit_28                       = 1 << 28, // byte 3, 0x10
-	obj_type_flags_bit_29_link_requires_gendoor = 1 << 29, // byte 3, 0x20    Indicates if the object requires a gendoor in the link group to be valid
-	obj_type_flags_bit_30_no_link               = 1 << 30, // byte 3, 0x40    Indicates that the event can't be linked
-	//obj_type_flags_bit_31                       = 1 << 31, // byte 3, 0x80
+	flags0_1_always                         = 1 << 0,  // byte 0, 0x1     If true the game sets the pos to (-32000, -32000) on init
+	flags0_2_balle                          = 1 << 1,  // byte 0, 0x2     Indicates if the event is TYPE_BALLE1 or TYPE_BALLE2
+	flags0_4_no_collision                   = 1 << 2,  // byte 0, 0x4     Indicates if the event has no collision - does not include follow
+	flags0_8_hurts_rayman                   = 1 << 3,  // byte 0, 0x8     Indicates if the event damages Rayman
+	flags0_0x10_keep_active                 = 1 << 4,  // byte 0, 0x10
+	flags0_0x20_has_detect_zone             = 1 << 5,  // byte 0, 0x20    Indicates if the detect zone should be set
+	flags0_0x40                             = 1 << 6,  // byte 0, 0x40
+	flags0_0x80_boss                        = 1 << 7,  // byte 0, 0x80    Indicates if the boss bar should show
+	flags1_1_keep_linked_objects_active     = 1 << 8,  // byte 1, 0x1
+	flags1_2_is_collectible                 = 1 << 9,  // byte 1, 0x2     Indicates if the event can be collected and thus not respawn again
+	flags1_4_fast_bump                      = 1 << 10, // byte 1, 0x4
+	flags1_8                                = 1 << 11, // byte 1, 0x8
+	flags1_0x10_move_x                      = 1 << 12, // byte 1, 0x10    Indicates if the object x position should be changed by SpeedX in MOVE_OBJECT
+	flags1_0x20_move_y                      = 1 << 13, // byte 1, 0x20    Indicates if the object y position should be changed by SpeedY in MOVE_OBJECT
+	flags1_0x40_special_platform            = 1 << 14, // byte 1, 0x40    Indicates if DO_SPECIAL_PLATFORM should be called
+	flags1_0x80_read_cmd                    = 1 << 15, // byte 1, 0x80    Indicates if commands should be read for the event, otherwise the command is set to 30 (NOP)
+	flags2_1_check_tile_type                = 1 << 16, // byte 2, 0x1     Indicates if the object reacts to block types (tile collision), thus calling calc_btyp
+	flags2_2_fall_in_water                  = 1 << 17, // byte 2, 0x2
+	flags2_4_blocks_ray                     = 1 << 18, // byte 2, 0x4
+	flags2_8_can_jump                       = 1 << 19, // byte 2, 0x8     Indicates if obj_jump gets called when on a ressort (spring) block
+	flags2_0x10_do_not_check_ray_collision  = 1 << 20, // byte 2, 0x10
+	flags2_0x20_kill_if_outside_active_zone = 1 << 21, // byte 2, 0x20
+	flags2_0x40_uturn_on_block              = 1 << 22, // byte 2, 0x40
+	flags2_0x80_increase_speed_x            = 1 << 23, // byte 2, 0x80
+	flags3_1_poing_collision_snd            = 1 << 24, // byte 3, 0x1
+	flags3_2_die_in_water                   = 1 << 25, // byte 3, 0x2
+	flags3_4_stop_moving_up_when_hit_block  = 1 << 26, // byte 3, 0x4
+	flags3_8_switch_off                     = 1 << 27, // byte 3, 0x8
+	flags3_0x10                             = 1 << 28, // byte 3, 0x10
+	flags3_0x20_link_requires_gendoor       = 1 << 29, // byte 3, 0x20    Indicates if the object requires a gendoor in the link group to be valid
+	flags3_0x40_no_link                     = 1 << 30, // byte 3, 0x40    Indicates that the event can't be linked
+//	flags3_0x80                             = 1 << 31, // byte 3, 0x80
 };
 
 enum tile_flags_enum {

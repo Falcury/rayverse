@@ -359,7 +359,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             mem_read(&obj->follow_x, mem, 2);
             mem_read(&obj->cmd_arg_1, mem, 2);
             mem_read(&obj->link, mem, 2);
-            mem_read(&obj->rayman_dist, mem, 2);
+            mem_read(&obj->ray_dist, mem, 2);
             mem_read(&obj->iframes_timer, mem, 2);
             mem_read(&obj->test_block_index, mem, 2);
             mem_read(&obj->scale, mem, 2);
