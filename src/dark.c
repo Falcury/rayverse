@@ -35,7 +35,7 @@ void DO_DARK_COMMAND(obj_t* obj) {
 }
 
 //33630
-void DO_DARK_POING_COLLISION(obj_t* obj) {
+void DO_DARK_POING_COLLISION(obj_t* obj, i16 a2) {
     //stub
 }
 

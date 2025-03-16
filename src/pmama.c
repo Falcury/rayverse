@@ -120,7 +120,7 @@ void PMA_SORT_DU_CANON(obj_t* obj) {
 }
 
 //66244
-void DO_PMA_POING_COLLISION(obj_t* obj) {
+void DO_PMA_POING_COLLISION(obj_t* obj, i16 a2) {
     //stub
 }
 

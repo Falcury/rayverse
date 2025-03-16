@@ -220,7 +220,7 @@ void DO_SURF_CHANGE_HAIRS(void) {
 }
 
 //70AE4
-void DO_PIEDS_RAYMAN(void) {
+void DO_PIEDS_RAYMAN(obj_t* obj) {
     //stub
 }
 

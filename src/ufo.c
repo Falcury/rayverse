@@ -16,7 +16,7 @@ void DO_IDC_COMMAND(obj_t* obj) {
 }
 
 //7EBB8
-void DO_LEV_POING_COLLISION(obj_t* obj) {
+void DO_LEV_POING_COLLISION(obj_t* obj, i16 a2) {
     //stub
 }
 

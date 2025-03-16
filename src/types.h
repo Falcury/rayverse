@@ -778,7 +778,7 @@ enum obj_type_enum {
 	TYPE_153_FEE = 153, // Betilla
 	TYPE_154_ROULETTE2 = 154, // sprinkler (4 heads, moving)
 	TYPE_155_ROULETTE3 = 155, // sprinkler (3 heads)
-	TYPE_156_WALK_NOTE_1 = 156, // wrong note 1
+	TYPE_156_WALK_NOTE_1 = 156, // walk note 1
 	TYPE_157_EAU = 157, // water
 	TYPE_158_PALETTE_SWAPPER = 158, // palette change
 	TYPE_159_TIBETAIN_6 = 159, // tibetan 6 platforms

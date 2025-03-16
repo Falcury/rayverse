@@ -45,7 +45,7 @@ void doBBF2command(obj_t* obj) {
 }
 
 //3FD78
-void DO_HYB_BBF2_POING_COLLISION(obj_t* obj) {
+void DO_HYB_BBF2_POING_COLLISION(obj_t* obj, i16 a2) {
     //stub
 }
 
