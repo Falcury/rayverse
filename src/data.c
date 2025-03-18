@@ -1620,13 +1620,8 @@ calcbloc_func_t* calcbloc2[64]; //C2948
 calcbloc_func_t* calcblocfloor[64]; //C2A48
 char* language_txt[304]; //C2B48
 
-i16 options_jeu_KeyJump; //C2F88 // TODO: check these names; create struct or array?
-i16 options_jeu_KeyWeapon; //C2F8A
-i16 options_jeu_KeyUnknown_default_02; //C2F8C
-i16 options_jeu_KeyAction; //C2F8E
-i16 options_jeu_music_enabled; //C2F90
-i16 options_jeu_sound_volume; //C2F92
-i16 options_jeu_is_stereo; //C2F94
+options_jeu_t options_jeu_save; //C2F58
+options_jeu_t options_jeu; //C2F78
 
 u32 gros_patai_src[1200]; //C2FA8
 i32 block_add[1200]; //C4268
@@ -2116,7 +2111,7 @@ u8 nb_wiz_collected; //CFA55
 u8 nb_wiz; //CFA56
 u8 is_fee; //CFA57
 u8 new_txt_fee; //CFA58
-u8 byte_CFA59; //CFA59
+u8 old_txt_fee; //CFA59
 u8 dir_on_wldmap; //CFA5A
 u8 Nb_total_cages; //CFA5B
 u8 fin_continue; //CFA5C

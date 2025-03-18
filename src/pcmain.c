@@ -148,8 +148,8 @@ void PcMain(void) {
 
             INIT_MOTEUR_LEVEL(new_level);
             init_fee();
-//			init_moustique();
-//			InitPaletteSpecialPC();
+			init_moustique();
+			InitPaletteSpecialPC();
 
             if (byte_CFA2A != 0) {
                 fade_out(2, &rvb_plan3);

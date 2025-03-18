@@ -243,17 +243,17 @@ void DISPLAY_STAGE_NAMES(void) {
     DO_STAGE_NAMES(); //TODO
     sprite_clipping(0, 320, 0, 200);
     if (PositionStageNameCalcule != 1) {
-        if (text_to_display[2].text[0] != '\0') {
-            display_text(text_to_display[2].text, text_to_display[2].xpos, text_to_display[2].ypos, text_to_display[2].font_size, text_to_display[2].color);
-        }
         if (text_to_display[1].text[0] != '\0') {
             display_text(text_to_display[1].text, text_to_display[1].xpos, text_to_display[1].ypos, text_to_display[1].font_size, text_to_display[1].color);
         }
-        if (text_to_display[4].text[0] != '\0') {
-            display_text(text_to_display[4].text, text_to_display[4].xpos, text_to_display[4].ypos, text_to_display[4].font_size, text_to_display[4].color);
+        if (text_to_display[0].text[0] != '\0') {
+            display_text(text_to_display[0].text, text_to_display[0].xpos, text_to_display[0].ypos, text_to_display[0].font_size, text_to_display[0].color);
         }
         if (text_to_display[3].text[0] != '\0') {
             display_text(text_to_display[3].text, text_to_display[3].xpos, text_to_display[3].ypos, text_to_display[3].font_size, text_to_display[3].color);
+        }
+        if (text_to_display[2].text[0] != '\0') {
+            display_text(text_to_display[2].text, text_to_display[2].xpos, text_to_display[2].ypos, text_to_display[2].font_size, text_to_display[2].color);
         }
     }
     if (PositionStageNameCalcule) {

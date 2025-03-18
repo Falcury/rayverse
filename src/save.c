@@ -706,13 +706,13 @@ bool LoadOptionsOnDisk(void) {
         mem_read(&Param, mem, 4);
         mem_read(&DeviceID, mem, 4);
         mem_read(&NumCard, mem, 1);
-        mem_read(&options_jeu_KeyJump, mem, 2);
-        mem_read(&options_jeu_KeyWeapon, mem, 2);
-        mem_read(&options_jeu_KeyUnknown_default_02, mem, 2);
-        mem_read(&options_jeu_KeyAction, mem, 2);
-        mem_read(&options_jeu_music_enabled, mem, 2); // 13 = default?
-        mem_read(&options_jeu_sound_volume, mem, 2); // 13 = default?
-        mem_read(&options_jeu_is_stereo, mem, 2);
+        mem_read(&options_jeu.jump, mem, 2);
+        mem_read(&options_jeu.fist, mem, 2);
+        mem_read(&options_jeu.field_14, mem, 2);
+        mem_read(&options_jeu.action, mem, 2);
+        mem_read(&options_jeu.music_enabled, mem, 2); // 13 = default?
+        mem_read(&options_jeu.sound_volume, mem, 2); // 13 = default?
+        mem_read(&options_jeu.is_stereo, mem, 2);
         mem_read(&Mode_Pad, mem, 1);
         mem_read(&Port_Pad, mem, 1);
         mem_read(&xpadmax, mem, 2);

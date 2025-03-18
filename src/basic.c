@@ -619,8 +619,33 @@ void INIT_TXT_BOX(display_item_t* box) {
 }
 
 //1F4A0
-void Deter_Option_Caract(u8* a1, i16 a2, i16 a3) {
-    //stub
+void Deter_Option_Caract(char* text, i16 key, i16 offset) {
+    if (offset == 255) {
+        i16 len = (i16)strlen(text);
+        for (i16 i = 0; i < len; ++i) {
+            char c = text[i];
+            if (c == '4') {
+                offset = i;
+            }
+        }
+    }
+    if (offset != 255) {
+        switch(key) {
+            case 0: {
+                text[offset] = 'a';
+            } break;
+            case 1: {
+                text[offset] = 'b';
+            } break;
+            case 2: {
+                text[offset] = 'c';
+            } break;
+            case 3: {
+                text[offset] = 'd';
+            } break;
+            default: break;
+        }
+    }
 }
 
 //1F50C

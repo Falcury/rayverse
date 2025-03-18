@@ -120,17 +120,17 @@ void DO_MEDAILLONS(void) {
 
 //67D50
 void INIT_LEVEL_STAGE_NAME(void) {
-    memcpy(text_to_display[1].text, t_world_info[num_world_choice].text, 48);
-    text_to_display[1].xpos = 450;
-    text_to_display[1].ypos = 193;
-    text_to_display[1].font_size = 2;
-    text_to_display[1].is_fond = 0;
-    text_to_display[1].field_D5 = 0;
-    INIT_TXT_BOX(&text_to_display[1]);
-    text_to_display[1].centered_y_pos -= 6;
-    text_to_display[1].width += 10;
-    text_to_display[1].height += 6;
-    text_to_display[1].color = t_world_info[num_world_choice].color;
+    memcpy(text_to_display[0].text, t_world_info[num_world_choice].text, 48);
+    text_to_display[0].xpos = 450;
+    text_to_display[0].ypos = 193;
+    text_to_display[0].font_size = 2;
+    text_to_display[0].is_fond = 0;
+    text_to_display[0].field_D5 = 0;
+    INIT_TXT_BOX(&text_to_display[0]);
+    text_to_display[0].centered_y_pos -= 6;
+    text_to_display[0].width += 10;
+    text_to_display[0].height += 6;
+    text_to_display[0].color = t_world_info[num_world_choice].color;
 }
 
 //67E40
@@ -138,58 +138,58 @@ void INIT_WORLD_STAGE_NAME(void) {
     i8 new_color = 0;
     switch (t_world_info[num_world_choice].world) {
         case 1: {
-            strcpy(text_to_display[3].text, language_txt[24]); // /the dream forest/
+            strcpy(text_to_display[2].text, language_txt[24]); // /the dream forest/
             new_color = 5;
         } break;
         case 2: {
-            strcpy(text_to_display[3].text, language_txt[25]); // /band land/
+            strcpy(text_to_display[2].text, language_txt[25]); // /band land/
             new_color = 3;
         } break;
         case 3: {
-            strcpy(text_to_display[3].text, language_txt[26]); // /blue mountains/
+            strcpy(text_to_display[2].text, language_txt[26]); // /blue mountains/
             new_color = 0;
         } break;
         case 4: {
-            strcpy(text_to_display[3].text, language_txt[27]); // /picture city/
+            strcpy(text_to_display[2].text, language_txt[27]); // /picture city/
             new_color = 2;
         } break;
         case 5: {
-            strcpy(text_to_display[3].text, language_txt[28]); // /the caves of skops/
+            strcpy(text_to_display[2].text, language_txt[28]); // /the caves of skops/
             new_color = 1;
         } break;
         case 6: {
-            strcpy(text_to_display[3].text, language_txt[29]); // /candy chateau/
+            strcpy(text_to_display[2].text, language_txt[29]); // /candy chateau/
             new_color = 1;
         } break;
         case 7: {
             new_color = t_world_info[num_world_choice].color;
             switch(fichier_selectionne) {
                 case 0: {
-                    strcpy(text_to_display[3].text, language_txt[161]); // /password/
+                    strcpy(text_to_display[2].text, language_txt[161]); // /password/
                 } break;
                 case 1: {
-                    strncpy(text_to_display[3].text, save_ray[0], 4);
+                    strncpy(text_to_display[2].text, save_ray[0], 4);
                 } break;
                 case 2: {
-                    strncpy(text_to_display[3].text, save_ray[1], 4);
+                    strncpy(text_to_display[2].text, save_ray[1], 4);
                 } break;
                 case 3: {
-                    strncpy(text_to_display[3].text, save_ray[2], 4);
+                    strncpy(text_to_display[2].text, save_ray[2], 4);
                 } break;
                 default: break;
             }
         } break;
         default: break;
     }
-    text_to_display[3].color = new_color;
-    text_to_display[3].font_size = 1;
-    text_to_display[3].xpos = 450;
-    text_to_display[3].ypos = 30;
-    text_to_display[3].is_fond = 0;
-    text_to_display[3].field_D5 = 0;
-    INIT_TXT_BOX(&text_to_display[3]);
-    text_to_display[3].width += 10;
-    text_to_display[3].height += 2;
+    text_to_display[2].color = new_color;
+    text_to_display[2].font_size = 1;
+    text_to_display[2].xpos = 450;
+    text_to_display[2].ypos = 30;
+    text_to_display[2].is_fond = 0;
+    text_to_display[2].field_D5 = 0;
+    INIT_TXT_BOX(&text_to_display[2]);
+    text_to_display[2].width += 10;
+    text_to_display[2].height += 2;
 }
 
 //68120
@@ -197,22 +197,22 @@ void INIT_STAGE_NAME(void) {
     INIT_TEXT_TO_DISPLAY();
     INIT_LEVEL_STAGE_NAME();
     INIT_WORLD_STAGE_NAME();
-    text_to_display[2].xpos = 160;
-    text_to_display[2].ypos = 250;
-    text_to_display[2].field_D5 = 0;
-    text_to_display[2].is_fond = 0;
-    text_to_display[4].xpos = 150;
-    text_to_display[4].ypos = -50;
-    text_to_display[4].field_D5 = 0;
-    text_to_display[4].is_fond = 0;
+    text_to_display[1].xpos = 160;
+    text_to_display[1].ypos = 250;
+    text_to_display[1].field_D5 = 0;
+    text_to_display[1].is_fond = 0;
+    text_to_display[3].xpos = 150;
+    text_to_display[3].ypos = -50;
+    text_to_display[3].field_D5 = 0;
+    text_to_display[3].is_fond = 0;
 }
 
 //6817C
 void CHANGE_STAGE_NAMES(void) {
-    text_to_display[2] = text_to_display[1];
+    text_to_display[1] = text_to_display[0];
     INIT_LEVEL_STAGE_NAME();
     if (t_world_info[num_world_choice].world != t_world_info[old_num_world].world) {
-        text_to_display[4] = text_to_display[3];
+        text_to_display[3] = text_to_display[2];
         INIT_WORLD_STAGE_NAME();
     }
 }
@@ -223,21 +223,21 @@ void DO_STAGE_NAMES(void) {
         // World map idle animation with letters bouncing everywhere
         //stub
     } else {
-        if (text_to_display[1].xpos > 160) {
-            text_to_display[1].xpos -= 6;
-            text_to_display[1].centered_x_pos -= 6;
+        if (text_to_display[0].xpos > 160) {
+            text_to_display[0].xpos -= 6;
+            text_to_display[0].centered_x_pos -= 6;
         }
-        if (text_to_display[3].xpos > 160) {
-            text_to_display[3].xpos -= 6;
-            text_to_display[3].centered_x_pos -= 6;
+        if (text_to_display[2].xpos > 160) {
+            text_to_display[2].xpos -= 6;
+            text_to_display[2].centered_x_pos -= 6;
         }
-        if (text_to_display[2].ypos < 293) {
-            text_to_display[2].ypos += 2;
-            text_to_display[2].centered_y_pos += 2;
+        if (text_to_display[1].ypos < 293) {
+            text_to_display[1].ypos += 2;
+            text_to_display[1].centered_y_pos += 2;
         }
-        if (text_to_display[4].ypos > -70) {
-            text_to_display[4].ypos -= 2;
-            text_to_display[4].centered_y_pos -= 2;
+        if (text_to_display[3].ypos > -70) {
+            text_to_display[3].ypos -= 2;
+            text_to_display[3].centered_y_pos -= 2;
         }
     }
 
@@ -414,7 +414,7 @@ void DO_RAYMAN_IN_WLD_MAP(void) {
             ) {
                 if (t_world_info[num_world_choice].text == language_txt[150] /* /save game/ */ &&
                     NBRE_SAVE != 0 &&
-                    strcmp(text_to_display[3].text, language_txt[161] /* /password/ */) != 0
+                    strcmp(text_to_display[2].text, language_txt[161] /* /password/ */) != 0
                 ) {
                     // Erase previously saved game?
                     if (confirmation_msg(3)) {

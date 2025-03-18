@@ -266,7 +266,7 @@ bool InitSnd(void) {
             voice_table[i].field_0 = -2;
         }
         raj_env_sound(18);
-        return raj_env_stereo(options_jeu_is_stereo);
+        return raj_env_stereo(options_jeu.is_stereo);
     } else {
         return false;
     }

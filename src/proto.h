@@ -227,7 +227,7 @@ i32 deter_num_let(u8 c, const char* next_chars);
 void calc_num_let_spr(u8 a1, u8* a2);
 i16 calc_largmax_text(const char* text, i16 char_index, i16 space_width, i16 char_spacing, u8 font_size);
 void INIT_TXT_BOX(display_item_t* box);
-void Deter_Option_Caract(u8* a1, i16 a2, i16 a3);
+void Deter_Option_Caract(char* text, i16 key, i16 offset);
 void SwapAB(i16* a, i16* b);
 void Bresenham(void (*func)(i16, i16), i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 param_6, i16 percent);
 void init_finBossLevel(void);

@@ -180,13 +180,13 @@ void LOAD_CONFIG(void) {
         } else {
             xpadmax = -2;
         }
-        options_jeu_music_enabled = 2;
-        options_jeu_sound_volume = 18;
-        options_jeu_is_stereo = 1;
-        options_jeu_KeyJump = 1;
-        options_jeu_KeyWeapon = 0;
-        options_jeu_KeyAction = 2;
-        SetVolumeSound((options_jeu_sound_volume * 127) / 20);
+        options_jeu.music_enabled = 2;
+        options_jeu.sound_volume = 18;
+        options_jeu.is_stereo = 1;
+        options_jeu.jump = 1;
+        options_jeu.fist = 0;
+        options_jeu.action = 2;
+        SetVolumeSound((options_jeu.sound_volume * 127) / 20);
         GameModeVideo = 0;
     }
 
@@ -235,7 +235,7 @@ void DO_NEW_MENUS(void) {
     MENU_RETURN = 0;
     menuEtape = 0;
     if (OptionMusicCdActive) {
-        MusicCdActive = options_jeu_music_enabled;
+        MusicCdActive = options_jeu.music_enabled;
         if (!MusicCdActive) {
             stop_cd();
         }
@@ -245,9 +245,9 @@ void DO_NEW_MENUS(void) {
     default_key();
     i16 NewMenusArgs = 0;
     while (!ModeDemo && !fin_du_jeu && !NewMenusArgs) {
-        raj_env_sound(options_jeu_sound_volume);
-        raj_env_stereo(options_jeu_is_stereo);
-        raj_env_audio(options_jeu_music_enabled);
+        raj_env_sound(options_jeu.sound_volume);
+        raj_env_stereo(options_jeu.is_stereo);
+        raj_env_audio(options_jeu.music_enabled);
         switch(menuEtape) {
             default: break;
             case 0: {
