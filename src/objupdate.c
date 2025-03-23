@@ -556,7 +556,7 @@ void DoSignPostRaymanCollision(obj_t* obj) {
 }
 
 //62150
-void TEST_SIGNPOST(obj_t* obj) {
+void TEST_SIGNPOST(void) {
     //stub
 }
 

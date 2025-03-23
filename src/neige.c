@@ -1,27 +1,96 @@
 
 //5B7A0
 void DoFirstFlocons(void) {
-    //stub
+    if (MapAvecPluieOuNeige && save1.is_just_saved && save1.save_obj_id == -1 && !fin_continue) {
+        for (i16 i = 0; i < 100; ++i) {
+            i16 random1 = myRand(i);
+            i16 random2 = myRand(random1);
+            do_flocons(xmap + random1, ymap + random2, xmap_old, ymap_old);
+            DO_SNOW_SEQUENCE();
+            horloges(0);
+            xmap_old = xmap;
+            ymap_old = ymap;
+        }
+    }
 }
 
 //5B848
 void add_one_floc(void) {
-    //stub
+    /* 3B264 8015FA64 -O2 -msoft-float */
+
+    s16 unk_1 = myRand(511);
+    s16 i = LEN(floc_ind) - 1;
+    s16 done = false;
+
+    while (!done)
+    {
+        if (floc_ind[i] < unk_1)
+        {
+            done = true;
+            nb_floc[i]++;
+        }
+        i--;
+    }
+
+    if (nb_floc[i + 1] > tot_nb_flocs[i + 1])
+        nb_floc[i + 1]--;
 }
 
 //5B8A4
 void add_256_flocs(void) {
-    //stub
+    /* 3B324 8015FB24 -O2 -msoft-float */
+
+    /* THEY LIED TO US, IT'S REALLY 251! D: */
+    nb_floc[0] = 10;
+    nb_floc[1] = 15;
+    nb_floc[2] = 25;
+    nb_floc[3] = 30;
+    nb_floc[4] = 35;
+    nb_floc[5] = 40;
+    nb_floc[6] = 43;
+    nb_floc[7] = 53;
 }
 
 //5B910
-void sub_5B910(void) {
+void sub_one_floc(void) {
     // NOTE: this function doesn't have a debug symbol in the Android version, I guess it was marked static?
-    //stub
+
+    /* 3B38C 8015FB8C -O2 -msoft-float */
+
+    s16 unk_1 = myRand(511);
+    s16 i = LEN(nb_floc) - 1;
+    s16 done = false;
+
+    while (!done && i > -1)
+    {
+        if (floc_ind[i] <= unk_1 && nb_floc[i] > 0)
+        {
+            nb_floc[i]--;
+            done = true;
+        }
+        i--;
+    }
+
+    if (i == -1)
+    {
+        i = LEN(nb_floc) - 1;
+        done = false;
+        while (!done && i > -1)
+        {
+            if (nb_floc[i] > 0)
+            {
+                nb_floc[i]--;
+                done = true;
+            }
+            i--;
+        }
+    }
 }
 
 //5B9A0 (adapted from PS1 decomp)
 void init_flocons(void) {
+    /* 3B488 8015FC88 -O2 -msoft-float */
+
     s16 flc_i;
     s16 i;
     s32 unk_1;
@@ -77,8 +146,91 @@ void init_flocons(void) {
 }
 
 //5BB78
-void do_flocons(i16 a1, i16 a2, i16 a3, i16 a4) {
-    //stub
+void do_flocons(i16 x, i16 y, i16 x_old, i16 y_old) {
+    /* 3B718 8015FF18 -O2 -msoft-float */
+
+    s16 unk_x_1; s16 unk_y_1;
+    s32 remove_1; s32 remove_2; /* TODO: ??? */
+    s16 unk_x_2; s16 unk_y_2;
+    s16 i;
+    s16 unk_1;
+    s16 flc_i_1;
+    s16 unk_x_3; s16 unk_y_3;
+    s16 x_0; s16 x_320; s16 y_0; s16 y_200;
+    flocon_t *cur_floc;
+    s16 unk_2;
+    s16 flc_i_2;
+    s16 prev_vy = VENT_Y;
+    s16 prev_vx = VENT_X;
+
+    VENT_Y += 4;
+    unk_x_1 = VENT_X / 4;
+    unk_y_1 = VENT_Y / 4;
+    remove_1 = VENT_X - (VENT_X / 4 * 4);
+    unk_x_2 = remove_1;
+    remove_2 = VENT_Y - (VENT_Y / 4 * 4);
+    unk_y_2 = remove_2;
+    if (abs(unk_x_2) == 1 && horloge[4] == 0)
+        unk_x_1 += sgn(VENT_X);
+
+    if (abs(unk_x_2) == 2 && horloge[2] == 0)
+        unk_x_1 += sgn(VENT_X);
+
+    if (abs(unk_x_2) == 3 && horloge[4] < 3)
+        unk_x_1 += sgn(VENT_X);
+
+    if (abs(unk_y_2) == 1 && horloge[4] == 0)
+        unk_y_1 += sgn(VENT_Y);
+
+    if (abs(unk_y_2) == 2 && horloge[2] == 0)
+        unk_y_1 += sgn(VENT_Y);
+
+    if (abs(unk_y_2) == 3 && horloge[4] < 3)
+        unk_y_1 += sgn(VENT_Y);
+
+    set_proj_center(SCREEN_WIDTH / 2, 170);
+    i = 0;
+    unk_1 = -64;
+    while (unk_1 < 32 * 6)
+    {
+        flc_i_1 = floc_ind[i];
+        unk_y_3 = y_old - y;
+        unk_y_3 += unk_y_1;
+        unk_x_3 = x_old - x + unk_x_1;
+        y_0 = invpy0[i];
+        y_200 = invpy200[i];
+        x_0 = invpx0[i];
+        x_320 = invpx320[i];
+
+        cur_floc = &flocon_tab[flc_i_1];
+        unk_2 = flc_i_1 + nb_floc[i];
+        flc_i_2 = flc_i_1;
+        while (flc_i_2 < unk_2)
+        {
+            cur_floc->field_0 += unk_x_3;
+            cur_floc->field_2 += unk_y_3;
+
+            if (cur_floc->field_0 > x_320)
+                cur_floc->field_0 = x_0;
+            else if (cur_floc->field_0 < x_0)
+                cur_floc->field_0 = x_320;
+
+            if (cur_floc->field_2 > y_200)
+                cur_floc->field_2 = y_0;
+            else if (cur_floc->field_2 < y_0)
+                cur_floc->field_2 = y_200;
+
+            cur_floc++;
+            flc_i_2++;
+        }
+        unk_1 += 32;
+        i++;
+    }
+
+    VENT_Y = prev_vy;
+    VENT_X = prev_vx;
+    if (num_world != 1)
+        weather_wind = VENT_X / 8;
 }
 
 //5BE74
@@ -253,13 +405,67 @@ void set_SNSEQ_list(i16 a1) {
         default: break;
     }
     SNSEQ_list_ptr = 1;
-    set_snow_sequence((i16)SNSEQ_list[1], (i16)SNSEQ_list[2]);
+    set_snow_sequence(SNSEQ_list[1], SNSEQ_list[2]);
     SNSEQ_list_ptr += 2;
 }
 
 //5C278
 void DO_SNOW_SEQUENCE(void) {
-    //stub
+    /* 3C164 80160964 -O2 -msoft-float */
+
+    switch (SNSEQ_no)
+    {
+        case 0:
+            break;
+        case 1:
+            VENT_X = 0;
+            VENT_Y = 0;
+            break;
+        case 2:
+            add_one_floc();
+            break;
+        case 3:
+            sub_one_floc();
+            break;
+        case 6:
+            if (horloge[2] == 0)
+                VENT_X--;
+            break;
+        case 4:
+            VENT_X--;
+            break;
+        case 7:
+            if (horloge[2] == 0)
+                VENT_X++;
+            break;
+        case 5:
+            VENT_X++;
+            break;
+        case 8:
+            if (horloge[2] == 0)
+                VENT_Y--;
+            break;
+        case 9:
+            if (horloge[2] == 0)
+                VENT_Y++;
+            break;
+        case 10:
+            VENT_X = -8;
+            VENT_Y = 8;
+            add_256_flocs();
+    }
+
+    if (++SNSEQ_ptr == SNSEQ_len[SNSEQ_no])
+    {
+        i16 first = SNSEQ_list[SNSEQ_list_ptr];
+        SNSEQ_list_ptr++;
+        i16 second = SNSEQ_list[SNSEQ_list_ptr];
+        SNSEQ_list_ptr++;
+
+        set_snow_sequence(first, second);
+        if (SNSEQ_list_ptr == SNSEQ_list[0])
+            SNSEQ_list_ptr = 0;
+    }
 }
 
 //5C3DC

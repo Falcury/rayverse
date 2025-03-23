@@ -180,7 +180,7 @@ void N_CLRSCR(u8* buffer) {
 }
 
 //14C9C
-void Swap_To_Screen(u8* draw_buf, u8* display_buf, i32 height, i32 width) {
+void Swap_To_Screen(u8* draw_buf, u8* display_buf, i32 width, i32 height) {
     //stub
 }
 
@@ -232,8 +232,9 @@ i32 Bloc_floc_W2 = 0; //15624
 //15628
 void flocon_clipping(i32 h1, i32 h2, i32 w1, i32 w2) {
     Bloc_floc_H1 = h1;
-
-    //stub
+    Bloc_floc_H2 = h2;
+    Bloc_floc_W1 = w1;
+    Bloc_floc_W2 = w2;
 }
 
 //15640
@@ -292,22 +293,22 @@ void draw_pluie7_Normal(void) {
 }
 
 //1595D
-void get_joy_input2_dos1(void) {
+void get_joy_input2_dos1(u8* source_buf, u8* dest_buf, i32 width, i32 height) {
     //stub
 }
 
 //15A57
-void get_joy_input2_dos2(void) {
+void get_joy_input2_dos2(u8* source_buf, u8* dest_buf, i32 width, i32 height) {
     //stub
 }
 
 //15B55
-void get_joy_input2_windows1(void) {
+void get_joy_input2_windows1(u8* source_buf, u8* dest_buf, i32 width, i32 height) {
     //stub
 }
 
 //15C13
-void get_joy_input2_windows2(void) {
+void get_joy_input2_windows2(u8* source_buf, u8* dest_buf, i32 width, i32 height) {
     //stub
 }
 

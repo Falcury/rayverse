@@ -119,17 +119,17 @@ void Init_Bande(u8 fnd, i16 width, i16 height, u8* source_buf, u8* dest_buf) {
 }
 
 //77BA0
-void Display_Back_Screen(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6) {
+void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2, i16 h2) {
     //stub
 }
 
 //784A8
-void Display_Sprite_On_Front(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6) {
+void Display_Sprite_On_Front(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2, i16 h2) {
     //stub
 }
 
 //787E8
-void Calcul_Deplacement_Bande(i16 a1, i16 a2, i16 a3) {
+void Calcul_Deplacement_Bande(i16 x, i16 plan_width, i16 plan_height) {
     //stub
 }
 

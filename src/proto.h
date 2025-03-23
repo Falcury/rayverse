@@ -30,7 +30,7 @@ void DrawBorderBoxNormal(u8* buffer, i32 x, i32 y, i32 height, i32 width, u16 co
 void DisplayAnyPictureNormal(u8* source_buffer, u8* dest_buffer, i32 source_x, i32 source_y, i32 dest_x, i32 dest_y, i32 stride, i32 width, i32 height);
 void ClearDrawAndDisplayBufferNormal(u8* draw_buf, u8* display_buf);
 void N_CLRSCR(u8* buffer);
-void Swap_To_Screen(u8* draw_buf, u8* display_buf, i32 height, i32 width);
+void Swap_To_Screen(u8* draw_buf, u8* display_buf, i32 width, i32 height);
 void clear_borders_Normal(u8* buffer, i32 height, i32 width);
 void Copy_Plan0Diff_To_Buf(u8* a1, u8* a2, i32 a3, i32 a4);
 void Display_Bloc(void* a1, void* a2);
@@ -51,10 +51,10 @@ void draw_flocon7_Normal(void);
 void draw_pluie6_Normal(void);
 void draw_flocon6_Normal(void);
 void draw_pluie7_Normal(void);
-void get_joy_input2_dos1(void); // ?
-void get_joy_input2_dos2(void); // ?
-void get_joy_input2_windows1(void);
-void get_joy_input2_windows2(void);
+void get_joy_input2_dos1(u8* source_buf, u8* dest_buf, i32 width, i32 height); // ?
+void get_joy_input2_dos2(u8* source_buf, u8* dest_buf, i32 width, i32 height); // ?
+void get_joy_input2_windows1(u8* source_buf, u8* dest_buf, i32 width, i32 height);
+void get_joy_input2_windows2(u8* source_buf, u8* dest_buf, i32 width, i32 height);
 void dos_game_io_port_something(void);
 void dos_game_io_port_something2(void);
 void get_joy_input1_dos1(void);
@@ -95,9 +95,9 @@ void speaker_enable(void);
 
 // pcmain.c
 void InitData(void);
-void DO_GROS_MOTEUR_NORMAL(void);
-void DO_MAIN_LOOP_PC_NORMAL(void);
-void DO_GROS_MOTEUR_X(void);
+void DO_GROS_MOTEUR_NORMAL(u8 a1);
+void DO_MAIN_LOOP_PC_NORMAL(u8* a1);
+void DO_GROS_MOTEUR_X(u8* a1);
 void DO_MAIN_LOOP_PC_X(void);
 void init_arg(i32 argc, char** argv);
 void PrintDosInfo(void);
@@ -516,7 +516,7 @@ void DO_VITRAIL_COMMAND(obj_t* obj);
 void allume_vitraux(obj_t* obj);
 
 // display.c
-void display_inter_anim(void);
+i16 display_inter_anim(u32 a1);
 void continue_fonction(void);
 void DO_CONTINUE(void);
 i16 saisie_nom_prg(u32 a1);
@@ -843,7 +843,7 @@ void set_luciole(i32 a1, i32 a2);
 void init_aff_luciole(i32 a1, i32 a2);
 void plot2line(i32 a1, i32 a2, i32 a3, i32 a4, i32 a5);
 void aff_luciole(i32 a1, i32 a2, i32 a3, i32 a4);
-void Display_and_free_luciole(i32 a1);
+void Display_and_free_luciole(u8* draw_buf);
 void free_luciole(void);
 void INIT_LUCIOLE(void);
 void DO_LUCIOLE(void);
@@ -1036,7 +1036,7 @@ void correct_gendoor_link(u8 a1);
 void suppressFromLinkList(obj_t* obj);
 void correct_link(void);
 void INIT_RAY_BEGIN(void);
-void INIT_RAY(u8 level_index);
+void INIT_RAY(u8 new_lvl);
 void is_icy_pente(u8 a1);
 void STOPPE_RAY_EN_XY(void);
 void DO_PLACE_RAY(void);
@@ -1060,9 +1060,9 @@ void DO_MOTEUR_GELE(void);
 void DoFirstFlocons(void);
 void add_one_floc(void);
 void add_256_flocs(void);
-void sub_5B910(void);
+void sub_one_floc(void);
 void init_flocons(void);
-void do_flocons(i16 a1, i16 a2, i16 a3, i16 a4);
+void do_flocons(i16 x, i16 y, i16 x_old, i16 y_old);
 void set_snow_sequence(i16 seq, i16 len);
 void set_SNSEQ_list(i16 a1);
 void DO_SNOW_SEQUENCE(void);
@@ -1074,7 +1074,7 @@ void deter_nb_blocks(void* a1, i16 a2, i16 a3, i32* a4, i32* a5);
 void Copy_Blocks(mem_t* buffer, void* a2, i16 a3, i16 a4);
 void construct_MAP(mem_t* mem, big_map_t* big_map, void* map_blocks);
 void init_build_map(big_map_t* a1);
-void update_display_map(void* a1);
+void update_display_map(big_map_t* a1);
 void set_default_Bloc_clipping(void);
 void set_xymapini(void);
 void set_xymap(void);
@@ -1082,7 +1082,7 @@ void set_whmap(i32 a1, i32 a2, void* a3);
 void recaleRaysurlesBords(void);
 void set_xywhmap(i16 xmin, i16 xmax, i16 ymin, i16 ymax);
 void MaskScrollDiffSprites(mem_t* buffer);
-void DRAW_MAP(void* a1, void* a2);
+void DRAW_MAP(void* draw_buf, big_map_t* big_map);
 void INIT_GAME_MODE_NORMAL(void);
 void FIN_GAME_MODE_NORMAL(void);
 
@@ -1195,7 +1195,7 @@ void DoGeneratingDoorRaymanCollision(obj_t* obj);
 void DO_REDUCTEUR(obj_t* obj);
 void DoReducteurRaymanCollision(obj_t* obj);
 void DoSignPostRaymanCollision(obj_t* obj);
-void TEST_SIGNPOST(obj_t* obj);
+void TEST_SIGNPOST(void);
 void DoPancarteRaymanCollision(obj_t* obj);
 void DO_MUSICIEN(obj_t* obj);
 void DoMusicienRaymanInZDD(obj_t* obj);
@@ -1442,9 +1442,9 @@ void saxo2_get_eject_sens(obj_t* obj);
 
 // screen.c
 void Init_Bande(u8 fnd, i16 width, i16 height, u8* source_buf, u8* dest_buf);
-void Display_Back_Screen(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6);
-void Display_Sprite_On_Front(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6);
-void Calcul_Deplacement_Bande(i16 a1, i16 a2, i16 a3);
+void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2, i16 h2);
+void Display_Sprite_On_Front(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2, i16 h2);
+void Calcul_Deplacement_Bande(i16 x, i16 plan_width, i16 plan_height);
 void Init_Effet_Chaleur(i16 width, i16 height, u8* source_buf, u8* dest_buf);
 void Do_Effet_Chaleur(i16 a1, i16 a2);
 

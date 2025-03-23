@@ -1,7 +1,19 @@
 
 //34108
-void display_inter_anim(void) {
-    //stub
+i16 display_inter_anim(u32 a1) {
+    horloges(1);
+    CLRSCR();
+    readinput();
+    display2(&ray);
+    DO_ANIM(&ray);
+    test_EXIT();
+    if (but0pressed() || but1pressed() || but2pressed() || but3pressed()) {
+        PROC_EXIT = 1;
+    }
+    if (anim_func) {
+        anim_func();
+    }
+    return 0;
 }
 
 //34174
@@ -491,7 +503,18 @@ void DO_GROS_RAYMAN(void) {
 
 //35D74
 void START_LEVEL_ANIM(void) {
-    //stub
+    if (fin_du_jeu != 1) {
+        INIT_LEVEL_ANIM();
+        u8 saved_proc_exit = PROC_EXIT;
+        if (!PROC_EXIT) {
+            EFFACE_VIDEO();
+            stop_cd();
+            INIT_FADE_IN();
+            SYNCHRO_LOOP(display_inter_anim);
+            FIN_LEVEL_ANIM();
+            PROC_EXIT = saved_proc_exit;
+        }
+    }
 }
 
 //35DB4
@@ -538,7 +561,7 @@ void FIRST_INIT(void) {
     InitModeNormalWithFrequency(VGA_FREQ);
     use_sync = 1;
     set_speaker_on();
-    //sub_35F70();
+    sub_35F70();
     path_has_changed = 0;
 }
 
@@ -799,7 +822,13 @@ i32 TestSave(void) {
 
 //36BC4
 void test_EXIT(void) {
-    //stub
+    if (input_mode == 1) {
+        if (TOUCHE(SC_ESCAPE)) {
+            PROC_EXIT = 1;
+        }
+    } else {
+        //stub
+    }
 }
 
 //36BF8
@@ -827,7 +856,14 @@ void LOAD_OPTIONS_SCREEN(void) {
 
 //36CBC
 void HANDLE_KEY(u8* a1) {
-    //stub
+    if (input_mode != 1) {
+        bool is_char_available = false; //is_input_char_available();
+        if (!is_char_available || ModeDemo) {
+            *a1 = 255;
+        } else {
+            *a1 = 0; //getch();
+        }
+    }
 }
 
 //36D30

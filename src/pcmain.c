@@ -5,17 +5,182 @@ void InitData(void) {
 }
 
 //17084
-void DO_GROS_MOTEUR_NORMAL(void) {
-    //stub
+void DO_GROS_MOTEUR_NORMAL(u8 a1) {
+    if (CarteSonAutorisee && gele != 1) {
+        manage_snd(); //TODO
+    }
+    do_record(&record); //TODO
+    if (gele) {
+        DO_MOTEUR_GELE(); //TODO
+    } else {
+        DO_MOTEUR(); //TODO
+        if (!gele) {
+            DO_MOTEUR2(); //TODO
+        }
+    }
+    get_luciole(); //TODO
+    if (a1) {
+        update_display_map(&BIG_MAP); //TODO
+    }
 }
 
 //170E0
-void DO_MAIN_LOOP_PC_NORMAL(void) {
+void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
+    RaymanDansUneMapDuJeu = 1;
+    DoFirstFlocons();
+    fin_continue = 0;
+    MapTimePause = 0;
+    ProchainEclair = 0;
+    numero_palette_special = 0;
+    if (MusicCdActive) {
+        TestCdLoop();
+    }
+
+    while (dead_time != 0 && !new_level && !new_world && ModeDemo != 2) {
+        speaker_enable();
+        if (use_sync) {
+            synchro();
+        }
+        if (need_timer) {
+            clock_ticks();
+        }
+        /*
+        if (need_timer) {
+            ticks += word_CF7E6; // (?)
+        }
+        */
+        fades();
+        if (dead_time >= 32 && !gele) {
+            DoPaletteSpecialPC(); //TODO
+        }
+        DO_SWAP_PALETTE(); //TODO
+        if (fixon || fixontemp) {
+            if (Mode_Pad == 1 && Main_Control) {
+                Swap_And_Test_Joystick(DrawBufferNormal, DisplayBufferNormal, 320, Bloc_lim_H2);
+            } else {
+                Swap_To_Screen(DrawBufferNormal, DisplayBufferNormal, 320, Bloc_lim_H2); //TODO
+            }
+        } else {
+            // stub
+            // TODO: work out what is happening here
+            if (Mode_Pad == 1 && Main_Control) {
+                Swap_And_Test_Joystick(DrawBufferNormal, DisplayBufferNormal, 320, Bloc_lim_H2);
+            } else {
+                Swap_To_Screen(DrawBufferNormal, DisplayBufferNormal, 320, Bloc_lim_H2); //TODO
+            }
+        }
+
+        if (need_timer) {
+            clock_ticks();
+        }
+
+        if (MusicCdActive) {
+            TestCdLoop();
+        }
+        if (Mode_Pad == 0) {
+            readinput();
+        }
+        // NOTE: may be repeated depending on display_mode?
+        //DO_GROS_MOTEUR_NORMAL(0); //TODO
+        if (need_timer) {
+            clock_ticks();
+        }
+        CLEAR_FIXE_LUCIOLE(); //TODO
+
+        // Draw background
+        if (BackgroundOn && FondAutorise == 1) {
+            Calcul_Deplacement_Bande(xmap, plan0_width, plan0_height); //TODO
+            Display_Back_Screen(plan0_width, plan0_height, Bloc_lim_W1, Bloc_lim_H1, Bloc_lim_W2, Bloc_lim_H2); //TODO
+        } else {
+            memset(draw_buffer, 0, 320*200);
+        }
+
+        if (MapAvecPluieOuNeige) {
+            flocon_clipping(Bloc_lim_H1, Bloc_lim_H2 - 6, Bloc_lim_W1, Bloc_lim_W2 - 4);
+            display_flocons_behind(); //TODO
+        }
+
+        DRAW_MAP(DrawBufferNormal, &BIG_MAP); //TODO
+        display_grp_stars(); //TODO
+        DISPLAY_ALL_OBJECTS(); //TODO
+        display_pix_gerbes(); //TODO
+        Display_Sprite_On_Front(plan0_width, plan0_height, Bloc_lim_W1, Bloc_lim_H1, Bloc_lim_W2, Bloc_lim_H2); //TODO
+
+        if (MapAvecPluieOuNeige) {
+            display_flocons_before(); //TODO
+        }
+
+        Display_and_free_luciole(DrawBufferNormal); //TODO
+        clear_borders_Normal(DrawBufferNormal + Bloc_lim_W1 + (Bloc_lim_H1 << 8) - 4 + (Bloc_lim_H1 << 6),
+                             Bloc_lim_H2 - Bloc_lim_H1,
+                             Bloc_lim_W2 - Bloc_lim_W1 + 4); //TODO
+
+        if (is_fee) {
+            DISPLAY_TEXT_FEE(); //TODO
+        } else {
+            DISPLAY_FIXE(left_time); //TODO
+        }
+
+        if (JeuCracker) {
+            DisplayCrackers(); //TODO
+        }
+
+        if (MessageProgram) {
+            DisplayProgrammerMessage();
+        }
+
+        display_time(left_time);
+        if (Vignet_To_Display) {
+            DISPLAY_GAME_VIGNET(); //TODO
+        }
+
+        if (TOUCHE(SC_ESCAPE)) {
+            if (nb_fade == 0 && !GoMenu) {
+                if (!get_casse_brique_ON() && !ModeDemo && !gele && dead_time == 64) {
+                    GoMenu = 1;
+                }
+            }
+        }
+        DO_OPTIONS_IN_GAME(); //TODO
+        if (get_casse_brique_ON() && !get_casse_brique_active()) {
+            set_casse_brique_ON(0);
+            RESET_TOUCHE(SC_ESCAPE);
+        }
+        if (rightjoy() || leftjoy() || downjoy() || upjoy() || but0pressed() || but1pressed() || but2pressed() || but3pressed()) {
+            MapTimePause = 0;
+        }
+        ++MapTimePause;
+        if (MapTimePause >= 21600) {
+            in_pause = 1;
+        }
+        if (in_pause) {
+            if (!GoMenu) {
+                if (fade == 65) {
+                    Do_Effect_Pause();
+                    MapTimePause = 0;
+                } else {
+                    in_pause = 0;
+                }
+            }
+        }
+        HANDLE_KEY(a1);
+
+        // NOTE: timer shenanigans?
+        DO_GROS_MOTEUR_NORMAL(1);
+
+        bool end_of_frame = true;
+
+        if (need_timer && use_sync && end_of_frame) {
+            //stub
+        }
+        endsynchro();
+    }
+
     //stub
 }
 
 //176A8
-void DO_GROS_MOTEUR_X(void) {
+void DO_GROS_MOTEUR_X(u8* a1) {
     //stub
 }
 
@@ -149,7 +314,7 @@ void PcMain(void) {
             INIT_MOTEUR_LEVEL(new_level);
             init_fee();
 			init_moustique();
-			InitPaletteSpecialPC();
+			InitPaletteSpecialPC(); //TODO
 
             if (byte_CFA2A != 0) {
                 fade_out(2, &rvb_plan3);
@@ -159,7 +324,7 @@ void PcMain(void) {
                 WaitNSynchro(15);
                 INIT_MOTEUR_DEAD();
                 INIT_RAY_ON_MS();
-                START_LEVEL_ANIM();
+                START_LEVEL_ANIM(); //TODO: implement DO_LEVEL_ANIM()
                 BackgroundOn = IsBackgroundOn();
                 if (GameModeVideo != 0) {
                     default_sprite_clipping();
@@ -176,9 +341,9 @@ void PcMain(void) {
                     InitClipping();
                     InitModeNormalWithFrequency(VGA_FREQ);
                     NewFrequency(Frequence);
-                    INIT_GAME_MODE_NORMAL();
+                    INIT_GAME_MODE_NORMAL(); //TODO
                     During_The_Menu = 0;
-                    DO_MAIN_LOOP_PC_NORMAL();
+                    DO_MAIN_LOOP_PC_NORMAL(NULL);
                     During_The_Menu = 1;
                     FIN_GAME_MODE_NORMAL();
                 }

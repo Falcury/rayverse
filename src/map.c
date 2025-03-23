@@ -50,7 +50,7 @@ void init_build_map(big_map_t* a1) {
 }
 
 //5C914
-void update_display_map(void* a1) {
+void update_display_map(big_map_t* a1) {
     //stub
 }
 
@@ -213,7 +213,7 @@ void MaskScrollDiffSprites(mem_t* buffer) {
 }
 
 //5D230
-void DRAW_MAP(void* a1, void* a2) {
+void DRAW_MAP(void* draw_buf, big_map_t* big_map) {
     //stub
 }
 

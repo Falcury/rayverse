@@ -40,7 +40,17 @@ void init_allowed_time(void) {
 
 //55AC8
 void fades(void) {
-    //stub
+    if (map_time == 0) {
+        INIT_FADE_IN();
+    }
+    if (dead_time >= 32 && dead_time <= display_mode + 33) {
+        if (fade == 65) {
+            INIT_FADE_OUT();
+        }
+    }
+    if ((fade & 0x40) == 0) {
+        DO_FADE();
+    }
 }
 
 //55B24
@@ -259,11 +269,49 @@ void SET_ACTIVE_FLAG(i16 screen_x, i16 screen_y, obj_t* obj) {
                 obj->active_timer = 0;
                 if (flags[ot] & flags2_0x20_kill_if_outside_active_zone) {
                     kill_obj(obj);
+                } else if (obj->active_flag == 2) {
+                    obj->active_flag = 1;
+                } else if (obj->active_flag == 0 || obj->active_flag == 4) {
+                    if (flags[ot] & flags0_1_always) {
+                        REINIT_OBJECT(obj);
+                    } else {
+                        obj->active_flag = 4;
+                        obj->is_active = 1;
+
+                        bool dont_reinit_linked_objects = false;
+                        if (obj->type != TYPE_10_FISH) {
+                            i16 id = obj->id;
+                            while (1) {
+                                obj_t* cur_obj = level.objects + id;
+                                if (cur_obj->active_flag != 4) {
+                                    dont_reinit_linked_objects = true;
+                                    break;
+                                } else {
+                                    id = link_init[cur_obj->id];
+                                    if (id == obj->id) {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (obj->y + obj->offset_by < -30) {
+                            obj->is_active = 0;
+                        }
+
+                        if (!dont_reinit_linked_objects) {
+                            i16 id = obj->id;
+                            do {
+                                obj_t* cur_obj = level.objects + id;
+                                REINIT_OBJECT(cur_obj);
+                                id = link_init[cur_obj->id];
+                            } while (id != obj->id);
+                        }
+                    }
                 }
             }
         }
     }
-    //stub
 }
 
 //565D0
@@ -480,7 +528,7 @@ void build_active_table(void) {
         obj_t* obj = &level.objects[level_obj.obj_ids[i]];
         if (obj->field_1C == 0) {
             if ((abs(obj->x - screen_center_x) < 660 && abs(obj->y - screen_center_y) < 600) || (flags[obj->type] & flags2_0x10_do_not_check_ray_collision)) {
-                SET_ACTIVE_FLAG(obj->x - xmap + 8, obj->y - ymap, obj); //TODO
+                SET_ACTIVE_FLAG(obj->x - xmap + 8, obj->y - ymap, obj);
             } else {
                 obj->is_active = 0;
             }
@@ -666,7 +714,7 @@ void INIT_RAY_BEGIN(void) {
 }
 
 //59948
-void INIT_RAY(u8 level_index) {
+void INIT_RAY(u8 new_lvl) {
     gele = 0;
     compteur_attente = 0;
     ray_mode = (ray.main_etat == 6) + 1;
@@ -713,7 +761,7 @@ void INIT_RAY(u8 level_index) {
     }
     poing.is_active = 0;
     poing.is_charging = 0;
-    if (level_index != 0) {
+    if (new_lvl) {
         RayEvts.super_helico = 0;
     }
     if (!(num_world == world_1_jungle && num_level == 9) && !ModeDemo && !record.is_recording) {
@@ -984,7 +1032,7 @@ void INIT_MOTEUR_LEVEL(i16 a1) {
         ray_mode = 1;
         RAY_MODE_SPEED = 16;
         new_level = 0;
-        build_active_table(); //TODO
+        build_active_table();
     }
 }
 
@@ -1000,12 +1048,37 @@ void DONE_MOTEUR_LEVEL(void) {
 
 //5A9D8
 void INIT_MOTEUR_DEAD(void) {
-    //stub
+    if (dead_time == 0) {
+        restore_gendoor_link(); //TODO
+        INIT_MOTEUR(false);
+        correct_gendoor_link(0);
+    }
+    if (!bonus_map && departlevel) {
+        saveGameState(NULL, &save2);
+        life_becoz_wiz = 0;
+    }
 }
 
 //5AA20
 void INIT_RAY_ON_MS(void) {
-    //stub
+    if (NewMs) {
+        if (rayman_obj_id == -1) {
+            if (rayOnMsWasThere) {
+                INIT_RAY(true);
+                NewMs = 0;
+            }
+        } else {
+            rms = ray;
+            ray = level.objects[rayman_obj_id];
+            INIT_RAY(true);
+            ray.hit_points = rms.hit_points;
+            ray.init_hit_points = rms.init_hit_points;
+            ray.hit_sprite = rms.hit_sprite;
+            set_main_and_sub_etat(&ray, 6, 0);
+            ray_mode = 2; //MODE_RAY_ON_MS
+            NewMs = 0;
+        }
+    }
 }
 
 //5AAE8
@@ -1035,5 +1108,12 @@ void Ray_RayEcrase(void) {
 
 //5B668
 void DO_MOTEUR_GELE(void) {
+    if (gele != 3) {
+        if (gele == 2) {
+            horloges(1);
+            TEST_SIGNPOST();
+            // stub
+        }
+    }
     //stub
 }

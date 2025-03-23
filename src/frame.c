@@ -214,7 +214,7 @@ void INIT_FADE_IN(void) {
 
 //3CAB4
 void INIT_FADE_OUT(void) {
-    //stub
+    start_fade_out(2);
 }
 
 //3CADC

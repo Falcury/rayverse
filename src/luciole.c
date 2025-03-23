@@ -30,7 +30,7 @@ void aff_luciole(i32 a1, i32 a2, i32 a3, i32 a4) {
 }
 
 //48914
-void Display_and_free_luciole(i32 a1) {
+void Display_and_free_luciole(u8* draw_buf) {
     //stub
 }
 

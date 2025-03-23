@@ -425,7 +425,34 @@ void PlayTchatchVignette(i32 a1) {
 
 //73204
 void TestCdLoop(void) {
-    //stub
+    if (cdTime != 0) {
+        if (cdTime != -1) {
+            //dos_get_time_of_day();
+            cdTime = 10 * (cdTimeEnd = cdTimeStart) / 182;
+            i32 duration = timeCd[22 * (num_world - 1) + num_level];
+            cdTime += 2;
+            if (cdTime >= duration) {
+                if (flagCDPlay != 0) {
+                    if (flagCDPlay >= 4) {
+                        //dos_get_time_of_day();
+                        flagCDPlay = 0;
+                        cdTime = 0;
+                        phaseCd = !phaseCd;
+                        //sub_2A654(map_cd_tracks[22 * (num_world - 1) + num_level -1 ]); // cd loop?
+                    } else {
+                        ++flagCDPlay;
+                    }
+                } else {
+                    ++flagCDPlay;
+                    //sub_2A6C4();
+                }
+            }
+        }
+    } else {
+        play_cd_track(map_cd_tracks[22 * (num_world - 1) + num_level -1 ]);
+        phaseCd = 0;
+        cdTime = 1;
+    }
 }
 
 //73384

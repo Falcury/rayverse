@@ -609,7 +609,10 @@ void ChangeLevel(void) {
 
 //7BFCC
 void init_moustique(void) {
-    //stub
+    if (!fin_du_jeu) {
+        NewMs = rayman_obj_id != -1;
+        rayOnMsWasThere = 0;
+    }
 }
 
 //7BFF4

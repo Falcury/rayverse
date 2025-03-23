@@ -94,7 +94,8 @@ void DisplayCrackers(void) {
 
 //193E4
 void DisplayProgrammerMessage(void) {
-    //stub
+    display_text("/hi master/", 160, 100, 0, 0);
+    display_text("/happy to see you/", 160, 150, 2, 0);
 }
 
 //19420

@@ -1006,7 +1006,54 @@ void SPECIAL_INIT(void) {
 
 //6B590
 void INIT_LEVEL_ANIM(void) {
-    //stub
+    anim_sequence = NULL;
+    switch (num_world) {
+        case world_1_jungle: {
+            if (num_level == 16 && (new_level == 1 || new_world == 1)) {
+                anim_sequence = car_sequence;
+            }
+            if (num_level == 7 && (new_level == 1 || new_world == 1)) {
+                anim_sequence = moust2_sequence;
+                dontdoit = 0;
+            } else if (num_level == 7 && !dontdoit) {
+                anim_sequence = moust1_sequence;
+                if (!fin_du_jeu) {
+                    dontdoit = 1;
+                }
+            }
+        } break;
+        case world_2_music: {
+            if (num_level == 16 && new_world == 1) {
+                anim_sequence = pst1_sequence;
+            }
+        } break;
+        case world_3_mountain: {
+            if (num_level == 10 && new_level == 1) {
+                anim_sequence = pst1_sequence;
+            }
+        } break;
+        case world_4_image: {
+            if (num_level == 11 && (new_level == 1 || new_world == 1)) {
+                anim_sequence = pst2_sequence;
+            }
+        } break;
+        case world_5_cave: {
+            if (num_level == 11 && (new_level == 1 || new_world == 1)) {
+                anim_sequence = worry_sequence;
+            }
+        } break;
+        default: break;
+    }
+    PROC_EXIT = 0;
+    if (anim_sequence && !fin_du_jeu) {
+        raytmp = ray;
+        ray.cmd = GO_LEFT;
+        ray.speed_x = 0;
+        ray.screen_y = 168 - ray.offset_by;
+        anim_func = DO_LEVEL_ANIM;
+    } else {
+        PROC_EXIT = 1;
+    }
 }
 
 //6B73C
@@ -1016,7 +1063,10 @@ void DO_LEVEL_ANIM(void) {
 
 //6BA34
 void FIN_LEVEL_ANIM(void) {
-    //stub
+    PROC_EXIT = 0;
+    ray = raytmp;
+    DO_FADE_OUT();
+    INIT_FADE_IN();
 }
 
 
