@@ -75,7 +75,7 @@ void AllocateDarkPhase2(obj_t* obj) {
 }
 
 //40364
-void DO_DARK2_AFFICE_TEXT(void) {
+void DO_DARK2_AFFICHE_TEXT(void) {
     //stub
 }
 

@@ -50,6 +50,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
         }
         */
         fades();
+        ++map_time; //TODO: remove this (should get incremented in rayMayLandOnAnObject()
         if (dead_time >= 32 && !gele) {
             DoPaletteSpecialPC(); //TODO
         }

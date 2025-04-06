@@ -521,8 +521,23 @@ void DrawSpriteColorFlipX(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u
 }
 
 //16A18
-void DrawSpriteFlipNormalNoClip(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
-    //stub
+void DrawSpriteNormalNoClip(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
+    u8* draw_pos = draw_buf + y * 320 + x;
+    u8* draw_end = draw_pos + size.y * 320;
+    i32 sprite_width = size.x;
+    u8* sprite_pos = image_data;
+    while (draw_pos < draw_end) {
+        for (i32 i = 0; i < size.x; ++i) {
+            u8 c = sprite_pos[i];
+            if (c < 160) {
+                draw_pos[i] = c;
+            } else {
+                i += (c - 160);
+            }
+        }
+        sprite_pos += sprite_width;
+        draw_pos += 320;
+    }
 }
 
 //16A24
@@ -568,8 +583,23 @@ void DrawSpriteNormal256(i32 x /*eax*/, i32 color /*edx*/, i32 y /*ebx*/, vec2b_
 }
 
 //16AFC
-void DrawSpriteNormalNoClip(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
-    //stub
+void DrawSpriteFlipNormalNoClip(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
+    u8* draw_pos = draw_buf + y * 320 + x;
+    u8* draw_end = draw_pos + size.y * 320;
+    i32 sprite_width = size.x;
+    u8* sprite_pos = image_data;
+    while (draw_pos < draw_end) {
+        for (i32 i = 0; i < size.x; ++i) {
+            u8 c = sprite_pos[i];
+            if (c < 160) {
+                draw_pos[size.x - i - 1] = c; // reverse order (flipped)
+            } else {
+                i += (c - 160);
+            }
+        }
+        sprite_pos += sprite_width;
+        draw_pos += 320;
+    }
 }
 
 //16B08

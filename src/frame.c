@@ -339,29 +339,30 @@ void InitModeNormalWithFrequency(u8 freq) {
         GetVideoRegister();
     }
     if (ModeVideoActuel != 0) {
-        //InitModeNormal();
+        InitModeNormal();
 //		memset(DrawBufferNormal, 0, 320 * 200);
 //		memset(DisplayBufferNormal, 0, 320 * 200);
-        //set_vga_frequency();
+        select_display_buffer(DisplayBufferNormal);
+        set_vga_frequency(freq);
         ModeVideoActuel = 0;
-        //dword_CD0F4 = sub_16A18;
-        //dword_CD114 = sub_16AFC;
+        DrawSpriteNoClipNormalEtX = DrawSpriteNormalNoClip;
+        DrawSpriteFlipNoClipNormalEtX = DrawSpriteFlipNormalNoClip;
         DrawSpriteColorNormalEtX = DrawSpriteColorNormal;
-        //dword_CD11C = (int)sub_16C89;
+        DrawSpriteColorFlipNormalEtX = DrawSpriteColorFlipNormal;
         draw_buffer = DrawBufferNormal;
         DrawSpriteFlipNormalEtX = DrawSpriteFlipNormal;
         DrawSpriteNormalEtX = DrawSpriteNormal;
-//		drawflocon1NormalETX = draw_flocon1_Normal;
-//		drawflocon2NormalETX = draw_flocon2_Normal;
-//		drawflocon3NormalETX = draw_flocon3_Normal;
-//		drawflocon4NormalETX = draw_flocon4_Normal;
-//		drawflocon5NormalETX = draw_flocon5_Normal;
-//		drawflocon6NormalETX = draw_flocon6_Normal;
-//		drawflocon7NormalETX = draw_flocon7_Normal;
-//		drawpluie4NormalETX = draw_pluie4_Normal;
-//		drawpluie6NormalETX = draw_pluie6_Normal;
-//		drawpluie5NormalETX = draw_pluie5_Normal;
-//		drawpluie7NormalETX = draw_pluie7_Normal;
+		drawflocon1NormalETX = draw_flocon1_Normal;
+		drawflocon2NormalETX = draw_flocon2_Normal;
+		drawflocon3NormalETX = draw_flocon3_Normal;
+		drawflocon4NormalETX = draw_flocon4_Normal;
+		drawflocon5NormalETX = draw_flocon5_Normal;
+		drawflocon6NormalETX = draw_flocon6_Normal;
+		drawflocon7NormalETX = draw_flocon7_Normal;
+		drawpluie4NormalETX = draw_pluie4_Normal;
+		drawpluie6NormalETX = draw_pluie6_Normal;
+		drawpluie5NormalETX = draw_pluie5_Normal;
+		drawpluie7NormalETX = draw_pluie7_Normal;
 //		fplotNormalETX = fplot_Normal;
     }
 }

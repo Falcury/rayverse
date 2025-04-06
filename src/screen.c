@@ -120,6 +120,58 @@ void Init_Bande(u8 fnd, i16 width, i16 height, u8* source_buf, u8* dest_buf) {
 
 //77BA0
 void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2, i16 h2) {
+    i32 y = h1;
+    u8 type_scroll = Type_Scroll[10 * (num_world - 1) + Num_Fond];
+    if (type_scroll == 0 || type_scroll == 2) {
+        if (num_world == world_4_image && (num_level == 4 || num_level == 11)) {
+            obj_t* rideau = level.objects + rideau_obj_id;
+            if (rideau->is_active) {
+                if (h1 < rideau->y - 110 - (200 - h2)) {
+                    y = rideau->y - 110 - (200 - h2);
+                    if (y < 0) {
+                        y = 0;
+                    }
+                }
+                if (y >= h2) {
+                    y = h2 - 1;
+                }
+            }
+        }
+        i32 v68; //?
+        if (type_scroll != 0) {
+            v68 = plan_height - h2;
+        } else if (num_world == world_3_mountain && num_level == 10) {
+            v68 = 200 - h2 + (ymap >> 1) + 11;
+        } else {
+            v68 = Val_Add_Scroll_Y + ymap / Val_Div_Scroll_Y;
+        }
+        if (v68 > 200 - h2 + (plan_height - 200)) {
+            v68 = plan_height - h2;
+        }
+        for (i32 i = 0; i < NbBande; ++i) {
+            bande_t* bande = Bande + i;
+            u8* v59 = bande->source_buffer_pos + bande->field_6 + w1;
+            u8* v61 = bande->draw_buffer_pos - 320 * v68 + w1;
+            i32 v33 = bande->field_0;
+            i32 v34 = bande->field_2 - v68;
+            i32 v36 = bande->field_0 + v34;
+            if (v34 < 0 && v36 > 0 && bande->field_0 != 0) {
+                v34 = 0;
+            }
+            //stub
+        }
+
+    } else {
+        // type_scroll == 1
+        for (i32 i = 0; i < NbBande; ++i) {
+            bande_t* bande = Bande + i;
+            i16 v24_4 = plan_height - bande->field_6 - h1;
+            //stub
+        }
+        for (i32 i = 0; i < NbSprite; ++i) {
+            //stub
+        }
+    }
     //stub
 }
 

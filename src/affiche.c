@@ -66,8 +66,21 @@ void display_sprite(obj_t* obj, u8 sprite_index, i16 x, i16 y, u8 flipped) {
 }
 
 //18F7C
-void display_sprite_NoClip(obj_t* obj, u8 a2, i16 a3, i16 a4, u8 a5) {
-    //stub
+void display_sprite_NoClip(obj_t* obj, u8 sprite_index, i16 x, i16 y, u8 flipped) {
+    sprite_t* sprite = obj->sprites + sprite_index;
+    draw_func_t* draw_func;
+    if (((sprite->flags & 4) != 0) == flipped) {
+        draw_func = DrawSpriteFlipNoClipNormalEtX;
+    } else {
+        draw_func = DrawSpriteNoClipNormalEtX;
+    }
+    i32 proj_x = get_proj_x(obj->scale, x);
+    i32 proj_y = get_proj_y(obj->scale, y);
+    i32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
+    i32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
+    vec2b_t proj_size = {(u8)proj_width, (u8)proj_height};
+    u8* image_data = obj->img_buffer + sprite->offset_in_atlas;
+    draw_func(proj_x, sprite->color, proj_y, proj_size, draw_buffer, image_data);
 }
 
 //19048
@@ -78,7 +91,7 @@ void DISPLAY_POING(void) {
 }
 
 //19060
-void DISPLAY_CLING(obj_t* obj) {
+void DISPLAY_CLING(void) {
     //stub
 }
 
@@ -99,8 +112,71 @@ void DisplayProgrammerMessage(void) {
 }
 
 //19420
-void DISPLAY_FIXE(i32 a1) {
-    //stub
+void DISPLAY_FIXE(i32 time) {
+    if (ray_mode == 5) {
+        if (cb_ball_obj_id != -1) {
+            DISPLAY_FIXE_CB(level.objects + cb_ball_obj_id);
+        }
+    } else {
+        DO_DARK2_AFFICHE_TEXT();
+        if (dead_time != 64 && !fixontemp) {
+            fixontemp = 300;
+        }
+        if (fixontemp > 0) {
+            if (fixontemp == 1 && GameModeVideo == 0) {
+//                draw_buffer = display_buffer; //TODO: extra buffer indirection?
+//                ClearBorder(Bloc_lim_H1, Bloc_lim_H2, Bloc_lim_W1, Bloc_lim_W2);
+                draw_buffer = DrawBufferNormal;
+                ClearBorder(Bloc_lim_H1, Bloc_lim_H2, Bloc_lim_W1, Bloc_lim_W2);
+            }
+            --fixontemp;
+        }
+        if (fixon || fixontemp != 0 || time == 0) {
+            i16 height = 35;
+            i16 width = 77;
+            if (GameModeVideo == 0 && (Bloc_lim_W1 > 16 || Bloc_lim_H1 > 5)) {
+                if (id_Cling_Old) {
+                    height = 45;
+                    width = 85;
+                }
+                if (Bloc_lim_H1 - 5 >= height) {
+                    DISPLAY_BLACKBOX(13, 0, width, height, 255, 0);
+                } else {
+                    DISPLAY_BLACKBOX(13, 0, width, Bloc_lim_H1, 255, 0);
+                    DISPLAY_BLACKBOX(13, Bloc_lim_H1, Bloc_lim_W1 - 15, height + 5 - Bloc_lim_H1, 255, 0);
+                }
+                if (Bloc_lim_H1 - 5 >= 23) {
+                    DISPLAY_BLACKBOX(241, 4, 68, 23, 255, 0);
+                } else {
+                    DISPLAY_BLACKBOX(241, 4, 68, Bloc_lim_H1 - 4, 255, 0);
+                    DISPLAY_BLACKBOX(Bloc_lim_W2, Bloc_lim_H1, 312 - Bloc_lim_W2, 28 - Bloc_lim_H1, 255, 0);
+                }
+            }
+            obj_t* obj = level.objects + sbar_obj_id;
+            if (time == -2) {
+                i32 draw_y = (GameModeVideo == 1 && P486 == 1) ? 16 : 0;
+                display_sprite_NoClip(obj, 27, 16, draw_y + 5, 1);
+                display_sprite_NoClip(obj, 56, 244, draw_y + 5, 1);
+                display_sprite_NoClip(obj, 28 + status_bar.lives_digits[0], 55, draw_y + 5, 1);
+                display_sprite_NoClip(obj, 28 + status_bar.lives_digits[1], 70, draw_y + 5, 1);
+                if (ray.hit_points != -1 && !fin_du_jeu) {
+                    display_sprite_NoClip(obj, 17 + status_bar.hp_sprites[0], 35, draw_y + 27, 1);
+                    if (status_bar.max_hitp == 4) {
+                        display_sprite_NoClip(obj, 20 + status_bar.hp_sprites[1], 59, draw_y + 27, 1);
+                    }
+                }
+                display_sprite_NoClip(obj, 28 + status_bar.wiz_digits[0], 276, draw_y + 5, 1);
+                display_sprite_NoClip(obj, 28 + status_bar.wiz_digits[1], 290, draw_y + 5, 1);
+            } else {
+                display_sprite_NoClip(obj, 56, Bloc_lim_W1 + 14, Bloc_lim_H2 - 32, 1);
+                display_sprite_NoClip(obj, 28 + status_bar.wiz_digits[0], Bloc_lim_W1 + 46, Bloc_lim_H2 - 32, 1);
+                display_sprite_NoClip(obj, 28 + status_bar.wiz_digits[1], Bloc_lim_W1 + 60, Bloc_lim_H2 - 32, 1);
+            }
+            if (id_Cling_1up != -1 || id_Cling_Pow != -1) {
+                DISPLAY_CLING(); //TODO
+            }
+        }
+    }
 }
 
 //19864

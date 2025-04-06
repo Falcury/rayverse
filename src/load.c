@@ -179,6 +179,13 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
         mem_read(&mp.width, mem, 2);
         mem_read(&mp.height, mem, 2);
         mem_read(rvb, mem, sizeof(rvb));
+        // Convert 6-bit colors into 8-bit colors by multiplying by 4
+        for (i32 i = 0; i < COUNT(rvb); ++i) {
+            u8* colors = (u8*)&rvb[i].colors;
+            for (i32 j = 0; i < 256*3; ++i) {
+                colors[i] <<= 2;
+            }
+        }
         mem_read(&last_plan1_palette, mem, 1);
         current_rvb = rvb[last_plan1_palette];
 
@@ -646,6 +653,7 @@ void LOAD_ALL_FIX(void) {
 
         free(mem);
     }
+    SpriteFixeOffset(main_mem_sprite); // remember buffer position so that we can keep fixe sprites always loaded
 }
 
 //46D68
