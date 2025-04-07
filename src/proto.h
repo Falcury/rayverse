@@ -32,7 +32,7 @@ void ClearDrawAndDisplayBufferNormal(u8* draw_buf, u8* display_buf);
 void N_CLRSCR(u8* buffer);
 void Swap_To_Screen(u8* draw_buf, u8* display_buf, i32 width, i32 height);
 void clear_borders_Normal(u8* buffer, i32 height, i32 width);
-void Copy_Plan0Diff_To_Buf(u8* a1, u8* a2, i32 a3, i32 a4);
+void Copy_Plan0Diff_To_Buf(u8* source, u8* dest, i32 width, i32 height, i32 draw_width);
 void Display_Bloc(void* a1, void* a2);
 void Display_Bloc_Plein(void* a1, void* a2);
 void Clip(void);

@@ -1528,10 +1528,12 @@ i16 atak[34] = {
 
 //98084
 u8 Type_Scroll[60] = {
-        0, 0, 1, 2, 2, 0, 1, 2, 2, 2, 0, 0, 2, 0, 0, 0, 2, 2,
-        2, 2, 0, 0, 1, 0, 0, 1, 2, 0, 2, 2, 0, 0, 2, 2, 0, 0,
-        0, 0, 2, 2, 0, 0, 0, 0, 2, 0, 2, 2, 2, 2, 0, 0, 2, 0,
-        0, 2, 2, 2, 2, 2,
+        0, 0, 1, 2, 2, 0, 1, 2, 2, 2,
+        0, 0, 2, 0, 0, 0, 2, 2, 2, 2,
+        0, 0, 1, 0, 0, 1, 2, 0, 2, 2,
+        0, 0, 2, 2, 0, 0, 0, 0, 2, 2,
+        0, 0, 0, 0, 2, 0, 2, 2, 2, 2,
+        0, 0, 2, 0, 0, 2, 2, 2, 2, 2,
 };
 
 //980C0
@@ -1707,7 +1709,7 @@ i32 RayonJumelle; //CD0EC
 void_func_t* drawpluie6NormalETX; //CD0F0
 draw_func_t* DrawSpriteNoClipNormalEtX; //CD0F4
 draw_func_t* DrawSpriteColorNormalEtX; //CD0F8
-i32 dword_CD0FC; //CD0FC
+i32 BufferNormalDeplt; //CD0FC
 void_func_t* fplotNormalETX; //CD100
 void_func_t* drawflocon5NormalETX; //CD104
 void_func_t* drawflocon2NormalETX; //CD108
@@ -1717,7 +1719,7 @@ draw_func_t* DrawSpriteFlipNoClipNormalEtX; //CD114
 draw_func_t* DrawSpriteFlipNormalEtX; //CD118
 draw_func_t* DrawSpriteColorFlipNormalEtX; //CD11C
 swap_func_t* Swap_And_Test_Joystick; //CD120
-void (*Copy_Plan0_To_Buf)(u8* a1, u8* a2, i32 a3, i32 a4); //CD124
+void (*Copy_Plan0_To_Buf)(u8* source, u8* dest, i32 width, i32 height, i32 a5); //CD124
 void* DrawBufferNormalIni; //CD128
 void_func_t* drawflocon3NormalETX; //CD12C
 u8* EffetBufferNormal; //CD130

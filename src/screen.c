@@ -150,13 +150,26 @@ void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2
         }
         for (i32 i = 0; i < NbBande; ++i) {
             bande_t* bande = Bande + i;
-            u8* v59 = bande->source_buffer_pos + bande->field_6 + w1;
-            u8* v61 = bande->draw_buffer_pos - 320 * v68 + w1;
-            i32 v33 = bande->field_0;
+            u8* source_buffer_pos = bande->source_buffer_pos + bande->field_6 + w1;
+            u8* dest_buffer_pos = bande->draw_buffer_pos - 320 * v68 + w1;
+            i32 draw_height = bande->field_0;
             i32 v34 = bande->field_2 - v68;
             i32 v36 = bande->field_0 + v34;
             if (v34 < 0 && v36 > 0 && bande->field_0 != 0) {
+                draw_height = v36;
+                dest_buffer_pos -= 320 * v34;
+                source_buffer_pos -= plan_width * v34;
                 v34 = 0;
+            }
+            if (y < v36 && v34 < h2) {
+                if (y <= v34) {
+                    if (h2 < v36) {
+                        draw_height = h2 - v34;
+                    }
+                    Copy_Plan0_To_Buf(source_buffer_pos - BufferNormalDeplt, dest_buffer_pos, plan_width, draw_height, w2 - w1);
+
+                }
+                Copy_Plan0_To_Buf(source_buffer_pos + (y - v34) * plan_width - BufferNormalDeplt, dest_buffer_pos + 320 * (y - v34), plan_width, draw_height - (y - v34), w2 - w1);
             }
             //stub
         }
@@ -182,7 +195,86 @@ void Display_Sprite_On_Front(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i1
 
 //787E8
 void Calcul_Deplacement_Bande(i16 x, i16 plan_width, i16 plan_height) {
-    //stub
+    i32 v17 = 0; // y something?
+    u8 type_scroll = Type_Scroll[10 * (num_world - 1) + Num_Fond];
+    if (type_scroll != 0) {
+        if (type_scroll == 1) {
+            for (i32 i = 0; i < NbBande; ++i) {
+                bande_t* bande = Bande + i;
+                if (bande->field_0 != 0) {
+                    if (bande->field_4 != 0) {
+                        if (bande->field_4 == 1 || bande->field_4 == 4) {
+                            bande->field_14 = (bande->field_9 + bande->field_14) % (16 * plan_height);
+                            if (bande->field_4 != 1) {
+                                bande->field_6 = (ymap + plan_height * bande->field_8) / bande->field_8 % plan_height;
+                                bande->field_6 += bande->field_14 >> 4;
+                                bande->field_6 = bande->field_6 % plan_height;
+                            } else {
+                                bande->field_6 = bande->field_14 >> 4;
+                            }
+                        } else if (bande->field_4 == 2 || bande->field_4 == 5) {
+                            if (bande->field_9 > bande->field_14) {
+                                bande->field_14 += 16 * plan_height;
+                            }
+                            bande->field_14 -= bande->field_9;
+                            if (bande->field_4 != 2) {
+                                bande->field_6 = (ymap + plan_height * bande->field_8) / bande->field_8 % plan_height;
+                                bande->field_6 += bande->field_14 >> 4;
+                                bande->field_6 = bande->field_6 % plan_height;
+                            } else {
+                                bande->field_6 = bande->field_14 >> 4;
+                            }
+                        }
+                    } else {
+                        bande->field_6 = (ymap + plan_height * bande->field_8) / bande->field_8 % plan_height;
+                    }
+                } else {
+                    bande->field_6 = (2 * ymap) % plan_height;
+                }
+            }
+        }
+    } else {
+        // type_scroll == 0
+        plan_width /= 2;
+        if (NbBande != 0) {
+            for (i32 i = 0; i < NbBande; ++i) {
+                bande_t* bande = Bande + i;
+                if (bande->field_0 != 0) {
+                    if (bande->field_4 != 0) {
+                        if (bande->field_4 == 1 || bande->field_4 == 4) {
+                            bande->field_14 = (bande->field_9 + bande->field_14) % (16 * plan_width);
+                            if (bande->field_4 != 1) {
+                                bande->field_6 = (x + plan_width * bande->field_8) / bande->field_8 % plan_width;
+                                bande->field_6 += bande->field_14 >> 4;
+                                bande->field_6 = bande->field_6 % plan_width;
+                            } else {
+                                bande->field_6 = bande->field_14 >> 4;
+                            }
+                        } else if (bande->field_4 == 2 || bande->field_4 == 5) {
+                            if (bande->field_9 > bande->field_14) {
+                                bande->field_14 += 16 * plan_width;
+                            }
+                            bande->field_14 -= bande->field_9;
+                            if (bande->field_4 != 2) {
+                                bande->field_6 = (x + plan_width * bande->field_8) / bande->field_8 % plan_width;
+                                bande->field_6 += bande->field_14 >> 4;
+                                bande->field_6 = bande->field_6 % plan_width;
+                            } else {
+                                bande->field_6 = bande->field_14 >> 4;
+                            }
+                        }
+                    } else {
+                        bande->field_6 = (x + plan_width * bande->field_8) / bande->field_8 % plan_width;
+                    }
+                } else {
+                    bande->field_6 = (2 * x) % plan_width;
+                }
+            }
+        }
+        if (num_world == world_5_cave && num_level == 10) {
+            Do_Effet_Chaleur(plan_width, plan_height);
+        }
+    }
 }
 
 //78C14

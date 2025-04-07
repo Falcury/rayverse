@@ -119,7 +119,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
         if (is_fee) {
             DISPLAY_TEXT_FEE(); //TODO
         } else {
-            DISPLAY_FIXE(left_time); //TODO
+            DISPLAY_FIXE(left_time);
         }
 
         if (JeuCracker) {

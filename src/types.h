@@ -568,8 +568,7 @@ typedef struct bnk_header_t {
 typedef struct bande_t {
     i16 field_0;
     i16 field_2;
-    u8 field_4;
-    //u8 field_5_align;
+    i16 field_4;
     i16 field_6;
     u8 field_8;
     u8 field_9;

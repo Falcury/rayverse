@@ -96,9 +96,9 @@ void DrawBlackBoxNormal(u8* buffer /*edi*/, i32 x /*edx*/, i32 y /*ecx*/, i32 he
 //14B2C
 void DrawFondBoxNormal(u8* buffer /*edi*/, i32 x /*edx*/, i32 y /*ecx*/, i32 height /*ebx*/, i32 width /*esi*/, u8 fond_type /*eax*/) {
     if (fond_type == 2) {
-        u8* last_line = buffer + 320 * (y + height) + width - 321;
-        u8* second_to_last_line = last_line - 321;
-        i32 skip_amount = 320 - x;
+        u8* last_line = buffer + SCREEN_WIDTH * (y + height) + width - SCREEN_WIDTH - 1;
+        u8* second_to_last_line = last_line - SCREEN_WIDTH - 1;
+        i32 skip_amount = SCREEN_WIDTH - x;
 
         //stub
 
@@ -110,7 +110,7 @@ void DrawFondBoxNormal(u8* buffer /*edi*/, i32 x /*edx*/, i32 y /*ecx*/, i32 hei
 
 //14BBB
 void DrawBorderBoxNormal(u8* buffer /*edi*/, i32 x, i32 y, i32 height, i32 width, u16 colors /*eax*/) {
-    u8* pos = buffer + 320 * y + x;
+    u8* pos = buffer + SCREEN_WIDTH * y + x;
     u8 light_color = (u8)colors;
     u8 dark_color = colors >> 8;
 
@@ -119,15 +119,15 @@ void DrawBorderBoxNormal(u8* buffer /*edi*/, i32 x, i32 y, i32 height, i32 width
         *pos = light_color;
         *(pos + width - 1) = dark_color;
         *(pos + width) = dark_color;
-        pos += 320;
+        pos += SCREEN_WIDTH;
     }
 
     // draw the bottom 2 darker lines
     memset(pos, dark_color, width);
-    memset(pos - 320 + 1, dark_color, width);
+    memset(pos - SCREEN_WIDTH + 1, dark_color, width);
 
     // draw the top line (light color)
-    pos = buffer + 320 * y + x;
+    pos = buffer + SCREEN_WIDTH * y + x;
     memset(pos, light_color, width); // draw the top line
 }
 
@@ -144,21 +144,21 @@ void DisplayAnyPictureNormal(u8* source_buffer, u8* dest_buffer, i32 source_x, i
         height += source_y;
         source_y = 0;
     }
-    if (dest_x + width > 320) {
-        width = 320 - dest_x;
+    if (dest_x + width > SCREEN_WIDTH) {
+        width = SCREEN_WIDTH - dest_x;
     }
-    if (dest_y + height > 200) {
-        width = 200 - dest_x;
+    if (dest_y + height > SCREEN_HEIGHT) {
+        width = SCREEN_HEIGHT - dest_x;
     }
     if (width <= 0 || height <= 0) {
         return;
     }
 
-    u8* dest = dest_buffer + 320 * dest_y + dest_x;
+    u8* dest = dest_buffer + SCREEN_WIDTH * dest_y + dest_x;
     u8* source = source_buffer + stride * source_y + source_x;
     for (i32 i = height; i != 0; --i) {
         memcpy(dest, source, width);
-        dest += 320;
+        dest += SCREEN_WIDTH;
         source += stride;
     }
 }
@@ -167,16 +167,16 @@ void DisplayAnyPictureNormal(u8* source_buffer, u8* dest_buffer, i32 source_x, i
 void ClearDrawAndDisplayBufferNormal(u8* draw_buf /*edi*/, u8* display_buf /*esi*/) {
     // added NULL checks
     if (draw_buf) {
-        memset(draw_buf, 0, 320*200);
+        memset(draw_buf, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
     }
     if (display_buf) {
-        memset(display_buf, 0, 320*200);
+        memset(display_buf, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
     }
 }
 
 //14C8E
 void N_CLRSCR(u8* buffer) {
-    memset(buffer, 0, 320*200);
+    memset(buffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
 }
 
 //14C9C
@@ -190,8 +190,12 @@ void clear_borders_Normal(u8* buffer, i32 height, i32 width) {
 }
 
 //14CFA
-void Copy_Plan0Diff_To_Buf(u8* a1, u8* a2, i32 a3, i32 a4) {
-    //stub
+void Copy_Plan0Diff_To_Buf(u8* source, u8* dest, i32 width, i32 height, i32 draw_width) {
+    for (i32 i = 0; i < height; ++i) {
+        memcpy(dest, source, draw_width);
+        dest += SCREEN_WIDTH;
+        source += width;
+    }
 }
 
 //14E64
