@@ -409,12 +409,25 @@ typedef struct map_data_t {
 	map_tile_t* map;
 } map_data_t;
 
+typedef struct display_map_t {
+    i16 x;
+    i16 y;
+    u8 width_in_tiles;
+    u8 height_in_tiles;
+    i16 tile_index;
+} display_map_t;
+
 typedef struct big_map_t {
-    map_tile_t* map;
-    u8** tile_texture_offsets;
-    u8* field_8;
-    u8* map_blocks;
-    //stub
+    map_tile_t* map; // field_0
+    u8** tile_texture_offsets; // field_4
+    display_map_t* display_map; // field_8
+    u8* map_blocks; // field_C
+    u32 field_10;
+    i16 field_14;
+    i16 width;
+    i16 height;
+    i16 field_1A;
+    i16 field_1C;
 } big_map_t;
 
 typedef struct voice_t {

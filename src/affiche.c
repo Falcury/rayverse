@@ -203,7 +203,68 @@ void DISPLAY_CYMBALE(obj_t* obj) {
 
 //19A2C
 void DISPLAY_ALL_OBJECTS(void) {
-    //stub
+    for (i32 current_display_prio = 7; current_display_prio >= 1; --current_display_prio) {
+        for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+            obj_t* obj = level.objects + actobj.objects[i];
+            if (current_display_prio == 1 && flags[obj->id] & flags0_0x80_boss) {
+                display_bar_boss(obj); //TODO
+            }
+            if (obj->display_prio != current_display_prio) {
+                continue;
+            }
+            if (obj->type == TYPE_157_EAU && num_world == world_5_cave && num_level == 8) {
+                // Eat at Joe's: water buoys level
+                if (obj->x >= 300) {
+                    display2(obj);
+                    continue;
+                }
+            } else {
+                switch(obj->type) {
+                    case TYPE_81_CYMBALE: {
+                        DISPLAY_CYMBALE(obj); //TODO
+                    } break;
+                    case TYPE_254_SLOPEY_PLAT: {
+                        //stub
+                    } break;
+                    case TYPE_252_VAGUE_DERRIERE:
+                    case TYPE_251_VAGUE_DEVANT:
+                    case TYPE_173_BATEAU: {
+                        i32 xmin, xmax, ymin, ymax;
+                        get_sprite_clipping(&xmin, &xmax, &ymin, &ymax);
+                        sprite_clipping(xmin, Bloc_lim_H2 - 40, ymin, ymax);
+                        display2(obj);
+                        sprite_clipping(xmin, xmax, ymin, ymax);
+                    } break;
+                    default: {
+                        display2(obj);
+                    } break;
+                }
+            }
+        }
+
+        if (current_display_prio == 3) {
+            if ((gele || (ray.iframes_timer % (2 * display_mode + 2) <= display_mode) || (ray.iframes_timer > 90 && RayEvts.squashed))
+                    && ray.flags.alive && ray.is_active) {
+                display2(&ray);
+                DISPLAY_POING(); //TODO
+            }
+        } else if (current_display_prio == 2 && nb_cymbal_in_map != 0) {
+            for (i32 j = 0; j < nb_cymbal_in_map; ++j) {
+                obj_t* cymbale = level.objects + cymbal_obj_id[j];
+                if (cymbale->is_active) {
+                    DISPLAY_CYMBALE(cymbale);
+                }
+            }
+        }
+    }
+
+    for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+        obj_t* obj = level.objects + actobj.objects[i];
+        if (obj->display_prio == 0 && obj->type == TYPE_245_DUNE) {
+            display2(obj);
+            break;
+        }
+    }
 }
 
 //19D2C

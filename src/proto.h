@@ -1082,7 +1082,7 @@ void set_whmap(i32 a1, i32 a2, void* a3);
 void recaleRaysurlesBords(void);
 void set_xywhmap(i16 xmin, i16 xmax, i16 ymin, i16 ymax);
 void MaskScrollDiffSprites(mem_t* buffer);
-void DRAW_MAP(void* draw_buf, big_map_t* big_map);
+void DRAW_MAP(u8* draw_buf, big_map_t* big_map);
 void INIT_GAME_MODE_NORMAL(void);
 void FIN_GAME_MODE_NORMAL(void);
 

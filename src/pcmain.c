@@ -90,8 +90,8 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
 
         // Draw background
         if (BackgroundOn && FondAutorise == 1) {
-            Calcul_Deplacement_Bande(xmap, plan0_width, plan0_height); //TODO
-            Display_Back_Screen(plan0_width, plan0_height, Bloc_lim_W1, Bloc_lim_H1, Bloc_lim_W2, Bloc_lim_H2); //TODO
+            Calcul_Deplacement_Bande(xmap, plan0_width, plan0_height);
+            Display_Back_Screen(plan0_width, plan0_height, Bloc_lim_W1, Bloc_lim_H1, Bloc_lim_W2, Bloc_lim_H2);
         } else {
             memset(draw_buffer, 0, 320*200);
         }
@@ -103,7 +103,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
 
         DRAW_MAP(DrawBufferNormal, &BIG_MAP); //TODO
         display_grp_stars(); //TODO
-        DISPLAY_ALL_OBJECTS(); //TODO
+        DISPLAY_ALL_OBJECTS();
         display_pix_gerbes(); //TODO
         Display_Sprite_On_Front(plan0_width, plan0_height, Bloc_lim_W1, Bloc_lim_H1, Bloc_lim_W2, Bloc_lim_H2); //TODO
 
