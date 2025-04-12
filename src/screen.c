@@ -85,27 +85,27 @@ void Init_Bande(u8 fnd, i16 width, i16 height, u8* source_buf, u8* dest_buf) {
 
     NbBande = Tab_NbBande[10 * (num_world - 1) + fnd];
 
-    i16 v7_field_0_cumulative = 0;
+    i16 cumulative_height = 0;
     for (i32 i = 0; i < NbBande; ++i) {
         def_bande_t* def_bande = Def_Bande + 3000 * (num_world - 1) + 300 * Num_Fond + i;
         bande_t* bande = Bande + i;
-        bande->field_0 = def_bande->field_0;
+        bande->height = def_bande->height;
         bande->field_8 = def_bande->field_2;
         bande->field_9 = def_bande->field_4;
         bande->field_4 = def_bande->field_6;
         bande->field_6 = 0;
         bande->field_14 = 0;
-        bande->field_2 = v7_field_0_cumulative;
+        bande->field_2 = cumulative_height;
         u8 type_scroll = Type_Scroll[10 * (num_world - 1) + Num_Fond];
         if (type_scroll == 0 || type_scroll == 2) {
-            bande->source_buffer_pos = source_buf + v7_field_0_cumulative * width;
-            bande->draw_buffer_pos = dest_buf + v7_field_0_cumulative * 320;
+            bande->source_buffer_pos = source_buf + cumulative_height * width;
+            bande->draw_buffer_pos = dest_buf + cumulative_height * 320;
         } else {
-            bande->source_buffer_pos = source_buf + v7_field_0_cumulative;
-            bande->draw_buffer_pos = dest_buf + v7_field_0_cumulative;
+            bande->source_buffer_pos = source_buf + cumulative_height;
+            bande->draw_buffer_pos = dest_buf + cumulative_height;
         }
 
-        v7_field_0_cumulative += bande->field_0;
+        cumulative_height += bande->height;
     }
 
     NbSprite = Tab_NbSprite[10 * (num_world - 1) + Num_Fond];
@@ -114,7 +114,7 @@ void Init_Bande(u8 fnd, i16 width, i16 height, u8* source_buf, u8* dest_buf) {
         def_sprite_t* sprite = Sprite + i;
         sprite->field_0 = def_sprite->field_0;
         sprite->field_2 = def_sprite->field_2;
-        sprite->field_4 = def_sprite->field_4;
+        sprite->bande_index = def_sprite->bande_index;
     }
 }
 
@@ -152,10 +152,10 @@ void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2
             bande_t* bande = Bande + i;
             u8* source_buffer_pos = bande->source_buffer_pos + bande->field_6 + w1;
             u8* dest_buffer_pos = bande->draw_buffer_pos - 320 * v68 + w1;
-            i32 draw_height = bande->field_0;
+            i32 draw_height = bande->height;
             i32 v34 = bande->field_2 - v68;
-            i32 v36 = bande->field_0 + v34;
-            if (v34 < 0 && v36 > 0 && bande->field_0 != 0) {
+            i32 v36 = bande->height + v34;
+            if (v34 < 0 && v36 > 0 && bande->height != 0) {
                 draw_height = v36;
                 dest_buffer_pos -= 320 * v34;
                 source_buffer_pos -= plan_width * v34;
@@ -171,7 +171,30 @@ void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2
                 }
                 Copy_Plan0_To_Buf(source_buffer_pos + (y - v34) * plan_width - BufferNormalDeplt, dest_buffer_pos + 320 * (y - v34), plan_width, draw_height - (y - v34), w2 - w1);
             }
-            //stub
+        }
+        plan_width /= 2;
+        for (i32 i = 0; i < NbSprite; ++i) {
+            def_sprite_t* sprite = Sprite + i;
+            bande_t* bande = Bande + sprite->bande_index;
+            if (bande->height != 0) {
+                i32 source_x = sprite->field_0 - bande->field_6;
+                if (source_x > 320) {
+                    source_x -= plan_width;
+                }
+                sprite_t* scroll_diff_sprite = ScrollDiffSprites->sprites + (i + 1);
+                if (source_x + scroll_diff_sprite->outer_width > w1) {
+                    vec2b_t size = {scroll_diff_sprite->outer_width, scroll_diff_sprite->outer_height};
+                    DrawSpriteDiffNormal(source_x, sprite->field_2 - v68, size, Scroll_Masque[i + 1], draw_buffer,
+                                         ScrollDiffSprites->img_buffer + scroll_diff_sprite->offset_in_atlas);
+                }
+                // Draw a second sprite further to the right if >1 fit on screen
+                if (source_x + plan_width < w2) {
+                    vec2b_t size = {scroll_diff_sprite->outer_width, scroll_diff_sprite->outer_height};
+                    DrawSpriteDiffNormal(source_x + plan_width, sprite->field_2 - v68, size, Scroll_Masque[i + 1],
+                                         draw_buffer,
+                                         ScrollDiffSprites->img_buffer + scroll_diff_sprite->offset_in_atlas);
+                }
+            }
         }
 
     } else {
@@ -201,7 +224,7 @@ void Calcul_Deplacement_Bande(i16 x, i16 plan_width, i16 plan_height) {
         if (type_scroll == 1) {
             for (i32 i = 0; i < NbBande; ++i) {
                 bande_t* bande = Bande + i;
-                if (bande->field_0 != 0) {
+                if (bande->height != 0) {
                     if (bande->field_4 != 0) {
                         if (bande->field_4 == 1 || bande->field_4 == 4) {
                             bande->field_14 = (bande->field_9 + bande->field_14) % (16 * plan_height);
@@ -239,7 +262,7 @@ void Calcul_Deplacement_Bande(i16 x, i16 plan_width, i16 plan_height) {
         if (NbBande != 0) {
             for (i32 i = 0; i < NbBande; ++i) {
                 bande_t* bande = Bande + i;
-                if (bande->field_0 != 0) {
+                if (bande->height != 0) {
                     if (bande->field_4 != 0) {
                         if (bande->field_4 == 1 || bande->field_4 == 4) {
                             bande->field_14 = (bande->field_9 + bande->field_14) % (16 * plan_width);

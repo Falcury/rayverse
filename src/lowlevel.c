@@ -341,7 +341,7 @@ void DetectCpu(void) {
     //stub
 }
 
-i32 XMIN = 8; //16184
+i32 XMIN = 8; //16184 //TODO: change XMIN to 0?
 i32 XMAX = 312; //16188
 i32 YMIN = 0; //1618C
 i32 YMAX = 200; //16190
@@ -349,7 +349,7 @@ i32 YMAX = 200; //16190
 
 //16194
 void default_sprite_clipping(void) {
-    XMIN = 8;
+    XMIN = 0; //TODO: change XMIN to 0?
     XMAX = 312;
     YMIN = 0;
     YMAX = 200;
@@ -696,14 +696,59 @@ void DrawSpriteColorFlipNormal(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_b
     }
 }
 
+static i32 diff_saved_sprite_width; //16D2F
+
 //16D33
-void DrawSpriteDiffNormal_clip(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
-    //stub
+bool DrawSpriteDiffNormal_clip(i32* x /*eax*/, i32* y /*ebx*/, vec2b_t* size /*ecx*/, u8** image_data /*esi*/) {
+    diff_saved_sprite_width = size->x;
+    if (*x < XMIN) {
+        i32 x_left_of_screen = -(*x - XMIN);
+        if (size->x <= x_left_of_screen) {
+            return false;
+        } else {
+            x_left_of_screen &= 0xFFFC;
+            size->x -= (u8) x_left_of_screen;
+            *x = XMIN;
+            *image_data += *x + x_left_of_screen;
+            size->x >>= 2;
+        }
+    } else if (*x + size->x > XMAX) {
+        if (*x >= XMAX) {
+            return false;
+        } else {
+            size->x = XMAX - *x;
+            size->x >>= 2;
+            ++size->x;
+        }
+    }
+    if (*y < YMIN) {
+        if (*y + size->y < YMIN) {
+            return false;
+        } else {
+            i32 y_above_screen = -(*y - YMIN);
+            y_above_screen &= 0xFFFF;
+            size->y -= (u8) y_above_screen;
+            *image_data += saved_sprite_width * y_above_screen;
+            *y = YMIN;
+        }
+    }
+    if (*y + size->y > YMAX) {
+        if (*y >= YMAX) {
+            return false;
+        } else {
+            size->y = YMAX - *y;
+            return true;
+        }
+    } else {
+        return true;
+    }
 }
 
 //16E0D
-void DrawSpriteDiffNormal(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
-    //stub
+void DrawSpriteDiffNormal(i32 x /*eax*/, i32 y /*ebx*/, vec2b_t size /*ecx*/, u8* mask /*edx*/, u8* draw_buf /*esi*/, u8* image_data /*edi*/) {
+    // NOTE: this seems to be implemented in a different way in the PC version, I guess for blitting performance reasons?
+    // Because we don't worry about small performance optimizations, we just use the regular draw method that's already working fine.
+    DrawSpriteNormal256(x, 0, y, size, draw_buf, image_data);
 }
 
 //16E8A

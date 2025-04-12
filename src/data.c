@@ -1011,7 +1011,7 @@ u8 byte_967CC = 0; //967CC
 i32 XSpeedJumelle = 0; //967D0
 i32 YSpeedJumelle = 0; //967D4
 
-i16 TabW1[4] = {4, 12, 20, 24}; //9684C
+i16 TabW1[4] = {4, 12, 20, 24}; //9684C // TODO: change TabW1[0] to 0 here to fix black bar on left of screen?
 i16 TabW2[4] = {320, 312, 304, 300}; //96854
 i16 TabH1[4] = {0, 8, 16, 20}; //9685C
 i16 TabH2[4] = {200, 192, 184, 180}; //96864
@@ -1602,7 +1602,7 @@ def_sprite_t Def_Sprite[1200] = {
 };
 
 big_map_t BIG_MAP; //C21D8
-i32 Scroll_Masque[20]; //C21F8
+u8* Scroll_Masque[20]; //C21F8
 i32 VitesseYStageNameLevel[30]; //C2248
 i32 VitesseXStageNameWorld[30]; //C22C0
 i32 VitesseXStageNameLevel[30]; //C2338

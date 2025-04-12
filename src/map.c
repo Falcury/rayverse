@@ -58,7 +58,7 @@ void update_display_map(big_map_t* a1) {
 void set_default_Bloc_clipping(void) {
     Bloc_lim_H1 = 0;
     Bloc_lim_H2 = 200;
-    Bloc_lim_W1 = 4;
+    Bloc_lim_W1 = 4; //TODO: change to 0?
     Bloc_lim_W2 = 320;
 }
 
@@ -209,7 +209,19 @@ void set_xywhmap(i16 xmin, i16 xmax, i16 ymin, i16 ymax) {
 
 //5D144
 void MaskScrollDiffSprites(mem_t* buffer) {
-    //stub
+    for (i32 i = 1; i < ScrollDiffSprites->nb_sprites; ++i) {
+        sprite_t* sprite = ScrollDiffSprites->sprites + i;
+        Scroll_Masque[i] = block_malloc(buffer, sprite->outer_height * sprite->inner_height);
+        u8* masque_pos = Scroll_Masque[i];
+        u8* image_pos = ScrollDiffSprites->img_buffer + sprite->offset_in_atlas;
+        for (i32 y = 0; y < sprite->outer_height; ++y) {
+            for (i32 x = 0; x < sprite->outer_width; ++x) {
+                *masque_pos = *image_pos == 0 ? 0 : 0xFF;
+                ++masque_pos;
+                ++image_pos;
+            }
+        }
+    }
 }
 
 //5D230

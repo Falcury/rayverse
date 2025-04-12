@@ -57,9 +57,9 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
                 u8 img_buffer_checksum;
                 mem_read(&img_buffer_checksum, mem, 1);
 
-                for (i32 i = 0; i < plan0_num_pcx_count; ++i) {
-                    cur_wldobj->img_buffer[i] ^= 0x8F;
+                for (i32 i = 0; i < cur_wldobj->x; ++i) {
                     img_buffer_checksum -= cur_wldobj->img_buffer[i];
+                    cur_wldobj->img_buffer[i] ^= 0x8F;
                 }
 
                 if (img_buffer_checksum != 0) {
@@ -206,7 +206,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
         } else {
             ScrollDiffSprites = wldobj + ScrollDiffSprites_value;
             if (GameModeVideo == 0 && ScrollDiffOn) {
-                MaskScrollDiffSprites(mem_level); //TODO
+                MaskScrollDiffSprites(mem_level);
             }
         }
 

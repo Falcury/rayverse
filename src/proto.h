@@ -83,8 +83,8 @@ void DrawSpriteFlipNormal(i32 x, i32 sprite_field_A, i32 y, vec2b_t size, u8* dr
 void DrawSpriteFlipNormal256(i32 x /*eax*/, i32 sprite_field_A /*edx*/, i32 y /*ebx*/, vec2b_t size /*ecx*/, u8* draw_buf /*edi*/, u8* image_data /*esi*/);
 void DrawSpriteColorNormal(i32 x, i32 sprite_field_A, i32 y, vec2b_t size, u8* draw_buf, u8* image_data);
 void DrawSpriteColorFlipNormal(i32 x, i32 sprite_field_A, i32 y, vec2b_t size, u8* draw_buf, u8* image_data);
-void DrawSpriteDiffNormal_clip(i32 x, i32 sprite_field_A, i32 y, vec2b_t size, u8* draw_buf, u8* image_data);
-void DrawSpriteDiffNormal(i32 x, i32 sprite_field_A, i32 y, vec2b_t size, u8* draw_buf, u8* image_data);
+bool DrawSpriteDiffNormal_clip(i32* x, i32* y, vec2b_t* size, u8** image_data);
+void DrawSpriteDiffNormal(i32 x, i32 y, vec2b_t size, u8* mask, u8* draw_buf, u8* image_data);
 void synchro(void);
 void endsynchro(void);
 void set_speaker_on(void);
