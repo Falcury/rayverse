@@ -357,8 +357,8 @@ void DO_ANIM(obj_t* obj) {
         eta = get_eta(obj);
         obj->anim_index = eta->anim_index;
         anim = obj->animations + obj->anim_index;
-        if ((obj->type == TYPE_23_RAYMAN && (ray_old_etat == 2 || ray_old_etat == 6)) ||
-            (obj->sub_etat == 61 && ray_old_subetat == 61 && ray_old_etat == 0)) {
+        if ((obj->type == TYPE_23_RAYMAN && (ray_old_main_etat == 2 || ray_old_main_etat == 6)) ||
+            (obj->sub_etat == 61 && ray_old_sub_etat == 61 && ray_old_main_etat == 0)) {
             if (ray.timer > 60 && !RayEvts.squashed) {
                 ray.timer = 60;
             }
@@ -483,10 +483,10 @@ void DoRaymanInZDDDefault(obj_t* obj) {
 //582A0
 void DO_ONE_OBJECT(obj_t* obj) {
     if (flags[ot] & flags0_2_balle) {
-        DO_BALLE(obj); //TODO
+        DO_BALLE(obj);
     }
     if (flags[ot] & flags0_0x20_has_detect_zone) {
-        SET_DETECT_ZONE_FLAG(obj); //TODO
+        SET_DETECT_ZONE_FLAG(obj);
     }
     if (flags[ot] & flags2_1_check_tile_type) {
         calc_btyp(obj);
@@ -556,13 +556,48 @@ void build_active_table(void) {
 }
 
 //58644
-void Add_One_RAY_lives(obj_t* obj) {
-    //stub
+void Add_One_RAY_lives(void) {
+    ++status_bar.lives;
+    if (status_bar.lives > 99) {
+        status_bar.lives = 99;
+    }
+    if (status_bar.max_hitp == 4) {
+        ray.hit_points = status_bar.max_hitp;
+    } else {
+        ray.hit_points = 2;
+    }
 }
 
 //58680
 void DO_CLING_ANIMS(void) {
-    //stub
+    if (id_Cling_1up != -1) {
+        obj_t* obj = level.objects + id_Cling_1up;
+        if (obj->timer != 0) {
+            --obj->timer;
+            obj->anim_frame = 0;
+        }
+        DO_ANIM(obj);
+        if (EOA(obj)) {
+            id_Cling_1up = -1;
+            if (ray_mode != 3 && ray_mode != 4) {
+                Add_One_RAY_lives();
+            }
+            obj->flags.alive = 0;
+        }
+    }
+
+    if (id_Cling_Pow != -1) {
+        obj_t* obj = level.objects + id_Cling_Pow;
+        if (obj->timer != 0) {
+            --obj->timer;
+            obj->anim_frame = 0;
+        }
+        DO_ANIM(obj);
+        if (EOA(obj)) {
+            id_Cling_Pow = -1;
+            obj->flags.alive = 0;
+        }
+    }
 }
 
 //58754
@@ -573,7 +608,7 @@ void DO_OBJECTS_ANIMS(void) {
 //587C8
 void DO_OBJECTS(void) {
     if (id_Cling_1up == -1 && id_Cling_Pow == -1) {
-        DO_CLING_ANIMS(); //TODO
+        DO_CLING_ANIMS();
     }
     if (lidol_to_allocate != 0) {
         allocate_toons(lidol_source_obj, 7); //TODO
@@ -1083,7 +1118,45 @@ void INIT_RAY_ON_MS(void) {
 
 //5AAE8
 void DO_MOTEUR(void) {
-    //stub
+    if (ModeDemo != 0) {
+        bool has_joystick_input = false; // TODO: check input buttons
+        if (ModeDemo == 3 || ModeDemo == 4) {
+            new_world = 1;
+            DO_FADE_OUT();
+            ModeDemo = 2;
+        }
+    }
+    //check_cheat_code_in_game(); // TODO
+    horloges(1);
+    calc_left_time();
+    ray_old_main_etat = ray.main_etat;
+    ray_old_sub_etat = ray.sub_etat;
+    xmap_old = xmap;
+    ymap_old = ymap;
+
+    if (ModeVideoActuel == 1) {
+        RIGHT_MAP_BORDER = xmap + 320 - ray.offset_bx - 36;
+        LEFT_MAP_BORDER = xmap + 20 - ray.offset_bx;
+    } else {
+        RIGHT_MAP_BORDER = Bloc_lim_W2 + xmap - ray.offset_bx - 36;
+        LEFT_MAP_BORDER = Bloc_lim_W1 + xmap + 20 - ray.offset_bx;
+    }
+
+    if (ray.cmd_arg_1 != -1) {
+        level.objects[ray.cmd_arg_1].display_prio = oldPrio;
+    }
+
+    if (RayEvts.firefly) {
+        DO_LUCIOLE(); //TODO
+    }
+
+    if (num_world == world_3_mountain) {
+        ray_wind_force = 0;
+    } else {
+        ray_wind_force = weather_wind;
+    }
+
+    DO_OBJECTS(); //TODO
 }
 
 //5AC70

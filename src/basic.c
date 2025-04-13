@@ -118,8 +118,17 @@ i32 vblToEOA(obj_t* obj, u8 a2) {
 }
 
 //1D738
-void GET_ANIM_POS(obj_t* obj, i16* a2, i16* a3, i16* a4, i16* a5) {
-    //stub
+void GET_ANIM_POS(obj_t* obj, i16* x, i16* y, i16* w, i16* h) {
+    anim_t* anim = obj->animations + obj->anim_index;
+    anim_frame_t* frame = anim->frames + obj->anim_frame;
+    *w = frame->width;
+    *h = frame->height;
+    if (obj->flags.flip_x) {
+        *x = obj->x + 2 * obj->offset_bx - frame->x - *w;
+    } else {
+        *x = obj->x + frame->x;
+    }
+    *y = obj->y + frame->y;
 }
 
 //1D7D8

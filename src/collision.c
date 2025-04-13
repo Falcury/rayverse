@@ -240,13 +240,217 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
 }
 
 //2DF34
-void standard_frontZone(obj_t* obj, i16* a2, i16* a3) {
-    //stub
+void standard_frontZone(obj_t* obj, i16* x, i16* w) {
+    /* 1FA54 80144254 -O2 -msoft-float */
+    if (!obj->flags.flip_x)
+        *x -= obj->detect_zone;
+    else
+        *x += (*w >> 1);
+    *w = obj->detect_zone + (*w >> 1);
 }
 
 //2DF88
 void SET_DETECT_ZONE_FLAG(obj_t* obj) {
-    //stub
+    /* 1FAB4 801442B4 -O2 -msoft-float */
+
+    s16 obj_x; s16 obj_y; s16 obj_w; s16 obj_h;
+    s32 unk_1;
+    u16 det_zn_flg;
+
+    GET_ANIM_POS(obj, &obj_x, &obj_y, &obj_w, &obj_h);
+    switch (obj->type)
+    {
+        case TYPE_FEE:
+            obj_x += (obj_h >> 1) - (obj->detect_zone >> 1);
+            obj_y -= 16;
+            obj_w = obj->detect_zone;
+            obj_h += 64;
+            break;
+        case TYPE_MST_SHAKY_FRUIT:
+            obj_y += obj_h;
+            obj_h += 240;
+            break;
+        case TYPE_PIRATE_GUETTEUR:
+        case TYPE_PIRATE_GUETTEUR2:
+            standard_frontZone(obj, &obj_x, &obj_w);
+            if (obj->main_etat == 0 && obj->sub_etat == 4)
+            {
+                obj_y += (obj_h >> 1);
+                obj_h += (obj->detect_zone << 2) + (obj_h >> 1);
+            }
+            break;
+        case TYPE_BLACKTOON1:
+            unk_1 = -1;
+            switch (obj->follow_sprite)
+            {
+                case 3:
+                    if (obj->main_etat == 0 && obj->sub_etat == 0)
+                    {
+                        obj_h += obj->detect_zone;
+                        obj_y -= obj->detect_zone;
+                        obj_w += obj->detect_zone;
+                        obj_x -= (obj->detect_zone >> 1);
+                    }
+                    break;
+                case 7:
+                    if (obj->main_etat == 1 && obj->sub_etat == 1)
+                    {
+                        obj_x = obj_x + unk_1 + (obj_w >> 1);
+                        obj_y += (obj_h >> 1);
+                        obj_w = 20;
+                        obj_h += obj->detect_zone;
+                        if (!obj->flags.flip_x)
+                            obj_x -= obj_w;
+                    }
+                    break;
+                case 4:
+                    obj_y -= obj->detect_zone + obj_h;
+                    obj_x -= (obj_w >> 1);
+                    obj_w += obj_w;
+                    obj_h += obj->detect_zone;
+                    break;
+                case 2:
+                    obj_y -= obj->detect_zone + obj_h;
+                    obj_h = obj->detect_zone + obj_h;
+                    obj_w += obj->detect_zone * 2;
+                    obj_x -= obj->detect_zone;
+                    break;
+            }
+            break;
+        case TYPE_POI3:
+            obj_x += (obj->flags.flip_x) ? obj_w : -obj_w;
+            obj_y -= 50;
+            obj_h += 50;
+            break;
+        case TYPE_MST_SCROLL:
+            if (obj->hit_points != 0)
+            {
+                obj_y = 0;
+                obj_h = mp.height << 4;
+            }
+            break;
+        case TYPE_SCROLL_SAX:
+        case TYPE_BB1_VIT:
+            obj_x = obj->x + obj->offset_bx;
+            obj_w = 16;
+            obj_y = 0;
+            obj_h = mp.height << 4;
+            break;
+        case TYPE_WAT_CLOWN:
+            obj_h += (obj->detect_zone >> 1);
+            obj_y -= (obj->detect_zone >> 1);
+            standard_frontZone(obj, &obj_x, &obj_w);
+            break;
+        case TYPE_CHASSEUR2:
+            obj_h = obj->detect_zone;
+            obj_y -= (obj->detect_zone >> 1);
+            obj_w += obj->detect_zone * 2;
+            obj_x -= obj->detect_zone;
+            break;
+        case TYPE_WIZARD1:
+        case TYPE_CHASSEUR1:
+        case TYPE_GENEBADGUY:
+        case TYPE_CYMBALE:
+        case TYPE_CYMBAL1:
+        case TYPE_CYMBAL2:
+            obj_w += obj->detect_zone * 2;
+            obj_x -= obj->detect_zone;
+            break;
+        case TYPE_CLOWN_TNT:
+            if (!obj->flags.flip_x)
+                obj_x += (obj_w >> 1) - (obj->detect_zone >> 1);
+            else
+                obj_x += (obj_w >> 1);
+
+            obj_w = (obj->detect_zone >> 1);
+            obj_y += (obj_h >> 1);
+            obj_h = (obj_h >> 1) + obj->detect_zone;
+            break;
+        case TYPE_STONEWOMAN:
+        case TYPE_STONEWOMAN2:
+            standard_frontZone(obj, &obj_x, &obj_w);
+            obj_h = (obj_h << 1);
+            break;
+        case TYPE_MITE:
+            unk_1 = 150;
+            if (!obj->flags.flip_x)
+                obj_x -= obj->detect_zone;
+            else
+                obj_x = obj_x + -unk_1 + (obj_w >> 1);
+
+            obj_w = obj->detect_zone + unk_1;
+            obj_y -= ((obj->detect_zone - obj_h) >> 1);
+            obj_h = obj->detect_zone;
+            break;
+        case TYPE_PIRATE_POELLE:
+        case TYPE_PIRATE_P_45:
+            standard_frontZone(obj, &obj_x, &obj_w);
+            obj_h = 150;
+            break;
+        case TYPE_PIRATE_POELLE_D:
+        case TYPE_PIRATE_P_D_45:
+            standard_frontZone(obj, &obj_x, &obj_w);
+            obj_h = 150;
+            obj_x += 70;
+            obj_y += 50;
+            break;
+        case TYPE_SPIDER_PLAFOND:
+            if (
+                    (
+                            obj->main_etat == 0 &&
+                            (obj->sub_etat == 24 || obj->sub_etat == 30 || obj->sub_etat == 11)
+                    ) ||
+                    (obj->main_etat == 1 && obj->sub_etat == 2)
+                    )
+            {
+                obj_h = 10;
+                obj_x -= 40;
+                obj_w += 80;
+            }
+            else
+            {
+                obj_h = 200;
+                obj_x -= 130;
+                obj_w += 260;
+            }
+            break;
+        case TYPE_DARK:
+            standard_frontZone(obj, &obj_x, &obj_w);
+            obj_h = 250;
+            break;
+        case TYPE_JOE:
+            obj_h += 20;
+            break;
+        case TYPE_PHOTOGRAPHE:
+            break;
+        default:
+            standard_frontZone(obj, &obj_x, &obj_w);
+            break;
+    }
+
+    if (inter_box(obj_x, obj_y, obj_w, obj_h, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h))
+    {
+        det_zn_flg = obj->detect_zone_flag;
+        if (det_zn_flg == 0 || det_zn_flg == 1)
+        {
+            if (det_zn_flg == 0)
+                obj->detect_zone_flag = 1;
+            else if (det_zn_flg == 1)
+                obj->detect_zone_flag = 2;
+        }
+        else
+        {
+            obj->detect_zone_flag++;
+            if (obj->detect_zone_flag == 20)
+                obj->detect_zone_flag = 2;
+        }
+    }
+    else
+    {
+        obj->detect_zone_flag = 0;
+        if (obj->type == TYPE_PHOTOGRAPHE)
+            obj->flags.flag_1 = 0;
+    }
 }
 
 //2E738

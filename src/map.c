@@ -274,7 +274,6 @@ void DRAW_MAP(u8* draw_buf, big_map_t* big_map) {
         }
 
     }
-    //stub
 }
 
 //5D5B0

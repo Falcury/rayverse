@@ -251,10 +251,10 @@ typedef struct anim_layer_t {
 } anim_layer_t;
 
 typedef struct anim_frame_t {
-	u8 unk_x;
-	u8 unk_y;
-	u8 unk_width;
-	u8 unk_height;
+	u8 x;
+	u8 y;
+	u8 width;
+	u8 height;
 } anim_frame_t;
 
 typedef struct anim_t {

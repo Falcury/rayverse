@@ -6,7 +6,29 @@ i16 get_allowed_time(void) {
 
 //23A28
 void calc_left_time(void) {
-    //stub
+    if (bonus_map) {
+        i16 allowed_time_in_seconds = allowed_time[32 * (num_world - 1) + (num_level - 1)];
+        if (map_time == 1) {
+            if (allowed_time_in_seconds == -2) {
+                left_time = -2;
+            } else {
+                left_time = allowed_time_in_seconds * 60;
+            }
+        } else if (allowed_time_in_seconds != -2 && map_time > 120) {
+            if (left_time != 0) {
+                ray.is_active = 1;
+                left_time = 60 * allowed_time_in_seconds - map_time + 120;
+                if (left_time == 0) {
+                    if (nb_wiz != 0) {
+                        status_bar.num_wiz = nb_wiz_save;
+                        departlevel = 0;
+                        fix_numlevel(&ray);
+                        DO_FADE_OUT();
+                    }
+                }
+            }
+        }
+    }
 }
 
 //23AF8

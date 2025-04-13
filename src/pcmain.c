@@ -5,7 +5,7 @@ void InitData(void) {
 }
 
 //17084
-void DO_GROS_MOTEUR_NORMAL(u8 a1) {
+void DO_GROS_MOTEUR_NORMAL(u8 need_update_display_map) {
     if (CarteSonAutorisee && gele != 1) {
         manage_snd(); //TODO
     }
@@ -19,8 +19,8 @@ void DO_GROS_MOTEUR_NORMAL(u8 a1) {
         }
     }
     get_luciole(); //TODO
-    if (a1) {
-        update_display_map(&BIG_MAP); //TODO
+    if (need_update_display_map) {
+        update_display_map(&BIG_MAP);
     }
 }
 
@@ -82,7 +82,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
             readinput();
         }
         // NOTE: may be repeated depending on display_mode?
-        //DO_GROS_MOTEUR_NORMAL(0); //TODO
+        DO_GROS_MOTEUR_NORMAL(1); //TODO
         if (need_timer) {
             clock_ticks();
         }
@@ -101,7 +101,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
             display_flocons_behind(); //TODO
         }
 
-        DRAW_MAP(DrawBufferNormal, &BIG_MAP); //TODO
+        DRAW_MAP(DrawBufferNormal, &BIG_MAP);
         display_grp_stars(); //TODO
         DISPLAY_ALL_OBJECTS();
         display_pix_gerbes(); //TODO
@@ -167,7 +167,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
         HANDLE_KEY(a1);
 
         // NOTE: timer shenanigans?
-        DO_GROS_MOTEUR_NORMAL(1);
+//        DO_GROS_MOTEUR_NORMAL(1);
 
         bool end_of_frame = true;
 
@@ -214,6 +214,15 @@ void InitMemoryVariable(void) {
     TailleMainMemLevel = 0x87C00;
     TailleMainMemSprite = 0xDF400;
     TailleMainMemFix = 0x4D800;
+
+    // NOTE: Structs and pointers might have a larger size on 64-bit systems.
+    // To prevent out-of-memory errors we have to increase the memory requirements a little.
+    TailleMainMemTmp *= 2;
+    TailleMainMemWorld *= 2;
+    TailleMainMemLevel *= 2;
+    TailleMainMemSprite *= 2;
+    TailleMainMemFix *= 2;
+
     AllocVariablesAutorisee();
 }
 

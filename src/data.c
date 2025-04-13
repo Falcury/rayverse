@@ -1776,8 +1776,8 @@ mem_t* main_mem_tmp; //CD8A0
 i32 nb_wiz_save; //CD8AC
 loadinforay_t LoadInfoRay[3]; //CD8B0
 flocon_t* flocon_tab; //CD8BC
-u32 map_time; //CD8C0
-u32 left_time; //CD8C4
+i32 map_time; //CD8C0
+i32 left_time; //CD8C4
 obj_t* lidol_source_obj; //CD8C8
 obj_t mapobj[25]; //CD8CC
 i32 bossSpeedFactor; //CE5B0
@@ -2006,7 +2006,7 @@ i16 black_ray_obj_id; //CF8BC
 u16 black_fist_obj_id; //CF8BE
 u16 final_pass_n; //CF8C0
 u16 final_pass_a; //CF8C2
-u16 ray_old_etat; //CF8C4
+u16 ray_old_main_etat; //CF8C4
 u16 final_pass_f; //CF8C6
 i16 moskitomama_gauche_obj_id; //CF8C8
 u16 final_pass_x; //CF8CA
@@ -2014,7 +2014,7 @@ i16 rideau_obj_id; //CF8CC
 i16 corde_dark_obj_id; //CF8CE
 i16 stosko_obj_id; //CF8D0
 i16 scroll_x; //CF8D2
-u16 ray_old_subetat; //CF8D4
+u16 ray_old_sub_etat; //CF8D4
 i16 moskitosaxo_obj_id; //CF8D6
 i16 moskitomama_droite_obj_id; //CF8D8
 u16 nb_fade; //CF8DA
