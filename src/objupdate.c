@@ -66,7 +66,7 @@ u8 readSpeedArgs(obj_t* obj) {
 
 //60C14
 u8 readInvalidArg(obj_t* obj) {
-    --obj->cmd_offset;
+    obj->cmd_offset = -1;
     readOneCommand(obj);
     return 1;
 }

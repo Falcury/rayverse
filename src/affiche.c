@@ -8,7 +8,7 @@ void display2(obj_t* obj) {
         i32 proj_y = get_proj_y(obj->scale, layer->y + obj->screen_y);
         if (layer->sprite_index != 0) {
             sprite_t* sprite = obj->sprites + layer->sprite_index;
-            if (sprite->unk_index != 0) {
+            if (sprite->id != 0) {
                 i32 x;
                 if (obj->flags.flip_x) {
                     if (obj->scale == 256 && layer_index == 5 && obj->anim_index >= 14 && obj->anim_index <= 16) {
@@ -404,7 +404,7 @@ void display_text(const char* text, i16 x, i16 y, u8 font_size, i8 color) {
                     DrawSpriteColorNormalEtX(current_x, color, y - sprite->outer_height, size, draw_buffer, alpha_numbers->img_buffer + sprite->offset_in_atlas);
                     i += 3;
                 }
-                current_x += (sprite->field_9 & 0xF) + sprite->inner_width - char_spacing;
+                current_x += (sprite->sprite_pos & 0xF) + sprite->inner_width - char_spacing;
             }
 
         }

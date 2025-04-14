@@ -542,10 +542,12 @@ void INIT_OBJECTS(u8 a1) {
             obj->sub_etat = obj->init_sub_etat;
         }
         obj_init(obj);
-        if (flags[obj->type] & 1) {
+        if (flags[obj->type] & flags0_1_always) {
             obj->x = -32000;
             obj->y = -32000;
             obj->flags.alive = 0;
+        } else {
+            obj->flags.alive = 1;
         }
 
         switch(obj->type) {

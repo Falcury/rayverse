@@ -16,7 +16,9 @@ void DO_TRP_ATTAK(obj_t* obj) {
 
 //7E69C
 void trompetteAtter(obj_t* obj) {
-    //stub
+    /* 2D9EC 801521EC -O2 -msoft-float */
+    skipToLabel(obj, 8, true);
+    recale_position(obj);
 }
 
 //7E6BC

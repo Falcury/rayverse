@@ -109,7 +109,7 @@ void SET_X_SPEED(obj_t* obj) {
 
 //55F9C
 void make_active2(obj_t* obj, u8 do_nova) {
-    obj->is_active = 0;
+    obj->is_active = 1;
     obj->field_1C = 1;
     obj->active_flag = 0;
     if (do_nova) {
@@ -121,7 +121,7 @@ void make_active2(obj_t* obj, u8 do_nova) {
 //55FBC
 void make_active(obj_t* obj, u8 do_nova) {
     if (obj->flags.alive) {
-        obj->is_active = 0;
+        obj->is_active = 1;
         obj->field_1C = 1;
         obj->active_flag = 0;
         if (do_nova) {
@@ -261,6 +261,10 @@ void SET_ACTIVE_FLAG(i16 screen_x, i16 screen_y, obj_t* obj) {
                         obj_t* cur_obj = level.objects + id;
                         make_active(cur_obj, !cur_obj->is_active && (flags[obj->type] & flags1_1_keep_linked_objects_active));
                         id = link_init[cur_obj->id];
+                        //TODO: fix root cause of infinite loop due to objects linking to themselves in link_init?
+                        if (id == cur_obj->id) {
+                            break;
+                        }
                     } while (id != obj->id);
                 }
             }
@@ -315,8 +319,101 @@ void SET_ACTIVE_FLAG(i16 screen_x, i16 screen_y, obj_t* obj) {
 }
 
 //565D0
-void DO_PESANTEUR(obj_t* obj) {
-    //stub
+i32 DO_PESANTEUR(obj_t* obj) {
+    /* 2C214 80150A14 -O2 -msoft-float */
+
+    s16 spd_y;
+    s32 res = false;
+    s16 y_accel = 0;
+    u8 anim_speed_div = obj->eta[obj->main_etat][obj->sub_etat].anim_speed >> 4;
+
+    if (anim_speed_div != 0)
+    {
+        if (obj->type == TYPE_TAMBOUR1 || obj->type == TYPE_TAMBOUR2)
+        {
+            if (obj->configuration != 0)
+                obj->configuration--;
+            else if (obj->gravity_value_1 == 0)
+            {
+                obj->speed_y++;
+                res = true;
+            }
+        }
+        else
+        {
+            switch (anim_speed_div)
+            {
+                case 6:
+                    if (horloge[2] == 0)
+                    {
+                        y_accel = 1;
+                        res = true;
+                    }
+                    break;
+                case 1:
+                    if (obj->gravity_value_1 == 0)
+                    {
+                        y_accel = 1;
+                        res = true;
+                    }
+                    break;
+                case 2:
+                    if (obj->gravity_value_2 == 0)
+                    {
+                        y_accel = 1;
+                        res = true;
+                    }
+                    break;
+                case 3:
+                    spd_y = obj->speed_y;
+                    if (spd_y > 0)
+                    {
+                        if (spd_y > 1)
+                            y_accel = -1;
+                    }
+                    else
+                        y_accel = 1;
+                    break;
+                case 4:
+                    spd_y = obj->speed_y;
+                    if (spd_y < -1)
+                    {
+                        if (spd_y < -2)
+                            y_accel = 1;
+                    }
+                    else
+                        y_accel = -1;
+                    break;
+                case 5:
+                    if (obj->gravity_value_1 == 0)
+                        y_accel = -1;
+                    break;
+                case 10:
+                    obj->gravity_value_1++;
+                    if (obj->gravity_value_1 >= obj->gravity_value_2)
+                    {
+                        obj->gravity_value_1 = 0;
+                        y_accel = 1;
+                        res = true;
+                    }
+                    break;
+                case 11:
+                    obj->gravity_value_1++;
+                    if (obj->gravity_value_1 >= obj->gravity_value_2)
+                    {
+                        obj->gravity_value_1 = 0;
+                        y_accel = -1;
+                        res = true;
+                    }
+                    break;
+            }
+        }
+
+        if (flags[obj->type] & flags1_0x20_move_y)
+            y_accel = ashl16(y_accel, 4);
+        obj->speed_y += y_accel;
+    }
+    return res;
 }
 
 //56734
@@ -406,7 +503,7 @@ void DO_STONEBOMB_REBOND(obj_t* obj) {
 }
 
 //56CD8
-void DO_THROWN_BOMD_REBOND(obj_t* obj, i16 a2, i16 a3) {
+void DO_THROWN_BOMB_REBOND(obj_t* obj, i16 a2, i16 a3) {
     //stub
 }
 
@@ -457,7 +554,342 @@ void NormalAtter(obj_t* obj) {
 
 //57530
 void OBJ_IN_THE_AIR(obj_t* obj) {
-    //stub
+    /* 2DA58 80152258 -O2 -msoft-float */
+    s16 pesanteur;
+    s16 spd_y;
+    s16 spr_x; s16 spr_y; s16 spr_w; s16 spr_h;
+    u8 anim_speed_div = obj->eta[obj->main_etat][obj->sub_etat].anim_speed >> 4;
+
+    if (!(anim_speed_div == 10 || anim_speed_div == 11))
+    {
+        obj->gravity_value_1++;
+        if (obj->gravity_value_1 > 2)
+            obj->gravity_value_1 = 0;
+
+        obj->gravity_value_2++;
+        if (obj->gravity_value_2 > 3)
+            obj->gravity_value_2 = 0;
+    }
+
+    pesanteur = DO_PESANTEUR(obj);
+    if (obj->type == TYPE_LIDOLPINK)
+    {
+        if (obj->speed_y >= 0 && obj->sub_etat == 0)
+            set_sub_etat(obj, 1);
+
+        if (!gerbe && obj->speed_y > 2 && obj->sub_etat == 1)
+        {
+            set_sub_etat(obj, 2);
+            obj->speed_x = 0;
+        }
+    }
+    else if (obj->type == TYPE_STONEDOG || obj->type == TYPE_STONEDOG2)
+    {
+        stoneDogBounces(obj);
+        if (obj->main_etat == 2)
+        {
+            spd_y = obj->speed_y;
+            if (spd_y > 0)
+            {
+                if (obj->sub_etat != 2)
+                    set_sub_etat(obj, 2);
+            }
+            else if (spd_y < 0 && (block_flags[(u8) calc_typ_trav(obj, 1)] & 1))
+                obj->speed_y = 0;
+        }
+    }
+    else if (obj->type == TYPE_NOTE1)
+    {
+        if (--obj->iframes_timer == 0)
+            DO_EXPLOSE_NOTE1(obj);
+    }
+
+    if ((flags[obj->type] & flags3_4_stop_moving_up_when_hit_block) && obj->speed_y < 0)
+    {
+        if (obj->flags.follow_enabled)
+        {
+            GET_SPRITE_POS(obj, obj->follow_sprite, &spr_x, &spr_y, &spr_w, &spr_h);
+            spr_x = obj->x + obj->offset_bx;
+            spr_y = spr_y + obj->offset_hy;
+        }
+        else
+        {
+            spr_x = obj->x + obj->offset_bx;
+            spr_y = obj->y + obj->offset_hy;
+        }
+
+        if (block_flags[BTYP(spr_x >> 4, (spr_y + obj->speed_y) >> 4)] & 0x10)
+            obj->speed_y = 0;
+    }
+    if ((flags[obj->type] & flags2_1_check_tile_type) && (block_flags[obj->coll_btype[0]] & 2))
+    {
+        switch (obj->type)
+        {
+            case TYPE_TROMPETTE:
+                trompetteAtter(obj);
+                break;
+            case TYPE_HYBRIDE_MOSAMS:
+                calc_obj_dir(obj);
+                recale_position(obj);
+                skipToLabel(obj, 3, true);
+                if (ray.main_etat != 2)
+                {
+                    allocateLandingSmoke(obj); //TODO
+                    set_main_and_sub_etat(&ray, 0, 0);
+                    button_released = 1;
+                    ray_jump();
+                    ray.speed_y = -8;
+                }
+                screen_trembling = 1;
+                break;
+            case TYPE_BLACKTOON1:
+                switch (obj->follow_sprite)
+                {
+                    case 3:
+                    case 5:
+                    case 6:
+                        break;
+                    case 7:
+                        obj->configuration = 2;
+                        calc_obj_dir(obj);
+                    case 1:
+                    case 4:
+                        set_main_and_sub_etat(obj, 1, 0);
+                        if (obj->flags.flip_x)
+                            skipToLabel(obj, 3, true);
+                        else
+                            skipToLabel(obj, 2, true);
+
+                        recale_position(obj);
+                        obj->speed_y = 0;
+                        break;
+                    case 2:
+                        set_main_and_sub_etat(obj, 0, 0);
+                        recale_position(obj);
+                        obj->speed_y = 0;
+                        break;
+                }
+                break;
+            case TYPE_WASHING_MACHINE:
+                if (obj->speed_y > 0)
+                {
+                    recale_position(obj);
+                    obj->speed_y = -obj->speed_y;
+                }
+                break;
+            case TYPE_DROP:
+                Drop_Atter(obj); //TODO
+                break;
+            case TYPE_MITE:
+            case TYPE_MITE2:
+                MiteAtter(obj); //TODO
+                break;
+            case TYPE_STONEWOMAN:
+                if (obj->speed_y >= 0)
+                {
+                    skipToLabel(obj, 16, true);
+                    obj->configuration = 0;
+                }
+                break;
+            case TYPE_TNT_BOMB:
+                PlaySnd(187, obj->id);
+                BombExplosion(obj); //TODO
+                break;
+            case TYPE_BADGUY1:
+            case TYPE_BADGUY2:
+            case TYPE_BADGUY3:
+                BadGuyAtter(obj); //TODO
+                break;
+            case TYPE_STONEBOMB2:
+            case TYPE_STONEBOMB3:
+                if (obj->speed_y != 0)
+                    PlaySnd(200, obj->id);
+                DO_STONEBOMB_REBOND(obj); //TODO
+                break;
+            case TYPE_STONEBOMB:
+                if (obj->speed_y != 0)
+                    PlaySnd(200, obj->id);
+                DO_THROWN_BOMB_REBOND(obj, pesanteur, 1); //TODO
+                break;
+            case TYPE_STONEDOG:
+            case TYPE_STONEDOG2:
+                stoneDogAtter(obj); //TODO
+                break;
+            case TYPE_PIRATE_BOMB:
+                DO_FRUIT_REBOND(obj, pesanteur, 1); //TODO
+                break;
+            case TYPE_MST_SHAKY_FRUIT:
+                if (obj->cmd_arg_1 != 0)
+                {
+                    PlaySnd(45, obj->id);
+                    obj->speed_y = 6;
+                    DO_FRUIT_REBOND(obj, 1, 1);
+                    obj->cmd_arg_1--;
+                }
+                break;
+            case TYPE_MST_FRUIT1:
+                if (obj->cmd_arg_1 != 0)
+                {
+                    PlaySnd(45, obj->id);
+                    obj->speed_y = 7;
+                    DO_FRUIT_REBOND(obj, 1, 1);
+                    obj->cmd_arg_1--;
+                }
+                break;
+            case TYPE_MST_FRUIT2:
+                if (obj->cmd_arg_1 != 0)
+                {
+                    PlaySnd(45, obj->id);
+                    obj->speed_y = 6;
+                    DO_THROWN_BOMB_REBOND(obj, 1, 1);
+                    obj->cmd_arg_1--;
+                }
+                break;
+            case TYPE_FALLING_OBJ:
+            case TYPE_FALLING_OBJ2:
+            case TYPE_FALLING_OBJ3:
+            case TYPE_FALLING_YING:
+            case TYPE_FALLING_YING_OUYE:
+            case TYPE_GRAINE:
+            case TYPE_BLACKTOON_EYES:
+                switch (obj->type)
+                {
+                    case TYPE_FALLING_OBJ:
+                    case TYPE_FALLING_OBJ3:
+                    case TYPE_FALLING_OBJ2:
+                        PlaySnd(45, obj->id);
+                        break;
+                    case TYPE_FALLING_YING:
+                    case TYPE_FALLING_YING_OUYE:
+                        PlaySnd(140, obj->id);
+                        break;
+                    case TYPE_GRAINE:
+                    case TYPE_BLACKTOON_EYES:
+                        PlaySnd(0, obj->id);
+                        break;
+                }
+                DO_FRUIT_REBOND(obj, pesanteur, 0);
+                break;
+            case TYPE_CAGE:
+                set_main_and_sub_etat(obj, 0, 11);
+                obj->speed_y = 0;
+                break;
+            case TYPE_LIDOLPINK:
+                LidolPinkAtter(obj);
+                break;
+            case TYPE_PIRATE_GUETTEUR:
+            case TYPE_PIRATE_GUETTEUR2:
+                if (obj->sub_etat == 2)
+                    set_main_and_sub_etat(obj, 0, 7);
+                else if (obj->speed_y >= 0)
+                    set_main_and_sub_etat(obj, 0, 10);
+                recale_position(obj);
+                obj->speed_y = 0;
+                obj->speed_x = 0;
+                break;
+            case TYPE_PIRATE_NGAWE:
+                recale_position(obj);
+                set_main_and_sub_etat(obj, 0, 5);
+                obj->speed_y = 0;
+                obj->speed_x = 0;
+                break;
+            case TYPE_SUPERHELICO:
+                obj->speed_x = 0;
+                obj->speed_y = 0;
+                break;
+            case TYPE_NOTE0:
+            case TYPE_NOTE1:
+            case TYPE_NOTE2:
+            case TYPE_BONNE_NOTE:
+            case TYPE_NOTE3:
+                DO_NOTE_REBOND(obj);
+                break;
+            case TYPE_BBL:
+                DO_BBL_REBOND(obj);
+                break;
+            case TYPE_BIG_CLOWN:
+            case TYPE_WAT_CLOWN:
+                Clown_Music_Atter(obj);
+                break;
+            case TYPE_SPIDER:
+                Spider_Atter(obj);
+                break;
+            case TYPE_BB1:
+                if (obj->iframes_timer < 10)
+                    DO_BBMONT_ATTER(obj);
+                break;
+            case TYPE_BB12:
+                DO_BBMONT2_ATTER(obj);
+                break;
+            case TYPE_BB13:
+                DO_BBMONT3_ATTER(obj);
+                break;
+            case TYPE_SAXO2:
+                DO_SAXO2_ATTER(obj);
+                break;
+            case TYPE_SAXO:
+                DO_SAXO_ATTER(obj);
+                break;
+            case TYPE_MAMA_PIRATE:
+                DO_PMA_ATTER(obj);
+                break;
+            case TYPE_COUTEAU:
+                DO_COU_ATTER(obj);
+                break;
+            case TYPE_BOUT_TOTEM:
+                DO_TOTBT_REBOND(obj);
+                break;
+            case TYPE_SPIDER_PLAFOND:
+                if (obj->main_etat == 2 && obj->speed_y > 0)
+                {
+                    set_main_and_sub_etat(obj, 0, 29);
+                    obj->speed_x = 0;
+                    obj->speed_y = 0;
+                    i16 flip_x = ray.x > obj->x;
+                    obj->flags.flip_x = flip_x;
+                }
+                break;
+            case TYPE_BALLE1:
+            case TYPE_BALLE2:
+            case TYPE_BIG_BOING_PLAT:
+            case TYPE_BLACK_FIST:
+            case TYPE_BLACK_RAY:
+            case TYPE_BNOTE:
+            case TYPE_BOING_PLAT:
+            case TYPE_BULLET:
+            case TYPE_CORDEBAS:
+            case TYPE_DARK_PHASE2:
+            case TYPE_DARK:
+            case TYPE_MARACAS_BAS:
+            case TYPE_MOSKITO:
+            case TYPE_MOSKITO2:
+            case TYPE_MST_SCROLL:
+            case TYPE_PI_BOUM:
+            case TYPE_POI1:
+            case TYPE_POI2:
+            case TYPE_POI3:
+            case TYPE_RING:
+            case TYPE_SCORPION:
+            case TYPE_SPACE_MAMA:
+            case TYPE_SPACE_MAMA2:
+            case TYPE_TAMBOUR1:
+            case TYPE_TAMBOUR2:
+                break;
+            default:
+                NormalAtter(obj);
+                break;
+        }
+    }
+    if (flags[obj->type] & flags1_0x20_move_y)
+    {
+        MIN_2(obj->speed_y, 96);
+        MAX_2(obj->speed_y, -128)
+    }
+    else
+    {
+        MIN_2(obj->speed_y, 6);
+        MAX_2(obj->speed_y, -8)
+    }
 }
 
 //57FEC
@@ -684,7 +1116,8 @@ void deactivate_ship_links(void) {
 }
 
 //5965C
-void linkListHoldsAGendoor(obj_t* obj) {
+u8 linkListHoldsAGendoor(obj_t* obj) {
+    return 0;
     //stub
 }
 
@@ -719,7 +1152,7 @@ void correct_gendoor_link(u8 a1) {
                 i16 linked_obj_id;
                 do {
                     linked_obj_id = link_init[init_link];
-                    suppressFromLinkList(level.objects + linked_obj_id); //TODO
+                    suppressFromLinkList(level.objects + linked_obj_id);
                 } while (init_link != linked_obj_id);
             }
 
@@ -729,12 +1162,37 @@ void correct_gendoor_link(u8 a1) {
 
 //597FC
 void suppressFromLinkList(obj_t* obj) {
-    //stub
+    i16 id = obj->id;
+    i16 linked_id = link_init[id];
+    if (id != linked_id) {
+        do {
+            id = linked_id;
+            linked_id = link_init[id];
+        } while (linked_id != obj->id);
+    }
+    link_init[id] = link_init[obj->id];
+    if (link_init[id] == id) {
+        level.objects[link_init[id]].link_has_gendoor = 0;
+    }
+    link_init[obj->id] = obj->id;
+    obj->link_has_gendoor = 0;
 }
 
 //59888
 void correct_link(void) {
-    //stub
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        obj_t* obj = level.objects + i;
+        if (link_init[i] == i) {
+            obj->link_has_gendoor = 0;
+        } else {
+            if ((flags[obj->type] & flags3_0x40_no_link) ||
+                    ((flags[obj->type] & flags3_0x20_link_requires_gendoor) && linkListHoldsAGendoor(obj))) {
+                suppressFromLinkList(obj);
+            } else {
+                obj->link_has_gendoor = 1;
+            }
+        }
+    }
 }
 
 //59900

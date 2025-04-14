@@ -51,7 +51,17 @@ void CALC_MOV_ON_BLOC(obj_t* obj) {
 
 //25B30
 void recale_position(obj_t* obj) {
-    //stub
+    i16 y = (obj->offset_by + obj->y) & ~0xF;
+    i16 x = (obj->offset_bx + obj->x) & 0xF;
+    i16 btyp = BTYP((obj->x + obj->offset_bx) >> 4, (obj->y + obj->offset_by) >> 4);
+
+    i32 v5 = calcblocrecal[btyp](x, 0);
+
+    if (obj->type != TYPE_23_RAYMAN) {
+        obj->y = y + v5 - obj->offset_by;
+    } else {
+        obj->speed_y = y + v5 - obj->offset_by - obj->y;
+    }
 }
 
 //25BB0

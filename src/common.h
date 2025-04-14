@@ -28,6 +28,10 @@ typedef long long s64;
 #ifndef MAX
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #endif
+#define MAX_2(x, y) if (x < y) x = y;
+#define MAX_3(x, y) if (y > x) x = y;
+#define MIN_2(x, y) if (x > y) x = y;
+#define MIN_3(x, y) if (y < x) x = y;
 
 #define pi32 3.14159265358979323846f
 #define two_pi32 (2.f*pi32)

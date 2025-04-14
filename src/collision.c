@@ -739,5 +739,24 @@ void DO_BLKTOON_EYES_CMD(obj_t* obj) {
 
 //31768
 void DO_RAY_POS_CMD(obj_t* obj) {
-    //stub
+    if (obj->timer != 255) {
+        if (obj->timer != 0) {
+            if (obj->main_etat != 0) {
+                if (obj->main_etat == 5) {
+                    ray.is_active = 1;
+                    ray.flags.alive = 1;
+                    set_main_and_sub_etat(&ray, 3, 40);
+                }
+            } else {
+                ray.is_active = 1;
+                ray.flags.alive = 1;
+            }
+            obj->flags.alive = 0;
+            del_alwobj(obj->id);
+            dead_time = 64;
+            ray.x = obj->x + obj->offset_bx - ray.offset_bx;
+            ray.y = obj->y + obj->offset_by - ray.offset_by;
+        }
+        --obj->timer;
+    }
 }

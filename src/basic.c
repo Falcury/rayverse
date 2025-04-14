@@ -176,8 +176,33 @@ void CALC_FOLLOW_SPRITE_SPEED(obj_t* obj, i32 a2, i32 a3, i16 a4) {
 }
 
 //1DBB4
-void GET_SPRITE_POS(obj_t* obj, i16 a2, i16* a3, i16* a4, i16* a5, i16* a6) {
-    //stub
+u8 GET_SPRITE_POS(obj_t* obj, i16 index, i16* x, i16* y, i16* w, i16* h) {
+    /* 230E0 801478E0 -O2 -msoft-float */
+    anim_t *anim;
+    anim_layer_t *layer;
+    u8 sprite_ind;
+    sprite_t *sprite;
+    s16 res;
+
+    anim = &obj->animations[obj->anim_index];
+    layer = &anim->layers[(anim->layers_per_frame & 0x3FFF) * obj->anim_frame];
+    layer += index;
+    sprite_ind = layer->sprite_index;
+    sprite = &obj->sprites[sprite_ind];
+    if (sprite_ind != 0 && sprite->id != 0) {
+        *w = sprite->inner_width;
+        *h = sprite->inner_height;
+        if (obj->flags.flip_x == ((sprite->flags & 4) != 0)) {
+            *x = obj->x + (obj->offset_bx * 2 - (layer->x + (sprite->sprite_pos & 0xF)) - sprite->outer_width);
+        } else {
+            *x = obj->x + layer->x + (sprite->sprite_pos & 0xF);
+        }
+        *y = layer->y + (sprite->sprite_pos >> 4) + obj->y;
+        res = true;
+    }
+    else
+        res = false;
+    return res;
 }
 
 //1DCFC
@@ -460,7 +485,7 @@ i32 calc_let_Width2(u8 font_size, i32 num_let) {
         }
     }
     if (sprite) {
-        i32 width = (sprite->field_9 & 0xF) + sprite->inner_width;
+        i32 width = (sprite->sprite_pos & 0xF) + sprite->inner_width;
         return width;
     } else {
         return 0;

@@ -233,12 +233,12 @@ typedef struct x_texture_t {
 
 typedef struct sprite_t {
 	u32 offset_in_atlas;
-	u8 unk_index;
+	u8 id;
 	u8 outer_width;
 	u8 outer_height;
 	u8 inner_width;
 	u8 inner_height;
-	u8 field_9;
+	u8 sprite_pos;
 	u8 color;
 	u8 flags;
 } sprite_t;
