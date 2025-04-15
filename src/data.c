@@ -159,6 +159,8 @@ u32 flags[262] = {
         0x02038000, 0x02038000, 0x02038000,
 };
 
+u8 joy_done; //92994
+
 //92996
 i16 zonediffx[262] = {
         0, 0, 0, 0, 0, -50, 0, 0, -80, 0, 0, 0, 250, 0, 250, 0, -60, -60, 0, 0, 60, 0, 0, 0, 0, 0, -60, 0, 0, 0,
@@ -2170,7 +2172,7 @@ u8 FinAnim; //CFA93
 u8 Phase; // (?) CFA94
 u8 WaitForFinAtan; //CFA95
 u8 skops_nb_lave; //CFA96
-u8 nb_trames_ecrase; //CFA97
+u8 NbTramesEcrase; //CFA97
 u8 RaymanDansUneMapDuJeu; //CFA98
 u8 life_becoz_wiz; //CFA99
 u8 nb_fix_eta; //CFA9A

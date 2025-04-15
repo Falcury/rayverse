@@ -419,8 +419,33 @@ void stop_freeze_snd(void) {
 }
 
 //7319C
-void PlayTchatchVignette(i32 a1) {
-    //stub
+void PlayTchatchVignette(i32 snd) {
+    if (CarteSonAutorisee) {
+        if (snd == 0) {
+            switch(num_world_choice) {
+                case 1: {
+                    snd = 1;
+                } break;
+                case 3: {
+                    snd = 2;
+                } break;
+                case 4: {
+                    snd = 4;
+                } break;
+                case 5: {
+                    if (num_level_choice != 3) {
+                        return;
+                    }
+                    snd = 3;
+                } break;
+                case 6: {
+                    snd = 7;
+                } break;
+                default: break;
+            }
+        }
+        PlayTchatch(snd, Volume_Snd); //TODO
+    }
 }
 
 //73204

@@ -150,7 +150,33 @@ bool COLL_RAY_PIC(void) {
 
 //2DA98
 void COLL_RAY_BLK_MORTEL(void) {
-    //stub
+    if ((ray.y + ray.offset_by) < (mp.height * 16)) {
+        i16 btyp = mp.map[ray.ray_dist].tile_type;
+        if (btyp == BTYP_SPIKES) {
+            set_main_and_sub_etat(&ray, 3, 32);
+            if (dead_time != 1) {
+                dead_time = 1;
+                stop_all_snd();
+                start_cd_perdu();
+            }
+            ray.speed_y = 0;
+            ray.speed_x = 0;
+            ray.y += 5;
+        } else if (ray.coll_btype[3] == BTYP_SPIKES) {
+            set_main_and_sub_etat(&ray, 3, 32);
+            if (dead_time != 1) {
+                dead_time = 1;
+                stop_all_snd();
+                start_cd_perdu();
+            }
+            ray.speed_y = 0;
+            ray.speed_x = 0;
+        } else if (btyp == BTYP_CLIFF) {
+            set_main_and_sub_etat(&ray, 2, 31);
+            scroll_end_y = ymap;
+            scroll_start_y = ymap;
+        }
+    }
 }
 
 //2DBAC
@@ -740,7 +766,7 @@ void DO_BLKTOON_EYES_CMD(obj_t* obj) {
 //31768
 void DO_RAY_POS_CMD(obj_t* obj) {
     if (obj->timer != 255) {
-        if (obj->timer != 0) {
+        if (obj->timer == 0) {
             if (obj->main_etat != 0) {
                 if (obj->main_etat == 5) {
                     ray.is_active = 1;

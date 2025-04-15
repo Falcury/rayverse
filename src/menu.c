@@ -188,6 +188,7 @@ void LOAD_CONFIG(void) {
         options_jeu.action = 2;
         SetVolumeSound((options_jeu.sound_volume * 127) / 20);
         GameModeVideo = 0;
+        POINTEUR_BOUTONS_OPTIONS_BIS();
     }
 
     set_special_key_descriptions(key_descriptions_azerty);

@@ -156,7 +156,18 @@ void RayTestBlocSH(void) {
 
 //6F95C
 void remoteControlRay(void) {
-    //stub
+    i32 diff_x = ray.x - remoteRayXToReach;
+    if (diff_x > 1) {
+        ray.flags.flip_x = 0;
+        set_sub_etat(&ray, 21);
+    } else if (diff_x < -1) {
+        ray.flags.flip_x = 1;
+        set_sub_etat(&ray, 21);
+    } else {
+        ray.speed_x = 0;
+        set_sub_etat(&ray, 20);
+        remoteRayXToReach = (i16)ray.x;
+    }
 }
 
 //6F9E0
@@ -171,22 +182,86 @@ void RAY_IN_THE_AIR(void) {
 
 //7008C
 void terminateFistWhenRayDies(void) {
-    //stub
+    if (poing.is_active) {
+        DO_NOVA(poing_obj);
+        switch_off_fist();
+    }
 }
 
 //700A4
-void snifRayIsDead(i32 a1) {
+void snifRayIsDead(obj_t* obj) {
     //stub
 }
 
 //7010C
 void rayfallsinwater(void) {
-    //stub
+    /* 62FA4 801877A4 -O2 -msoft-float */
+    set_main_and_sub_etat(&ray, 3, 22);
+    decalage_en_cours = 0;
+    ray.anim_frame = 0;
+    ray.speed_y = 0;
+    ray.speed_x = 0;
+    decalage_en_cours = 0;
+    if (ray_on_poelle) {
+        ray.x -= h_scroll_speed;
+    }
+    h_scroll_speed = 0;
+    dead_time = 1;
+    ray.iframes_timer = 120;
+    ray_se_noie = true;
+    allocate_splash(&ray);
+    terminateFistWhenRayDies();
 }
 
 //701A8
-void RAY_DEAD(void) {
-    //stub
+u8 RAY_DEAD(void) {
+    if (ray.x < LEFT_MAP_BORDER - 10 ||
+            (ray.screen_y + ray.offset_by < -20 && scroll_y == -1) ||
+            ray.x > RIGHT_MAP_BORDER + 10 ||
+            ray.screen_y > SCREEN_HEIGHT - 20
+    ) {
+        ray.hit_points = 0;
+        RAY_HIT(1, 0); //TODO
+    } else {
+        if (!(ray.main_etat == 2 && ray.sub_etat == 9) &&
+                !(ray.main_etat == 3 && ray.sub_etat == 22) &&
+                ray.flags.alive
+        ) {
+            if (ray.coll_btype[0] == BTYP_WATER && ray.cmd_arg_2 == -1 && ray.main_etat != 6) {
+                rayfallsinwater();
+            } else if (ray.y + ray.offset_by > (mp.height + 1) * 16) {
+                set_main_and_sub_etat(&ray, 2, 9);
+                if (ray.speed_y < 0) {
+                    ray.speed_y = 0;
+                }
+            }
+        }
+        if ((ray.main_etat == 2 && ray.sub_etat == 9) ||
+                (ray.main_etat == 3 && (ray.sub_etat == 22 || ray.sub_etat == 32) && EOA(&ray))
+        ) {
+            --dead_time;
+            if (dead_time != 0 || fin_du_jeu) {
+                ray.cmd_arg_2 = -1;
+            } else {
+                ray.hit_points = 2;
+                if (ray.is_active) {
+                    ray.is_active = 0;
+                    ray.flags.alive = 0;
+                    dead_time = 64;
+                    snifRayIsDead(&ray); //TODO
+                    if (status_bar.lives < 0) {
+                        ray.hit_points = 0;
+                        fin_du_jeu = 1;
+                        status_bar.lives = 0;
+                    }
+                }
+                status_bar.max_hitp = ray.hit_points;
+                ray.iframes_timer = 90;
+            }
+        }
+    }
+    bool alive = ray.is_active && ray.flags.alive && ray_mode != 3 && ray_mode != 4;
+    return alive;
 }
 
 //70408
@@ -251,6 +326,80 @@ void DO_RAY_ON_MS(void) {
 
 //7133C
 void DO_RAYMAN(void) {
+    v_scroll_speed = 0;
+    h_scroll_speed = 0;
+    setvol(-1);
+    if (RAY_DEAD()) {
+        ray.ray_dist = ((ray.y + ray.offset_by) >> 4) * mp.width + ((ray.x + ray.offset_bx) >> 4);
+        COLL_RAY_BLK_MORTEL();
+        if (scroll_y != -1 && ray.screen_y + ray.offset_bx < 0) {
+            ray.speed_y = 0;
+        }
+        if (ray.iframes_timer == -1 && get_eta(&ray)->flags & 8) {
+            if (COLL_RAY_PIC()) { // TODO
+                RAY_HIT(1, 0);
+            }
+        }
+    }
+    if (RayEvts.squashed && ray.iframes_timer == -1 && ray.scale == 0) {
+        Ray_RayEcrase(); // TODO
+    }
+
+    joy_done = 0;
+    calc_obj_pos(&ray);
+    if (ray.cmd_arg_2 == -1) {
+        calc_btyp(&ray);
+    } else {
+        ray.speed_y = 0;
+        ray.speed_x = 0;
+    }
+
+    if (!(remoteRayXToReach == -32000 || get_eta(&ray)->flags & 0x40)) {
+        if ((ray.main_etat == 0 && !(ray.sub_etat == 4 || ray.sub_etat == 5 || ray.sub_etat == 6 ||
+                                     ray.sub_etat == 7 || ray.sub_etat == 9 || ray.sub_etat == 10)) ||
+                (ray.main_etat == 1 && !(ray.sub_etat == 1)) ||
+                (ray.main_etat == 3 && !(ray.sub_etat == 1 || (ray.sub_etat == 2 || ray.sub_etat == 3) || ray.sub_etat == 4))
+        ) {
+            if (remoteRayXToReach != 0) {
+                set_main_and_sub_etat(&ray, 3, 21);
+            } else {
+                set_main_and_sub_etat(&ray, 3, 20);
+            }
+        }
+
+        if ((ray.main_etat == 2 && ray.sub_etat == 8) || (ray.main_etat == 2 && ray.sub_etat == 31)) {
+            RAY_IN_THE_AIR(); //TODO
+        } else if (ray.main_etat == 3) {
+            if (ray.sub_etat == 16) {
+                DO_GROWING_PLATFORM(); //TODO
+                if (eau_obj_id != -1) {
+                    level.objects[eau_obj_id].iframes_timer = 1;
+                }
+            } else if (ray.sub_etat == 21 || ray.sub_etat == 20) {
+                remoteControlRay();
+            }
+
+            if (!(ray.sub_etat == 22 || ray.sub_etat == 23 || ray.sub_etat == 32)) {
+                RAY_SWIP();
+            }
+        } else {
+            if (options_jeu.test_fire1()) {
+                RAY_RESPOND_TO_FIRE1(); // jump
+            }
+            if (options_jeu.test_fire0()) {
+                RAY_RESPOND_TO_FIRE0(); // weapon
+            }
+            if (options_jeu.test_button3()) {
+                RAY_RESPOND_TO_BUTTON3(); // action
+            }
+            if (options_jeu.test_button4()) {
+                //RAY_RESPOND_TO_BUTTON4(); //unused; NOTE: nullsub present in the Android version optimized out?
+            }
+
+             //STUB
+        }
+    }
+
     //stub
 }
 

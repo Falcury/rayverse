@@ -579,9 +579,9 @@ void DoMusicienRaymanInZDD(obj_t* obj) {
 // sub_62658
 void DO_TEN_COMMAND(obj_t* obj) {
     if (obj->cmd == GO_LEFT) {
-        obj_set_not_flipped(obj);
+        obj->flags.flip_x = 0;
     } else if (obj->cmd == GO_RIGHT) {
-        obj_set_flipped(obj);
+        obj->flags.flip_x = 1;
     }
     if (obj->main_etat == 0 && obj->sub_etat == 11) {
         if (obj->anim_frame >= 5 && obj->timer == 0) {

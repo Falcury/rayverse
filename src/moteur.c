@@ -84,8 +84,13 @@ void allocateLandingSmoke(obj_t* obj) {
 }
 
 //55E60
-void instantSpeed(i16 a1) {
-    //stub
+i32 instantSpeed(i16 speed) {
+    i32 spd_shr = ashr16(speed, 4);
+    i32 spd_abs_max = abs(speed) & 0xF;
+    if (spd_abs_max != 0) {
+        spd_shr += sgn(speed) * (ashr32(map_time * spd_abs_max, 4) - ashr32(map_time * spd_abs_max - spd_abs_max, 4));
+    }
+    return spd_shr;
 }
 
 //55EE4
@@ -894,12 +899,77 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
 
 //57FEC
 void test_fall_in_water(obj_t* obj) {
-    //stub
+    if (obj->coll_btype[0] == BTYP_WATER && !(obj->type == TYPE_23_RAYMAN && ray.main_etat == 6)) {
+        if (obj->type == TYPE_52_MST_FRUIT2) {
+            obj->flags.alive = 0;
+        } else {
+            if (flags[obj->type] & flags2_2_fall_in_water) {
+                if (!obj->flags.flag_0x40) {
+                    allocate_splash(obj);
+                    obj->speed_y = 0;
+                    obj->speed_x = 0;
+                }
+                if (flags[obj->type] & flags3_2_die_in_water) {
+                    obj->is_active = 0;
+                    obj->y = ymap + 484;
+                }
+            }
+        }
+    }
 }
 
 //58084
 void MOVE_OBJECT(obj_t* obj) {
-    //stub
+    if (obj->speed_x != 0 || obj->speed_y != 0) {
+        if ((flags[obj->type] & flags2_0x80_increase_speed_x) && obj->configuration == 1 && horloge[20] == 0) {
+            obj->speed_x = obj->speed_x <= 0 ? obj->speed_x + 1 : obj->speed_x - 1;
+            if (obj->speed_x == 0) {
+                obj->configuration = 0;
+            }
+        }
+        bool need_set_flag_0x100;
+        if (obj->type == TYPE_94_POING) {
+            poing.y_16 += ashl16(obj->speed_y, 4);
+            obj->y = poing.y_16 >> 4;
+            obj->x += obj->speed_x;
+            need_set_flag_0x100 = false;
+        } else {
+            i32 dx = 0;
+            i32 dy = 0;
+
+            if (flags[obj->type] & flags1_0x20_move_y) {
+                dy = instantSpeed(obj->speed_y);
+            } else {
+                dy = obj->speed_y;
+            }
+
+            if (flags[obj->type] & flags1_0x10_move_x) {
+                dx = instantSpeed(obj->speed_x);
+            } else {
+                dx = obj->speed_x;
+            }
+
+            if (flags[obj->type] & flags2_0x40_uturn_on_block) {
+                i32 x1 = obj->x + obj->offset_bx;
+                i32 x2 = x1 + dx;
+                i32 y = obj->y + obj->offset_by - 8;
+                if ((!(block_flags[BTYP(x1, y) >> 4] & 0x10) && (block_flags[BTYP(x2, y) >> 4] & 0x10)) ||
+                        x2 < 0 || (x2 > xmapmax + SCREEN_WIDTH - 16)) {
+                    dx = -dx;
+                    obj->speed_x = -obj->speed_x;
+                }
+            }
+
+            obj->x += dx;
+            obj->y += dy;
+            need_set_flag_0x100 = (dx != 0) || (dy != 0);
+        }
+
+        obj->flags.flag_0x100 = need_set_flag_0x100;
+        test_fall_in_water(obj);
+    } else {
+        obj->flags.flag_0x100 = false;
+    }
 }
 
 //58270
@@ -1067,7 +1137,10 @@ void DO_OBJECTS(void) {
 
 //58908
 void MOVE_OBJECTS(void) {
-    //stub
+    for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+        obj_t* obj = level.objects + actobj.objects[i];
+        MOVE_OBJECT(obj);
+    }
 }
 
 //58964
@@ -1131,6 +1204,7 @@ void correct_gendoor_link(u8 a1) {
 
             // NOTE: I'm not too sure about this part, might need checking
             while (link != i && link != last_link) {
+                // TODO: solve infinite loop problem
                 if (obj->flags.alive && obj->type == TYPE_164_GENERATING_DOOR) {
                     level.objects[link].flags.alive = 0;
                 }
@@ -1279,37 +1353,40 @@ void INIT_RAY(u8 new_lvl) {
     if (level.objects && level.nb_objects > 0) {
 
         obj_t* obj = level.objects;
+        bool found = false;
         for (i32 i = 0; i < level.nb_objects; ++i) {
             if (obj->type == TYPE_99_RAY_POS) {
+                found = true;
                 break;
             }
             ++obj;
         }
-        // NOTE: if the rayman start position doesn't exist, the first object is used instead
-        if (!fin_continue) {
-            ray.flags.alive = false;
-            ray.is_active = 0;
+        if (found) {
+            if (!fin_continue) {
+                ray.flags.alive = false;
+                ray.is_active = 0;
+            }
+            xmap = obj->x + obj->offset_bx - 160;
+            ymap = obj->y - 10;
+            if (GameModeVideo) {
+                if (xmap >= xmapmax) {
+                    xmap = xmapmax;
+                }
+                if (ymap >= ymapmax) {
+                    ymap = ymapmax;
+                }
+                if (xmap < 0) {
+                    xmap = 0;
+                }
+                if (ymap < 0) {
+                    ymap = 0;
+                }
+            } else {
+                set_xymap();
+            }
+            ray.x = obj->x + obj->offset_bx - ray.offset_bx;
+            ray.y = obj->y + obj->offset_by - ray.offset_by;
         }
-        xmap = obj->x + obj->offset_bx - 160;
-        ymap = obj->y - 10;
-        if (GameModeVideo) {
-            if (xmap >= xmapmax) {
-                xmap = xmapmax;
-            }
-            if (ymap >= ymapmax) {
-                ymap = ymapmax;
-            }
-            if (xmap < 0) {
-                xmap = 0;
-            }
-            if (ymap < 0) {
-                ymap = 0;
-            }
-        } else {
-            set_xymap();
-        }
-        ray.x = obj->x + obj->offset_bx - ray.offset_bx;
-        ray.y = obj->y + obj->offset_by - ray.offset_by;
     }
 
     if (RaymanDansUneMapDuJeu) {
@@ -1619,7 +1696,96 @@ void DO_MOTEUR(void) {
 
 //5AC70
 void DO_MOTEUR2(void) {
-    //stub
+    DO_WIZ_AFTER_BONUS_MAP(); //TODO
+    DO_PERFECT_BONUS_MAP(); //TODO
+    DO_OBJECTS_ANIMS(); //TODO
+    if (ray.flags.alive) {
+        if (dead_time != 64) {
+            ray.cmd_arg_2 = -1;
+        }
+        switch(ray_mode) {
+            case 1: {
+                DO_RAYMAN(); //TODO
+            } break;
+            case 2: {
+                if (ray.main_etat != 6) {
+                    set_main_and_sub_etat(&ray, 6, 0);
+                }
+                DO_RAY_ON_MS(); //TODO
+            } break;
+            case 3:
+            case 4: {
+                DO_MORT_DE_RAY(); //TODO
+            } break;
+            case 5: {
+                DO_RAY_CASSE_BRIQUE(); //TODO
+            } break;
+            default: {
+                DO_PLACE_RAY(); //TODO
+            } break;
+        }
+        if (NumScrollObj <= 0 || ray_mode <= 0) {
+            scroll_x = -1;
+            scroll_y = -1;
+        } else {
+            DO_AUTO_SCROLL(); //TODO
+        }
+        MOVE_OBJECTS();
+        calc_obj_pos(&ray);
+        if (scroll_y != -1 && v_scroll_speed == 255) {
+            v_scroll_speed = 0;
+        }
+        if (ray_mode > 0) {
+            recale_ray_pos(); //TODO
+        }
+        if (ray_mode == 2) {
+            //stub
+        }
+        DO_SCROLL(&h_scroll_speed, &v_scroll_speed); //TODO
+        build_active_table();
+        RECALE_ALL_OBJECTS(); //TODO
+        if (ray.cmd_arg_2 != -1) {
+            obj_t* v20 = level.objects + ray.cmd_arg_2;
+            oldPrio = v20->display_prio;
+            if (oldPrio > 3) {
+                v20->display_prio = 3;
+            }
+        }
+    } else {
+        MOVE_OBJECTS();
+        scroll_y = -1;
+        build_active_table();
+        if (dead_time != 0) {
+            // TODO: solve ray.flags.alive set to false at start of game?
+            --dead_time;
+        }
+    }
+    DO_FIXE(); //TODO
+    if (MapAvecPluieOuNeige) {
+        do_flocons(xmap, ymap, xmap_old, ymap_old);
+        DO_SNOW_SEQUENCE();
+    }
+    do_pix_gerbes();
+    if (RayEvts.tiny) {
+        set_zoom_mode(0);
+        if (RayEvts.squashed && (ray.iframes_timer == -1 || ray.scale & ~0x100)) {
+            if (ray.main_etat != 5) {
+                if (NbTramesEcrase != 0) {
+                    --NbTramesEcrase;
+                } else {
+                    ray.scale = MAX(0, ray.scale - 5);
+                }
+            }
+        } else {
+            ray.scale = 256;
+            NbTramesEcrase = 200;
+        }
+        if (ray.flags.flip_x) {
+            set_proj_center(ray.screen_x - 8 + ray.offset_bx, ray.screen_y + ray.offset_by);
+        } else {
+            set_proj_center(ray.screen_x + ray.offset_bx, ray.screen_y + ray.offset_by);
+        }
+    }
 }
 
 //5B0A4

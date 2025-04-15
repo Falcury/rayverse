@@ -197,6 +197,6 @@ void DO_CB_BRIK_COMMAND(obj_t* obj) {
 }
 
 //28888
-void DO_RAY_CASSE_BRIQUE(obj_t* obj) {
+void DO_RAY_CASSE_BRIQUE() {
     //stub
 }

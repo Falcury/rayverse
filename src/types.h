@@ -212,7 +212,7 @@ typedef struct {
 } loadinforay_t;
 
 typedef struct poing_t {
-	u32 field_0; // Fixed-point y pos value?
+	u32 y_16; // Fixed-point y pos value?
 	u16 field_4;
 	u16 speed_x;
 	u16 charge;
@@ -450,10 +450,10 @@ typedef struct options_t {
 } options_t;
 
 typedef struct options_jeu_t {
-	void* func_0;
-	void* func_4;
-	void* func_8;
-	void* func_C;
+	i32 (*test_fire1)(void);
+    i32 (*test_fire0)(void);
+    i32 (*test_button4)(void);
+    i32 (*test_button3)(void);
 	u16 jump;
 	u16 fist;
 	u16 field_14;

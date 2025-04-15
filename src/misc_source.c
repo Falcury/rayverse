@@ -6,14 +6,6 @@ static inline eta_t* get_eta(obj_t* obj) {
 	return &obj->eta[obj->main_etat][obj->sub_etat];
 }
 
-static inline void obj_set_flipped(obj_t* obj) {
-	obj->flags.flip_x = true;
-}
-
-static inline void obj_set_not_flipped(obj_t* obj) {
-	obj->flags.flip_x = false;
-}
-
 
 // maybe move these to memory-related procedures?
 

@@ -214,7 +214,7 @@ void LoadTchatchPerdu(void) {
 }
 
 //3EDF4
-void PlayTchatch(void) {
+void PlayTchatch(i32 snd, i32 volume) {
     //stub
 }
 

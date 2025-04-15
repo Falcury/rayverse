@@ -27,7 +27,11 @@ void start_cd_gros_rayman(void) {
 
 //1CF80
 void start_cd_perdu(void) {
-    //stub
+    if (CarteSonAutorisee) {
+        PlayTchatchVignette(8);
+    } else {
+        start_cd_gros_rayman();
+    }
 }
 
 //1CF94

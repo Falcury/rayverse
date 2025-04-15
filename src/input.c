@@ -1,7 +1,81 @@
 
 //41AF0
 void POINTEUR_BOUTONS_OPTIONS_BIS(void) {
-    //stub
+    switch(options_jeu.jump) {
+        case 0: {
+            options_jeu.test_fire1 = but0pressed;
+            TEST_KEY_BUTTON0 = TestKeyJump;
+        } break;
+        case 1: {
+            options_jeu.test_fire1 = but1pressed;
+            TEST_KEY_BUTTON1 = TestKeyJump;
+        } break;
+        case 2: {
+            options_jeu.test_fire1 = but2pressed;
+            TEST_KEY_BUTTON2 = TestKeyJump;
+        } break;
+        case 3: {
+            options_jeu.test_fire1 = but3pressed;
+            TEST_KEY_BUTTON3 = TestKeyJump;
+        } break;
+        default: break;
+    }
+
+    switch(options_jeu.fist) {
+        case 0: {
+            options_jeu.test_fire0 = but0pressed;
+            TEST_KEY_BUTTON0 = TestKeyWeapon;
+        } break;
+        case 1: {
+            options_jeu.test_fire0 = but1pressed;
+            TEST_KEY_BUTTON1 = TestKeyWeapon;
+        } break;
+        case 2: {
+            options_jeu.test_fire0 = but2pressed;
+            TEST_KEY_BUTTON2 = TestKeyWeapon;
+        } break;
+        case 3: {
+            options_jeu.test_fire0 = but3pressed;
+            TEST_KEY_BUTTON3 = TestKeyWeapon;
+        } break;
+        default: break;
+    }
+
+    switch(options_jeu.field_14) {
+        case 0: {
+            options_jeu.test_button4 = but0pressed;
+        } break;
+        case 1: {
+            options_jeu.test_button4 = but1pressed;
+        } break;
+        case 2: {
+            options_jeu.test_button4 = but2pressed;
+        } break;
+        case 3: {
+            options_jeu.test_button4 = but3pressed;
+        } break;
+        default: break;
+    }
+
+    switch(options_jeu.action) {
+        case 0: {
+            options_jeu.test_button3 = but0pressed;
+            TEST_KEY_BUTTON0 = TestKeyAction;
+        } break;
+        case 1: {
+            options_jeu.test_button3 = but1pressed;
+            TEST_KEY_BUTTON1 = TestKeyAction;
+        } break;
+        case 2: {
+            options_jeu.test_button3 = but2pressed;
+            TEST_KEY_BUTTON2 = TestKeyAction;
+        } break;
+        case 3: {
+            options_jeu.test_button3 = but3pressed;
+            TEST_KEY_BUTTON3 = TestKeyAction;
+        } break;
+        default: break;
+    }
 }
 
 //41CA8
