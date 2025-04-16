@@ -275,8 +275,8 @@ void RepousseRay(void) {
 }
 
 //70598
-void RayEstIlBloque(void) {
-    //stub
+u8 RayEstIlBloque(void) {
+    return 0; //stub
 }
 
 //7089C
@@ -340,30 +340,32 @@ void DO_RAYMAN(void) {
                 RAY_HIT(1, 0);
             }
         }
-    }
-    if (RayEvts.squashed && ray.iframes_timer == -1 && ray.scale == 0) {
-        Ray_RayEcrase(); // TODO
-    }
 
-    joy_done = 0;
-    calc_obj_pos(&ray);
-    if (ray.cmd_arg_2 == -1) {
-        calc_btyp(&ray);
-    } else {
-        ray.speed_y = 0;
-        ray.speed_x = 0;
-    }
+        if (RayEvts.squashed && ray.iframes_timer == -1 && ray.scale == 0) {
+            Ray_RayEcrase(); // TODO
+        }
 
-    if (!(remoteRayXToReach == -32000 || get_eta(&ray)->flags & 0x40)) {
-        if ((ray.main_etat == 0 && !(ray.sub_etat == 4 || ray.sub_etat == 5 || ray.sub_etat == 6 ||
-                                     ray.sub_etat == 7 || ray.sub_etat == 9 || ray.sub_etat == 10)) ||
+        joy_done = 0;
+        calc_obj_pos(&ray);
+        if (ray.cmd_arg_2 == -1) {
+            calc_btyp(&ray);
+        } else {
+            ray.speed_y = 0;
+            ray.speed_x = 0;
+        }
+
+        if (!(remoteRayXToReach == -32000 || get_eta(&ray)->flags & 0x40)) {
+            if ((ray.main_etat == 0 && !(ray.sub_etat == 4 || ray.sub_etat == 5 || ray.sub_etat == 6 ||
+                                         ray.sub_etat == 7 || ray.sub_etat == 9 || ray.sub_etat == 10)) ||
                 (ray.main_etat == 1 && !(ray.sub_etat == 1)) ||
-                (ray.main_etat == 3 && !(ray.sub_etat == 1 || (ray.sub_etat == 2 || ray.sub_etat == 3) || ray.sub_etat == 4))
-        ) {
-            if (remoteRayXToReach != 0) {
-                set_main_and_sub_etat(&ray, 3, 21);
-            } else {
-                set_main_and_sub_etat(&ray, 3, 20);
+                (ray.main_etat == 3 &&
+                 !(ray.sub_etat == 1 || (ray.sub_etat == 2 || ray.sub_etat == 3) || ray.sub_etat == 4))
+                    ) {
+                if (remoteRayXToReach != 0) {
+                    set_main_and_sub_etat(&ray, 3, 21);
+                } else {
+                    set_main_and_sub_etat(&ray, 3, 20);
+                }
             }
         }
 
@@ -380,27 +382,120 @@ void DO_RAYMAN(void) {
             }
 
             if (!(ray.sub_etat == 22 || ray.sub_etat == 23 || ray.sub_etat == 32)) {
-                RAY_SWIP();
+                RAY_SWIP(); //TODO
             }
         } else {
             if (options_jeu.test_fire1()) {
-                RAY_RESPOND_TO_FIRE1(); // jump
+                RAY_RESPOND_TO_FIRE1(); // jump //TODO
             }
             if (options_jeu.test_fire0()) {
-                RAY_RESPOND_TO_FIRE0(); // weapon
+                RAY_RESPOND_TO_FIRE0(); // weapon //TODO
             }
             if (options_jeu.test_button3()) {
-                RAY_RESPOND_TO_BUTTON3(); // action
+                RAY_RESPOND_TO_BUTTON3(); // action //TODO
             }
             if (options_jeu.test_button4()) {
                 //RAY_RESPOND_TO_BUTTON4(); //unused; NOTE: nullsub present in the Android version optimized out?
             }
 
-             //STUB
+            if (record.is_playing && butX1pressed() && butX0pressed()) {
+                ChangeLevel();
+            }
+
+            if (poing.is_charging) {
+                if (ray.sub_etat == 12) {
+                    RAY_GROW_FIST();
+                }
+                if (!options_jeu.test_fire0()) {
+                    RAY_THROW_FIST(); //TODO
+                }
+            }
+
+            if (ray.main_etat == 7) {
+                RAY_BALANCE(); //TODO
+            } else if (ray.main_etat == 2) {
+                RAY_IN_THE_AIR(); //TODO
+            } else if (!options_jeu.test_fire1()) {
+                button_released = 1;
+            }
+            RAY_RESPOND_TO_ALL_DIRS(); //TODO
+        }
+
+        if (RayEvts.reverse != 0) {
+            i16 ray_x, ray_y, ray_w, ray_h;
+            GET_SPRITE_POS(&ray, 5, &ray_x, &ray_y, &ray_w, &ray_h);
+            // TODO: initialize star_ray_der and star_ray_dey
+            star_ray_der->x = star_ray_dev->x = ray_x + (ray_w >> 1) - star_ray_dev->offset_bx;
+            star_ray_der->y = star_ray_dev->y = ray_y - star_ray_dev->offset_hy;
+
+            if (!star_ray_der->is_active) {
+                add_alwobj(star_ray_der);
+            }
+            if (!star_ray_dev->is_active) {
+                add_alwobj(star_ray_dev);
+            }
+        } else if (RayEvts.force_run != 0) {
+            if (RayEvts.force_run == 1) {
+                RayEvts.force_run = 2;
+                RayEvts.run = 1;
+                DO_NOVA(&ray); //TODO
+                set_main_and_sub_etat(&ray, 1, 3);
+            } else if (!((ray.main_etat == 1 && (ray.sub_etat == 3 || ray.sub_etat == 7)) || ray.main_etat == 2)) {
+                RayEvts.run = 1;
+                set_main_and_sub_etat(&ray, 1, 3);
+            } else if (RayEvts.force_run == 3 && (ray.main_etat != 2)) {
+                RayEvts.force_run = 0;
+            }
+        }
+
+        if (ray.cmd_arg_2 != -1) {
+            RAY_FOLLOW(); //TODO
+        }
+
+        if (RayEstIlBloque()) { //TODO
+            if (ray.main_etat == 7) {
+                RAY_FIN_BALANCE(); //TODO
+            }
+            ray.speed_x = 0;
+            ray.nb_cmd = 0;
+            decalage_en_cours = 0;
+        }
+
+        if (pierreAcorde_obj_id != -1) {
+            RepousseRay(); //TODO
+        }
+
+        RAY_SURF(); //TODO
+        STOPPE_RAY_EN_XY(); //TODO
+
+        if (ray.speed_y <= 0) {
+            if (ray.speed_y < 0) {
+                move_up_ray(); //TODO
+            }
+        } else {
+            move_down_ray(); //TODO
+        }
+        if (ray.speed_x >= 0) {
+            if (ray.speed_x > 0) {
+                RAY_TO_THE_RIGHT(); //TODO
+            }
+        } else {
+            RAY_TO_THE_LEFT(); //TODO
+        }
+
+        if (ray.flags.alive && ray.main_etat != 7) {
+            DO_ANIM(&ray);
+            DO_SURF_CHANGE_HAIRS(); //TODO
+        }
+
+        GET_RAY_ZDC(&ray, &ray_zdc_x, &ray_zdc_y, &ray_zdc_w, &ray_zdc_h); //TODO
+        DO_COLLISIONS(); //TODO
+        if (!fin_boss) {
+            TEST_SIGNPOST(); //TODO
         }
     }
 
-    //stub
+    stackRay(); //TODO
 }
 
 //71920

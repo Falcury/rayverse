@@ -1346,8 +1346,9 @@ void INIT_RAY(u8 new_lvl) {
             RAY_REVERSE_COMMANDS(); //TODO
         }
     } else {
-        RayEvts.reverse = 1;
-        RAY_REVERSE_COMMANDS(); //TODO
+        //TODO: figure out what is happening here (seems to be wrong right now)
+//        RayEvts.reverse = 1;
+//        RAY_REVERSE_COMMANDS(); //TODO
     }
 
     if (level.objects && level.nb_objects > 0) {

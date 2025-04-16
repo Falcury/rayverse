@@ -228,12 +228,20 @@ i32 but3pressed(void) {
 
 //420D4
 i32 butX0pressed(void) {
-    return 0; //stub
+    bool result = false;
+    if (nb_fade == 0) {
+        result = bux01 == 1 || (input_mode == 1 && TEST_KEY_BUTTON2());
+    }
+    return result;
 }
 
 //4210C
 i32 butX1pressed(void) {
-    return 0; //stub
+    bool result = false;
+    if (nb_fade == 0) {
+        result = bux11 == 1;
+    }
+    return result;
 }
 
 //4212C

@@ -206,7 +206,7 @@ u8 GET_SPRITE_POS(obj_t* obj, i16 index, i16* x, i16* y, i16* w, i16* h) {
 }
 
 //1DCFC
-void GET_RAY_ZDC(obj_t* obj, i16* a2, i16* a4, i16* a5) {
+void GET_RAY_ZDC(obj_t* obj, i16* a2, i16* a3, i16* a4, i16* a5) {
     //stub
 }
 

@@ -327,7 +327,7 @@ typedef struct obj_t {
 	i16 nb_sprites;
 	i16 cmd_offset;
 	i16 nb_cmd;
-	i16 cmd_arg_2; // action (?) // command_par2? // field_4A
+	i16 cmd_arg_2; // action (?) // command_par2? follow_id? // field_4A
 	i16 follow_y;
 	i16 follow_x;
 	i16 cmd_arg_1;

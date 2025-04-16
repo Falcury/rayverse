@@ -21,7 +21,10 @@ void RAY_PREPARE_FIST(void) {
 
 //66BD0
 void RAY_GROW_FIST(void) {
-    //stub
+    ++poing.charge;
+    if (poing.charge >= 64) {
+        poing.charge = 63;
+    }
 }
 
 //66BF4

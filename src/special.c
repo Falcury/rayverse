@@ -613,7 +613,8 @@ void START_2_PARTS_CYMBAL_ACTION(obj_t* obj) {
 
 //7BFB0
 void ChangeLevel(void) {
-    //stub
+    fix_numlevel(&ray);
+    new_level = 1;
 }
 
 //7BFCC
