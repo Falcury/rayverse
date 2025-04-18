@@ -319,7 +319,7 @@ void gauge(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7);
 void ClearBorder(i16 lim_H1, i16 lim_H2, i16 lim_W1, i16 lim_W2);
 
 // blocs.c
-void MURDUR(i16 a1, i16 a2);
+u8 MURDUR(i16 x, i16 y);
 i32 dist_to_bloc_floor(i16 btype, i16 x, i16 y);
 u8 bloc_floor(i16 btype, i16 x, i16 y);
 u8 calc_typ_trav(obj_t* obj, u8 a2);
@@ -1368,7 +1368,7 @@ void RAY_BALANCE(void);
 void RAY_FIN_BALANCE(void);
 void RayTestBlocSH(void);
 void remoteControlRay(void);
-void STOPPE_RAY_CONTRE_PAROIS(u8 a1);
+void STOPPE_RAY_CONTRE_PAROIS(u8 block);
 void RAY_IN_THE_AIR(void);
 void terminateFistWhenRayDies(void);
 void snifRayIsDead(obj_t* obj);
@@ -1620,3 +1620,4 @@ u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte);
 void SetPalette(rgb_palette_t* palette, u8 first_color, i32 num_colors);
 void set_special_key_descriptions(const char** descriptions);
 image_t load_vignet_pcx(u32 resource_id);
+void detect_and_remove_invalid_link_cycles();

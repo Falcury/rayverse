@@ -319,6 +319,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
 
         link_init = (i16*)block_malloc(mem_level, 2 * level.nb_objects);
         mem_read(link_init, mem, 2 * level.nb_objects);
+        detect_and_remove_invalid_link_cycles(); // NOTE: added as a precaution
 
         // We can't directly read the obj_t because the pointer size is not 4 bytes on all systems.
         // So we read everything field by field

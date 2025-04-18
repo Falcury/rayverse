@@ -151,7 +151,45 @@ void RAY_FIN_BALANCE(void) {
 
 //6F870
 void RayTestBlocSH(void) {
-    //stub
+    /* 621FC 801869FC -O2 -msoft-float */
+    s16 x_1;
+    s16 y_1;
+    s16 temp_v1_2;
+    s16 var_a1;
+    s32 var_v0;
+    s32 temp_v1;
+    s32 var_a0;
+    u32 var_v0_2;
+
+    x_1 = ray.x + ray.offset_bx;
+    var_a1 = x_1;
+    y_1 = ray.y + ray.offset_hy;
+    var_v0 = x_1;
+    if (x_1 < 0)
+        var_v0 = x_1 + 15;
+    temp_v1 = x_1 - (var_v0 >> 4 << 4);
+    if (decalage_en_cours > 0 || (decalage_en_cours == 0 && ray.flags.flip_x)) {
+        var_a0 = 16;
+        if ((u8) temp_v1 >= 14)
+            var_a1 = x_1 + 16;
+    } else {
+        var_a0 = -16;
+        if ((u8) temp_v1 < 4)
+            var_a1 -= 16;
+    }
+    temp_v1_2 = var_a1 + var_a0;
+    if (
+            decalage_en_cours != 0 &&
+            (MURDUR(temp_v1_2, y_1 + 16) ||
+             MURDUR(temp_v1_2, y_1 + 32) ||
+             MURDUR(temp_v1_2, y_1 + 48))
+            )
+    {
+        ray.speed_x = 0;
+        decalage_en_cours = 0;
+    }
+    if (ray.speed_y < 0 && MURDUR(x_1, y_1 + 16))
+        ray.speed_y = 0;
 }
 
 //6F95C
@@ -171,12 +209,74 @@ void remoteControlRay(void) {
 }
 
 //6F9E0
-void STOPPE_RAY_CONTRE_PAROIS(u8 a1) {
-    //stub
+void STOPPE_RAY_CONTRE_PAROIS(u8 block) {
+    if (ray_mode != 3 && (block_flags[block] & 0x10)) {
+
+    }
 }
 
 //6FA44
 void RAY_IN_THE_AIR(void) {
+    if (ray_wind_force) {
+        ray.nb_cmd = 1;
+    }
+    memmove(&pos_stack[1], &pos_stack[0], sizeof(pos_stack) - sizeof(i16));
+    pos_stack[0] = (i16)ray.x;
+
+    if (ray.sub_etat == 7) {
+        ray.cmd_arg_2 = -1;
+    }
+
+    bool may_land_obj = true;
+    if (helico_time != -1) {
+        --helico_time;
+    }
+    if (ray_between_clic != -1) {
+        --ray_between_clic;
+    }
+    ++jump_time;
+
+    u8 anim_speed = get_eta(&ray)->anim_speed >> 4;
+    if (anim_speed != 10 && anim_speed != 11) {
+        ++ray.gravity_value_1;
+        if (ray.gravity_value_1 >= 3) {
+            ray.gravity_value_1 = 0;
+        }
+        ++ray.gravity_value_2;
+        if (ray.gravity_value_2 >= 4) {
+            ray.gravity_value_2 = 0;
+        }
+    }
+
+    if (jump_time == 23) {
+        ++ray.speed_y;
+    }
+    if (!options_jeu.test_fire1() || jump_time > 12 || in_air_because_hit || ray.timer != 0 || ray.sub_etat == 2) {
+        DO_PESANTEUR(&ray);
+        if ((button_released % 2) == 0 && !options_jeu.test_fire1()) {
+            ++button_released;
+        }
+    }
+    if (jump_time == 6) {
+        if (ray.sub_etat == 24 || ray.sub_etat == 33) {
+            set_sub_etat(&ray, 2);
+        } else if (ray.sub_etat == 32) {
+            set_sub_etat(&ray, 17);
+        }
+    }
+
+    if (ray.link != -1) {
+        ray.link += ray.speed_y;
+    }
+    u8 block = calc_typ_trav(&ray, 2);
+    if (ray.sub_etat != 8 && ray.sub_etat != 31) {
+        RAY_HELICO(); //TODO
+        if (ray.sub_etat == 15) {
+            RayTestBlocSH();
+        }
+    }
+    STOPPE_RAY_CONTRE_PAROIS(block);
+
     //stub
 }
 

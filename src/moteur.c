@@ -266,10 +266,6 @@ void SET_ACTIVE_FLAG(i16 screen_x, i16 screen_y, obj_t* obj) {
                         obj_t* cur_obj = level.objects + id;
                         make_active(cur_obj, !cur_obj->is_active && (flags[obj->type] & flags1_1_keep_linked_objects_active));
                         id = link_init[cur_obj->id];
-                        //TODO: fix root cause of infinite loop due to objects linking to themselves in link_init?
-                        if (id == cur_obj->id) {
-                            break;
-                        }
                     } while (id != obj->id);
                 }
             }
@@ -1204,7 +1200,6 @@ void correct_gendoor_link(u8 a1) {
 
             // NOTE: I'm not too sure about this part, might need checking
             while (link != i && link != last_link) {
-                // TODO: solve infinite loop problem
                 if (obj->flags.alive && obj->type == TYPE_164_GENERATING_DOOR) {
                     level.objects[link].flags.alive = 0;
                 }
@@ -1217,7 +1212,8 @@ void correct_gendoor_link(u8 a1) {
                 if (last_link == link_init[i]) {
                     level.objects[last_link].link_has_gendoor = 0;
                 }
-                obj->link = link;
+                obj->link = link_init[i];
+                link_init[i] = i;
                 obj->link_has_gendoor = 0;
             }
 
@@ -1232,6 +1228,7 @@ void correct_gendoor_link(u8 a1) {
 
         }
     }
+    detect_and_remove_invalid_link_cycles(); // NOTE: added as a precaution. TODO: remove if no longer needed?
 }
 
 //597FC

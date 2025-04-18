@@ -174,3 +174,29 @@ image_t load_vignet_pcx(u32 resource_id) {
     }
     return image;
 }
+
+void detect_and_remove_invalid_link_cycles(void) {
+    u8* visited = malloc(level.nb_objects);
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        memset(visited, 0, level.nb_objects);
+        obj_t* obj = level.objects + i;
+        i16 initial_link = obj->id;
+        i16 current_link = link_init[initial_link];
+        bool loop_invalid = false;
+        while (current_link != initial_link) {
+            // We expect a closed loop of links, returning to the original object id.
+            if (visited[current_link]) {
+                loop_invalid = true;
+                break;
+            }
+            visited[current_link] = 1;
+            current_link = link_init[current_link];
+        }
+        if (loop_invalid) {
+            printf("Found an invalid link (id %d)\n", i);
+            link_init[i] = obj->id;
+        }
+    }
+
+    free(visited);
+}
