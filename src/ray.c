@@ -521,10 +521,17 @@ void DO_RAYMAN(void) {
             RAY_RESPOND_TO_ALL_DIRS(); //TODO
         }
 
+        // NOTE: added null check for star_ray_der and star_ray_dev
+        // This seems to occur if RayEvts.reverse is set but the TYPE_202_RAY_ETOILES is missing from the level?
+        // In that case, star_ray_der and star_ray_dev are not set in obj_init
+        // TODO: maybe be even more robust?
+        if (!(star_ray_der && star_ray_dev)) {
+            RayEvts.reverse = 0;
+        }
+
         if (RayEvts.reverse != 0) {
             i16 ray_x, ray_y, ray_w, ray_h;
             GET_SPRITE_POS(&ray, 5, &ray_x, &ray_y, &ray_w, &ray_h);
-            // TODO: initialize star_ray_der and star_ray_dey
             star_ray_der->x = star_ray_dev->x = ray_x + (ray_w >> 1) - star_ray_dev->offset_bx;
             star_ray_der->y = star_ray_dev->y = ray_y - star_ray_dev->offset_hy;
 

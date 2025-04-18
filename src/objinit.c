@@ -527,6 +527,10 @@ void INIT_OBJECTS(u8 a1) {
     corde_dark_obj_id = -1;
     nb_wiz = 0;
 
+    // NOTE: added null initialization for extra robustness (defend against TYPE_202_RAY_ETOILES missing from the level)
+    star_ray_der = NULL;
+    star_ray_dev = NULL;
+
     i16 found_bbf2_gauche = -1;
     i16 found_bbf2_droite = -1;
 
