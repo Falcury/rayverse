@@ -196,7 +196,7 @@ typedef struct world_info_t {
 } world_info_t;
 
 typedef struct status_bar_t {
-	u16 lives;
+	i16 lives;
 	u8 lives_digits[2];
 	u8 hp_sprites[2];
 	u8 num_wiz;

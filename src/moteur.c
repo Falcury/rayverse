@@ -1176,7 +1176,28 @@ void RAY_TO_THE_LEFT(void) {
 
 //59518
 void DO_FIXE(void) {
-    //stub
+    if (status_bar.max_hitp == 2) {
+        status_bar.hp_sprites[1] = ray.hit_points;
+        status_bar.hp_sprites[0] = 0;
+    } else {
+        if (ray.hit_points > 2) {
+            status_bar.hp_sprites[1] = 2;
+            status_bar.hp_sprites[0] = ray.hit_points - 2;
+        } else {
+            status_bar.hp_sprites[1] = ray.hit_points;
+            status_bar.hp_sprites[0] = 0;
+        }
+    }
+    if (status_bar.lives == -1) {
+        status_bar.lives_digits[0] = 0;
+        status_bar.lives_digits[1] = 0;
+    } else {
+        status_bar.lives_digits[0] = status_bar.lives / 10;
+        status_bar.lives_digits[1] = status_bar.lives % 10;
+    }
+    status_bar.num_wiz = MIN(status_bar.num_wiz, 99);
+    status_bar.wiz_digits[0] = status_bar.num_wiz / 10;
+    status_bar.wiz_digits[1] = status_bar.num_wiz % 10;
 }
 
 //595E8
