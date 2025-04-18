@@ -225,7 +225,7 @@ void DO_FADE_OUT(void) {
 //3CB04
 void EFFACE_VIDEO(void) {
     endsynchro();
-    if (ModeVideoActuel == 1) {
+    if (ModeVideoActuel == MODE_X) {
         SWAP_BUFFERS();
         display_emptypicture();
         display_emptypicture();
@@ -329,22 +329,22 @@ void InitModeXWithFrequency(u8 freq) {
 //3D9D4
 void InitTextMode(void) {
     textmode();
-    ModeVideoActuel = 255;
+    ModeVideoActuel = MODE_TEXT;
 }
 
 //3D9E4
 void InitModeNormalWithFrequency(u8 freq) {
-    if (ModeVideoActuel == 255) {
-//        InitFirstModeVideo();
+    if (ModeVideoActuel == MODE_TEXT) {
+        InitFirstModeVideo();
         GetVideoRegister();
     }
-    if (ModeVideoActuel != 0) {
+    if (ModeVideoActuel != MODE_NORMAL) {
         InitModeNormal();
 //		memset(DrawBufferNormal, 0, 320 * 200);
 //		memset(DisplayBufferNormal, 0, 320 * 200);
         select_display_buffer(DisplayBufferNormal);
         set_vga_frequency(freq);
-        ModeVideoActuel = 0;
+        ModeVideoActuel = MODE_NORMAL;
         DrawSpriteNoClipNormalEtX = DrawSpriteNormalNoClip;
         DrawSpriteFlipNoClipNormalEtX = DrawSpriteFlipNormalNoClip;
         DrawSpriteColorNormalEtX = DrawSpriteColorNormal;

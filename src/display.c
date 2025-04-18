@@ -730,7 +730,7 @@ void DEPART_WORLD(void) {
         stop_cd();
     }
     if (!ModeNormalAutorise) {
-        GameModeVideo = 1;
+        GameModeVideo = MODE_X;
     }
     if (FondAutorise == 2) {
         P486 = 1;
@@ -1038,7 +1038,7 @@ void ToDoAtExit(void) {
     if (MusicCdActive) {
         DoneMusic();
     }
-    if (ModeVideoActuel != 255) {
+    if (ModeVideoActuel != MODE_TEXT) {
         InitTextMode();
     }
     printf("\nThank you for playing Rayman.\n");

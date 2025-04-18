@@ -2,7 +2,7 @@
 //44DE0
 void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
     stop_cd();
-    if (GameModeVideo == 1) {
+    if (GameModeVideo == MODE_X) {
         PLAN1_BUFFER = block_malloc(mem_world, 71680);
     } else {
         PLAN1_BUFFER = 0;
@@ -23,7 +23,7 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
         // Header block
         mem_read(&background_width, mem, 2);
         mem_read(&background_height, mem, 2);
-        if (GameModeVideo != 0) {
+        if (GameModeVideo != MODE_NORMAL) {
             if (FondAutorise != 0) {
                 PLAN0 = allocate_PLAN0(mem_world, background_width, background_height);
             }
@@ -205,18 +205,18 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             ScrollDiffSprites = NULL;
         } else {
             ScrollDiffSprites = wldobj + ScrollDiffSprites_value;
-            if (GameModeVideo == 0 && ScrollDiffOn) {
+            if (GameModeVideo == MODE_NORMAL && ScrollDiffOn) {
                 MaskScrollDiffSprites(mem_level);
             }
         }
 
-        if (GameModeVideo == 1 || !ScrollDiffOn) {
+        if (GameModeVideo == MODE_X || !ScrollDiffOn) {
             no_fnd = background_image_static;
-        } else if (GameModeVideo == 0 && ScrollDiffOn) {
+        } else if (GameModeVideo == MODE_NORMAL && ScrollDiffOn) {
             no_fnd = background_image_scrolling;
         }
 
-        if (GameModeVideo == 1) {
+        if (GameModeVideo == MODE_X) {
             // X Mode Textures
             u32 x_texture_count;
             u32 x_unk_table_size;
@@ -279,7 +279,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             }
 #endif
             mem_seek(mem, event_block_offset);
-        } else if (GameModeVideo == 0) {
+        } else if (GameModeVideo == MODE_NORMAL) {
             // Normal Mode Textures
 
             mem_seek(mem, texture_block_offset);
@@ -813,7 +813,7 @@ void LoadPlan0InVignet(i32 resource_id) {
 
         u8* dest_buffer = PLAN0; // Notice that we're loading into PLAN0 here, and not PLAN0BIT.
 
-        if (GameModeVideo != 0) {
+        if (GameModeVideo != MODE_NORMAL) {
             memcpy(dest_buffer, image.memory, width * height);
         } else {
             // We need to blit the image data into PLAN0 which has been allocated to be twice as wide.
@@ -829,7 +829,7 @@ void LoadPlan0InVignet(i32 resource_id) {
         }
         free(image.memory);
 
-        if (GameModeVideo != 0) {
+        if (GameModeVideo != MODE_NORMAL) {
             PLAN0FND_to_bits_planes(PLAN0, width, height);
         } else {
             // NOTE: this is a bug!!

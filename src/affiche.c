@@ -123,7 +123,7 @@ void DISPLAY_FIXE(i32 time) {
             fixontemp = 300;
         }
         if (fixontemp > 0) {
-            if (fixontemp == 1 && GameModeVideo == 0) {
+            if (fixontemp == 1 && GameModeVideo == MODE_NORMAL) {
 //                draw_buffer = display_buffer; //TODO: extra buffer indirection?
 //                ClearBorder(Bloc_lim_H1, Bloc_lim_H2, Bloc_lim_W1, Bloc_lim_W2);
                 draw_buffer = DrawBufferNormal;
@@ -134,7 +134,7 @@ void DISPLAY_FIXE(i32 time) {
         if (fixon || fixontemp != 0 || time == 0) {
             i16 height = 35;
             i16 width = 77;
-            if (GameModeVideo == 0 && (Bloc_lim_W1 > 16 || Bloc_lim_H1 > 5)) {
+            if (GameModeVideo == MODE_NORMAL && (Bloc_lim_W1 > 16 || Bloc_lim_H1 > 5)) {
                 if (id_Cling_Old) {
                     height = 45;
                     width = 85;
@@ -154,7 +154,7 @@ void DISPLAY_FIXE(i32 time) {
             }
             obj_t* obj = level.objects + sbar_obj_id;
             if (time == -2) {
-                i32 draw_y = (GameModeVideo == 1 && P486 == 1) ? 16 : 0;
+                i32 draw_y = (GameModeVideo == MODE_NORMAL && P486 == 1) ? 16 : 0;
                 display_sprite_NoClip(obj, 27, 16, draw_y + 5, 1);
                 display_sprite_NoClip(obj, 56, 244, draw_y + 5, 1);
                 display_sprite_NoClip(obj, 28 + status_bar.lives_digits[0], 55, draw_y + 5, 1);
@@ -309,7 +309,7 @@ void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, u8 is_
 
     if (clip_width > 0 && clip_height > 0) {
         if (font_size == -1) {
-            if (ModeVideoActuel == 1) {
+            if (ModeVideoActuel == MODE_X) {
                 //draw_borderbox();
             } else {
                 if (is_fond == 0) {
@@ -320,11 +320,11 @@ void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, u8 is_
             }
         }
         if (is_fond == 1) {
-            if (ModeVideoActuel != 1) {
+            if (ModeVideoActuel != MODE_X) {
                 DrawBorderBoxNormal(draw_buffer, clip_x, clip_y, clip_height, clip_width, 0x2026);
             }
         } else if (is_fond == 2) {
-            if (ModeVideoActuel != 1) {
+            if (ModeVideoActuel != MODE_X) {
                 DrawBorderBoxNormal(draw_buffer, clip_x, clip_y, clip_height, clip_width, 0x2020);
             } else {
                 //draw_borderbox();

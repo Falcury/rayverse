@@ -233,7 +233,7 @@ void AllocVariablesAutorisee(void) {
     if (!flocon_tab) {
         fatal_error();
     }
-    GameModeVideo = (ModeNormalAutorise == 0);
+    GameModeVideo = ModeNormalAutorise ? MODE_NORMAL : MODE_X;
     MenuCredits = 0;
 }
 
@@ -317,7 +317,7 @@ void PcMain(void) {
 			speaker_enable();
             DEPART_LEVEL();
             init_divers_level_PC(&v1);
-            if ((GameModeVideo == 0 && num_world == 6 && num_level == 4) || get_casse_brique_active()) {
+            if ((GameModeVideo == MODE_NORMAL && num_world == 6 && num_level == 4) || get_casse_brique_active()) {
                 InitClipping();
             }
 
@@ -336,7 +336,7 @@ void PcMain(void) {
                 INIT_RAY_ON_MS();
                 START_LEVEL_ANIM(); //TODO: implement DO_LEVEL_ANIM()
                 BackgroundOn = IsBackgroundOn();
-                if (GameModeVideo != 0) {
+                if (GameModeVideo != MODE_NORMAL) {
                     default_sprite_clipping();
                     InitModeXWithFrequency(VGA_FREQ);
                     NewFrequency(Frequence);

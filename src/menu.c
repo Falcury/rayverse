@@ -4,7 +4,7 @@ void LOAD_FND(void) {
     if (Plan0NumPcx[no_fnd] != -1) {
         LoadPlan0InVignet(Plan0NumPcx[no_fnd]);
     }
-    if (GameModeVideo == 0) {
+    if (GameModeVideo == MODE_NORMAL) {
         Init_Bande(no_fnd, plan0_width, plan0_height, PLAN0BIT, DrawBufferNormal);
     }
 }
@@ -89,7 +89,7 @@ void INIT_FND(void) {
         } break;
         default:break;
     }
-    if (GameModeVideo == 0) {
+    if (GameModeVideo == MODE_NORMAL) {
         type_fndscrX = 0;
     }
     LOAD_FND();
@@ -129,11 +129,14 @@ void LOAD_CONFIG(void) {
     if (LoadOptionsOnDisk()) {
         LoadLanguageTxt(main_mem_fix, 0); // English
         if (xpadmax == -1) {
-            GameModeVideo = 1;
-            P486 = 0;
+            // NOTE: this may occur if a RAYMAN.CFG is present that contains this value for xpadmax.
+            // TODO: figure out why this causes Mode X to be used instead of normal mode.
+            // Disabling this code for now.
+//            GameModeVideo = MODE_X;
+//            P486 = 0;
         }
         if (FondAutorise == 2) {
-            GameModeVideo = 1;
+            GameModeVideo = MODE_X;
             P486 = 1;
         }
         POINTEUR_BOUTONS_OPTIONS_BIS();
@@ -187,7 +190,7 @@ void LOAD_CONFIG(void) {
         options_jeu.fist = 0;
         options_jeu.action = 2;
         SetVolumeSound((options_jeu.sound_volume * 127) / 20);
-        GameModeVideo = 0;
+        GameModeVideo = MODE_NORMAL;
         POINTEUR_BOUTONS_OPTIONS_BIS();
     }
 
@@ -203,7 +206,7 @@ void NewFrequency(u8 a1) {
 
 //49720
 void InitClipping(void) {
-    if (GameModeVideo) {
+    if (GameModeVideo != MODE_NORMAL) {
         default_sprite_clipping();
     } else if (is_fee || (num_world == world_6_cake && num_level == 4) || get_casse_brique_active()) {
         set_xywhmap(TabW1[0], TabW2[0], TabH1[0], TabH2[0]);

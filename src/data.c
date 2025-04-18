@@ -830,8 +830,8 @@ i16 DemoRecordSize[6] = {154, 192, 200, 172, 200, 120}; //95E04
 i16 DemoRecordWorld[6] = {2, 3, 4, 5, 1, 5}; //95E10
 i16 DemoRecordMap[6] = {7, 7, 1, 4, 9, 10}; //95E1C
 u8* DisplayBufferNormal = NULL; //95E28 // initialized to 0xA0000 (= VGA video memory)
-u8 ModeVideoActuel = 255; //95E2C
-u8 GameModeVideo = 255; //95E2D
+u8 ModeVideoActuel = MODE_TEXT; //95E2C
+u8 GameModeVideo = MODE_TEXT; //95E2D
 i32 JumAmpDefMul = 0; //95E30
 i32 JumAmpDefPlus = 0; //95E34
 u8 key_right = SC_RIGHT; //95E38

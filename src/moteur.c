@@ -1387,7 +1387,7 @@ void INIT_RAY(u8 new_lvl) {
             }
             xmap = obj->x + obj->offset_bx - 160;
             ymap = obj->y - 10;
-            if (GameModeVideo) {
+            if (GameModeVideo != MODE_NORMAL) {
                 if (xmap >= xmapmax) {
                     xmap = xmapmax;
                 }
@@ -1476,7 +1476,7 @@ void INIT_MOTEUR(u8 new_lvl) {
     xmap = 0;
     ymap = 0;
 
-    if (GameModeVideo != 0) {
+    if (GameModeVideo != MODE_NORMAL) {
         ymapmax = 16 * mp.height - 200;
         xmapmax = 16 * mp.width - 305;
         if (xmapmax < 0) {
@@ -1542,7 +1542,7 @@ void INIT_MOTEUR(u8 new_lvl) {
         INIT_LUCIOLE(); //TODO
     }
     DO_OBJECTS(); //TODO
-    if (mp.width <= 20 && (SizeScreen == 0 || GameModeVideo == 1)) {
+    if (mp.width <= 20 && (SizeScreen == 0 || GameModeVideo == MODE_X)) {
         scroll_start_x = scroll_end_x;
         xmap = scroll_end_x;
     }
@@ -1688,7 +1688,7 @@ void DO_MOTEUR(void) {
     xmap_old = xmap;
     ymap_old = ymap;
 
-    if (ModeVideoActuel == 1) {
+    if (ModeVideoActuel == MODE_X) {
         RIGHT_MAP_BORDER = xmap + 320 - ray.offset_bx - 36;
         LEFT_MAP_BORDER = xmap + 20 - ray.offset_bx;
     } else {

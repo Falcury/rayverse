@@ -632,6 +632,11 @@ typedef struct pix_gerbe_t {
     i16 is_active;
 } pix_gerbe_t;
 
+enum game_mode_video_enum {
+    MODE_NORMAL = 0,
+    MODE_X = 1,
+    MODE_TEXT = 255,
+};
 
 enum obj_type_enum {
 	TYPE_0_BADGUY1 = 0, // livingstone
