@@ -307,6 +307,12 @@ void DO_NEW_MENUS(void) {
 
 //49B7C
 void DO_OPTIONS_IN_GAME(void) {
+    if (GoMenu == 1) {
+        //NOTE: temporary method for quitting out of a level (will return to the main menu)
+        new_world = 1;
+        new_level = 1;
+        GoMenu = 0;
+    }
     //stub
 }
 
