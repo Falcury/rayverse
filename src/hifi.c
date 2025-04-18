@@ -196,7 +196,7 @@ void DigiMusicDone(void) {
 //3ECC4
 void LoadTchatchPerdu(void) {
     stop_cd();
-    FILE* fp = open_data_file("sndvig.dat", true);
+    FILE* fp = open_data_file("SNDVIG.DAT", true);
     if (fp) {
         archive_header_t* sndvig_header = sndvig_infos + 6;
         ptrTchatch = malloc(sndvig_header->size);
