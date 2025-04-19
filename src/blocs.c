@@ -242,7 +242,8 @@ void TEST_FIN_BLOC(obj_t* obj) {
 }
 
 //256D4
-void TEST_IS_ON_RESSORT_BLOC(obj_t* obj) {
+u8 TEST_IS_ON_RESSORT_BLOC(obj_t* obj) {
+    return 0;
     //stub
 }
 

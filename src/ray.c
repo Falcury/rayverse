@@ -20,8 +20,242 @@ void IS_RAY_ON_LIANE(void) {
 }
 
 //6C224
-void rayMayLandOnAnObject(u8* a1, i16 obj_id) {
-    //stub
+void rayMayLandOnAnObject(u8* param_1, i16 obj_id) {
+    /* 5D518 80181D18 -O2 -msoft-float */
+    s16 var_a1_1;
+
+    s16 i;
+    u8 cur_type;
+    s16 unk_y;
+
+
+    i16 unk_1 = RayEvts.tiny ? 8 : 4;
+    ray.cmd_arg_2 = -1;
+
+    i = 0;
+    obj_t* cur_obj = &level.objects[actobj.objects[i]];
+    while (i < actobj.num_active_objects) {
+        if (cur_obj->flags.follow_enabled && cur_obj->id != obj_id) {
+            if (flags[cur_obj->type] & flags1_0x20_move_y)
+                unk_y = instantSpeed(cur_obj->speed_y);
+            else
+                unk_y = cur_obj->speed_y;
+
+            unk_y = abs((s16) (unk_y + (cur_obj->follow_y - ray.speed_y))) + 2;
+            MAX_2(unk_y, unk_1);
+
+            cur_type = cur_obj->type;
+            if (cur_type == TYPE_PI || cur_type == TYPE_HERSE_HAUT || cur_type == TYPE_HERSE_BAS_NEXT) {
+                unk_y += 8;
+            }
+
+            if (abs(cur_obj->ray_dist) < unk_y && !(block_flags[(u8) calc_typ_trav(&ray, 2)] & 0x10)) {
+                ray.cmd_arg_2 = actobj.objects[i];
+                if (left_time == -2 && (map_time % 2 != 0)) {
+                    ++map_time;
+                }
+
+                ray.cmd_arg_1 = -1;
+                ray_last_ground_btyp = 1;
+                if (ray.main_etat == 2)
+                {
+                    switch (cur_obj->type)
+                    {
+                        case TYPE_TIBETAIN_2:
+                            PlaySnd(110, cur_obj->id);
+                            break;
+                        case TYPE_PLATFORM:
+                            if (num_world == 1 || num_world == 4)
+                                PlaySnd(19, -1);
+                            else
+                                PlaySnd(242, -1);
+                            break;
+                        case TYPE_FALLPLAT:
+                        case TYPE_LIFTPLAT:
+                            if (num_world == 4 || num_world == 5)
+                                PlaySnd(19, -1);
+                            else
+                                PlaySnd(242, -1);
+                            break;
+                        case TYPE_MOVE_PLAT:
+                        case TYPE_CRUMBLE_PLAT:
+                        case TYPE_BOING_PLAT:
+                        case TYPE_ONOFF_PLAT:
+                        case TYPE_MOVE_START_NUA:
+                            if (num_world == 4)
+                                PlaySnd(19, -1);
+                            else
+                                PlaySnd(242, -1);
+                            break;
+                        case TYPE_TIBETAIN:
+                        case TYPE_MARACAS:
+                        case TYPE_TAMBOUR1:
+                        case TYPE_TAMBOUR2:
+                        case TYPE_TIBETAIN_6:
+                        case TYPE_HERSE_BAS:
+                        case TYPE_HERSE_BAS_NEXT:
+                            break;
+                        case TYPE_GOMME:
+                            PlaySnd(248, -1);
+                            break;
+                        case TYPE_MARK_AUTOJUMP_PLAT:
+                            PlaySnd(52, -1);
+                            break;
+                        default:
+                            PlaySnd(19, -1);
+                            break;
+                    }
+                }
+
+                switch (cur_obj->type)
+                {
+                    case TYPE_CYMBALE:
+                        cur_obj->link = 0;
+                        break;
+                    case TYPE_FALLING_OBJ:
+                    case TYPE_FALLING_OBJ2:
+                    case TYPE_FALLING_OBJ3:
+                        if (cur_obj->main_etat == 0 && cur_obj->sub_etat == 13)
+                            set_main_and_sub_etat(cur_obj, 0, 15);
+                        break;
+                    case TYPE_BAG3:
+                        if (cur_obj->sub_etat == 3)
+                            skipToLabel(cur_obj, 0, true);
+                        break;
+                    case TYPE_MARACAS:
+                        if (cur_obj->sub_etat == 4)
+                        {
+                            /*
+                            alternative to do{}while(0);
+                            possible up to commit fed31ab
+                            */
+                            if (/*var_a1_1 = */ cur_obj->hit_points == 0)
+                                set_sub_etat(cur_obj, 5);
+                            else
+                                MARACAS_GO(cur_obj); //TODO
+                        }
+                        break;
+                    case TYPE_TAMBOUR1:
+                        cur_obj->configuration = 0x10;
+                        if (cur_obj->main_etat == 0)
+                        {
+                            if (cur_obj->sub_etat == 7)
+                            {
+                                set_main_and_sub_etat(cur_obj, 2, 0);
+                                PlaySnd(110, cur_obj->id);
+                            }
+                            else if (cur_obj->sub_etat == 9)
+                            {
+                                set_main_and_sub_etat(cur_obj, 2, 2);
+                                PlaySnd(112, cur_obj->id);
+                            }
+                        }
+                        break;
+                    case TYPE_TAMBOUR2:
+                        cur_obj->configuration = 0x10;
+                        set_main_and_sub_etat(cur_obj, 2, 1);
+                        PlaySnd(111, cur_obj->id);
+                        break;
+                    case TYPE_CYMBAL2:
+                        /* TODO: macroooooooooooooooooo */
+                        if (cur_obj->main_etat == 0 && cur_obj->sub_etat == 13)
+                            START_2_PARTS_CYMBAL_ACTION(cur_obj); //TODO
+                        break;
+                    case TYPE_ROULETTE:
+                        if (cur_obj->main_etat == 0 && cur_obj->sub_etat == 10)
+                            skipToLabel(cur_obj, 1, true);
+                        break;
+                    case TYPE_ROULETTE2:
+                        if (cur_obj->main_etat == 0 && cur_obj->sub_etat == 13)
+                            skipToLabel(cur_obj, 1, true);
+                        break;
+                    case TYPE_ROULETTE3:
+                        if (cur_obj->main_etat == 0 && cur_obj->sub_etat == 15)
+                            skipToLabel(cur_obj, 1, true);
+                        break;
+                    case TYPE_MOVE_START_PLAT:
+                        if (cur_obj->main_etat == 0 && cur_obj->sub_etat == 0)
+                            skipToLabel(cur_obj, 0, true);
+                        break;
+                    case TYPE_MOVE_START_NUA:
+                        if (!(cur_obj->main_etat == 0 && cur_obj->sub_etat == 10))
+                            skipToLabel(cur_obj, 0, true);
+                        break;
+                    case TYPE_FALLPLAT:
+                    case TYPE_LIFTPLAT:
+                        skipToLabel(cur_obj, 0, true);
+                        break;
+                    case TYPE_UFO_IDC:
+                        if (finBosslevel.helped_joe_2)
+                            START_UFO(cur_obj); //TODO
+                        break;
+                    case TYPE_POELLE:
+                        if (!(cur_obj->main_etat == 0 && cur_obj->sub_etat == 1)) {
+                            set_main_and_sub_etat(cur_obj, 0, 1);
+                            cur_obj->flags.follow_enabled = 0;
+                            ray_on_poelle = 1;
+                            ray.cmd_arg_2 = -1;
+                            ray.speed_x = 1;
+                            SauveRayEvts = RayEvts;
+                            memset(&RayEvts, 0, sizeof(RayEvts));
+                            RayEvts.poing = 1;
+                            RayEvts.hang = 0;
+                            RayEvts.helico = 0;
+                            RayEvts.super_helico = 0;
+                            RayEvts.handstand_dash = 0;
+                            RayEvts.handstand = 0;
+                            RayEvts.magicseed = 0;
+                            RayEvts.grab = 0;
+                            RayEvts.run = 0;
+                            RayEvts.tiny = 0;
+                            RayEvts.firefly = 0;
+                            RayEvts.force_run = 0;
+                            RayEvts.reverse = 0;
+                            RayEvts.squashed = 0;
+                        }
+                        break;
+                    case TYPE_SWING_PLAT:
+                        if (cur_obj->main_etat == 0 && cur_obj->sub_etat == 2)
+                            set_sub_etat(cur_obj, 9);
+                        break;
+                    case TYPE_BOING_PLAT:
+                    case TYPE_BIG_BOING_PLAT:
+                        cur_obj->cmd_arg_2 = MAX(ray.speed_y, 2);
+                        break;
+                }
+
+                if (ray.main_etat == 2) {
+                    u8 new_me = 1;
+                    u8 new_se = 3;
+                    if (abs(ray.speed_x) >= ashr16(ray.eta[new_me][new_se].right_speed, 4) && RayEvts.run) {
+                        set_main_and_sub_etat(&ray, new_me, new_se);
+                    } else {
+                        set_main_etat(&ray, 0);
+                        set_sub_etat(&ray, 8);
+                        if (ray.link > 200) {
+                            allocateRayLandingSmoke(); //TODO
+                        }
+                    }
+                }
+
+                s16 foll_x; s16 foll_y; s16 foll_w; s16 foll_h;
+                GET_SPRITE_POS(cur_obj, cur_obj->follow_sprite, &foll_x, &foll_y, &foll_w, &foll_h);
+                ray.speed_y = cur_obj->offset_hy + foll_y - ray.offset_by - ray.y;
+                *param_1 = 0;
+                ray.link = -1;
+                helico_time = -1;
+                break;
+            }
+        }
+
+        i++;
+        cur_obj = &level.objects[actobj.objects[i]];
+    }
+
+    if (obj_id != -1 && ray.cmd_arg_2 == -1)
+        ray.cmd_arg_2 = obj_id;
+    else if (ray.cmd_arg_2 != -1)
+        level.objects[ray.cmd_arg_2].ray_dist = 0;
 }
 
 //6CA70
@@ -45,8 +279,107 @@ void ray_jump(void) {
 }
 
 //6D020
-void ray_inertia_speed(u8 a1, u8 a2, i16 a3, i16 a4) {
-    //stub
+void ray_inertia_speed(u8 a1, u8 a2, i16 prev_speed_x, i16 a4) {
+    /* 5E4BC 80182CBC -O2 -msoft-float */
+    s16 unk_1;
+    s16 unk_2;
+    s16 unk_3;
+    s16 unk_4;
+    s16 unk_5;
+    s16 unk_6;
+
+    if (a1 == 0)
+    {
+        decalage_en_cours = prev_speed_x;
+        unk_1 = 0;
+    }
+    else
+    {
+        unk_2 = ashr32(prev_speed_x * a1, 8);
+        unk_1 = ashr16(a1, 3);
+        unk_1 = unk_1 != 0 ? unk_1 : 1;
+        unk_3 = ashl16(a2, 2);
+        unk_4 = ashl16(a4, 3) + (unk_2 + unk_3);
+
+        switch ((s16) (num_world - 1))
+        {
+            case 0:
+            case 1:
+            case 3:
+            case 5:
+                unk_5 = 6;
+                break;
+            case 2:
+                unk_5 = 3;
+                break;
+        }
+
+        /* ??? duplication ??? */
+        if (unk_4 > 0)
+        {
+            unk_6 =
+                    (unk_2 > 0 ? prev_speed_x : 0) +
+                    (unk_3 > 0 ? (ashl16(a2 + unk_5, 8) / unk_1) : 0) +
+                    ashl16(a4, 8);
+
+            MAX_3(unk_6, decalage_en_cours);
+        }
+        else if (unk_4 < 0)
+        {
+            unk_6 =
+                    (unk_2 < 0 ? prev_speed_x : 0) +
+                    (unk_3 < 0 ? (ashl16(a2 - unk_5, 8)) / unk_1 : 0) +
+                    ashl16(a4, 8);
+
+            MIN_3(unk_6, decalage_en_cours);
+        }
+        else
+            unk_6 = decalage_en_cours;
+
+        if (unk_4 != 0)
+        {
+            if (unk_6 > 0)
+            {
+                if (decalage_en_cours < unk_6)
+                    decalage_en_cours += unk_4;
+                if (decalage_en_cours > unk_6)
+                    decalage_en_cours = unk_6;
+            }
+            else
+            {
+                if (decalage_en_cours > unk_6)
+                    decalage_en_cours += unk_4;
+                if (decalage_en_cours < unk_6)
+                    decalage_en_cours = unk_6;
+            }
+        }
+    }
+
+    if (decalage_en_cours != 0)
+    {
+        ray.speed_x = instantSpeed(ashr16(decalage_en_cours, 4));
+        if (block_flags[calc_typ_travd(&ray, false)] & 0x10 && ray.main_etat != 2)
+        {
+            ray.speed_x = 0;
+            decalage_en_cours = 0;
+            ray.nb_cmd = 0;
+        }
+    }
+    else
+        ray.speed_x = 0;
+
+    if ((ray.main_etat == 0 || ray.main_etat == 1 || ray.main_etat == 3) && ray.cmd_arg_2 == -1)
+        CALC_MOV_ON_BLOC(&ray);
+
+    if (ray.main_etat == 2 && ray.sub_etat == 15)
+        unk_1 += 2;
+
+    if (decalage_en_cours >= unk_1)
+        decalage_en_cours -= unk_1;
+    else if (decalage_en_cours <= -unk_1)
+        decalage_en_cours += unk_1;
+    else
+        decalage_en_cours = 0;
 }
 
 //6D2E8
@@ -100,13 +433,131 @@ void RAY_RESPOND_TO_UP(void) {
 }
 
 //6E548
-void RAY_RESPOND_TO_DIR(void) {
+void RAY_RESPOND_TO_DIR(i16 dir) {
     //stub
 }
 
 //6EB40
 void RAY_RESPOND_TO_NOTHING(void) {
-    //stub
+    /* 60A58 80185258 -O2 -msoft-float */
+    eta_t *sel_eta_1;
+    eta_t *sel_eta_2;
+    s32 unk_1;
+    anim_t *sel_anim;
+
+    switch (ray.main_etat)
+    {
+        case 1:
+            if (
+                    !(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40) && // TODO: check: this part not in the PC version?
+                    !(ray.sub_etat == 4 || ray.sub_etat == 5) && RayEvts.force_run == 0
+                    )
+            {
+                set_main_etat(&ray, 0);
+                if (ray.sub_etat == 8 || ray.sub_etat == 10)
+                    set_sub_etat(&ray, 47);
+                else if (ray.sub_etat == 9 || ray.sub_etat == 11)
+                    set_sub_etat(&ray, 48);
+                else if (ray.sub_etat == 3 || ray.sub_etat == 7)
+                    set_sub_etat(&ray, 36);
+                else
+                    set_sub_etat(&ray, 0);
+            }
+            RAY_SWIP();
+            break;
+        case 0:
+            ray.speed_x = 0;
+            if (ray.cmd_arg_1 != -1 && ray.sub_etat == 0)
+            {
+                if (ray.cmd_arg_1 == 1)
+                    set_sub_etat(&ray, 49);
+                else
+                    set_sub_etat(&ray, 3);
+            }
+            if (ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40)
+            {
+                if (!(block_flags[(u8) calc_typ_trav(&ray, 2)] & 0x10))
+                {
+                    if (!(ray.main_etat == 0 && ray.sub_etat == 60))
+                        set_main_and_sub_etat(&ray, 0, 60);
+                }
+                else if (!(ray.main_etat == 0 && (ray.sub_etat == 15 || ray.sub_etat == 61)))
+                {
+                    sel_anim = &ray.animations[ray.anim_index];
+                    set_main_and_sub_etat(&ray, 0, 15);
+                    ray.anim_frame = sel_anim->frame_count - 1;
+                }
+            }
+            else
+            {
+                if (ray.sub_etat == 37 && abs(decalage_en_cours) <= 128)
+                    set_sub_etat(&ray, 38);
+                else if (ray.sub_etat == 20 && EOA(&ray))
+                {
+                    if (block_flags[(u8) calc_typ_trav(&ray, 2)] & 0x10)
+                    {
+                        sel_eta_1 = &ray.eta[ray.main_etat][ray.sub_etat];
+                        unk_1 = ((sel_eta_1->flags >> 4 ^ 1) & 1) * 0x10;
+                        sel_eta_1->flags = sel_eta_1->flags & 0xEF | unk_1;
+                        freezeAnim(&ray, 1);
+                        sel_eta_2 = &ray.eta[ray.main_etat][ray.sub_etat];
+                        unk_1 = ((sel_eta_2->flags >> 4 ^ 1) & 1) * 0x10;
+                        sel_eta_2->flags = sel_eta_2->flags & 0xEF | unk_1;
+                    }
+                }
+                else if (ray.sub_etat == 59 || ray.sub_etat == 62 || ray.sub_etat == 63)
+                {
+                    if (EOA(&ray))
+                    {
+                        compteur_attente = 0;
+                        set_sub_etat(&ray, 0);
+                    }
+                }
+                else if (
+                        (ray.sub_etat == 0 || ray.sub_etat == 1 || ray.sub_etat == 2) &&
+                        ++compteur_attente >= 500
+                        ) {
+                    set_sub_etat(&ray, 59);
+                    //TODO: add animation_attente
+                }
+            }
+            RAY_SWIP();
+            break;
+        case 4:
+            if (ray.sub_etat == 2 || ray.sub_etat == 3)
+            {
+                set_sub_etat(&ray, 0);
+                ray.speed_y = 0;
+            }
+            break;
+        case 2:
+            compteur_attente = 0;
+            animation_attente = 0;
+            if (ray.sub_etat != 8)
+                ray.speed_x = 0;
+            if (ray.sub_etat != 15 && ray.nb_cmd == 0)
+                ray_inertia_speed(0, 0, 0, ray_wind_force);
+            else
+                ray_inertia_speed(8, 0, 0, ray_wind_force);
+            break;
+        case 6:
+            decalage_en_cours = 0;
+            joy_done++;
+            ray.flags.flip_x = 1;
+            if (ray.gravity_value_1 == 0)
+            {
+                if (ray.speed_x > 0)
+                    ray.speed_x--;
+                else if (ray.speed_x < 0)
+                    ray.speed_x++;
+
+                if (ray.speed_y > 0)
+                    ray.speed_y--;
+                else if (ray.speed_y < 0)
+                    ray.speed_y++;
+            }
+            break;
+    }
 }
 
 //6F0B0
@@ -210,8 +661,13 @@ void remoteControlRay(void) {
 
 //6F9E0
 void STOPPE_RAY_CONTRE_PAROIS(u8 block) {
-    if (ray_mode != 3 && (block_flags[block] & 0x10)) {
-
+    if (ray_mode != 3 && (block_flags[block] & 0x10) && ray.sub_etat != 7 && ray.sub_etat != 9 && ray.speed_y <= 0) {
+        if (ray.sub_etat != 8) {
+            set_sub_etat(&ray, 1);
+            button_released = 0;
+        }
+        ray.link = 0; // landing speed
+        ray.speed_y = 0;
     }
 }
 
@@ -227,7 +683,7 @@ void RAY_IN_THE_AIR(void) {
         ray.cmd_arg_2 = -1;
     }
 
-    bool may_land_obj = true;
+    u8 may_land_obj = true;
     if (helico_time != -1) {
         --helico_time;
     }
@@ -266,7 +722,7 @@ void RAY_IN_THE_AIR(void) {
     }
 
     if (ray.link != -1) {
-        ray.link += ray.speed_y;
+        ray.link += ray.speed_y; // landing speed
     }
     u8 block = calc_typ_trav(&ray, 2);
     if (ray.sub_etat != 8 && ray.sub_etat != 31) {
@@ -276,21 +732,143 @@ void RAY_IN_THE_AIR(void) {
         }
     }
     STOPPE_RAY_CONTRE_PAROIS(block);
+    if (ray.speed_y < -3 && ray.sub_etat == 15 && anim_speed == 11) {
+        eta_t* ray_eta = get_eta(&ray);
+        ray_eta->anim_speed = (ray_eta->anim_speed & 0xF) | 0x10;
+        ray.gravity_value_1 = 0;
+        ray.gravity_value_2 = 0;
+    }
+    if (ray.speed_y >= 0) {
+        if (ray.sub_etat == 0) {
+            set_sub_etat(&ray, 1);
+            ray.link = 0; // landing speed
+        } else if (ray.sub_etat == 17 || ray.sub_etat == 18) {
+            set_sub_etat(&ray, 19);
+            ray.link = 0; // landing speed
+        }
+    }
+    if ((ray.sub_etat != 17 && ray.sub_etat != 0 && ray.sub_etat != 9 && ray.sub_etat != 31) &&
+            (ray.sub_etat != 13 || ray.speed_y >= 0) && jump_time >= 3 && ray_mode != 3
+    ) {
+        u8 bf = block_flags[ray.coll_btype[0]];
+        if (bf & 2) {
+            // Rayman lands on a block
+            if (bf & 0x40) {
+                if (bf & 0x80) {
+                    decalage_en_cours += 16 * ray.speed_y;
+                } else {
+                    decalage_en_cours -= 16 * ray.speed_y;
+                }
+            }
+            recale_position(&ray);
+            ray.y += ray.speed_y;
+            ray.speed_y = 0;
+            ray.timer = 0;
+            in_air_because_hit = 0;
 
-    //stub
+            if (!(TEST_IS_ON_RESSORT_BLOC(&ray))) { //TODO
+                u16 snd = (num_world == 6 && num_level == 1) ? 242 : 19;
+                PlaySnd(snd, -1);
+            }
+
+            if (ray.nb_cmd == 0) {
+                i32 i;
+                for (i = 1; i < 10; i++) {
+                    if (pos_stack[i - 1] != pos_stack[i]) {
+                        break;
+                    }
+                }
+                if (i != 10) {
+                    i16 new_decalage;
+                    if (pos_stack[i - 1] < pos_stack[i]) {
+                        new_decalage = MIN(decalage_en_cours, -256);
+                    } else {
+                        new_decalage = MAX(decalage_en_cours, 256);
+                    }
+                    decalage_en_cours = new_decalage;
+                } else {
+                    decalage_en_cours = 0;
+                }
+            }
+            helico_time = -1;
+            if (ray.sub_etat == 3) {
+                if (ray.anim_frame == 0) {
+                    button_released = 1;
+                }
+            } else if (ray.sub_etat == 8) {
+                i16 new_timer = MIN(ray.iframes_timer, 90);
+                ray.iframes_timer = new_timer;
+            }
+            if (ray.sub_etat == 17 || ray.sub_etat == 18 || ray.sub_etat == 19) {
+                if (RayEvts.run && abs(ray.speed_x) >= ashr16(ray.eta[1][3].right_speed, 4)) {
+                    set_main_and_sub_etat(&ray, 1, 7);
+                } else {
+                    set_main_and_sub_etat(&ray, 0, 43);
+                }
+            } else if (ray.sub_etat == 25 || ray.sub_etat == 26) {
+                set_main_and_sub_etat(&ray, 0, 52);
+            } else if (ray.sub_etat == 27 || ray.sub_etat == 28) {
+                set_main_and_sub_etat(&ray, 0, 53);
+            } else {
+                set_main_and_sub_etat(&ray, 0, 8);
+            }
+            if (ray.link >= 200) { // landing speed
+                allocateRayLandingSmoke(); //TODO
+            }
+            ray.link = -1; // landing speed
+        } else {
+            if (ray.sub_etat != 7) {
+                if (ray.sub_etat == 8) {
+                    if (ray.speed_y > -1) {
+                        rayMayLandOnAnObject(&may_land_obj, -1);
+                    }
+                    if (ray.main_etat != 2 || ray.sub_etat != 8) {
+                        ray.iframes_timer = 90;
+                    }
+                } else {
+                    rayMayLandOnAnObject(&may_land_obj, -1);
+                }
+            }
+        }
+    }
+    if (ray_mode != 3 && ray.main_etat == 2 && ray.sub_etat != 31) {
+        IS_RAY_ON_LIANE(); //TODO
+        CAN_RAY_HANG_BLOC(); //TODO
+    }
+
+    if (may_land_obj == true) {
+        if (ray.speed_y > 4) {
+            ray.speed_y = 4;
+        }
+        if (ray.speed_y < -10) {
+            ray.speed_y = -10;
+        }
+    }
+    if (num_world == world_2_music && num_level == 15 && (xmapmax < ray.x + 150) && (mp.height * 16 - 100 < ray.y) && ray.hit_points != -1) {
+        ChangeLevel();
+        DO_FADE_OUT();
+    }
 }
 
 //7008C
 void terminateFistWhenRayDies(void) {
     if (poing.is_active) {
-        DO_NOVA(poing_obj);
+        DO_NOVA(poing_obj); //TODO
         switch_off_fist();
     }
 }
 
 //700A4
 void snifRayIsDead(obj_t* obj) {
-    //stub
+    --status_bar.lives;
+    RayEvts.super_helico = 0;
+    status_bar.num_wiz = 0;
+    if (!ray_se_noie && !(ray.main_etat == 3 && ray.sub_etat == 32)) {
+        lidol_to_allocate = 5;
+        lidol_source_obj = obj;
+        gerbe = true;
+    }
+    terminateFistWhenRayDies();
 }
 
 //7010C
@@ -321,7 +899,7 @@ u8 RAY_DEAD(void) {
             ray.screen_y > SCREEN_HEIGHT - 20
     ) {
         ray.hit_points = 0;
-        RAY_HIT(1, 0); //TODO
+        RAY_HIT(1, 0);
     } else {
         if (!(ray.main_etat == 2 && ray.sub_etat == 9) &&
                 !(ray.main_etat == 3 && ray.sub_etat == 22) &&
@@ -348,7 +926,7 @@ u8 RAY_DEAD(void) {
                     ray.is_active = 0;
                     ray.flags.alive = 0;
                     dead_time = 64;
-                    snifRayIsDead(&ray); //TODO
+                    snifRayIsDead(&ray);
                     if (status_bar.lives < 0) {
                         ray.hit_points = 0;
                         fin_du_jeu = 1;
@@ -366,7 +944,26 @@ u8 RAY_DEAD(void) {
 
 //70408
 void RAY_HURT(void) {
-    //stub
+    /* 6346C 80187C6C -O2 -msoft-float */
+    test_fin_cling();
+    --ray.hit_points;
+    if (ray.iframes_timer == -1) {
+        u8 flag_set = get_eta(&ray)->flags & 0x40;
+        if ((flag_set && !(block_flags[(u8) calc_typ_trav(&ray, 2)] & 0x10)) || !flag_set) {
+            ray.iframes_timer = 120;
+        } else {
+            ray.iframes_timer = 60;
+        }
+    }
+
+    if (ray.hit_points == -1) {
+        if (ray_mode == 2) {
+            ray_mode = 4;
+        } else {
+            ray_mode = 3;
+        }
+        jump_time = 0;
+    }
 }
 
 //704B0
@@ -401,7 +998,48 @@ void DO_PIEDS_RAYMAN(obj_t* obj) {
 
 //70AE8
 void DO_MORT_DE_RAY(void) {
-    //stub
+    /* 63E30 80188630 -O2 -msoft-float */
+    ray.iframes_timer = -1;
+    v_scroll_speed = 0;
+    h_scroll_speed = 0;
+    calc_obj_pos(&ray);
+    calc_btyp(&ray);
+    RAY_IN_THE_AIR();
+    RAY_SWIP();
+    STOPPE_RAY_EN_XY();
+    if (ray.speed_y > 0) {
+        move_down_ray();
+    } else if (ray.speed_y < 0) {
+        move_up_ray();
+    }
+    if (ray.speed_x < 0) {
+        RAY_TO_THE_LEFT();
+    } else if (ray.speed_x > 0) {
+        RAY_TO_THE_RIGHT();
+    }
+
+    fin_poing_follow(0); //TODO
+
+    if (ray_on_poelle == 1) {
+        RayEvts = SauveRayEvts;
+        ray_on_poelle = 0;
+    }
+    if (EOA(&ray) || !(ray.main_etat == 2 && ray.sub_etat == 8)) {
+        snifRayIsDead(&ray);
+        dead_time = 128;
+        gerbe = 1;
+        ray.flags.alive = 0;
+        if (status_bar.lives >= 0) {
+            ray.hit_points = 2;
+            status_bar.max_hitp = 2;
+        } else {
+            ray.hit_points = 0;
+            status_bar.lives = 0;
+            fin_du_jeu = 1;
+        }
+    }
+    DO_ANIM(&ray);
+    stackRay();
 }
 
 //70C20
@@ -416,7 +1054,107 @@ void RAY_FOLLOW(void) {
 
 //70E14
 void RAY_RESPOND_TO_ALL_DIRS(void) {
-    //stub
+    /* 32AF8 801572F8 -O2 -msoft-float */
+    if (ray_on_poelle == true) {
+        if (decalage_en_cours == 0 && ray.speed_y == 0)
+        {
+            if (!rightjoy() || ray.flags.flip_x)
+            {
+                if (leftjoy() && ray.flags.flip_x)
+                    RAY_RESPOND_TO_DIR(0);
+            }
+            else
+                RAY_RESPOND_TO_DIR(1);
+        }
+        else if (decalage_en_cours > 0 && !(ray.flags.flip_x))
+            RAY_RESPOND_TO_DIR(1);
+        else if (decalage_en_cours < 0 && ray.flags.flip_x)
+            RAY_RESPOND_TO_DIR(0);
+
+        if (joy_done == 0)
+        {
+            RAY_RESPOND_TO_NOTHING();
+            return;
+        }
+        else
+        {
+            compteur_attente = 0;
+            return;
+        }
+    }
+
+    if (RayEvts.reverse == 0) {
+        if (rightjoy() || RayEvts.force_run != 0)
+            RAY_RESPOND_TO_DIR(1);
+        if (leftjoy() && RayEvts.force_run == 0)
+            RAY_RESPOND_TO_DIR(0);
+        if (downjoy() && joy_done == 0 && RayEvts.force_run == 0)
+        {
+            RAY_RESPOND_TO_DOWN();
+            joy_done++;
+        }
+        if (upjoy())
+        {
+            if (joy_done == 0)
+            {
+                if (RayEvts.force_run == 0)
+                {
+                    RAY_RESPOND_TO_UP();
+                    joy_done++;
+                }
+            }
+            else
+            {
+                compteur_attente = 0;
+                animation_attente = 0;
+                return;
+            }
+        }
+        if (joy_done != 0)
+        {
+            compteur_attente = 0;
+            animation_attente = 0;
+            return;
+        }
+        if (RayEvts.force_run == 0) {
+            RAY_RESPOND_TO_NOTHING();
+            return;
+        } else {
+            compteur_attente = 0;
+            animation_attente = 0;
+            return;
+        }
+    }
+    if (rightjoy())
+        RAY_RESPOND_TO_DIR(0);
+    if (leftjoy())
+        RAY_RESPOND_TO_DIR(1);
+    if (downjoy() && joy_done == 0)
+    {
+        RAY_RESPOND_TO_DOWN();
+        joy_done++;
+    }
+    if (upjoy())
+    {
+        if (joy_done == 0)
+        {
+            RAY_RESPOND_TO_UP();
+            joy_done++;
+        }
+        else
+        {
+            compteur_attente = 0;
+            animation_attente = 0;
+            return;
+        }
+    }
+
+    if (joy_done == 0) {
+        RAY_RESPOND_TO_NOTHING();
+    } else {
+        compteur_attente = 0;
+        animation_attente = 0;
+    }
 }
 
 //70FF8

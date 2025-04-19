@@ -135,9 +135,6 @@ i32 downjoy(void) {
     if (Main_Control == 2) {
         //stub?
     }
-    if (TOUCHE(SC_DOWN)) {
-        int x = 5;
-    }
     if (input_mode == 1) {
         result |= (TOUCHE(key_down) && !(TOUCHE(key_up)));
     }

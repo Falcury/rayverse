@@ -419,7 +419,23 @@ i32 DO_PESANTEUR(obj_t* obj) {
 
 //56734
 void freezeAnim(obj_t* obj, u8 a2) {
-    //stub
+    /* 2C45C 80150C5C -O2 -msoft-float */
+    s16 count = obj->animations[obj->anim_index].frame_count - 1;
+    s32 count_capped;
+
+    if (obj->eta[obj->main_etat][obj->sub_etat].flags & 0x10)
+    {
+        /* duplicate... */
+        count_capped = count;
+        MIN_3(count_capped, a2);
+        obj->anim_frame = count - count_capped + 1;
+    }
+    else
+    {
+        count_capped = count;
+        MIN_3(count_capped, a2);
+        obj->anim_frame = count_capped;
+    }
 }
 
 //567AC
@@ -1145,18 +1161,49 @@ void RECALE_ALL_OBJECTS(void) {
 }
 
 //58AAC
-void RayCoince(i16 a1) {
-    //stub
+u8 RayCoince(i16 a1) {
+    return 0; //stub
 }
 
 //58DE8
 void move_up_ray(void) {
-    //stub
+    /* 30E34 80155634 -O2 -msoft-float */
+    if (ray_mode == 2 && RayCoince(2)) {
+        ray.speed_y = 0;
+    }
+
+    i16 unk_y_1 = ((get_eta(&ray)->flags & 0x40) || RayEvts.tiny) ? 40 : 25;
+    i16 unk_y_2 = 20;
+
+    ray.y += ray.speed_y;
+    if (ray.y < scroll_start_y - (unk_y_1 + unk_y_2)) {
+        ray.y = scroll_start_y - (unk_y_1 + unk_y_2);
+        ray.speed_y = 0;
+        if (ray.cmd_arg_2 != -1) {
+            RAY_HIT(ray.iframes_timer == -1, NULL);
+        }
+    }
+    calc_obj_pos(&ray);
+    v_scroll_speed = 0;
 }
 
 //58EC8
 void move_down_ray(void) {
-    //stub
+    /* 30E34 80155634 -O2 -msoft-float */
+
+    if (ray_mode == 2 && RayCoince(3)) {
+        ray.speed_y = 0;
+    }
+
+    ray.y += ray.speed_y;
+    calc_obj_pos(&ray);
+    if (ray.main_etat == 2) {
+        if ((scroll_end_y - ymap > ray.speed_y) && ray.screen_y >= 100) {
+            v_scroll_speed = ray.speed_y;
+        } else {
+            v_scroll_speed = 0;
+        }
+    }
 }
 
 //58F70

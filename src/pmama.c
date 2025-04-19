@@ -125,8 +125,10 @@ void DO_PMA_POING_COLLISION(obj_t* obj, i16 a2) {
 }
 
 //6628C
-void pma_get_eject_sens(obj_t* obj) {
-    //stub
+i32 pma_get_eject_sens(obj_t* obj) {
+    /* 29118 8014D918 -O2 -msoft-float */
+    ray.iframes_timer = 40;
+    return -1;
 }
 
 //662A0

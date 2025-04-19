@@ -652,5 +652,18 @@ void allocatePaillette(obj_t* obj) {
 
 //7C328
 void test_fin_cling(void) {
-    //stub
+    /* 3F0B8 801638B8 -O2 -msoft-float */
+    //NOTE: bug in original game: alive flag is set after setting the id to -1: level.objects[-1].flags.alive = 0;
+    if (id_Cling_1up != -1) {
+        Add_One_RAY_lives();
+        level.objects[id_Cling_1up].flags.alive = 0;
+        id_Cling_1up = -1;
+    }
+
+    if (id_Cling_Pow != -1) {
+        ray.hit_points = 4;
+        status_bar.max_hitp = 4;
+        level.objects[id_Cling_Pow].flags.alive = 0;
+        id_Cling_Pow = -1;
+    }
 }

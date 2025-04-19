@@ -332,7 +332,7 @@ typedef struct obj_t {
 	i16 follow_x;
 	i16 cmd_arg_1;
 	i16 link; // 52
-	u16 ray_dist; //54 // tile index?
+	i16 ray_dist; //54 // tile index?
 	i16 iframes_timer; // timer (?)
 	u16 test_block_index;
 	u16 scale; // 5A

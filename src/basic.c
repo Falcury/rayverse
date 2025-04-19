@@ -268,8 +268,8 @@ void calc_btyp_square(obj_t* obj) {
 
     i16 x = obj->x + obj->offset_bx;
     i16 y = obj->y + obj->offset_by;
-    i16 tile_x = ashr16(y, 4);
-    i16 tile_y = ashr16(x, 4);
+    i16 tile_x = ashr16(x, 4);
+    i16 tile_y = ashr16(y, 4);
     i16 tile_x_left = ashr16(x - x_offset, 4);
     i16 tile_x_right = ashr16(x + x_offset, 4);
 

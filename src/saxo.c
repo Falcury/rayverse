@@ -216,8 +216,8 @@ void DO_SAXO3_DEBUT(obj_t* obj) {
 }
 
 //778CC
-void saxo2_get_eject_sens(obj_t* obj) {
-    //stub
+i32 saxo2_get_eject_sens(void) {
+    return Phase < 2 ? -1 : 1;
 }
 
 

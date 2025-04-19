@@ -185,18 +185,14 @@ void RAY_KO(obj_t* obj) {
 }
 
 //2DBDC
-void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
-    if (put_above_solid_tiles) {
+void RAY_HIT(bool hurt, obj_t* obj) {
+    if (hurt) {
         RAY_HURT();
         i32 tile_x = (ray.x + ray.offset_bx) / 16;
-        for (;;) {
-            i32 tile_y = (ray.y + ray.offset_by) / 16;
-            if (BTYP(tile_x, tile_y) != 10) {
-                --ray.y;
-            } else {
-                break;
-            }
+        while (BTYP(tile_x, (ray.y + ray.offset_by) / 16) == BTYP_WATER) {
+            --ray.y;
         }
+        ray.coll_btype[0] = BTYP_NONE;
     }
     if (ray.main_etat == 6) {
         set_main_and_sub_etat(&ray, 6, 8);
@@ -206,60 +202,55 @@ void RAY_HIT(bool put_above_solid_tiles, obj_t* other_obj) {
     } else if (ray.flags.alive) {
         if (!(ray.main_etat == 3 && (ray.sub_etat == 22 || ray.sub_etat == 32)) &&
             !(ray.main_etat == 2 && ray.sub_etat == 31)
-                ) {
+        ) {
             if ((get_eta(&ray)->flags & 0x40) && (block_flags[calc_typ_trav(&ray, 2)] & 0x10)) {
                 set_main_and_sub_etat(&ray, 0, 61);
             } else {
                 set_main_and_sub_etat(&ray, 2, 8);
             }
             ray_speed_inv = 0;
-            if (ray.main_etat == 0 && ray.sub_etat == 61) {
+            if (obj == NULL && !(ray.main_etat == 0 && ray.sub_etat == 61)) {
                 ray.speed_x = ray.flags.flip_x ? -2 : 2;
                 ray.speed_y = -3;
-            } else {
-                if (other_obj != NULL) {
-                    i32 bump_direction = -1;
-                    if (other_obj->type == TYPE_180_SAXO2) {
-                        //bump_direction = sub_778CC();
-                    } else if (other_obj->type == TYPE_150_SCORPION) {
-                        //bump_direction = sub_79688();
-                    } else if (other_obj->type == TYPE_198_BB12) {
-                        bump_direction = 1;
-                    } else if (other_obj->type == TYPE_200_BB13) {
-                        bump_direction = -1;
-                    } else if (other_obj->type == TYPE_100_MITE) {
-                        bump_direction = other_obj->flags.flip_x ? 1 : -1;
-                    } else if (other_obj->type == TYPE_120_BATTEUR_FOU) {
-                        // bump_direction = sub_2008C(other_event);
-                    } else if (other_obj->type == TYPE_187_MAMA_PIRATE) {
-                        // bump_direction = sub_6628C(other_event);
-                    } else if (other_obj->type == TYPE_209_FIRE_LEFT) {
-                        bump_direction = 1;
-                    } else if (other_obj->type == TYPE_210_FIRE_RIGHT) {
-                        bump_direction = -1;
+            } else if (obj && !(ray.main_etat == 0 && ray.sub_etat == 61)){
+                i32 eject_sens = -1;
+                if (obj->type == TYPE_180_SAXO2) {
+                    eject_sens = saxo2_get_eject_sens();
+                } else if (obj->type == TYPE_150_SCORPION) {
+                    eject_sens = sko_get_eject_sens();
+                } else if (obj->type == TYPE_198_BB12) {
+                    eject_sens = 1;
+                } else if (obj->type == TYPE_200_BB13) {
+                    eject_sens = -1;
+                } else if (obj->type == TYPE_100_MITE) {
+                    eject_sens = obj->flags.flip_x ? 1 : -1;
+                } else if (obj->type == TYPE_120_BATTEUR_FOU) {
+                    eject_sens = bat_get_eject_sens(obj);
+                } else if (obj->type == TYPE_187_MAMA_PIRATE) {
+                    eject_sens = pma_get_eject_sens(obj);
+                } else if (obj->type == TYPE_209_FIRE_LEFT) {
+                    eject_sens = 1;
+                } else if (obj->type == TYPE_210_FIRE_RIGHT) {
+                    eject_sens = -1;
+                } else {
+                    i32 xspeed_delta = obj->speed_x - ray.speed_x;
+                    if (xspeed_delta == 0) {
+                        eject_sens = ray.flags.flip_x ? 1 : -1;
                     } else {
-                        i32 xspeed_delta = other_obj->speed_x - ray.speed_x;
-                        if (xspeed_delta == 0) {
-                            bump_direction = ray.flags.flip_x ? 1 : -1;
-                        } else {
-                            bump_direction = xspeed_delta > 0 ? 1 : -1;
-                        }
+                        eject_sens = xspeed_delta > 0 ? 1 : -1;
                     }
-                    i32 bump_speed;
-                    if (flags[other_obj->type] & flags1_4_fast_bump) {
-                        bump_speed = 5;
-                    } else if (other_obj->type == TYPE_180_SAXO2) {
-                        bump_speed = 4;
-                    } else {
-                        bump_speed = 2;
-                    }
-                    ray.speed_x = bump_speed * bump_direction; // Note: can it be a different value except 1 or -1?
-                    ray.speed_y = -bump_speed;
-
                 }
+                i32 bump_speed;
+                if (flags[obj->type] & flags1_4_fast_bump) {
+                    bump_speed = 5;
+                } else if (obj->type == TYPE_180_SAXO2) {
+                    bump_speed = 4;
+                } else {
+                    bump_speed = 2;
+                }
+                ray.speed_x = bump_speed * eject_sens; // Note: eject_sens is always 1 or -1
+                ray.speed_y = ~bump_speed;
             }
-
-            // stub
 
         }
     }
