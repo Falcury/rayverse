@@ -498,11 +498,11 @@ void RAY_RESPOND_TO_NOTHING(void) {
                     {
                         sel_eta_1 = &ray.eta[ray.main_etat][ray.sub_etat];
                         unk_1 = ((sel_eta_1->flags >> 4 ^ 1) & 1) * 0x10;
-                        sel_eta_1->flags = sel_eta_1->flags & 0xEF | unk_1;
+                        sel_eta_1->flags = (sel_eta_1->flags & 0xEF) | unk_1;
                         freezeAnim(&ray, 1);
                         sel_eta_2 = &ray.eta[ray.main_etat][ray.sub_etat];
                         unk_1 = ((sel_eta_2->flags >> 4 ^ 1) & 1) * 0x10;
-                        sel_eta_2->flags = sel_eta_2->flags & 0xEF | unk_1;
+                        sel_eta_2->flags = (sel_eta_2->flags & 0xEF) | unk_1;
                     }
                 }
                 else if (ray.sub_etat == 59 || ray.sub_etat == 62 || ray.sub_etat == 63)

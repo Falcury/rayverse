@@ -1116,7 +1116,12 @@ void DO_CLING_ANIMS(void) {
 
 //58754
 void DO_OBJECTS_ANIMS(void) {
-    //stub
+    for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+        obj_t* obj = level.objects + actobj.objects[i];
+        if (obj->type != TYPE_204_BLACK_RAY && obj->type != TYPE_205_BLACK_FIST) {
+            DO_ANIM(obj);
+        }
+    }
 }
 
 //587C8
