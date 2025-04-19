@@ -715,7 +715,7 @@ bool LoadOptionsOnDisk(void) {
         mem_read(&options_jeu.is_stereo, mem, 2);
         mem_read(&Mode_Pad, mem, 1);
         mem_read(&Port_Pad, mem, 1);
-        mem_read(&xpadmax, mem, 2);
+        mem_read(&xpadmax, mem, 2); // offset = 0x26
         mem_read(&xpadmin, mem, 2);
         mem_read(&ypadmax, mem, 2);
         mem_read(&ypadmin, mem, 2);
@@ -739,7 +739,7 @@ bool LoadOptionsOnDisk(void) {
         mem_read(&fixon, mem, 1);
         mem_read(&BackgroundOptionOn, mem, 1);
         mem_read(&ScrollDiffOn, mem, 1);
-        mem_read(&tRefRam2VramNormalFix, mem, 16);
+        mem_read(&tRefRam2VramNormalFix, mem, 16); // offset = 0x44
         mem_read(&tRefRam2VramNormal, mem, 16);
         mem_read(&tRefTransFondNormal, mem, 16);
         mem_read(&tRefSpriteNormal, mem, 4);

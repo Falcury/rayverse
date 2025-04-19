@@ -128,12 +128,11 @@ void check_key_table(void) {
 void LOAD_CONFIG(void) {
     if (LoadOptionsOnDisk()) {
         LoadLanguageTxt(main_mem_fix, 0); // English
-        if (xpadmax == -1) {
-            // NOTE: this may occur if a RAYMAN.CFG is present that contains this value for xpadmax.
+        if (tRefRam2VramNormalFix[0] >= 128 && xpadmax == -1) {
+            // NOTE: this may occur if a RAYMAN.CFG is present that contains values that meet this condition.
             // TODO: figure out why this causes Mode X to be used instead of normal mode.
-            // Disabling this code for now.
-//            GameModeVideo = MODE_X;
-//            P486 = 0;
+            GameModeVideo = MODE_X;
+            P486 = 0;
         }
         if (FondAutorise == 2) {
             GameModeVideo = MODE_X;
@@ -147,6 +146,7 @@ void LOAD_CONFIG(void) {
             SetIrq(Irq);
             SetDma(Dma);
             SetParam(Param);
+            SetDeviceID(DeviceID);
             //if (sub_3E780()) {} // seems to do something with locking memory regions (DOS protected mode stuff)
 
         } else {
@@ -163,7 +163,7 @@ void LOAD_CONFIG(void) {
             // stub: init joypad
         } else {
             if (xpadmax == -1) {
-                xpadmax = 2;
+                xpadmax = -2;
             }
         }
 
@@ -174,9 +174,10 @@ void LOAD_CONFIG(void) {
             LoadBnkFixe();
             InitSnd();
         }
+        language = 0; // English
         LoadLanguageTxt(main_mem_fix, language);
         if (JoystickPresent()) {
-            //vignet_load_proc = load_vignet_12;
+            pLOAD_SCREEN = LOAD_OPTIONS_SCREEN;
             CalcTab();
             DO_FADE_OUT();
             MAIN_CALIBRATE_JOYSTICK();
