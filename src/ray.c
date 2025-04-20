@@ -661,7 +661,7 @@ void remoteControlRay(void) {
 
 //6F9E0
 void STOPPE_RAY_CONTRE_PAROIS(u8 block) {
-    if (ray_mode != 3 && (block_flags[block] & 0x10) && ray.sub_etat != 7 && ray.sub_etat != 9 && ray.speed_y <= 0) {
+    if (ray_mode != MODE_3_MORT_DE_RAYMAN && (block_flags[block] & 0x10) && ray.sub_etat != 7 && ray.sub_etat != 9 && ray.speed_y <= 0) {
         if (ray.sub_etat != 8) {
             set_sub_etat(&ray, 1);
             button_released = 0;
@@ -748,7 +748,7 @@ void RAY_IN_THE_AIR(void) {
         }
     }
     if ((ray.sub_etat != 17 && ray.sub_etat != 0 && ray.sub_etat != 9 && ray.sub_etat != 31) &&
-            (ray.sub_etat != 13 || ray.speed_y >= 0) && jump_time >= 3 && ray_mode != 3
+            (ray.sub_etat != 13 || ray.speed_y >= 0) && jump_time >= 3 && ray_mode != MODE_3_MORT_DE_RAYMAN
     ) {
         u8 bf = block_flags[ray.coll_btype[0]];
         if (bf & 2) {
@@ -831,7 +831,7 @@ void RAY_IN_THE_AIR(void) {
             }
         }
     }
-    if (ray_mode != 3 && ray.main_etat == 2 && ray.sub_etat != 31) {
+    if (ray_mode != MODE_3_MORT_DE_RAYMAN && ray.main_etat == 2 && ray.sub_etat != 31) {
         IS_RAY_ON_LIANE(); //TODO
         CAN_RAY_HANG_BLOC(); //TODO
     }
@@ -938,7 +938,7 @@ u8 RAY_DEAD(void) {
             }
         }
     }
-    bool alive = ray.is_active && ray.flags.alive && ray_mode != 3 && ray_mode != 4;
+    bool alive = ray.is_active && ray.flags.alive && ray_mode != MODE_3_MORT_DE_RAYMAN && ray_mode != MODE_4_MORT_DE_RAYMAN_ON_MS;
     return alive;
 }
 
@@ -957,10 +957,10 @@ void RAY_HURT(void) {
     }
 
     if (ray.hit_points == -1) {
-        if (ray_mode == 2) {
-            ray_mode = 4;
+        if (ray_mode == MODE_2_RAY_ON_MS) {
+            ray_mode = MODE_4_MORT_DE_RAYMAN_ON_MS;
         } else {
-            ray_mode = 3;
+            ray_mode = MODE_3_MORT_DE_RAYMAN;
         }
         jump_time = 0;
     }

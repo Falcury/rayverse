@@ -632,6 +632,45 @@ typedef struct pix_gerbe_t {
     i16 is_active;
 } pix_gerbe_t;
 
+typedef struct rayevts_t {
+    u8 poing : 1;               //1
+    u8 hang : 1;                //2
+    u8 helico : 1;              //4
+    u8 super_helico : 1;        //8
+    u8 handstand_dash : 1;      //0x10
+    u8 handstand : 1;           //0x20
+    u8 magicseed : 1;           //0x40
+    u8 grab : 1;                //0x80
+    u8 run : 1;                 //0x100
+    u8 tiny : 1;                //0x200
+    u8 firefly : 1;             //0x400
+    u8 force_run : 2;           //0x800 and 0x1000
+    u8 reverse : 2;             //0x2000 and 0x4000
+    u8 squashed : 1;            //0x8000
+} rayevts_t;
+
+typedef struct finbosslevel_t {
+    u8 bzzit : 1;           // 1
+    u8 moskito : 1;         // 2
+    u8 mr_sax : 1;          // 4
+    u8 mr_stone : 1;        // 8
+    u8 viking_mama : 1;     // 0x10
+    u8 space_mama : 1;      // 0x20
+    u8 mr_skops : 1;        // 0x40
+    u8 mr_dark : 1;         // 0x80
+    u8 crazy_drummer : 1;   // 0x100
+    u8 helped_joe_1 : 1;    // 0x200
+    u8 helped_joe_2 : 1;    // 0x400
+    u8 helped_musician : 1; // 0x800
+} finbosslevel_t;
+
+typedef struct wi_save_zone_t {
+    u8 unlocked : 1;
+    u8 status_flag_4_bit: 1;
+    u8 cages : 3;
+} wi_save_zone_t;
+
+
 enum game_mode_video_enum {
     MODE_NORMAL = 0,
     MODE_X = 1,
@@ -1189,44 +1228,6 @@ typedef enum btyp_enum {
     BTYP_SLIPPERY=30,
 } BlockType;
 
-typedef struct rayevts_t {
-	u8 poing : 1;               //1
-	u8 hang : 1;                //2
-	u8 helico : 1;              //4
-	u8 super_helico : 1;        //8
-	u8 handstand_dash : 1;      //0x10
-	u8 handstand : 1;           //0x20
-	u8 magicseed : 1;           //0x40
-	u8 grab : 1;                //0x80
-	u8 run : 1;                 //0x100
-	u8 tiny : 1;                //0x200
-	u8 firefly : 1;             //0x400
-	u8 force_run : 2;           //0x800 and 0x1000
-	u8 reverse : 2;             //0x2000 and 0x4000
-	u8 squashed : 1;            //0x8000
-} rayevts_t;
-
-typedef struct finbosslevel_t {
-    u8 bzzit : 1;           // 1
-    u8 moskito : 1;         // 2
-    u8 mr_sax : 1;          // 4
-    u8 mr_stone : 1;        // 8
-    u8 viking_mama : 1;     // 0x10
-    u8 space_mama : 1;      // 0x20
-    u8 mr_skops : 1;        // 0x40
-    u8 mr_dark : 1;         // 0x80
-    u8 crazy_drummer : 1;   // 0x100
-    u8 helped_joe_1 : 1;    // 0x200
-    u8 helped_joe_2 : 1;    // 0x400
-    u8 helped_musician : 1; // 0x800
-} finbosslevel_t;
-
-typedef struct wi_save_zone_t {
-    u8 unlocked : 1;
-    u8 status_flag_4_bit: 1;
-    u8 cages : 3;
-} wi_save_zone_t;
-
 enum world_enum {
 	world_0_none     = 0,
 	world_1_jungle   = 1,
@@ -1273,6 +1274,15 @@ enum cmd_enum {
 	GO_SKIPTRUE = 31, // Skips {arg1} commands if TEST is true
 	GO_SKIPFALSE = 32, // Skips {arg1} commands if TEST is false
 	INVALID_CMD = 33, // Terminates the commands and loops back, {arg1} is always 0xFF which is used as the command array terminator
+};
+
+enum ray_mode_enum {
+    MODE_0_NONE = 0,
+    MODE_1_RAYMAN = 1,
+    MODE_2_RAY_ON_MS = 2,
+    MODE_3_MORT_DE_RAYMAN = 3,
+    MODE_4_MORT_DE_RAYMAN_ON_MS = 4,
+    MODE_5_CASSE_BRIQUE = 5,
 };
 
 enum sound_enum {

@@ -500,7 +500,7 @@ void DoRaymanCollisionDefault(obj_t* obj) {
                 ray.iframes_timer = command_par3;
             } else {
                 RAY_HIT(1, obj);
-                if (!(ray_mode == 3 || ray_mode == 4)) {
+                if (!(ray_mode == MODE_3_MORT_DE_RAYMAN || ray_mode == MODE_4_MORT_DE_RAYMAN_ON_MS)) {
                     ray.iframes_timer = 60;
                 }
             }

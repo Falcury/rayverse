@@ -602,7 +602,7 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
     }
     else if (obj->type == TYPE_STONEDOG || obj->type == TYPE_STONEDOG2)
     {
-        stoneDogBounces(obj);
+        stoneDogBounces(obj); //TODO
         if (obj->main_etat == 2)
         {
             spd_y = obj->speed_y;
@@ -1093,7 +1093,7 @@ void DO_CLING_ANIMS(void) {
         DO_ANIM(obj);
         if (EOA(obj)) {
             id_Cling_1up = -1;
-            if (ray_mode != 3 && ray_mode != 4) {
+            if (ray_mode != MODE_3_MORT_DE_RAYMAN && ray_mode != MODE_4_MORT_DE_RAYMAN_ON_MS) {
                 Add_One_RAY_lives();
             }
             obj->flags.alive = 0;
@@ -1173,7 +1173,7 @@ u8 RayCoince(i16 a1) {
 //58DE8
 void move_up_ray(void) {
     /* 30E34 80155634 -O2 -msoft-float */
-    if (ray_mode == 2 && RayCoince(2)) {
+    if (ray_mode == MODE_2_RAY_ON_MS && RayCoince(2)) {
         ray.speed_y = 0;
     }
 
@@ -1196,7 +1196,7 @@ void move_up_ray(void) {
 void move_down_ray(void) {
     /* 30E34 80155634 -O2 -msoft-float */
 
-    if (ray_mode == 2 && RayCoince(3)) {
+    if (ray_mode == MODE_2_RAY_ON_MS && RayCoince(3)) {
         ray.speed_y = 0;
     }
 
@@ -1354,7 +1354,7 @@ void INIT_RAY_BEGIN(void) {
 void INIT_RAY(u8 new_lvl) {
     gele = 0;
     compteur_attente = 0;
-    ray_mode = (ray.main_etat == 6) + 1;
+    ray_mode = (ray.main_etat == 6) ? MODE_2_RAY_ON_MS : MODE_1_RAYMAN;
     if (RayEvts.tiny) {
         rms.hit_points = ray.hit_points;
         ray = rms;
@@ -1670,7 +1670,7 @@ void INIT_MOTEUR_LEVEL(i16 a1) {
             restore_objects_flags();
         }
         correct_gendoor_link(0);
-        ray_mode = 1;
+        ray_mode = MODE_1_RAYMAN;
         RAY_MODE_SPEED = 16;
         new_level = 0;
         build_active_table();
@@ -1716,7 +1716,7 @@ void INIT_RAY_ON_MS(void) {
             ray.init_hit_points = rms.init_hit_points;
             ray.hit_sprite = rms.hit_sprite;
             set_main_and_sub_etat(&ray, 6, 0);
-            ray_mode = 2; //MODE_RAY_ON_MS
+            ray_mode = MODE_2_RAY_ON_MS;
             NewMs = 0;
         }
     }
@@ -1775,27 +1775,27 @@ void DO_MOTEUR2(void) {
             ray.cmd_arg_2 = -1;
         }
         switch(ray_mode) {
-            case 1: {
+            case MODE_1_RAYMAN: {
                 DO_RAYMAN(); //TODO
             } break;
-            case 2: {
+            case MODE_2_RAY_ON_MS: {
                 if (ray.main_etat != 6) {
                     set_main_and_sub_etat(&ray, 6, 0);
                 }
                 DO_RAY_ON_MS(); //TODO
             } break;
-            case 3:
-            case 4: {
+            case MODE_3_MORT_DE_RAYMAN:
+            case MODE_4_MORT_DE_RAYMAN_ON_MS: {
                 DO_MORT_DE_RAY(); //TODO
             } break;
-            case 5: {
+            case MODE_5_CASSE_BRIQUE: {
                 DO_RAY_CASSE_BRIQUE(); //TODO
             } break;
             default: {
                 DO_PLACE_RAY(); //TODO
             } break;
         }
-        if (NumScrollObj <= 0 || ray_mode <= 0) {
+        if (NumScrollObj <= 0 || ray_mode <= MODE_0_NONE) {
             scroll_x = -1;
             scroll_y = -1;
         } else {
@@ -1806,10 +1806,10 @@ void DO_MOTEUR2(void) {
         if (scroll_y != -1 && v_scroll_speed == 255) {
             v_scroll_speed = 0;
         }
-        if (ray_mode > 0) {
+        if (ray_mode > MODE_0_NONE) {
             recale_ray_pos(); //TODO
         }
-        if (ray_mode == 2) {
+        if (ray_mode == MODE_2_RAY_ON_MS) {
             //stub
         }
         DO_SCROLL(&h_scroll_speed, &v_scroll_speed); //TODO

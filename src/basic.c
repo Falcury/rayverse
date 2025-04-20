@@ -407,7 +407,7 @@ void switchOff(obj_t* obj) {
     if (EOA(obj)) {
         obj->flags.alive = 0;
         obj->is_active = 0;
-        if (!(ray_mode == 5 && obj->type == TYPE_161_WIZ)) {
+        if (!(ray_mode == MODE_5_CASSE_BRIQUE && obj->type == TYPE_161_WIZ)) {
             del_alwobj(obj->id);
         }
         if (obj->type == TYPE_75_PAILLETTE || obj->type == TYPE_170_RAYON) {

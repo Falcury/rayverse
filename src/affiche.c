@@ -113,7 +113,7 @@ void DisplayProgrammerMessage(void) {
 
 //19420
 void DISPLAY_FIXE(i32 time) {
-    if (ray_mode == 5) {
+    if (ray_mode == MODE_5_CASSE_BRIQUE) {
         if (cb_ball_obj_id != -1) {
             DISPLAY_FIXE_CB(level.objects + cb_ball_obj_id);
         }
