@@ -11,7 +11,22 @@ void recale_ray_on_liane(void) {
 
 //6C088
 void calc_bhand_typ(void) {
-    //stub
+    /* 5D2C0 80181AC0 -O2 -msoft-float */
+    //NOTE: the PS1 version takes an obj_t as an argument (instead of using ray)
+    i16 x = ray.offset_bx + ray.x;
+    u8 unk_1 = ray.speed_y + 22 + ray.offset_hy;
+    if (RayEvts.tiny) {
+        unk_1 = 80 - ((80 - unk_1) >> 1);
+    }
+    i16 y = unk_1 + ray.y;
+    hand_btyp = BTYP(x >> 4, y >> 4);
+    if (hand_btyp != BTYP_LIANE) {
+        hand_btypg = BTYP((x - 8) >> 4, y >> 4);
+        hand_btypd = BTYP((x + 8) >> 4, y >> 4);
+    } else {
+        hand_btypd = BTYP_SOLID;
+        hand_btypg = BTYP_SOLID;
+    }
 }
 
 //6C138
@@ -384,7 +399,214 @@ void ray_inertia_speed(u8 a1, u8 a2, i16 prev_speed_x, i16 a4) {
 
 //6D2E8
 void RAY_SWIP(void) {
-    //stub
+    /* 5E9AC 801831AC -O2 -msoft-float */
+    // NOTE: PS1 decomp is non-matching
+
+    s16 temp_a2;
+    s16 temp_v0;
+    s32 var_v0_2;
+    s32 var_v0_3;
+    s32 var_a1;
+    u8 var_s0;
+    s32 var_v1;
+    u8 temp_v1_2;
+
+    /*var_s0 = saved_reg_s0;*/
+    i16 var_s2 = 0;
+    i32 var_s4 = num_world == 3 ? 32 : 16;
+    if (ray.cmd_arg_2 != -1) {
+        obj_t* follow_obj = &level.objects[ray.cmd_arg_2];
+        if (!(follow_obj->flags.follow_enabled)) {
+            ray.cmd_arg_2 = -1;
+        }
+        i16 ray_dist = follow_obj->ray_dist;
+        if ((abs(ray_dist) >= 9) || (ray_dist < 0) || (ray.cmd_arg_2 == -1)) {
+            u8 sp10;
+            rayMayLandOnAnObject(&sp10, ray.cmd_arg_2);
+            if (ray.cmd_arg_2 != -1) {
+                if (abs(follow_obj->ray_dist) >= 9) {
+                    ray.cmd_arg_2 = -1;
+                    u8 old_ray_main_etat = ray.main_etat;
+                    set_main_etat(&ray, 2);
+
+                    if (ray_on_poelle != 0) {
+                        if ((old_ray_main_etat == 0) && (ray.sub_etat == 40)) {
+                            set_sub_etat(&ray, 26);
+                        } else {
+                            set_sub_etat(&ray, 28);
+                        }
+                    } else {
+                        if (old_ray_main_etat == 1 && (ray.sub_etat == 9 || ray.sub_etat == 11)) {
+                                ray.flags.flip_x = !ray.flags.flip_x;
+                        }
+                        if (old_ray_main_etat == 1) {
+                            if (ray.sub_etat == 3) {
+                                set_sub_etat(&ray, 32);
+                            } else {
+                                set_sub_etat(&ray, 24);
+                            }
+                        }
+                        else {
+                            set_sub_etat(&ray, 1);
+                        }
+
+                    }
+                    ray.link = 0; // landing speed
+                    jump_time = 0;
+                }
+            }
+        }
+    }
+    if (!ray_in_fee_zone) {
+        SET_X_SPEED(&ray);
+    }
+    if (ray.main_etat == 1 && (ray.sub_etat == 9 || ray.sub_etat == 48 || ray.sub_etat == 11)) {
+        ray.speed_x = -ray.speed_x;
+    }
+    temp_v0 = ashl16((s16) ray.speed_x, 4);
+    temp_a2 = temp_v0;
+    if (ray.speed_x != 0) {
+        var_a1 = -(abs(temp_v0) < 257);
+        if (ray_wind_force > 0) {
+            ray.speed_x = (s16) ray.speed_x + 10;
+        } else if (ray_wind_force < 0) {
+            ray.speed_x = (s16) ray.speed_x - 10;
+        }
+    } else {
+        var_a1 = 0;
+    }
+    /* could try gotos-only for this entire section... */
+    if (ray.main_etat == 2) {
+        if ((ray.sub_etat == 0x0F) || (ray.nb_cmd != 0)) {
+            if (ray.flags.flip_x) {
+                var_s0 = 12;
+                if (decalage_en_cours <= 0) {
+                    var_s0 = 8;
+                }
+            } else {
+                var_s0 = 8;
+                if (decalage_en_cours < 0) {
+                    var_s0 = 12;
+                }
+            }
+        } else {
+            var_s0 = var_a1;
+        }
+        var_s2 = 0;
+        /*default:
+        block_57:
+                var_s2 = 0;
+                break;*/
+    } else if (ray.main_etat == 0 || ray.main_etat == 1 || ray.main_etat == 3) {
+        if (ray.cmd_arg_2 != -1) {
+            // NOTE: slopey plat code is not present in the PS1 version
+            obj_t* follow_obj = &level.objects[ray.cmd_arg_2];
+            if (follow_obj->type == TYPE_254_SLOPEY_PLAT) {
+                var_s0 = 255 / (abs(follow_obj->hit_points) + 1);
+                var_s2 = -ashr16(follow_obj->hit_points, 1);
+            } else {
+                var_s0 = 0;
+                var_s2 = 0;
+            }
+
+        } else {
+            switch (ray.coll_btype[0])
+            {
+                case 0:
+                case 1:
+                case 8:
+                case 9:
+                case 24:
+                case 25:
+                case 30:
+                    /* not sure about this */
+                    if (((block_flags[ray.coll_btype[0]] & 1) ||
+                             (block_flags[ray.coll_btype[4]] & 8) ||
+                             !(block_flags[ray.coll_btype[4]] & 2))
+                     ) {
+                        if ((ray.speed_x != 0 || decalage_en_cours != 0 || ray_wind_force != 0))
+                        {
+                            var_s0 = var_s4;
+                            var_s2 = 0;
+                        }
+                        else
+                        {
+
+                            var_s0 = var_a1;
+                            var_s2 = 0;
+                        }
+                    }
+                    else
+                    {
+                        var_s0 = var_a1;
+                        var_s2 = 0;
+                    }
+                    break;
+                case 15:
+
+                    switch (ray.coll_btype[3])
+                    {
+                        case 20:
+                        case 21:
+                            var_s0 = var_s4;
+                            var_s2 = -4;
+                            break;
+                        case 22:
+                        case 23:
+                            var_s0 = var_s4;
+                            var_s2 = 4;
+                            break;
+                        case 18:
+                            var_s0 = var_s4;
+                            var_s2 = -6;
+                            break;
+                        case 19:
+                            var_s0 = var_s4;
+                            var_s2 = 6;
+                            break;
+                        default:
+                            var_s0 = var_a1;
+                            var_s2 = 0;
+                            break;
+                    }
+                    break;
+                case 20:
+                case 21:
+                    var_s0 = var_s4;
+                    var_s2 = -4;
+                    break;
+                case 22:
+                case 23:
+                    var_s0 = var_s4;
+                    var_s2 = 4;
+                    break;
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 12:
+                case 14:
+                    var_s0 = var_a1;
+                    var_s2 = 0;
+                    break;
+                case 18:
+                    var_s0 = var_s4;
+                    var_s2 = -6;
+                    break;
+                case 19:
+                    var_s0 = var_s4;
+                    var_s2 = 6;
+                    break;
+            }
+        }
+    }
+    if (ray_on_poelle == 1)
+    {
+        var_s0 = var_s0 >> 1;
+    }
+    ray_inertia_speed(var_s0, var_s2, temp_a2, ray_wind_force);
 }
 
 //6D724
@@ -424,7 +646,86 @@ void RAY_TOMBE(void) {
 
 //6E030
 void RAY_RESPOND_TO_DOWN(void) {
-    //stub
+    /* 5FC44 80184444 -O2 -msoft-float */
+    eta_t *sel_eta_1;
+    eta_t *sel_eta_2;
+    s32 unk_1;
+
+    switch (ray.main_etat)
+    {
+        case 4:
+            if (ray.sub_etat != 11 && ray.sub_etat != 12)
+            {
+                ray.speed_y = 1;
+                if (ray.scale != 0 && horloge[2] != 0)
+                    DO_ANIM(&ray);
+                calc_bhand_typ();
+                if (hand_btyp != BTYP_LIANE)
+                    RAY_TOMBE(); //TODO
+                else if (ray.sub_etat != 3)
+                    set_sub_etat(&ray, 3);
+            }
+            else
+                ray.speed_y = 0;
+            break;
+        case 0:
+            /* not a switch? */
+            if (
+                    ray.sub_etat == 0 || ray.sub_etat == 1 || ray.sub_etat == 2 || ray.sub_etat == 3 ||
+                    ray.sub_etat == 49 || ray.sub_etat == 8 || ray.sub_etat == 43 || ray.sub_etat == 36 ||
+                    ray.sub_etat == 37 || ray.sub_etat == 38 || ray.sub_etat == 39 || ray.sub_etat == 40 ||
+                    ray.sub_etat == 41 || ray.sub_etat == 42 || ray.sub_etat == 13 || ray.sub_etat == 59 ||
+                    ray.sub_etat == 62 || ray.sub_etat == 63 ||
+                    ray.sub_etat == 64 || ray.sub_etat == 65 //NOTE: the last 2 are not in the PS1 version
+            ) {
+                set_main_and_sub_etat(&ray, 3, 6);
+            }
+            else if (ray.sub_etat == 20)
+            {
+                if (EOA(&ray))
+                {
+                    sel_eta_1 = &ray.eta[ray.main_etat][ray.sub_etat];
+                    if (horloge[sel_eta_1->anim_speed & 0xF] == 0)
+                    {
+                        /* ??? */
+                        unk_1 = ((sel_eta_1->flags >> 4 ^ 1) & 1) * 0x10;
+                        sel_eta_1->flags = (sel_eta_1->flags & ~0x10) | unk_1;
+                        freezeAnim(&ray, 1);
+                        sel_eta_2 = &ray.eta[ray.main_etat][ray.sub_etat];
+                        unk_1 = ((sel_eta_2->flags >> 4 ^ 1) & 1) * 0x10;
+                        sel_eta_2->flags = (sel_eta_2->flags & ~0x10) | unk_1;
+                    }
+                }
+            }
+            RAY_SWIP();
+            break;
+        case 1:
+            // NOTE: this is different from the PS1 version
+            if (ray.sub_etat == 0 && options_jeu.test_fire1() && !ray_on_poelle) {
+                set_main_and_sub_etat(&ray, 3, 6);
+            } else {
+                if (!(ray.sub_etat == 8 || ray.sub_etat == 10 || ray.sub_etat == 9 || ray.sub_etat == 11) ||
+                    ((!options_jeu.test_fire1() || ray_on_poelle) && (!leftjoy() || !options_jeu.test_fire1() || ray_on_poelle))
+                ) {
+                    if (RayEvts.force_run == 0) {
+                        RAY_STOP();
+                    }
+                }
+            }
+            RAY_SWIP();
+            break;
+        case 5:
+            ray.y += 14;
+            RAY_TOMBE();
+            break;
+        case 6:
+            decalage_en_cours = 0;
+            ray.flags.flip_x = 1;
+            if (ray.speed_y < 3 && ray.gravity_value_1 == 0) {
+                ++ray.speed_y;
+            }
+            break;
+    }
 }
 
 //6E370
