@@ -101,9 +101,9 @@ void SET_X_SPEED(obj_t* obj) {
     if (horloge[horloge_index] == 0) {
         eta_t* eta = get_eta(obj);
         if (obj->flags.flip_x) {
-            xspeed = eta->right_speed * horloge_index;
+            xspeed = eta->speed_x_right * horloge_index;
         } else {
-            xspeed = eta->left_speed * horloge_index;
+            xspeed = eta->speed_x_left * horloge_index;
         }
         if (obj->type == TYPE_23_RAYMAN && RayEvts.tiny) {
             xspeed /= 2;
@@ -1130,7 +1130,7 @@ void DO_OBJECTS(void) {
         DO_CLING_ANIMS();
     }
     if (lidol_to_allocate != 0) {
-        allocate_toons(lidol_source_obj, 7); //TODO
+        allocate_toons(lidol_source_obj, 7);
         lidol_to_allocate = 0;
     }
     for (i32 i = 0; i < actobj.num_active_objects; ++i) {

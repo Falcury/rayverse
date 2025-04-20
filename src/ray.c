@@ -227,7 +227,7 @@ void rayMayLandOnAnObject(u8* param_1, i16 obj_id) {
                 if (ray.main_etat == 2) {
                     u8 new_me = 1;
                     u8 new_se = 3;
-                    if (abs(ray.speed_x) >= ashr16(ray.eta[new_me][new_se].right_speed, 4) && RayEvts.run) {
+                    if (abs(ray.speed_x) >= ashr16(ray.eta[new_me][new_se].speed_x_right, 4) && RayEvts.run) {
                         set_main_and_sub_etat(&ray, new_me, new_se);
                     } else {
                         set_main_etat(&ray, 0);
@@ -800,7 +800,7 @@ void RAY_IN_THE_AIR(void) {
                 ray.iframes_timer = new_timer;
             }
             if (ray.sub_etat == 17 || ray.sub_etat == 18 || ray.sub_etat == 19) {
-                if (RayEvts.run && abs(ray.speed_x) >= ashr16(ray.eta[1][3].right_speed, 4)) {
+                if (RayEvts.run && abs(ray.speed_x) >= ashr16(ray.eta[1][3].speed_x_right, 4)) {
                     set_main_and_sub_etat(&ray, 1, 7);
                 } else {
                     set_main_and_sub_etat(&ray, 0, 43);

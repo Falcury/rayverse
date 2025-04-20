@@ -935,6 +935,8 @@ u8 undestroy = 0; //962B6
 u8 upscreen = 0; //962B7
 u8 casse_brique_active = 0; //962B8
 u8 CasseBriqueON = 0; //962B9
+i16 Toon_Speeds_x[7] = {-3, -2, -1, 0, 1, 1, 3}; //962BC
+i16 Toon_Speeds_y[7] = {-3, -5, -4, -6, -5, -3, -3}; //962CA
 
 u8 dark_attaque = 0; //9637D
 u8 type_dark_attaque = 0; //9637E

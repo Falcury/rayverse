@@ -44,8 +44,15 @@ void snapToSprite(obj_t* obj1, obj_t* obj2, u8 a3, i16 a4, i16 a5) {
 }
 
 //1D4C4
-void findfirstObject(i16 a1) {
-    //stub
+obj_t* findfirstObject(i16 obj_type) {
+    obj_t* obj = level.objects;
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        if (obj->type == obj_type) {
+            break;
+        }
+        ++obj;
+    }
+    return obj;
 }
 
 //1D4F4

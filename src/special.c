@@ -511,12 +511,12 @@ void allocate_splash(obj_t* obj) {
 void DO_BALLE(obj_t* obj) {
     eta_t* eta = get_eta(obj);
     if (obj->type == TYPE_15_BALLE2) {
-        eta->left_speed = -1;
-        eta->right_speed = 1;
+        eta->speed_x_left = -1;
+        eta->speed_x_right = 1;
         eta->anim_speed = (eta->anim_speed & 0xF) | 0xA0; // TODO: change to bitfield?
     } else if (obj->type == TYPE_13_BALLE1) {
-        eta->left_speed = -2;
-        eta->right_speed = 2;
+        eta->speed_x_left = -2;
+        eta->speed_x_right = 2;
         eta->anim_speed = (eta->anim_speed & 0xF);
     }
 }

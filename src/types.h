@@ -167,8 +167,8 @@ typedef struct app_state_t {
 #pragma pack(push,1)
 
 typedef struct eta_t {
-	i8 right_speed;
-	i8 left_speed;
+	i8 speed_x_right;
+	i8 speed_x_left;
 	u8 anim_index;
 	u8 next_etat;
 	u8 next_subetat;
