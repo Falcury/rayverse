@@ -1356,7 +1356,7 @@ void CAN_RAY_HANG_BLOC(void);
 void RAY_TOMBE(void);
 void RAY_RESPOND_TO_DOWN(void);
 void RAY_RESPOND_TO_UP(void);
-void RAY_RESPOND_TO_DIR(i16 dir);
+void RAY_RESPOND_TO_DIR(i16 flip_x);
 void RAY_RESPOND_TO_NOTHING(void);
 void RAY_RESPOND_TO_BUTTON3(void);
 void RAY_RESPOND_TO_FIRE0(void);

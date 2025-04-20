@@ -1213,17 +1213,56 @@ void move_down_ray(void) {
 
 //58F70
 void recale_ray_pos(void) {
+    if (ray.main_etat == 3 && ray.sub_etat == 23) {
+        return;
+    }
+    if (scroll_y == -1) {
+
+    }
+
+    if (scroll_x == -1) {
+
+    }
     //stub
 }
 
 //59418
 void RAY_TO_THE_RIGHT(void) {
-    //stub
+    /* 31690 80155E90 -O2 -msoft-float */
+    if (ray_mode == MODE_2_RAY_ON_MS && RayCoince(1)) {
+        ray.speed_x = 0;
+        decalage_en_cours = 0;
+    }
+    ray.x += ray.speed_x;
+    if (RIGHT_MAP_BORDER < ray.x) {
+        ray.x = RIGHT_MAP_BORDER;
+        ray.speed_x = 0;
+        decalage_en_cours = 0;
+        if (ray.main_etat != 2) {
+            ray.speed_y = 0;
+        }
+    }
+    calc_obj_pos(&ray);
 }
 
 //5949C
 void RAY_TO_THE_LEFT(void) {
-    //stub
+    /* 3176C 80155F6C -O2 -msoft-float */
+    if (ray_mode == MODE_2_RAY_ON_MS && RayCoince(0)) {
+        ray.speed_x = 0;
+        decalage_en_cours = 0;
+    }
+    ray.x += ray.speed_x;
+    if (scroll_x == -1 && ray.x < LEFT_MAP_BORDER) {
+        ray.x = LEFT_MAP_BORDER;
+        ray.speed_x = 0;
+        decalage_en_cours = 0;
+        if (ray.main_etat != 2) {
+            ray.speed_y = 0;
+        }
+    }
+
+    calc_obj_pos(&ray); //NOTE: missing in all versions? A bug, or not needed?
 }
 
 //59518
@@ -1391,7 +1430,7 @@ void INIT_RAY(u8 new_lvl) {
     ray_last_ground_btyp = 1;
     ray_pos_in_stack = 0;
     ray_se_noie = 0;
-    ray_in_fee_zone = 1;
+    ray_in_fee_zone = 0;
     fin_dark = 0;
     for (i32 i = 0; i < 10; ++i) {
         pos_stack[i] = ray.x;

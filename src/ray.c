@@ -730,12 +730,195 @@ void RAY_RESPOND_TO_DOWN(void) {
 
 //6E370
 void RAY_RESPOND_TO_UP(void) {
-    //stub
+    /* 6002C 8018482C -O2 -msoft-float */
+    switch (ray.main_etat) {
+        case 4:
+            if (ray.sub_etat != 11 && ray.sub_etat != 12) {
+                calc_bhand_typ();
+                if (hand_btyp == BTYP_NONE) {
+                    RAY_TOMBE(); //TODO
+                    ray.timer = 10;
+                    ray.speed_y = 1;
+                }
+                else if (hand_btyp != BTYP_LIANE) {
+                    ray.speed_y = 0;
+                } else {
+                    ray.speed_y = -1;
+                    if (ray.scale != 0 && horloge[2] != 0) {
+                        DO_ANIM(&ray);
+                    }
+                }
+
+                if (ray.sub_etat != 2) {
+                    set_sub_etat(&ray, 2);
+                }
+            } else {
+                ray.speed_y = 0;
+            }
+            break;
+        case 1:
+            if (RayEvts.force_run == 0) {
+                RAY_STOP();
+            }
+            break;
+        case 5:
+            v_scroll_speed = 255;
+            break;
+        case 0:
+            if (ray.sub_etat == 37 && abs(decalage_en_cours) <= 128) {
+                set_sub_etat(&ray, 38);
+            }
+            RAY_SWIP();
+            if (ray.cmd_arg_2 == -1) {
+                v_scroll_speed = 255;
+            }
+            if (ray.main_etat == 0 && ray.sub_etat == 15 && !(block_flags[(u8) calc_typ_trav(&ray, 2)] & 0x10)) {
+                set_main_and_sub_etat(&ray, 0, 60);
+            }
+            break;
+        case 6:
+            decalage_en_cours = 0;
+            ray.flags.flip_x = 1;
+            if (ray.speed_y > -3 && ray.gravity_value_1 == 0) {
+                --ray.speed_y;
+            }
+            break;
+    }
 }
 
 //6E548
-void RAY_RESPOND_TO_DIR(i16 dir) {
-    //stub
+void RAY_RESPOND_TO_DIR(i16 flip_x) {
+    /* 602E8 80184AE8 -O2 -msoft-float */
+    anim_t *sel_anim;
+    s32 unk_1;
+    s16 to_speed;
+
+    switch (ray.main_etat)
+    {
+        case 1:
+            // TODO: this section seems completely different in the PS1 and PC versions. Need to check.
+            joy_done++;
+            if (
+                    ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40 /*&&
+                    !FUN_80133984(0) && !FUN_801339f4(0)*/
+                    )
+            {
+                if (!(block_flags[(u8) calc_typ_trav(&ray, 2)] & 0x10))
+                {
+                    if (ray.main_etat != 0 || ray.sub_etat != 60)
+                        set_main_and_sub_etat(&ray, 0, 60);
+                }
+                else if (ray.main_etat != 0 || (ray.sub_etat != 15 && ray.sub_etat != 61))
+                {
+                    sel_anim = &ray.animations[ray.anim_index];
+                    set_main_and_sub_etat(&ray, 0, 15);
+                    ray.anim_frame = sel_anim->frame_count - 1;
+                }
+            }
+            else if (
+                    (ray.flags.flip_x != flip_x) &&
+                    ray.sub_etat != 11 && ray.sub_etat != 50 && ray.sub_etat != 51 &&
+                    ray_last_ground_btyp != true
+                    )
+                set_main_and_sub_etat(&ray, 1, 4);
+            if (!(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40))
+                ray.flags.flip_x = flip_x;
+            RAY_SWIP();
+            break;
+        case 0:
+            joy_done++;
+            if (
+                    ray.sub_etat == 15 &&
+                    !downjoy() &&
+                    !(block_flags[(u8) calc_typ_trav(&ray, 2)] & 0x10)
+                    )
+                set_main_and_sub_etat(&ray, 1, 0);
+            else if (
+                    ray.sub_etat != 11 && ray.sub_etat != 12 && ray.sub_etat != 18 &&
+                    ray.sub_etat != 20 && ray.sub_etat != 15 && ray.sub_etat != 47 &&
+                    ray.sub_etat != 48 && ray.sub_etat != 50 && ray.sub_etat != 51 &&
+                    ray.sub_etat != 61
+                    )
+            {
+                if (ray.flags.flip_x != flip_x) {
+                    if (ray_last_ground_btyp != true)
+                        set_main_and_sub_etat(&ray, 1, 4);
+                    else
+                        set_main_and_sub_etat(&ray, 1, 0);
+                    ray.flags.flip_x = flip_x;
+                }
+                else
+                {
+                    set_main_etat(&ray, 1);
+                    set_sub_etat(&ray, 0);
+                }
+            }
+            RAY_SWIP();
+            break;
+        case 2:
+            joy_done++;
+            if (ray.sub_etat != 15 && ray.nb_cmd == 0)
+                decalage_en_cours = 0;
+            RAY_SWIP();
+            if (!ray_on_poelle) {
+                ray.flags.flip_x = flip_x;
+            }
+            break;
+        case 4:
+            /* TODO: ctrl flow? */
+            joy_done++;
+            if ((ray.sub_etat == 2 && upjoy()) || (ray.sub_etat == 3 && downjoy())) {
+                calc_bhand_typ();
+                if (hand_btyp == BTYP_NONE) {
+                    if (ray.sub_etat == 2) {
+                        RAY_TOMBE();
+                        ray.timer = 10;
+                        ray.speed_y = 1;
+                    } else {
+                        RAY_TOMBE();
+                    }
+                } else if (hand_btyp != BTYP_LIANE) {
+                    RAY_STOP();
+                }
+            } else if (ray.sub_etat == 2 || ray.sub_etat == 3)
+                RAY_STOP();
+
+            if (
+                    options_jeu.test_fire1() &&
+                    (button_released & 1) == (unk_1 = 1) &&
+                    ray.sub_etat != 11 && ray.sub_etat != 12 && ray.sub_etat != 13
+                    )
+            {
+                ray_jump();
+                decalage_en_cours = 256;
+                return;
+            } else if (ray.sub_etat == 13) {
+                if (ray.flags.flip_x != flip_x) {
+                    set_sub_etat(&ray, 1);
+                }
+            }
+            if (ray.sub_etat != 11 && ray.sub_etat != 12) {
+                ray.flags.flip_x = flip_x;
+            }
+            break;
+        case 5:
+            joy_done++;
+            if (ray.flags.flip_x != flip_x)
+                RAY_TOMBE();
+            break;
+        case 6:
+            joy_done++;
+            decalage_en_cours = 0;
+            ray.flags.flip_x = 1;
+            if (flip_x == 0)
+                to_speed = -1;
+            else
+                to_speed = flip_x;
+            flip_x = to_speed;
+            if ((ray.speed_x * flip_x < 3) && ray.gravity_value_1 == 0)
+                ray.speed_x += flip_x;
+            break;
+    }
 }
 
 //6EB40
@@ -1557,7 +1740,7 @@ void DO_RAYMAN(void) {
             } else if (!options_jeu.test_fire1()) {
                 button_released = 1;
             }
-            RAY_RESPOND_TO_ALL_DIRS(); //TODO
+            RAY_RESPOND_TO_ALL_DIRS();
         }
 
         // NOTE: added null check for star_ray_der and star_ray_dev
@@ -1623,10 +1806,10 @@ void DO_RAYMAN(void) {
         }
         if (ray.speed_x >= 0) {
             if (ray.speed_x > 0) {
-                RAY_TO_THE_RIGHT(); //TODO
+                RAY_TO_THE_RIGHT();
             }
         } else {
-            RAY_TO_THE_LEFT(); //TODO
+            RAY_TO_THE_LEFT();
         }
 
         if (ray.flags.alive && ray.main_etat != 7) {
