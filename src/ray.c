@@ -274,23 +274,166 @@ void rayMayLandOnAnObject(u8* param_1, i16 obj_id) {
 }
 
 //6CA70
-void set_air_speed(u8 a1, u8 a2, i16 a3, i32 a4) {
-    //stub
+void set_air_speed(u8 main_etat, u8 sub_etat, i16 param_3, u8 param_4) {
+    /* 5DE3C 8018263C -O2 -msoft-float */
+    eta_t *eta;
+    s8 unk_1;
+    s8 unk_2;
+
+    eta = &ray.eta[main_etat][sub_etat];
+    unk_1 = abs(param_3) >> 4;
+    unk_1 = MIN(unk_1, 112);
+    unk_2 = -unk_1; /* TODO: ??? */
+
+    if (ray.speed_x > 0) {
+        eta->speed_x_left = -16;
+        eta->speed_x_right = MAX(param_4, unk_1);
+    } else if (ray.speed_x < 0) {
+        eta->speed_x_left = MIN(-param_4, unk_2);
+        eta->speed_x_right = 16;
+    } else {
+        eta->speed_x_left = -param_4;
+        eta->speed_x_right = param_4;
+    }
 }
 
 //6CAF8
-void Reset_air_speed(u8 a1) {
-    //stub
+void Reset_air_speed(u8 is_rolling_speed) {
+    /* 5DF0C 8018270C -O2 -msoft-float */
+    if (is_rolling_speed) {
+        set_air_speed(2, 17, decalage_en_cours, 48);
+        set_air_speed(2, 18, decalage_en_cours, 48);
+        set_air_speed(2, 19, decalage_en_cours, 48);
+        set_air_speed(2, 3, decalage_en_cours, 48);
+        set_air_speed(2, 5, decalage_en_cours, 48);
+        set_air_speed(2, 4, decalage_en_cours, 48);
+        set_air_speed(2, 32, decalage_en_cours, 48);
+    } else {
+        set_air_speed(2, 0, decalage_en_cours, 32);
+        set_air_speed(2, 1, decalage_en_cours, 32);
+        set_air_speed(2, 2, decalage_en_cours, 32);
+        set_air_speed(2, 24, decalage_en_cours, 32);
+        set_air_speed(2, 11, decalage_en_cours, 32);
+        set_air_speed(2, 12, decalage_en_cours, 32);
+        set_air_speed(2, 13, decalage_en_cours, 32);
+        set_air_speed(2, 3, decalage_en_cours, 32);
+        set_air_speed(2, 5, decalage_en_cours, 32);
+        set_air_speed(2, 4, decalage_en_cours, 32);
+    }
 }
 
 //6CCE0
 void determineRayAirInertia(void) {
-    //stub
+    /* 5E0CC 801828CC -O2 -msoft-float */
+    if (ray_wind_force != 0) {
+        ray.nb_cmd = 1;
+        return;
+    }
+    if (ray.cmd_arg_2 != -1) {
+        ray.nb_cmd = 0;
+        return;
+    }
+    switch (ray_last_ground_btyp) {
+        case false:
+            if (abs(decalage_en_cours) <= 256)
+                ray.nb_cmd = 0;
+            else
+                ray.nb_cmd = 1;
+            break;
+        case true:
+            ray.nb_cmd = 0;
+            break;
+    }
 }
 
 //6CD40
 void ray_jump(void) {
-    //stub
+    /* 5E15C 8018295C -O2 -msoft-float */
+    s16 speed_y;
+    s16 follow_y;
+    s32 unk_2;
+    u8 is_rolling_speed;
+
+    if ((get_eta(&ray)->flags & 1) && (button_released & 1) == 1) {
+        if (ray.main_etat == 7) {
+            decalage_en_cours = ashl16(ray.speed_x, 7);
+            ray.speed_y -= 2;
+        } else {
+            if (ray.main_etat == 4) {
+                ray.speed_y = -3; // NOTE: -4 in the Android version
+            } else {
+                ray.speed_y = -5;
+            }
+        }
+        speed_y = ray.speed_y;
+        if (ray.cmd_arg_2 != -1) {
+            follow_y = level.objects[ray.cmd_arg_2].follow_y;
+            if (speed_y > follow_y) {
+                speed_y = follow_y;
+            }
+        } else {
+            switch (ray.coll_btype[0]) {
+                case BTYP_NONE:
+                    break;
+                case BTYP_SOLID_RIGHT_45:
+                case BTYP_SLIPPERY_RIGHT_45:
+                    if (ray.speed_x >= 6)
+                        speed_y = ~ray.speed_x;
+                    break;
+                case BTYP_SOLID_LEFT_45:
+                case BTYP_SLIPPERY_LEFT_45:
+                    if (ray.speed_x < -5)
+                        speed_y = ray.speed_x - 1;
+                    break;
+                case BTYP_SOLID_RIGHT1_30:
+                case BTYP_SOLID_RIGHT2_30:
+                case BTYP_SLIPPERY_RIGHT1_30:
+                case BTYP_SLIPPERY_RIGHT2_30:
+                    if (ray.speed_x > 10)
+                        speed_y = ~ashr16(ray.speed_x, 1);
+                    break;
+                case BTYP_SOLID_LEFT1_30:
+                case BTYP_SOLID_LEFT2_30:
+                case BTYP_SLIPPERY_LEFT1_30:
+                case BTYP_SLIPPERY_LEFT2_30:
+                    if (ray.speed_x < -10)
+                        speed_y = ~ashr16(ray.speed_x, 1);
+                    break;
+                case BTYP_SLIPPERY:
+                    break;
+            }
+        }
+        ray.speed_y = speed_y;
+        determineRayAirInertia();
+        unk_2 = (RayEvts.tiny) ? 256 : 512;
+
+        if (ray_on_poelle) {
+            Reset_air_speed(false);
+            if (ray.main_etat == 0 && ray.sub_etat == 40)
+                set_main_and_sub_etat(&ray, 2, 25);
+            else
+                set_main_and_sub_etat(&ray, 2, 27);
+        } else {
+            is_rolling_speed = unk_2 < abs(decalage_en_cours);
+            Reset_air_speed(is_rolling_speed);
+            if (is_rolling_speed)
+                set_main_and_sub_etat(&ray, 2, 17);
+            else
+                set_main_and_sub_etat(&ray, 2, 0);
+        }
+        in_air_because_hit = false;
+        jump_time = 0;
+        helico_time = -1;
+        ray.gravity_value_1 = 0;
+        ray.gravity_value_2 = 0;
+        ray.cmd_arg_2 = -1;
+        button_released = 0;
+        poing.is_charging = false;
+        saveRMjumpX = ray.x;
+        saveRMjumpY = ray.y;
+        if (RayEvts.tiny)
+            ray.speed_y = ashr16(ray.speed_y, 1) - 1;
+    }
 }
 
 //6D020
@@ -1056,7 +1199,24 @@ void RAY_RESPOND_TO_FIRE0(void) {
 
 //6F208
 void RAY_RESPOND_TO_FIRE1(void) {
-    //stub
+    if (!fin_boss) {
+        switch (ray.main_etat) {
+            case 0:
+            case 2:
+            case 5:
+            case 7: {
+                if (downjoy() && ray.sub_etat != 3) {
+                    button_released = 0;
+                } else {
+                    ray_jump();
+                }
+            } break;
+            case 1: {
+                ray_jump();
+            } break;
+            default: break;
+        }
+    }
 }
 
 //6F24C
@@ -1799,10 +1959,10 @@ void DO_RAYMAN(void) {
 
         if (ray.speed_y <= 0) {
             if (ray.speed_y < 0) {
-                move_up_ray(); //TODO
+                move_up_ray();
             }
         } else {
-            move_down_ray(); //TODO
+            move_down_ray();
         }
         if (ray.speed_x >= 0) {
             if (ray.speed_x > 0) {

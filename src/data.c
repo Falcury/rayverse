@@ -1989,8 +1989,8 @@ i16 new_world; // 0xCF892
 i16 rayman_obj_id; //CF894
 i16 Mus_obj_id; //CF896
 i16 helico_time; //CF898
-u16 word_CF89A; //CF89A
-u16 word_CF89C; //CF89C
+u16 saveRMjumpY; //CF89A
+u16 saveRMjumpX; //CF89C
 i16 xmap; //CF89E
 i16 departlevel; //CF8A0
 i16 ray_Y_main_pos_init; //CF8A2

@@ -1217,11 +1217,11 @@ void recale_ray_pos(void) {
         return;
     }
     if (scroll_y == -1) {
-
+        //stub
     }
 
     if (scroll_x == -1) {
-
+        //stub
     }
     //stub
 }
