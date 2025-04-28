@@ -101,6 +101,16 @@ i32 Abs(i32 x) {
 }
 
 //inlined
+i32 mini(i32 a, i32 b) {
+    return ((a) < (b) ? (a) : (b));
+}
+
+//inlined
+i32 maxi(i32 a, i32 b) {
+    return (a) > (b) ? (a) : (b);
+}
+
+//inlined
 i32 sgn(i32 x) {
     return (x < 0) ? -1 : (x > 0);
 }

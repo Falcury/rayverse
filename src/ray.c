@@ -753,7 +753,39 @@ void RAY_SWIP(void) {
 
 //6D724
 void RAY_STOP(void) {
-    //stub
+    /* 5EF40 80183740 -O2 -msoft-float */
+    u8 main_etat = ray.main_etat;
+
+    if (main_etat == 1 || ray.cmd_arg_2 != -1)
+    {
+        switch (main_etat * 0x100 + ray.sub_etat)
+        {
+            case 0x100 + 8:
+            case 0x100 + 10:
+                set_main_and_sub_etat(&ray, 0, 47);
+                break;
+            case 0x100 + 9:
+            case 0x100 + 11:
+                set_main_and_sub_etat(&ray, 0, 48);
+                break;
+            case 0x100 + 0:
+            case 0x100 + 3:
+            case 0x100 + 4:
+            case 0x100 + 5:
+            case 0x100 + 7:
+                set_main_and_sub_etat(&ray, 0, 0);
+                break;
+        }
+
+        if (decalage_en_cours == 0) {
+            ray.speed_y = 0;
+            ray.speed_x = 0;
+        }
+    }
+    else if (main_etat == 4) {
+        ray.speed_y = 0;
+        set_sub_etat(&ray, 0);
+    }
 }
 
 //6D7D4
@@ -1193,7 +1225,9 @@ void RAY_RESPOND_TO_BUTTON3(void) {
 
 //6F1C8
 void RAY_RESPOND_TO_FIRE0(void) {
-    //stub
+    if (!poing.is_active && RayEvts.poing && RayEvts.force_run == 0) {
+        RAY_PREPARE_FIST();
+    }
 }
 
 //6F208
@@ -1863,11 +1897,11 @@ void DO_RAYMAN(void) {
             }
 
             if (!(ray.sub_etat == 22 || ray.sub_etat == 23 || ray.sub_etat == 32)) {
-                RAY_SWIP(); //TODO
+                RAY_SWIP();
             }
         } else {
             if (options_jeu.test_fire1()) {
-                RAY_RESPOND_TO_FIRE1(); // jump //TODO
+                RAY_RESPOND_TO_FIRE1(); // jump
             }
             if (options_jeu.test_fire0()) {
                 RAY_RESPOND_TO_FIRE0(); // weapon //TODO
@@ -1888,7 +1922,7 @@ void DO_RAYMAN(void) {
                     RAY_GROW_FIST();
                 }
                 if (!options_jeu.test_fire0()) {
-                    RAY_THROW_FIST(); //TODO
+                    RAY_THROW_FIST();
                 }
             }
 

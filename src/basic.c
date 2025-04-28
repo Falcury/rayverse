@@ -213,8 +213,62 @@ u8 GET_SPRITE_POS(obj_t* obj, i16 index, i16* x, i16* y, i16* w, i16* h) {
 }
 
 //1DCFC
-void GET_RAY_ZDC(obj_t* obj, i16* a2, i16* a3, i16* a4, i16* a5) {
-    //stub
+void GET_RAY_ZDC(obj_t* obj, i16* x, i16* y, i16* w, i16* h) {
+    /* 23204 80147A04 -O2 -msoft-float */
+    u8 main_etat = obj->main_etat;
+    s32 frame;
+
+    if (obj->eta[main_etat][obj->sub_etat].flags & 0x40)
+    {
+        *x = obj->x + 72;
+        *y = obj->y + 64;
+        *w = 16;
+        *h = 14;
+    }
+    else if (main_etat == 5)
+    {
+        *x = obj->x + 72;
+        *y = obj->y + 40;
+        *w = 16;
+        *h = 46;
+    }
+    else if (main_etat == 7)
+    {
+        frame = obj->anim_frame;
+        if (frame > 32)
+            frame -= 32;
+        frame -= 10;
+        if ((s16) frame < 13U)
+        {
+            *x = obj->x + 64;
+            *y = obj->y + 54;
+            *w = 36;
+            *h = 20;
+        }
+        else
+        {
+            *x = obj->x + 70;
+            *y = obj->y + 40;
+            *w = 20;
+            *h = 40;
+        }
+    }
+    else
+    {
+        *x = obj->x + 72;
+        *y = obj->y + 24;
+        *w = 16;
+        *h = 54;
+    }
+    if (obj->scale != 0)
+    {
+        set_proj_center(obj->x + obj->offset_bx, obj->y + obj->offset_by);
+        *x = get_proj_x(obj->scale, *x);
+        *y = get_proj_y(obj->scale, *y);
+        *w = get_proj_dist2(obj->scale, *w);
+        *h = get_proj_dist2(obj->scale, *h);
+        set_proj_center(obj->screen_x + obj->offset_bx, obj->screen_y + obj->offset_by);
+    }
 }
 
 //1DEC0
@@ -945,7 +999,7 @@ void add_alwobj(obj_t* obj) {
 void del_alwobj(i16 obj_index) {
     i32 found_index = -1;
     for (i32 i = 0; i < level_obj.nb_objects; ++i) {
-        if (level_obj.obj_ids[i] == i) {
+        if (level_obj.obj_ids[i] == obj_index) {
             found_index = i;
             break;
         }

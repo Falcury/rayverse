@@ -138,7 +138,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
         if (TOUCHE(SC_ESCAPE)) {
             if (nb_fade == 0 && !GoMenu) {
                 if (!get_casse_brique_ON() && !ModeDemo && !gele && dead_time == 64) {
-                    GoMenu = 1;
+                     GoMenu = 1;
                 }
             }
         }
