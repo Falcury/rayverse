@@ -374,7 +374,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             mem_read(&obj->zdc, mem, 2);
             mem_read(&obj->active_timer, mem, 2);
             mem_read(&obj->type, mem, 2);
-            mem_read(&obj->coll_btype, mem, 5);
+            mem_read(&obj->btypes, mem, 5);
             mem_read(&obj->field_67, mem, 1);
             mem_read(&obj->offset_bx, mem, 1);
             mem_read(&obj->offset_by, mem, 1);

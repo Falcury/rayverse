@@ -457,12 +457,12 @@ void DO_RAYMAN_IN_WLD_MAP(void) {
         i16 xspeed = 0; // speed x?
         i16 yspeed = 0; // speed y?
         if (diff_x != 0 && diff_y != 0) {
-            if (abs(diff_y) > abs(diff_x)) {
-                xspeed = abs(ray.timer * diff_x / diff_y);
+            if (Abs(diff_y) > Abs(diff_x)) {
+                xspeed = Abs(ray.timer * diff_x / diff_y);
                 yspeed = ray.timer;
             } else {
                 xspeed = ray.timer;
-                yspeed = abs(ray.timer * diff_y / diff_x);
+                yspeed = Abs(ray.timer * diff_y / diff_x);
             }
         } else if (diff_x == 0) {
             yspeed = ray.timer;
@@ -474,7 +474,7 @@ void DO_RAYMAN_IN_WLD_MAP(void) {
         ray.speed_x = t_world_info[old_num_world].xpos + xspeed * sgn(diff_x) - ray.offset_bx - ray.x;
         ray.speed_y = t_world_info[old_num_world].ypos + yspeed * sgn(diff_y) - ray.offset_by - (ray.y - 8);
 
-        if (abs(xspeed) >= abs(diff_x) && abs(yspeed) >= abs(diff_y)) {
+        if (Abs(xspeed) >= Abs(diff_x) && Abs(yspeed) >= Abs(diff_y)) {
             // arrived at new location
             old_num_world = num_world_choice;
             if (ray.main_etat != 0) {

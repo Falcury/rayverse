@@ -108,7 +108,7 @@ u8 calc_typ_trav(obj_t* obj, u8 a2) {
         case BTYP_SOLID_PASSTHROUGH:
         case BTYP_SOLID:
         case BTYP_SLIPPERY:
-            temp_v1_2 = obj->coll_btype[0];
+            temp_v1_2 = obj->btypes[0];
             if ((s32) temp_v1_2 >= 2)
             {
                 if ((s32) temp_v1_2 >= 4)
@@ -233,28 +233,348 @@ u8 calc_typ_trav(obj_t* obj, u8 a2) {
 
 //251F8
 u8 calc_typ_travd(obj_t* obj, u8 a2) {
-    return 0; //stub
+    s16 spd_x_sgn = obj->speed_x; /* ??? */
+    s16 x_offs_1;
+    s32 unk_1;
+    s16 x_saved;
+    s16 x_offs_2;
+    s16 foll_x; s16 foll_y; s16 foll_w; s16 foll_h;
+    u8 unk_2;
+    s32 res;
+
+    /* sgn() on android */
+    if (obj->speed_x >= 0)
+        spd_x_sgn = obj->speed_x > 0;
+    else
+        spd_x_sgn = -1;
+
+    if (spd_x_sgn != 0)
+    {
+        x_offs_1 = 14;
+        if (obj->type == TYPE_RAYMAN)
+        {
+            unk_1 = 4;
+            if (ray.scale != 0)
+            {
+                x_offs_1 = 8;
+                unk_1 = 2;
+            }
+
+            if (ray.cmd_arg_1 != -1)
+                x_offs_1 -= unk_1;
+        }
+        x_offs_1 *= spd_x_sgn;
+        if (a2)
+            x_offs_1 = -x_offs_1;
+        x_saved = obj->x;
+        obj->x += x_offs_1;
+        if (!a2)
+        {
+            x_offs_2 = obj->speed_x;
+            if (flags[obj->type] & flags1_0x10_move_x)
+                x_offs_2 /= 16;
+            obj->x -= x_offs_2;
+        }
+
+        if (obj->flags.follow_enabled)
+            GET_SPRITE_POS(obj, obj->follow_sprite, &foll_x, &foll_y, &foll_w, &foll_h);
+        else
+            foll_y = 0;
+
+        unk_2 = ashr16(-(foll_y + obj->offset_hy) + obj->offset_by, 4);
+        if (obj->type == TYPE_RAYMAN && ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40)
+            unk_2 = ashr16(unk_2, 1);
+        if (unk_2 != 0)
+            unk_2--;
+        res = calc_typ_trav(obj, unk_2);
+        obj->x = x_saved;
+    }
+    else
+        res = 0;
+
+    return res;
 }
 
 //25388
 void TEST_FIN_BLOC(obj_t* obj) {
-    //stub
+    /* 6EC34 80193434 -O2 -msoft-float */
+    if (!(block_flags[obj->btypes[0]] & 2))
+    {
+        switch (obj->type)
+        {
+            case TYPE_RAYMAN:
+                if (ray.main_etat == 1 && ray.sub_etat == 1) {
+                    set_main_and_sub_etat(obj, 2, 6);
+                } else if (ray.main_etat == 1 && ray.sub_etat == 6) {
+                    set_main_and_sub_etat(obj, 2, 23);
+                } else {
+                    IS_RAY_ON_LIANE();
+                    if (
+                            !(hand_btyp == BTYP_LIANE || hand_btypd == BTYP_LIANE || hand_btypg == BTYP_LIANE ||
+                              ray.main_etat == 5)
+                            )
+                    {
+                        if (ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40)
+                        {
+                            ray.speed_y = 0;
+                            ray.y += 16;
+                            ray.screen_y += 16;
+                        }
+
+                        if (ray_on_poelle)
+                        {
+                            if (ray.main_etat == 0 && ray.sub_etat == 40)
+                                set_main_and_sub_etat(obj, 2, 26);
+                            else
+                                set_main_and_sub_etat(obj, 2, 28);
+                        }
+                        else
+                        {
+                            if (ray.main_etat == 1 && (ray.sub_etat == 9 || ray.sub_etat == 11)) {
+                                ray.flags.flip_x ^= 1;
+                            }
+                            if (Abs(ray.speed_x) < 3)
+                            {
+                                Reset_air_speed(false);
+                                if (!(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40))
+                                    set_main_and_sub_etat(obj, 2, 24);
+                                else
+                                    set_main_and_sub_etat(obj, 2, 33);
+                            }
+                            else
+                            {
+                                Reset_air_speed(true);
+                                set_main_and_sub_etat(obj, 2, 32);
+                            }
+                        }
+                        jump_time = 0;
+                        if (ray_last_ground_btyp == false || ray_wind_force != 0)
+                            ray.nb_cmd = 1;
+                        else
+                            ray.nb_cmd = 0;
+                    }
+                }
+                break;
+            case TYPE_LIDOLPINK:
+                set_main_and_sub_etat(obj, 2, 2);
+                skipToLabel(obj, 2, true);
+                break;
+            case TYPE_BADGUY1:
+                set_main_etat(obj, 2);
+                if (obj->sub_etat != 2)
+                    set_sub_etat(obj, 2);
+                else
+                    set_sub_etat(obj, 10);
+                break;
+            case TYPE_BADGUY2:
+            case TYPE_BADGUY3:
+                set_main_and_sub_etat(obj, 2, 2);
+                break;
+            case TYPE_STONEDOG:
+            case TYPE_STONEDOG2:
+                skipToLabel(obj, 2, true);
+                obj->gravity_value_2 = 7;
+                obj->speed_y = 0;
+                break;
+            case TYPE_MITE:
+                skipToLabel(obj, 0, true);
+                break;
+            case TYPE_SPIDER:
+                obj->cmd_context_depth = -1;
+                set_main_and_sub_etat(obj, 2, 0);
+                skipToLabel(obj, 8, true);
+                obj->speed_x = 0;
+                obj->speed_y = 0;
+                break;
+            case TYPE_STONEWOMAN:
+                set_main_and_sub_etat(obj, 2, 4);
+                skipToLabel(obj, 15, false);
+                break;
+        }
+        obj->link = 0;
+        obj->gravity_value_1 = 0;
+        if (!(obj->type == TYPE_STONEDOG || obj->type == TYPE_STONEDOG2))
+            obj->gravity_value_2 = 0;
+    }
 }
 
 //256D4
 u8 TEST_IS_ON_RESSORT_BLOC(obj_t* obj) {
-    return 0;
-    //stub
+    if (obj->btypes[0] == BTYP_RESSORT && obj->speed_y >= 0) {
+        if (obj->type == TYPE_23_RAYMAN) {
+            return true;
+        } else {
+            return (flags[obj->type] & flags2_8_can_jump) != 0;
+        }
+    } else {
+        return false;
+    }
 }
 
 //25708
-void IS_ON_RESSORT_BLOC(obj_t* obj) {
-    //stub
+u8 IS_ON_RESSORT_BLOC(obj_t* obj) {
+    if (obj->btypes[0] == BTYP_RESSORT && obj->speed_y >= 0) {
+        if (obj->type == TYPE_23_RAYMAN) {
+            button_released = 1;
+            set_main_and_sub_etat(&ray, 0, 0);
+            ray_jump();
+            PlaySnd(249, -1);
+            ray.speed_y = -3;
+            allocatePaillette(obj); //TODO
+            return true;
+        } else {
+            obj_jump(obj); //TODO
+            return (flags[obj->type] & flags2_8_can_jump) != 0;
+        }
+    } else {
+        return false;
+    }
 }
 
 //25820
 void CALC_MOV_ON_BLOC(obj_t* obj) {
-    //stub
+    s16 temp_s0_1;
+    s16 temp_s0_3;
+    s32 temp_s1_1;
+    s16 temp_s1_2;
+    u8 temp_v0_1;
+    s16 temp_v0_2;
+    s16 temp_v1_6;
+    s32 var_s1;
+    s16 var_v0_2;
+    s32 temp_a0;
+    s32 temp_s0_2;
+    s32 temp_s4;
+    s32 x_in_tile;
+    s32 var_s2_1;
+    s32 var_s2_2;
+    s32 y_in_tile;
+    s32 speed_x;
+    s32 var_v0;
+    u32 temp_v1_4;
+    u32 temp_v1_5;
+    u8 temp_v1_2;
+    u8 temp_v1_3;
+
+    /*var_s2_1 = saved_reg_s2;*/
+    temp_a0 = obj->type * 4;
+    if ((flags[obj->type] & flags2_1_check_tile_type) || obj->type == TYPE_23_RAYMAN) {
+        if (((flags[obj->type] & flags1_0x10_move_x) & 1) && obj->type != TYPE_23_RAYMAN) {
+            speed_x = instantSpeed(obj->speed_x);
+        } else {
+            speed_x = obj->speed_x;
+        }
+        x_in_tile = speed_x + ((obj->offset_bx + obj->x) & 0xF);
+        y_in_tile = (obj->offset_by + obj->y) & 0xF;
+        if ((obj->type == TYPE_23_RAYMAN) && (ray.cmd_arg_1 != -1)) {
+            if (speed_x > 0)
+            {
+                x_in_tile = 15;
+            }
+            else if (speed_x < 0)
+            {
+                x_in_tile = 0;
+            }
+            temp_v1_2 = obj->btypes[0];
+            var_s2_1 = calcbloc1[obj->btypes[0]](x_in_tile, y_in_tile);
+            y_in_tile = var_s2_1;
+        }
+        else
+        {
+            var_s2_1 = calcbloc1[obj->btypes[0]](x_in_tile, y_in_tile);
+
+        }
+        var_s1 = var_s2_1 - y_in_tile;
+        x_in_tile = speed_x + (obj->x + obj->offset_bx);
+        temp_s1_1 = var_s1 + (obj->y + obj->offset_by);
+        temp_v0_1 = BTYP(x_in_tile >> 4, temp_s1_1 >> 4);
+        x_in_tile = x_in_tile & 0xF;
+        y_in_tile = temp_s1_1 & 0xF;
+        switch (temp_v0_1)
+        {
+            case 0:
+            case 1:
+            case 8:
+            case 10:
+            case 24:
+            case 25:
+                temp_s1_2 = speed_x + (obj->x + obj->offset_bx);
+                temp_s0_3 = var_s1 + (obj->y + obj->offset_by) + 16;
+                temp_v0_2 = dist_to_bloc_floor(BTYP(temp_s1_2 >> 4, temp_s0_3 >> 4), temp_s1_2 & 0xF, temp_s0_3 | ~0xF);
+                if (temp_v0_2 >= 3)
+                {
+                    case 12:
+                        var_s2_1 = y_in_tile;
+                }
+                else
+                {
+                    var_s2_1 = y_in_tile + temp_v0_2;
+                }
+                break;
+            case 2:
+            case 18:
+                var_s2_1 = 15 - x_in_tile;
+                break;
+            case 3:
+            case 19:
+                var_s2_1 = x_in_tile;
+                break;
+            case 4:
+            case 20:
+                var_s2_1 = 15 - (x_in_tile >> 1);
+                break;
+            case 5:
+            case 21:
+                var_s2_1 = 7 - (x_in_tile >> 1);
+                break;
+            case 6:
+            case 22:
+                var_s2_1 = ((x_in_tile) >> 1);
+                break;
+            case 7:
+            case 23:
+                var_s2_1 = ((x_in_tile) >> 1) + 8;
+                break;
+            case 9:
+            case 14:
+            case 15:
+            case 30:
+                temp_v1_5 = BTYP((obj->x + obj->offset_bx + speed_x) >> 4, (obj->y + obj->offset_by + var_s1 - 16) >> 4);
+                var_s2_2 = calcbloc2[temp_v1_5](x_in_tile, y_in_tile);
+                var_s2_1 = (var_s2_2 - 16);
+                var_s2_1 = y_in_tile + var_s2_1;
+                break;
+        }
+        if (!IS_ON_RESSORT_BLOC(obj)) {
+            if (obj->type == TYPE_23_RAYMAN) {
+                if ((ray.cmd_arg_2 == -1 && ray.main_etat != 2) && Abs(obj->speed_y) > 2 && Abs(obj->speed_y) < 16 &&
+                                        !(block_flags[temp_v0_1] & 2))
+                {
+                    i16 saved_speed_y = obj->speed_y;
+                    set_main_and_sub_etat(&ray, 0, 0);
+                    button_released = 1;
+                    ray_jump();
+                    obj->speed_y = saved_speed_y;
+                }
+                else
+                {
+                    if (
+                            ((ray.main_etat != 3) || (((ray.sub_etat != 32)) &&
+//                                                     (ray.sub_etat != 0x26) && //NOTE: this subetat only in PS1
+                                                     ((ray.sub_etat != 22))))
+                            )
+                    {
+                        obj->speed_y = (var_s1 + var_s2_1) - y_in_tile;
+                        TEST_FIN_BLOC(obj);
+                    }
+                }
+            }
+            else {
+                obj->speed_y = (var_s1 + var_s2_1) - y_in_tile;
+                TEST_FIN_BLOC(obj);
+            }
+        }
+    }
 }
 
 //25B30
@@ -273,54 +593,54 @@ void recale_position(obj_t* obj) {
 }
 
 //25BB0
-i32 blocs1_empty(i32 a1, i32 a2) {
-    return a2 + 1;
+i32 blocs1_empty(i32 x, i32 y) {
+    return y + 1;
 }
 
 //25BB4
-i32 blocs1_right_45(i32 a1, i32 a2) {
-    return 15 - a1;
+i32 blocs1_right_45(i32 x, i32 y) {
+    return 15 - x;
 }
 
 //25BC0
-i32 blocs1_left_45(i32 a1, i32 a2) {
-    return a1;
+i32 blocs1_left_45(i32 x, i32 y) {
+    return x;
 }
 
 //25BC4
-i32 blocs1_right1_30(i32 a1, i32 a2) {
-    return 15 - (a1 >> 1);
+i32 blocs1_right1_30(i32 x, i32 y) {
+    return 15 - (x >> 1);
 }
 
 //25BD4
-i32 blocs1_right2_30(i32 a1, i32 a2) {
-    return 7 - (a1 >> 1);
+i32 blocs1_right2_30(i32 x, i32 y) {
+    return 7 - (x >> 1);
 }
 
 //25BE4
-i32 blocs1_left1_30(i32 a1, i32 a2) {
-    return a1 >> 1;
+i32 blocs1_left1_30(i32 x, i32 y) {
+    return x >> 1;
 }
 
 //25BE8
-i32 blocs1_left2_30(i32 a1, i32 a2) {
-    return (a1 >> 1) + 8;
+i32 blocs1_left2_30(i32 x, i32 y) {
+    return (x >> 1) + 8;
 }
 
 //25BF0
-i32 blocs3_empty(i32 a1, i32 a2) {
-    return a2;
+i32 blocs3_empty(i32 x, i32 y) {
+    return y;
 }
 #define blocs1_liane blocs3_empty
 
 //25BF4
-i32 blocs4_empty(i32 a1, i32 a2) {
+i32 blocs4_empty(i32 x, i32 y) {
     return 0;
 }
 #define blocs1_hor blocs4_empty
 
 //25BF8
-i32 blocs2_empty(i32 a1, i32 a2) {
+i32 blocs2_empty(i32 x, i32 y) {
     return 16;
 }
 

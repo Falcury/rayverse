@@ -407,7 +407,8 @@ void DO_WIZARD(obj_t* obj) {
 }
 
 //614B4
-void get_next_bonus_level(obj_t* obj) {
+i32 get_next_bonus_level(u8 lev) {
+    return 0;
     //stub
 }
 

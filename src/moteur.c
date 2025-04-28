@@ -74,8 +74,52 @@ void DO_SCREEN_TREMBLE2(void) {
 }
 
 //55C08
-void DO_SCROLL(i16* a1, i16* a2) {
-    //stub
+void DO_SCROLL(i16* h_speed, i16* v_speed) {
+    if (*v_speed == 255) {
+        *v_speed = 0;
+    }
+    if (num_world == world_6_cake && num_level == 4) {
+        *h_speed = 0;
+    }
+    if (num_world == world_5_cave && num_level == 11) {
+        *h_speed = 0;
+    }
+    if (num_world == world_5_cave && num_level == 3) {
+        *h_speed = 0;
+        *v_speed = 0;
+    }
+    DO_SCREEN_TREMBLE(); //TODO
+    if (screen_trembling2 > 0) {
+        DO_SCREEN_TREMBLE2(); //TODO
+    }
+    if (screen_trembling3 > 0) {
+        DO_SCREEN_TREMBLE3(); //TODO
+    }
+
+    ymap += *v_speed;
+    xmap += *h_speed;
+
+    if (xmap < scroll_start_x) {
+        *h_speed += scroll_start_x - xmap;
+        xmap = scroll_start_x;
+        dhspeed = 0;
+    } else if (xmap > scroll_end_x) {
+        *h_speed -= xmap - scroll_end_x;
+        xmap = scroll_end_x;
+        dhspeed = 0;
+    }
+
+    if (ymap < scroll_start_y) {
+        *v_speed += scroll_start_y - ymap;
+        ymap = scroll_start_y;
+        dvspeed = 0;
+    } else if (ymap > scroll_end_y) {
+        *v_speed -= ymap - scroll_end_y;
+        ymap = scroll_end_y;
+        dvspeed = 0;
+    }
+
+    calc_obj_pos(&ray);
 }
 
 //55D78
@@ -86,7 +130,7 @@ void allocateLandingSmoke(obj_t* obj) {
 //55E60
 i32 instantSpeed(i16 speed) {
     i32 spd_shr = ashr16(speed, 4);
-    i32 spd_abs_max = abs(speed) & 0xF;
+    i32 spd_abs_max = Abs(speed) & 0xF;
     if (spd_abs_max != 0) {
         spd_shr += sgn(speed) * (ashr32(map_time * spd_abs_max, 4) - ashr32(map_time * spd_abs_max - spd_abs_max, 4));
     }
@@ -638,7 +682,7 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
         if (block_flags[BTYP(spr_x >> 4, (spr_y + obj->speed_y) >> 4)] & 0x10)
             obj->speed_y = 0;
     }
-    if ((flags[obj->type] & flags2_1_check_tile_type) && (block_flags[obj->coll_btype[0]] & 2))
+    if ((flags[obj->type] & flags2_1_check_tile_type) && (block_flags[obj->btypes[0]] & 2))
     {
         switch (obj->type)
         {
@@ -911,7 +955,7 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
 
 //57FEC
 void test_fall_in_water(obj_t* obj) {
-    if (obj->coll_btype[0] == BTYP_WATER && !(obj->type == TYPE_23_RAYMAN && ray.main_etat == 6)) {
+    if (obj->btypes[0] == BTYP_WATER && !(obj->type == TYPE_23_RAYMAN && ray.main_etat == 6)) {
         if (obj->type == TYPE_52_MST_FRUIT2) {
             obj->flags.alive = 0;
         } else {
@@ -1041,7 +1085,7 @@ void build_active_table(void) {
     for (i32 i = level_obj.nb_objects-1; i >= 0; --i) {
         obj_t* obj = &level.objects[level_obj.obj_ids[i]];
         if (obj->field_1C == 0) {
-            if ((abs(obj->x - screen_center_x) < 660 && abs(obj->y - screen_center_y) < 600) || (flags[obj->type] & flags2_0x10_do_not_check_ray_collision)) {
+            if ((Abs(obj->x - screen_center_x) < 660 && Abs(obj->y - screen_center_y) < 600) || (flags[obj->type] & flags2_0x10_do_not_check_ray_collision)) {
                 SET_ACTIVE_FLAG(obj->x - xmap + 8, obj->y - ymap, obj);
             } else {
                 obj->is_active = 0;
@@ -1213,17 +1257,115 @@ void move_down_ray(void) {
 
 //58F70
 void recale_ray_pos(void) {
+    /* 3103C 8015583C -O2 -msoft-float */
+    //NOTE: is this function really called RecaleRayPosInJumelle in the PS1 version?? maybe not right?
     if (ray.main_etat == 3 && ray.sub_etat == 23) {
         return;
     }
     if (scroll_y == -1) {
-        //stub
+        i16 unk_y_1 = ((ray_zdc_h >> 1) - ray.offset_by) + 114; // 136 in the PS1 version
+        if ((ray.main_etat == 2 && !(ray.sub_etat == 15 && ray_Suphelico_bis)) || screen_trembling) {
+            if ((ymap != scroll_end_y && (unk_y_1 < ray.screen_y - ray.speed_y) && ray.speed_y > 0) ||
+                (ymap != scroll_start_y && (-ray.offset_hy - 16 >= ray.screen_y) && ray.speed_y < 0))
+            {
+                if (ray.speed_y <= 16)
+                    v_scroll_speed = ray.speed_y;
+                else
+                    v_scroll_speed = 0;
+            }
+        } else {
+            if (v_scroll_speed != 255 || decalage_en_cours != 0)
+            {
+                i16 unk_y_2 = ray.screen_y - unk_y_1;
+                i32 v_scr_temp = v_scroll_speed = ashr16(unk_y_2, 2);
+                i32 spd_y_abs_1 = Abs(ray.speed_y);
+                if (Abs(v_scr_temp) >= spd_y_abs_1) {
+                    MAX_2(spd_y_abs_1, 3);
+                    i16 spd_y_abs_2 = spd_y_abs_1;
+                    if (v_scr_temp > 0) {
+                        MIN_2(v_scroll_speed, (s16) spd_y_abs_1);
+                    } else if (v_scr_temp < 0) {
+                        MAX_2(v_scr_temp, -spd_y_abs_2);
+                        v_scroll_speed = v_scr_temp;
+                    } else {
+                        if (unk_y_2 > 0)
+                            v_scroll_speed = 1;
+                        else if (unk_y_2 < 0)
+                            v_scroll_speed = -1;
+                    }
+                }
+            } else if (ray.main_etat != 1) {
+                if (ray.screen_y < unk_y_1 + 48) {
+                    v_scroll_speed = -4;
+                } else {
+                    v_scroll_speed = 0;
+                }
+
+            }
+        }
     }
 
     if (scroll_x == -1) {
-        //stub
+        i16 unk_x_1 = (112 - ray.offset_bx) - special_ray_mov_win_x_left;
+        i16 unk_x_2 = special_ray_mov_win_x_right - (ray.offset_bx - 208);
+        if (decalage_en_cours > 0 || ray.speed_x > 0) {
+            i16 unk_x_3 = ashr16(ray.screen_x - unk_x_1, 2);
+            if (unk_x_3 >= dhspeed) {
+                if (unk_x_3 > dhspeed) {
+                    dhspeed++;
+                }
+            } else {
+                dhspeed--;
+            }
+        } else if (decalage_en_cours < 0 || ray.speed_x < 0) {
+            i16 unk_x_3 = ashr16(ray.screen_x - unk_x_2, 2);
+            if (unk_x_3 > dhspeed) {
+                dhspeed++;
+            } else if (unk_x_3 < dhspeed) {
+                dhspeed--;
+            }
+        } else {
+            if (ray.flags.flip_x) {
+                i16 unk_x_3 = ashr16(ray.screen_x - unk_x_1, 2);
+                if (unk_x_3 >= dhspeed) {
+                    if (unk_x_3 > dhspeed) {
+                        dhspeed++;
+                    }
+                } else {
+                    dhspeed--;
+                }
+            } else {
+                i16 unk_x_3 = ashr16(ray.screen_x - unk_x_2, 2);
+                if (unk_x_3 > dhspeed) {
+                    dhspeed++;
+                } else if (unk_x_3 < dhspeed) {
+                    dhspeed--;
+                }
+            }
+        }
+
+        if (dans_la_map_monde) {
+            if (Abs(dhspeed) > 4) {
+                dhspeed = dhspeed > 0 ? 4 : -4;
+            }
+        }
+
+        h_scroll_speed += ashr16(dhspeed, 2);
+        if ((unk_x_2 > ray.screen_x && ray.speed_x < 0) || (unk_x_1 < ray.screen_x && ray.speed_x > 0)) {
+            h_scroll_speed += ray.speed_x;
+        }
     }
-    //stub
+
+    if (scroll_y == -1 && ray.cmd_arg_2 != -1)
+    {
+        obj_t* other_obj = &level.objects[ray.cmd_arg_2];
+        if (flags[other_obj->type] & flags1_0x20_move_y) {
+            v_scroll_speed += instantSpeed(other_obj->speed_y);
+        } else {
+            v_scroll_speed += other_obj->speed_y;
+        }
+        v_scroll_speed += other_obj->follow_y;
+    }
 }
 
 //59418
@@ -1503,19 +1645,54 @@ void INIT_RAY(u8 new_lvl) {
         calc_btyp(&ray);
     } else {
         for (i32 i = 0; i < 5; ++i) {
-            ray.coll_btype[i] = 0;
+            ray.btypes[i] = 0;
         }
     }
 }
 
 //59CF4
-void is_icy_pente(u8 a1) {
-    //stub
+u8 is_icy_pente(u8 btyp) {
+    u8 result = (block_flags[btyp] & 0x40) != 0 && (block_flags[btyp] & 8) != 0;
+    return result;
 }
 
 //59D18
 void STOPPE_RAY_EN_XY(void) {
-    //stub
+    if (ray.main_etat != 7) {
+        i16 x = ray.offset_bx + ray.x;
+        i16 y = ray.offset_by + ray.y;
+        if (block_flags[ray.btypes[0]] & 0x40) {
+            y -= 8;
+        }
+
+        x += ray.speed_x * 2;
+        u8 btyp_1 = BTYP(x >> 4, (y - 8) >> 4);
+        u8 btyp_2 = BTYP(x >> 4, (y - 24) >> 4);
+        u8 btyp_3 = BTYP(x >> 4, (y - 40) >> 4);
+        u8 btyp_4 = BTYP(x >> 4, (y - 56) >> 4);
+
+        i16 stop = false;
+        if (block_flags[btyp_1] & 0x10)
+            stop = !is_icy_pente(btyp_2);
+        if (!(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40) && !RayEvts.tiny) {
+            if (!stop && (((block_flags[btyp_2] & 0x10) && !is_icy_pente(btyp_3)) ||
+                     ((block_flags[btyp_3] & 0x10) && !is_icy_pente(btyp_4)))
+            ) {
+                stop = true;
+            }
+        }
+
+        if (stop)
+        {
+            ray.speed_x = 0;
+            decalage_en_cours = 0;
+            ray.nb_cmd = 0;
+            Reset_air_speed(true);
+            Reset_air_speed(false);
+        }
+    }
+
+
 }
 
 //59E9C
@@ -1723,7 +1900,29 @@ void restore_gendoor_link(void) {
 
 //5A8E4
 void DONE_MOTEUR_LEVEL(void) {
-    //stub
+    /* 34FEC 801597EC -O2 -msoft-float */
+    restore_gendoor_link(); //TODO
+    if (!bonus_map && departlevel && get_next_bonus_level(num_level) == 0 && !fin_continue) {
+        doneGameSave();
+    }
+    if (rayman_obj_id != -1 && (new_level || new_world)) {
+        raytmp = ray;
+        ray = rms;
+        INIT_RAY(1);
+        ray.hit_points = raytmp.hit_points;
+        ray.init_hit_points = raytmp.init_hit_points;
+        ray.hit_sprite = raytmp.hit_sprite;
+        set_main_and_sub_etat(&ray, 0, 0);
+        ray_mode = MODE_0_NONE;
+    }
+
+    if (first_boss_meet) {
+        Change_Wait_Anim();
+    }
+
+    if (fee_obj_id != -1) {
+        record.is_playing = false;
+    }
 }
 
 //5A9D8
@@ -1808,7 +2007,7 @@ void DO_MOTEUR(void) {
 void DO_MOTEUR2(void) {
     DO_WIZ_AFTER_BONUS_MAP(); //TODO
     DO_PERFECT_BONUS_MAP(); //TODO
-    DO_OBJECTS_ANIMS(); //TODO
+    DO_OBJECTS_ANIMS();
     if (ray.flags.alive) {
         if (dead_time != 64) {
             ray.cmd_arg_2 = -1;
@@ -1825,7 +2024,7 @@ void DO_MOTEUR2(void) {
             } break;
             case MODE_3_MORT_DE_RAYMAN:
             case MODE_4_MORT_DE_RAYMAN_ON_MS: {
-                DO_MORT_DE_RAY(); //TODO
+                DO_MORT_DE_RAY();
             } break;
             case MODE_5_CASSE_BRIQUE: {
                 DO_RAY_CASSE_BRIQUE(); //TODO

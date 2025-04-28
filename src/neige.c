@@ -170,22 +170,22 @@ void do_flocons(i16 x, i16 y, i16 x_old, i16 y_old) {
     unk_x_2 = remove_1;
     remove_2 = VENT_Y - (VENT_Y / 4 * 4);
     unk_y_2 = remove_2;
-    if (abs(unk_x_2) == 1 && horloge[4] == 0)
+    if (Abs(unk_x_2) == 1 && horloge[4] == 0)
         unk_x_1 += sgn(VENT_X);
 
-    if (abs(unk_x_2) == 2 && horloge[2] == 0)
+    if (Abs(unk_x_2) == 2 && horloge[2] == 0)
         unk_x_1 += sgn(VENT_X);
 
-    if (abs(unk_x_2) == 3 && horloge[4] < 3)
+    if (Abs(unk_x_2) == 3 && horloge[4] < 3)
         unk_x_1 += sgn(VENT_X);
 
-    if (abs(unk_y_2) == 1 && horloge[4] == 0)
+    if (Abs(unk_y_2) == 1 && horloge[4] == 0)
         unk_y_1 += sgn(VENT_Y);
 
-    if (abs(unk_y_2) == 2 && horloge[2] == 0)
+    if (Abs(unk_y_2) == 2 && horloge[2] == 0)
         unk_y_1 += sgn(VENT_Y);
 
-    if (abs(unk_y_2) == 3 && horloge[4] < 3)
+    if (Abs(unk_y_2) == 3 && horloge[4] < 3)
         unk_y_1 += sgn(VENT_Y);
 
     set_proj_center(SCREEN_WIDTH / 2, 170);

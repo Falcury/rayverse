@@ -341,6 +341,8 @@ i32 vol_l(i16 a1, i16 a2) {
 
 //7228C
 void PlaySnd(u16 sound_id, i16 obj_id) {
+    PlaySnd_old(sound_id); //TODO: remove this after PlaySnd works properly by itself
+
     if (CarteSonAutorisee) {
         if ((ray.scale != 0 && obj_id == reduced_rayman_id) || obj_id == rayman_obj_id) {
             obj_id = -1;
@@ -349,10 +351,16 @@ void PlaySnd(u16 sound_id, i16 obj_id) {
             indice_ray_wait = 0;
         }
         i16 sound_to_interrupt = last_snd(obj_id);
-        if (sound_to_interrupt != sound_id && !(sound_flags[sound_to_interrupt] & 8)) {
+        if (sound_to_interrupt != sound_id && (sound_table[sound_to_interrupt] & 8) != 0) {
             erase_pile_snd(obj_id);
             i16 voice_obj_snd = get_voice_obj_snd(obj_id, sound_to_interrupt);
             if (voice_obj_snd >= 0) {
+                voice_t* voice = voice_table + voice_obj_snd;
+                sound_table_entry_t* sound = hard_sound_table + voice->sound_id;
+                KeyOff(voice_obj_snd, bank_to_use[voice->sound_id], sound->prog, sound->tone, sound->note);
+                voice->field_0 = -2;
+                voice->sound_id = -1;
+                voice_is_working[voice_obj_snd] = 0;
                 // stub
             }
             // stub
@@ -374,7 +382,7 @@ void PlaySnd_old(u16 sound_id) {
                 voice_table[voice_index].field_0 = -2;
                 voice_table[voice_index].field_2 = 64;
                 voice_table[voice_index].field_4 = 64;
-                if (sound_flags[sound_id] & 0x10) {
+                if (sound_table[sound_id] & 0x10) {
                     voice_is_working[voice_index] = 1;
                 }
             }

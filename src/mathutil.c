@@ -96,6 +96,11 @@ i32 ashr32(i32 x, u8 bits) {
 }
 
 //inlined
+i32 Abs(i32 x) {
+    return abs(x);
+}
+
+//inlined
 i32 sgn(i32 x) {
     return (x < 0) ? -1 : (x > 0);
 }

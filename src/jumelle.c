@@ -122,7 +122,7 @@ void ChangeDeltaSizeJumelle(i32 delta_size) {
 void CalculVitesseJumelle(void) {
     i32 delta_x = PositionJumelleDemandeX - JumellePosX;
     i32 delta_y = PositionJumelleDemandeY - JumellePosY;
-    i32 dist = abs(delta_y) + abs(delta_x);
+    i32 dist = Abs(delta_y) + Abs(delta_x);
     if (dist > 0) {
         delta_x = ashl16(delta_x, 6) / dist;
         delta_y = ashl16(delta_y, 6) / dist;
@@ -268,8 +268,8 @@ void RecaleRayPosInJumelle(void) {
         if (v_scroll_speed != 255 || decalage_en_cours != 0) {
             i32 v14 = ray.screen_y - v13;
             v_scroll_speed = ashr16(ray.screen_y - v13, 2);
-            if (abs(ray.speed_y) <= abs(v_scroll_speed)) {
-                i32 v16 = MAX(3, abs(ray.speed_y));
+            if (Abs(ray.speed_y) <= Abs(v_scroll_speed)) {
+                i32 v16 = MAX(3, Abs(ray.speed_y));
                 if (v_scroll_speed <= 0) {
                     if (v_scroll_speed != 0) {
                         v_scroll_speed = MAX(v_scroll_speed, -v16);
@@ -334,7 +334,7 @@ void RecaleRayPosInJumelle(void) {
             }
         }
 
-        if (abs(dhspeed) > 4) {
+        if (Abs(dhspeed) > 4) {
             dhspeed = (dhspeed > 0) ? 4 : -4;
         }
         h_scroll_speed += ashr16(dhspeed, 2);

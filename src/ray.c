@@ -56,7 +56,7 @@ void rayMayLandOnAnObject(u8* param_1, i16 obj_id) {
             else
                 unk_y = cur_obj->speed_y;
 
-            unk_y = abs((s16) (unk_y + (cur_obj->follow_y - ray.speed_y))) + 2;
+            unk_y = Abs((s16) (unk_y + (cur_obj->follow_y - ray.speed_y))) + 2;
             MAX_2(unk_y, unk_1);
 
             cur_type = cur_obj->type;
@@ -64,7 +64,7 @@ void rayMayLandOnAnObject(u8* param_1, i16 obj_id) {
                 unk_y += 8;
             }
 
-            if (abs(cur_obj->ray_dist) < unk_y && !(block_flags[(u8) calc_typ_trav(&ray, 2)] & 0x10)) {
+            if (Abs(cur_obj->ray_dist) < unk_y && !(block_flags[(u8) calc_typ_trav(&ray, 2)] & 0x10)) {
                 ray.cmd_arg_2 = actobj.objects[i];
                 if (left_time == -2 && (map_time % 2 != 0)) {
                     ++map_time;
@@ -242,7 +242,7 @@ void rayMayLandOnAnObject(u8* param_1, i16 obj_id) {
                 if (ray.main_etat == 2) {
                     u8 new_me = 1;
                     u8 new_se = 3;
-                    if (abs(ray.speed_x) >= ashr16(ray.eta[new_me][new_se].speed_x_right, 4) && RayEvts.run) {
+                    if (Abs(ray.speed_x) >= ashr16(ray.eta[new_me][new_se].speed_x_right, 4) && RayEvts.run) {
                         set_main_and_sub_etat(&ray, new_me, new_se);
                     } else {
                         set_main_etat(&ray, 0);
@@ -281,7 +281,7 @@ void set_air_speed(u8 main_etat, u8 sub_etat, i16 param_3, u8 param_4) {
     s8 unk_2;
 
     eta = &ray.eta[main_etat][sub_etat];
-    unk_1 = abs(param_3) >> 4;
+    unk_1 = Abs(param_3) >> 4;
     unk_1 = MIN(unk_1, 112);
     unk_2 = -unk_1; /* TODO: ??? */
 
@@ -335,7 +335,7 @@ void determineRayAirInertia(void) {
     }
     switch (ray_last_ground_btyp) {
         case false:
-            if (abs(decalage_en_cours) <= 256)
+            if (Abs(decalage_en_cours) <= 256)
                 ray.nb_cmd = 0;
             else
                 ray.nb_cmd = 1;
@@ -372,7 +372,7 @@ void ray_jump(void) {
                 speed_y = follow_y;
             }
         } else {
-            switch (ray.coll_btype[0]) {
+            switch (ray.btypes[0]) {
                 case BTYP_NONE:
                     break;
                 case BTYP_SOLID_RIGHT_45:
@@ -414,7 +414,7 @@ void ray_jump(void) {
             else
                 set_main_and_sub_etat(&ray, 2, 27);
         } else {
-            is_rolling_speed = unk_2 < abs(decalage_en_cours);
+            is_rolling_speed = unk_2 < Abs(decalage_en_cours);
             Reset_air_speed(is_rolling_speed);
             if (is_rolling_speed)
                 set_main_and_sub_etat(&ray, 2, 17);
@@ -437,7 +437,7 @@ void ray_jump(void) {
 }
 
 //6D020
-void ray_inertia_speed(u8 a1, u8 a2, i16 prev_speed_x, i16 a4) {
+void ray_inertia_speed(i16 a1, i16 a2, i16 prev_speed_x, i16 a4) {
     /* 5E4BC 80182CBC -O2 -msoft-float */
     s16 unk_1;
     s16 unk_2;
@@ -446,8 +446,7 @@ void ray_inertia_speed(u8 a1, u8 a2, i16 prev_speed_x, i16 a4) {
     s16 unk_5;
     s16 unk_6;
 
-    if (a1 == 0)
-    {
+    if (a1 == 0) {
         decalage_en_cours = prev_speed_x;
         unk_1 = 0;
     }
@@ -516,7 +515,7 @@ void ray_inertia_speed(u8 a1, u8 a2, i16 prev_speed_x, i16 a4) {
     if (decalage_en_cours != 0)
     {
         ray.speed_x = instantSpeed(ashr16(decalage_en_cours, 4));
-        if (block_flags[calc_typ_travd(&ray, false)] & 0x10 && ray.main_etat != 2)
+        if ((block_flags[calc_typ_travd(&ray, false)] & 0x10) && ray.main_etat != 2)
         {
             ray.speed_x = 0;
             decalage_en_cours = 0;
@@ -555,7 +554,7 @@ void RAY_SWIP(void) {
     u8 temp_v1_2;
 
     /*var_s0 = saved_reg_s0;*/
-    i16 var_s2 = 0;
+    i16 x_accel = 0;
     i32 var_s4 = num_world == 3 ? 32 : 16;
     if (ray.cmd_arg_2 != -1) {
         obj_t* follow_obj = &level.objects[ray.cmd_arg_2];
@@ -563,11 +562,11 @@ void RAY_SWIP(void) {
             ray.cmd_arg_2 = -1;
         }
         i16 ray_dist = follow_obj->ray_dist;
-        if ((abs(ray_dist) >= 9) || (ray_dist < 0) || (ray.cmd_arg_2 == -1)) {
+        if ((Abs(ray_dist) >= 9) || (ray_dist < 0) || (ray.cmd_arg_2 == -1)) {
             u8 sp10;
             rayMayLandOnAnObject(&sp10, ray.cmd_arg_2);
             if (ray.cmd_arg_2 != -1) {
-                if (abs(follow_obj->ray_dist) >= 9) {
+                if (Abs(follow_obj->ray_dist) >= 9) {
                     ray.cmd_arg_2 = -1;
                     u8 old_ray_main_etat = ray.main_etat;
                     set_main_etat(&ray, 2);
@@ -609,11 +608,11 @@ void RAY_SWIP(void) {
     temp_v0 = ashl16((s16) ray.speed_x, 4);
     temp_a2 = temp_v0;
     if (ray.speed_x != 0) {
-        var_a1 = -(abs(temp_v0) < 257);
+        var_a1 = -(Abs(temp_v0) < 257);
         if (ray_wind_force > 0) {
-            ray.speed_x = (s16) ray.speed_x + 10;
+            ray.speed_x = ray.speed_x + 10;
         } else if (ray_wind_force < 0) {
-            ray.speed_x = (s16) ray.speed_x - 10;
+            ray.speed_x = ray.speed_x - 10;
         }
     } else {
         var_a1 = 0;
@@ -635,7 +634,7 @@ void RAY_SWIP(void) {
         } else {
             var_s0 = var_a1;
         }
-        var_s2 = 0;
+        x_accel = 0;
         /*default:
         block_57:
                 var_s2 = 0;
@@ -645,15 +644,15 @@ void RAY_SWIP(void) {
             // NOTE: slopey plat code is not present in the PS1 version
             obj_t* follow_obj = &level.objects[ray.cmd_arg_2];
             if (follow_obj->type == TYPE_254_SLOPEY_PLAT) {
-                var_s0 = 255 / (abs(follow_obj->hit_points) + 1);
-                var_s2 = -ashr16(follow_obj->hit_points, 1);
+                var_s0 = 255 / (Abs(follow_obj->hit_points) + 1);
+                x_accel = -ashr16(follow_obj->hit_points, 1);
             } else {
                 var_s0 = 0;
-                var_s2 = 0;
+                x_accel = 0;
             }
 
         } else {
-            switch (ray.coll_btype[0])
+            switch (ray.btypes[0])
             {
                 case 0:
                 case 1:
@@ -663,65 +662,65 @@ void RAY_SWIP(void) {
                 case 25:
                 case 30:
                     /* not sure about this */
-                    if (((block_flags[ray.coll_btype[0]] & 1) ||
-                             (block_flags[ray.coll_btype[4]] & 8) ||
-                             !(block_flags[ray.coll_btype[4]] & 2))
+                    if (((block_flags[ray.btypes[0]] & 1) ||
+                         (block_flags[ray.btypes[4]] & 8) ||
+                         !(block_flags[ray.btypes[4]] & 2))
                      ) {
                         if ((ray.speed_x != 0 || decalage_en_cours != 0 || ray_wind_force != 0))
                         {
                             var_s0 = var_s4;
-                            var_s2 = 0;
+                            x_accel = 0;
                         }
                         else
                         {
 
                             var_s0 = var_a1;
-                            var_s2 = 0;
+                            x_accel = 0;
                         }
                     }
                     else
                     {
                         var_s0 = var_a1;
-                        var_s2 = 0;
+                        x_accel = 0;
                     }
                     break;
                 case 15:
 
-                    switch (ray.coll_btype[3])
+                    switch (ray.btypes[3])
                     {
                         case 20:
                         case 21:
                             var_s0 = var_s4;
-                            var_s2 = -4;
+                            x_accel = -4;
                             break;
                         case 22:
                         case 23:
                             var_s0 = var_s4;
-                            var_s2 = 4;
+                            x_accel = 4;
                             break;
                         case 18:
                             var_s0 = var_s4;
-                            var_s2 = -6;
+                            x_accel = -6;
                             break;
                         case 19:
                             var_s0 = var_s4;
-                            var_s2 = 6;
+                            x_accel = 6;
                             break;
                         default:
                             var_s0 = var_a1;
-                            var_s2 = 0;
+                            x_accel = 0;
                             break;
                     }
                     break;
                 case 20:
                 case 21:
                     var_s0 = var_s4;
-                    var_s2 = -4;
+                    x_accel = -4;
                     break;
                 case 22:
                 case 23:
                     var_s0 = var_s4;
-                    var_s2 = 4;
+                    x_accel = 4;
                     break;
                 case 2:
                 case 3:
@@ -732,15 +731,15 @@ void RAY_SWIP(void) {
                 case 12:
                 case 14:
                     var_s0 = var_a1;
-                    var_s2 = 0;
+                    x_accel = 0;
                     break;
                 case 18:
                     var_s0 = var_s4;
-                    var_s2 = -6;
+                    x_accel = -6;
                     break;
                 case 19:
                     var_s0 = var_s4;
-                    var_s2 = 6;
+                    x_accel = 6;
                     break;
             }
         }
@@ -749,7 +748,7 @@ void RAY_SWIP(void) {
     {
         var_s0 = var_s0 >> 1;
     }
-    ray_inertia_speed(var_s0, var_s2, temp_a2, ray_wind_force);
+    ray_inertia_speed(var_s0, x_accel, temp_a2, ray_wind_force);
 }
 
 //6D724
@@ -908,7 +907,7 @@ void RAY_RESPOND_TO_UP(void) {
             v_scroll_speed = 255;
             break;
         case 0:
-            if (ray.sub_etat == 37 && abs(decalage_en_cours) <= 128) {
+            if (ray.sub_etat == 37 && Abs(decalage_en_cours) <= 128) {
                 set_sub_etat(&ray, 38);
             }
             RAY_SWIP();
@@ -1117,7 +1116,7 @@ void RAY_RESPOND_TO_NOTHING(void) {
             }
             else
             {
-                if (ray.sub_etat == 37 && abs(decalage_en_cours) <= 128)
+                if (ray.sub_etat == 37 && Abs(decalage_en_cours) <= 128)
                     set_sub_etat(&ray, 38);
                 else if (ray.sub_etat == 20 && EOA(&ray))
                 {
@@ -1394,7 +1393,7 @@ void RAY_IN_THE_AIR(void) {
     if ((ray.sub_etat != 17 && ray.sub_etat != 0 && ray.sub_etat != 9 && ray.sub_etat != 31) &&
             (ray.sub_etat != 13 || ray.speed_y >= 0) && jump_time >= 3 && ray_mode != MODE_3_MORT_DE_RAYMAN
     ) {
-        u8 bf = block_flags[ray.coll_btype[0]];
+        u8 bf = block_flags[ray.btypes[0]];
         if (bf & 2) {
             // Rayman lands on a block
             if (bf & 0x40) {
@@ -1410,7 +1409,7 @@ void RAY_IN_THE_AIR(void) {
             ray.timer = 0;
             in_air_because_hit = 0;
 
-            if (!(TEST_IS_ON_RESSORT_BLOC(&ray))) { //TODO
+            if (!(TEST_IS_ON_RESSORT_BLOC(&ray))) {
                 u16 snd = (num_world == 6 && num_level == 1) ? 242 : 19;
                 PlaySnd(snd, -1);
             }
@@ -1444,7 +1443,7 @@ void RAY_IN_THE_AIR(void) {
                 ray.iframes_timer = new_timer;
             }
             if (ray.sub_etat == 17 || ray.sub_etat == 18 || ray.sub_etat == 19) {
-                if (RayEvts.run && abs(ray.speed_x) >= ashr16(ray.eta[1][3].speed_x_right, 4)) {
+                if (RayEvts.run && Abs(ray.speed_x) >= ashr16(ray.eta[1][3].speed_x_right, 4)) {
                     set_main_and_sub_etat(&ray, 1, 7);
                 } else {
                     set_main_and_sub_etat(&ray, 0, 43);
@@ -1549,7 +1548,7 @@ u8 RAY_DEAD(void) {
                 !(ray.main_etat == 3 && ray.sub_etat == 22) &&
                 ray.flags.alive
         ) {
-            if (ray.coll_btype[0] == BTYP_WATER && ray.cmd_arg_2 == -1 && ray.main_etat != 6) {
+            if (ray.btypes[0] == BTYP_WATER && ray.cmd_arg_2 == -1 && ray.main_etat != 6) {
                 rayfallsinwater();
             } else if (ray.y + ray.offset_by > (mp.height + 1) * 16) {
                 set_main_and_sub_etat(&ray, 2, 9);
@@ -1662,7 +1661,7 @@ void DO_MORT_DE_RAY(void) {
         RAY_TO_THE_RIGHT();
     }
 
-    fin_poing_follow(0); //TODO
+    fin_poing_follow(0);
 
     if (ray_on_poelle == 1) {
         RayEvts = SauveRayEvts;
@@ -1955,7 +1954,7 @@ void DO_RAYMAN(void) {
         }
 
         RAY_SURF(); //TODO
-        STOPPE_RAY_EN_XY(); //TODO
+        STOPPE_RAY_EN_XY();
 
         if (ray.speed_y <= 0) {
             if (ray.speed_y < 0) {

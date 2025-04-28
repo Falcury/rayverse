@@ -339,7 +339,7 @@ typedef struct obj_t {
 	u16 zdc; // ?
 	u16 active_timer;
 	u16 type;
-	u8 coll_btype[5]; // 0 = center, 1 = left, 2 = right, 3 = up, 4 = down
+	u8 btypes[5]; // 0 = center, 1 = left, 2 = right, 3 = up, 4 = down
 	u8 field_67;
 	u8 offset_bx;
 	u8 offset_by;
@@ -434,6 +434,9 @@ typedef struct voice_t {
 	i16 field_0;
 	i16 field_2;
 	i16 field_4;
+    i16 sound_id;
+    i16 field_8;
+    i16 field_A;
 } voice_t;
 
 typedef struct options_t {

@@ -360,7 +360,7 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state) {
 	}
 	memcpy(save_state->link_init, link_init, level.nb_objects * sizeof(u16));
 	for (i32 i = 0; i < 5; ++i) {
-		save_state->ray_coll_btype[i] = ray.coll_btype[i];
+		save_state->ray_coll_btype[i] = ray.btypes[i];
 	}
 	save_state->ray_anim_index = ray.anim_index;
 	save_state->ray_anim_frame = ray.anim_frame;
@@ -422,7 +422,7 @@ void restoreGameState(save_state_t* save_state) {
             }
         }
         for (i32 i = 0; i < 5; ++i) {
-            ray.coll_btype[i] = save_state->ray_coll_btype[i];
+            ray.btypes[i] = save_state->ray_coll_btype[i];
         }
         ray.anim_index = save_state->ray_anim_index;
         ray.anim_frame = save_state->ray_anim_frame;

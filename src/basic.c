@@ -280,18 +280,18 @@ void calc_btyp_square(obj_t* obj) {
     i16 tile_x_left = ashr16(x - x_offset, 4);
     i16 tile_x_right = ashr16(x + x_offset, 4);
 
-    obj->coll_btype[3] = BTYP(tile_x, tile_y - 1); // up
-    obj->coll_btype[1] = BTYP(tile_x_left, tile_y); // left
+    obj->btypes[3] = BTYP(tile_x, tile_y - 1); // up
+    obj->btypes[1] = BTYP(tile_x_left, tile_y); // left
 
     // center
     if (obj->main_etat == 2) {
-        obj->coll_btype[0] = bloc_floor(BTYP(tile_x, tile_y), x % 16, y % 16);
+        obj->btypes[0] = bloc_floor(BTYP(tile_x, tile_y), x % 16, y % 16);
     } else {
-        obj->coll_btype[0] = BTYP(tile_x, tile_y);
+        obj->btypes[0] = BTYP(tile_x, tile_y);
     }
 
-    obj->coll_btype[2] = BTYP(tile_x_right, tile_y); // right
-    obj->coll_btype[4] = BTYP(tile_x, tile_y + 1); // down
+    obj->btypes[2] = BTYP(tile_x_right, tile_y); // right
+    obj->btypes[4] = BTYP(tile_x, tile_y + 1); // down
 }
 
 //1E76C
@@ -308,7 +308,7 @@ u8 calc_btyp(obj_t* obj) {
 
     if (obj->type == TYPE_RAYMAN) {
         ray.cmd_arg_1 = -1;
-        switch (ray.coll_btype[0]) {
+        switch (ray.btypes[0]) {
             case BTYP_NONE:
             case BTYP_CHDIR:
                 break;
@@ -335,7 +335,7 @@ u8 calc_btyp(obj_t* obj) {
         }
     }
 
-    if (!(block_flags[obj->coll_btype[0]] & 2)) {
+    if (!(block_flags[obj->btypes[0]] & 2)) {
         if (obj->type == TYPE_23_RAYMAN) {
             btyp = mp.map[ray.ray_dist].tile_type;
         } else {
@@ -347,7 +347,7 @@ u8 calc_btyp(obj_t* obj) {
         }
 
         if (!(block_flags[btyp] & 2)) {
-            u8 left_and_right_solid = (block_flags[obj->coll_btype[2]] & 2) + ((block_flags[obj->coll_btype[1]] & 2) != 0);
+            u8 left_and_right_solid = (block_flags[obj->btypes[2]] & 2) + ((block_flags[obj->btypes[1]] & 2) != 0);
             // left = 1, right = 2, both = 3
             if (left_and_right_solid == 3) {
                 // decide whether the closest solid tile is to the left or right?
@@ -367,7 +367,7 @@ u8 calc_btyp(obj_t* obj) {
                             if (ray.main_etat != 2) {
                                 obj->cmd_arg_1 = (left_or_right == ray.flags.flip_x);
                             }
-                            ray.coll_btype[0] = ray.coll_btype[1 + (left_or_right != 0)];
+                            ray.btypes[0] = ray.btypes[1 + (left_or_right != 0)];
                         }
                     }
                 } else if (left_or_right != ray.flags.flip_x && obj->main_etat != 2) {
@@ -385,15 +385,15 @@ u8 calc_btyp(obj_t* obj) {
                             )
                     ) {
                         makeUturn(obj);
-                        obj->coll_btype[0] = BTYP_SOLID;
+                        obj->btypes[0] = BTYP_SOLID;
                     }
                 }
             } else {
-                btyp = obj->coll_btype[0];
+                btyp = obj->btypes[0];
             }
         }
     } else {
-        btyp = obj->coll_btype[0];
+        btyp = obj->btypes[0];
     }
     return btyp;
 }
@@ -753,7 +753,7 @@ void Bresenham(void (*func)(i16, i16), i16 origin_x, i16 origin_y, i16 dest_x, i
     }
     else
     {
-        var_s3 = abs(var_s4 / var_s5) < 1;
+        var_s3 = Abs(var_s4 / var_s5) < 1;
     }
     if (var_s3 == 1)
     {
@@ -779,7 +779,7 @@ void Bresenham(void (*func)(i16, i16), i16 origin_x, i16 origin_y, i16 dest_x, i
         else
             var_s7_1 = 1;
 
-        var_s4 = abs(var_s4);
+        var_s4 = Abs(var_s4);
         var_s2_1 = (var_s4 * 2) - var_s5;
         temp_a3 = var_s4 - var_s5;
         if (var_s0_1 != 0)
@@ -862,7 +862,7 @@ void Bresenham(void (*func)(i16, i16), i16 origin_x, i16 origin_y, i16 dest_x, i
         }
         else
             var_s7_1 = 1;
-        var_s5 = abs(var_s5);
+        var_s5 = Abs(var_s5);
         var_s2_1 = (var_s5 * 2) - var_s4;
         temp_a0 = var_s5 - var_s4;
         if (var_s0_1 != 0)

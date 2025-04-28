@@ -162,7 +162,7 @@ void COLL_RAY_BLK_MORTEL(void) {
             ray.speed_y = 0;
             ray.speed_x = 0;
             ray.y += 5;
-        } else if (ray.coll_btype[3] == BTYP_SPIKES) {
+        } else if (ray.btypes[3] == BTYP_SPIKES) {
             set_main_and_sub_etat(&ray, 3, 32);
             if (dead_time != 1) {
                 dead_time = 1;
@@ -192,7 +192,7 @@ void RAY_HIT(bool hurt, obj_t* obj) {
         while (BTYP(tile_x, (ray.y + ray.offset_by) / 16) == BTYP_WATER) {
             --ray.y;
         }
-        ray.coll_btype[0] = BTYP_NONE;
+        ray.btypes[0] = BTYP_NONE;
     }
     if (ray.main_etat == 6) {
         set_main_and_sub_etat(&ray, 6, 8);
@@ -520,7 +520,39 @@ void test_allowed(obj_t* obj, i16 center_x, i16 center_y) {
 
 //2F224
 void obj_jump(obj_t* obj) {
-    //stub
+    /* 4880C 8016D00C -O2 -msoft-float */
+    s16 spd_y;
+    u8 gravity_value_2 = 0;
+    s16 spd_x = obj->speed_x;
+    u8 label = 255;
+
+    switch (obj->type) {
+        case TYPE_172_STONEWOMAN:
+            if (get_eta(obj)->flags & 1) {
+                label = 15;
+                set_main_and_sub_etat(obj, 2, 3);
+                spd_y = -3;
+                gravity_value_2 = 5;
+            }
+            break;
+        case TYPE_123_BLACKTOON1:
+            if (obj->configuration & 2) {
+                label = 1;
+                set_main_and_sub_etat(obj, 2, 5);
+                spd_y = -3;
+            }
+            break;
+    }
+
+    if (label != 255) {
+        skipToLabel(obj, label, true);
+        obj->speed_x = spd_x;
+        obj->speed_y = spd_y;
+        obj->gravity_value_1 = 0;
+        obj->gravity_value_2 = gravity_value_2;
+        obj->y -= 12;
+        calc_btyp(obj);
+    }
 }
 
 //2F2FC

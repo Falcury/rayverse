@@ -244,8 +244,8 @@ void obj_init(obj_t* obj) {
     obj->cmd_offset = -1;
     obj->flags.flip_x = false;
     obj->flags.read_commands = (obj->cmds != NULL);
-    memset(obj->coll_btype, 0, 5);
-    GET_OBJ_CMD(obj); //TODO
+    memset(obj->btypes, 0, 5);
+    GET_OBJ_CMD(obj);
     obj->flags.anim_changed = false;
     obj->flags.flag_0x40 = false;
     obj->flags.flag_0x100 = false;
