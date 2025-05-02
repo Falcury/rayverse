@@ -495,7 +495,7 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
                     need_scroll_xmap = false;
                 }
             } else {
-                delta_pos_x = 16 * ((SCREEN_WIDTH/2) - JumellePosX);
+                delta_pos_x = 16 * ((SCREEN_WIDTH / 2) - JumellePosX);
                 ChangeDeltaPosXJumelleWithoutLimit(delta_pos_x);
             }
 
@@ -506,12 +506,12 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
                     need_scroll_ymap = false;
                 }
             } else {
-                delta_pos_y = 16 * (SCREEN_HEIGHT/2 - JumellePosY);
+                delta_pos_y = 16 * (SCREEN_HEIGHT / 2 - JumellePosY);
                 ChangeDeltaPosYJumelleWithoutLimit(delta_pos_y);
             }
         } else {
-            PositionJumelleDemandeY = SCREEN_HEIGHT/2;
-            PositionJumelleDemandeX = SCREEN_WIDTH/2;
+            PositionJumelleDemandeY = SCREEN_HEIGHT / 2;
+            PositionJumelleDemandeX = SCREEN_WIDTH / 2;
             delta_pos_x = 16 * (PositionJumelleDemandeX - JumellePosX);
             delta_pos_y = 16 * (PositionJumelleDemandeY - JumellePosY);
             ChangeDeltaPosXJumelleWithoutLimit(delta_pos_x);
@@ -538,103 +538,103 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
             dvspeed = 0;
             v_speed = 0;
         }
-
-        CalcObjPosInWorldMap(&ray);
-
-        if (v_speed == 0) {
-            ChangeJumelleSizeOK &= ~1;
-        }
-
-        if (h_speed == 0) {
-            ChangeJumelleSizeOK &= ~2;
-        }
-
-        if (delta_pos_x == 0 && delta_pos_y == 0 && ray.speed_y == 0 && ray.speed_x == 0 && ChangeJumelleSizeOK != 4) {
-            if (RayonJumelle < 64 && !ModeAutoJumelle) {
-                ChangeDeltaSizeJumelle(1);
-            }
-
-            if (JumAmpDefPlus + JumAmpDefMul * -RayonJumelle >= JumelleZoomAmp || ModeAutoJumelle) {
-                if (JumAmpDefPlus + JumAmpDefMul * -RayonJumelle > JumelleZoomAmp && !ModeAutoJumelle) {
-                    ChangeDeltaZoomAmpJumelle(300);
-                }
-            } else {
-                ChangeDeltaZoomAmpJumelle(-300);
-            }
-
-            if (JumAmpDefPlus + JumAmpDefMul * -RayonJumelle == JumelleZoomAmp && RayonJumelle == 64 && ChangeJumelleSizeOK != 0) {
-                ModeAutoJumelle = 0;
-                CompteurJumelle = 0;
-                ChangeJumelleSizeOK = 4;
-            }
-
-        } else if (ray.speed_x != 0 || ray.speed_y != 0) {
-            ChangeJumelleSizeOK &= ~4;
-        }
-
-        if (ChangeJumelleSizeOK == 4) {
-            ++CompteurJumelle;
-            if (CompteurJumelle == 1830) {
-                ModeAutoRayonJumelle = 25;
-                ModeAutoJumelle |= ChangeJumelleSizeOK;
-            } else if (CompteurJumelle == 1800) {
-                ModeAutoJumelle |= 2;
-                ModeAutoJumelleZoomAmp = -26 * RayonJumelle + 32150;
-            } else if (ModeAutoJumelle != 0) {
-                if (!(ModeAutoJumelle & 1) && RayonJumelle == 25) {
-                    if (JumelleZoomAmp == 31500) {
-                        ModeAutoJumelle |= 1;
-                        RayonJumelle = 25;
-                        ModeAutoPosXJumelle = myRand(SCREEN_WIDTH) + 8;
-                        ModeAutoPosYJumelle = myRand(SCREEN_HEIGHT) + RayonJumelle / 3;
-                        PositionJumelleDemandeX = ModeAutoPosXJumelle;
-                        PositionJumelleDemandeY = ModeAutoPosYJumelle;
-                        Xmap16 = 16 * xmap;
-                        Ymap16 = 16 * ymap;
-                        PositionJumelleX16 = 16 * JumellePosX;
-                        PositionJumelleY16 = 16 * JumellePosY;
-                    }
-                }
-            }
-        }
-
-        if (ModeAutoJumelle & 1) {
-            CalculVitesseJumelle();
-            ChangeDeltaPosXJumelleWithoutLimit(XSpeedJumelle);
-            ChangeDeltaPosYJumelleWithoutLimit(YSpeedJumelle);
-            if (JumellePosX == ModeAutoPosXJumelle && JumellePosY == ModeAutoPosYJumelle) {
-                ModeAutoPosXJumelle = myRand(SCREEN_WIDTH) + RayonJumelle / 3;
-                ModeAutoPosYJumelle = myRand(SCREEN_HEIGHT) + RayonJumelle / 3;
-                PositionJumelleDemandeX = ModeAutoPosXJumelle;
-                PositionJumelleDemandeY = ModeAutoPosYJumelle;
-            }
-        }
-
-        if (ModeAutoJumelle & 2) {
-            if (JumelleZoomAmp < ModeAutoJumelleZoomAmp) {
-                ChangeDeltaZoomAmpJumelle(300);
-                if (JumelleZoomAmp > ModeAutoJumelleZoomAmp) {
-                    JumelleZoomAmp = ModeAutoJumelleZoomAmp;
-                }
-            } else if (JumelleZoomAmp > ModeAutoJumelleZoomAmp) {
-                ChangeDeltaZoomAmpJumelle(-300);
-                if (JumelleZoomAmp < ModeAutoJumelleZoomAmp) {
-                    JumelleZoomAmp = ModeAutoJumelleZoomAmp;
-                }
-            }
-        }
-
-        if (ModeAutoJumelle & 4) {
-            if (RayonJumelle < ModeAutoRayonJumelle) {
-                ChangeDeltaSizeJumelle(1);
-                ModeAutoJumelleZoomAmp = -26 * RayonJumelle + 32150;
-            } else if (RayonJumelle > ModeAutoRayonJumelle) {
-                ChangeDeltaSizeJumelle(-1);
-                ModeAutoJumelleZoomAmp = -26 * RayonJumelle + 32150;
-            }
-        }
-
     }
+
+    CalcObjPosInWorldMap(&ray);
+
+    if (v_speed == 0) {
+        ChangeJumelleSizeOK &= ~1;
+    }
+
+    if (h_speed == 0) {
+        ChangeJumelleSizeOK &= ~2;
+    }
+
+    if (delta_pos_x == 0 && delta_pos_y == 0 && ray.speed_y == 0 && ray.speed_x == 0 && ChangeJumelleSizeOK != 4) {
+        if (RayonJumelle < 64 && !ModeAutoJumelle) {
+            ChangeDeltaSizeJumelle(1);
+        }
+
+        if (JumAmpDefPlus + JumAmpDefMul * -RayonJumelle >= JumelleZoomAmp || ModeAutoJumelle) {
+            if (JumAmpDefPlus + JumAmpDefMul * -RayonJumelle > JumelleZoomAmp && !ModeAutoJumelle) {
+                ChangeDeltaZoomAmpJumelle(300);
+            }
+        } else {
+            ChangeDeltaZoomAmpJumelle(-300);
+        }
+
+        if (JumAmpDefPlus + JumAmpDefMul * -RayonJumelle == JumelleZoomAmp && RayonJumelle == 64 && ChangeJumelleSizeOK == 0) {
+            ModeAutoJumelle = 0;
+            CompteurJumelle = 0;
+            ChangeJumelleSizeOK = 4;
+        }
+
+    } else if (ray.speed_x != 0 || ray.speed_y != 0) {
+        ChangeJumelleSizeOK &= ~4;
+    }
+
+    if (ChangeJumelleSizeOK == 4) {
+        ++CompteurJumelle;
+        if (CompteurJumelle == 1830) {
+            ModeAutoRayonJumelle = 25;
+            ModeAutoJumelle |= ChangeJumelleSizeOK;
+        } else if (CompteurJumelle == 1800) {
+            ModeAutoJumelle |= 2;
+            ModeAutoJumelleZoomAmp = -26 * RayonJumelle + 32150;
+        } else if (ModeAutoJumelle != 0) {
+            if (!(ModeAutoJumelle & 1) && RayonJumelle == 25) {
+                if (JumelleZoomAmp == 31500) {
+                    ModeAutoJumelle |= 1;
+                    RayonJumelle = 25;
+                    ModeAutoPosXJumelle = myRand(SCREEN_WIDTH) + 8;
+                    ModeAutoPosYJumelle = myRand(SCREEN_HEIGHT) + RayonJumelle / 3;
+                    PositionJumelleDemandeX = ModeAutoPosXJumelle;
+                    PositionJumelleDemandeY = ModeAutoPosYJumelle;
+                    Xmap16 = 16 * xmap;
+                    Ymap16 = 16 * ymap;
+                    PositionJumelleX16 = 16 * JumellePosX;
+                    PositionJumelleY16 = 16 * JumellePosY;
+                }
+            }
+        }
+    }
+
+    if (ModeAutoJumelle & 1) {
+        CalculVitesseJumelle();
+        ChangeDeltaPosXJumelleWithoutLimit(XSpeedJumelle);
+        ChangeDeltaPosYJumelleWithoutLimit(YSpeedJumelle);
+        if (JumellePosX == ModeAutoPosXJumelle && JumellePosY == ModeAutoPosYJumelle) {
+            ModeAutoPosXJumelle = myRand(SCREEN_WIDTH) + RayonJumelle / 3;
+            ModeAutoPosYJumelle = myRand(SCREEN_HEIGHT) + RayonJumelle / 3;
+            PositionJumelleDemandeX = ModeAutoPosXJumelle;
+            PositionJumelleDemandeY = ModeAutoPosYJumelle;
+        }
+    }
+
+    if (ModeAutoJumelle & 2) {
+        if (JumelleZoomAmp < ModeAutoJumelleZoomAmp) {
+            ChangeDeltaZoomAmpJumelle(300);
+            if (JumelleZoomAmp > ModeAutoJumelleZoomAmp) {
+                JumelleZoomAmp = ModeAutoJumelleZoomAmp;
+            }
+        } else if (JumelleZoomAmp > ModeAutoJumelleZoomAmp) {
+            ChangeDeltaZoomAmpJumelle(-300);
+            if (JumelleZoomAmp < ModeAutoJumelleZoomAmp) {
+                JumelleZoomAmp = ModeAutoJumelleZoomAmp;
+            }
+        }
+    }
+
+    if (ModeAutoJumelle & 4) {
+        if (RayonJumelle < ModeAutoRayonJumelle) {
+            ChangeDeltaSizeJumelle(1);
+            ModeAutoJumelleZoomAmp = -26 * RayonJumelle + 32150;
+        } else if (RayonJumelle > ModeAutoRayonJumelle) {
+            ChangeDeltaSizeJumelle(-1);
+            ModeAutoJumelleZoomAmp = -26 * RayonJumelle + 32150;
+        }
+    }
+
 }
 
 //444D4
