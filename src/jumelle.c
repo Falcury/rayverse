@@ -1,10 +1,122 @@
 
 //42930
-void plot2linejumelle(i32 x, i32 y, i32 a3, i32 a4, i32 a5, u8* effet_buf, u8* draw_buf) {
-    //stub
+void plot2linejumelle(i32 jumelle_x, i32 jumelle_y, i32 plot_x, i32 plot_y, i32 circle2_offset, u8* effet_buf, u8* draw_buf) {
+    i32 v55 = SCREEN_WIDTH * JumelleYMin + JumelleXMin;
+    i32 v56 = jumelle_x - 112;
+    i32 v7 = jumelle_x - plot_x - circle2_offset;
+    i32 v53 = jumelle_y - 64;
+    if (plot_x <= circle2_offset) {
+        i32 v60 = 2 * plot_x;
+        if (v7 < 0) {
+            v60 += v7;
+            v7 = 0;
+        }
+        if (v7 + v60 >= SCREEN_WIDTH) {
+            v60 = SCREEN_WIDTH - v7 - 1;
+        }
+        i32 v25 = circle2_offset + jumelle_x - plot_x;
+        i32 v59 = 2 * plot_x;
+        i32 v57 = v25;
+        if (v25 < 0) {
+            v59 += v25;
+            v57 = 0;
+        }
+        if (v59 + v57 >= SCREEN_WIDTH) {
+            v59 = SCREEN_WIDTH - v57 - 1;
+        }
+
+        // Draw top segments
+        i32 v26 = jumelle_y - plot_y;
+        i32 v54 = v26;
+        if (jumelle_y - plot_y >= 0 && v26 < SCREEN_HEIGHT) {
+            // Top segment of left circle
+            if (v60 > 0) {
+                i32 v27 = SCREEN_WIDTH * v26 + v7;
+                i32 v28 = v27 - v55;
+                u8* v29 = draw_buf + v27;
+                u8* v30 = effet_buf + v28;
+                if (JumelleZoomActif) {
+                    //stub
+                } else {
+                    memcpy(v29, v30, v60);
+                }
+            }
+
+            // Top segment of right circle
+            if (v59 > 0) {
+                u8* v35 = effet_buf + SCREEN_WIDTH * v54 + v57 - v55;
+                u8* v36 = draw_buf + SCREEN_WIDTH * v54 + v57;
+                if (JumelleZoomActif) {
+                    //stub
+                } else {
+                    memcpy(v36, v35, v59);
+                }
+            }
+        }
+
+        // Draw bottom segments
+        i32 v8 = plot_y + jumelle_y;
+        i32 v52 = v8;
+        if (v8 >= 0 && v8 < SCREEN_HEIGHT) {
+            // Bottom segment of left circle
+            if (v60 > 0) {
+                u8* v41 = draw_buf + SCREEN_WIDTH * v52 + v7;
+                u8* v42 = effet_buf + SCREEN_WIDTH * v52 + v7 - v55;
+                if (JumelleZoomActif) {
+                    //stub
+                } else {
+                    memcpy(v41, v42, v60);
+                }
+            }
+
+            if (v59 > 0) {
+                u8* v18 = draw_buf + SCREEN_WIDTH * v52 + v57;
+                u8* v24 = effet_buf + SCREEN_WIDTH * v52 + v57 - v55;
+                if (JumelleZoomActif) {
+                    //stub
+                } else {
+                    memcpy(v18, v24, v59);
+                }
+            }
+        }
+    } else {
+        // Draw middle part of both circles
+        i32 v58 = 2 * (plot_x + circle2_offset);
+        if (v7 < 0) {
+            v58 += v7;
+            v7 = 0;
+        }
+        if (v7 + v58 >= SCREEN_WIDTH) {
+            v58 = SCREEN_WIDTH - v7 - 1;
+        }
+        if (v58 > 0) {
+            i32 v9 = jumelle_y - plot_y;
+            if (v9 >= 0 && v9 < SCREEN_HEIGHT) {
+                u8* v10 = draw_buf + SCREEN_WIDTH * v9 + v7;
+                u8* v11 = effet_buf + SCREEN_WIDTH * v9 + v7 - v55;
+                if (JumelleZoomActif) {
+                    //stub
+                } else {
+                    memcpy(v10, v11, v58);
+                }
+            }
+
+            i32 v16 = jumelle_y + plot_y;
+            if (v16 >= 0 && v16 < SCREEN_HEIGHT) {
+                u8* v10 = draw_buf + SCREEN_WIDTH * v16 + v7;
+                u8* v11 = effet_buf + SCREEN_WIDTH * v16 + v7 - v55;
+                if (JumelleZoomActif) {
+                    //stub
+                } else {
+                    memcpy(v10, v11, v58);
+                }
+            }
+        }
+    }
+
 }
 
-bool skip_jumelle = true;
+bool skip_jumelle = false;
 
 //42E1C
 void DisplayJumellesNormal(i32 x, i32 y, i32 rayon, i32 a4, u8* effet_buf, u8* draw_buf) {
@@ -33,48 +145,21 @@ void DisplayJumellesNormal(i32 x, i32 y, i32 rayon, i32 a4, u8* effet_buf, u8* d
 #else
         memcpy(draw_buf, effet_buf, 320*200);
 #endif
-        return;
     }
 
-    // TODO: draw jumelle circle
-    i32 v10 = x;
-    i32 v6 = rayon;
+    i32 v6 = 0;
     i32 v7 = 0;
-    i32 v8 = 0;
-    if ( rayon >= 0 )
-    {
-        i32 v11 = 1;
-        i32 v12 = 2 * rayon - 1;
-        do
-        {
-            plot2linejumelle(x, y, v7, v6, a4, effet_buf, draw_buf);
-            plot2linejumelle(x, y, v6, v7, a4, effet_buf, draw_buf);
-            v8 += v11;
-            ++v7;
-            v11 += 2;
-            if ( v8 >= v6 )
-            {
-                v8 -= v12;
-                --v6;
-                v12 -= 2;
-            }
+    i32 v8 = rayon;
+    while (v8 >= v7) {
+        plot2linejumelle(x, y, v7, v8, a4, effet_buf, draw_buf);
+        plot2linejumelle(x, y, v8, v7, a4, effet_buf, draw_buf);
+        v6 = v6 + 2 * v7 + 1;
+        ++v7;
+        if (v6 >= v8) {
+            v6 = v6 - 2 * v8 + 1;
+            --v8;
         }
-        while ( v7 <= v6 );
     }
-
-//    i32 v6 = 0;
-//    i32 v7 = 0;
-//    i32 v8 = rayon;
-//    while (v8 >= v7) {
-//        plot2linejumelle(x, y, v7, v8, a4, effet_buf, draw_buf);
-//        plot2linejumelle(x, y, v8, v7, a4, effet_buf, draw_buf);
-//        v6 = v6 + 2 * v7 + 1;
-//        ++v7;
-//        if (v6 >= v8) {
-//            v6 = v6 - 2 * v8 + 1;
-//            --v8;
-//        }
-//    }
     if (ParamZoomChange) {
         PrepareJumelleZoom();
     }

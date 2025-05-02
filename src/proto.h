@@ -802,7 +802,7 @@ void Reset_Clavier(void);
 bool JoystickPresent(void);
 
 // jumelle.c
-void plot2linejumelle(i32 x, i32 y, i32 a3, i32 a4, i32 a5, u8* effet_buf, u8* draw_buf);
+void plot2linejumelle(i32 jumelle_x, i32 jumelle_y, i32 plot_x, i32 plot_y, i32 circle2_offset, u8* effet_buf, u8* draw_buf);
 void DisplayJumellesNormal(i32 x, i32 y, i32 rayon, i32 a4, u8* effet_buf, u8* draw_buf);
 void InitMatriceJumelle(void);
 void DefaultJumelleVariable(void);
