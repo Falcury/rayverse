@@ -178,8 +178,8 @@ typedef struct eta_t {
 } eta_t;
 
 typedef struct world_info_t {
-	u16 xpos;
-	u16 ypos;
+	i16 xpos;
+	i16 ypos;
 	u8 index_up;
 	u8 index_down;
 	u8 index_left;

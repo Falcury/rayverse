@@ -14,34 +14,67 @@ void DisplayJumellesNormal(i32 x, i32 y, i32 rayon, i32 a4, u8* effet_buf, u8* d
         for (i32 i = 0; i < HauteurJumelle; ++i) {
             if (JumelleYMin + i >= 0 && JumelleYMin + i < 200) {
                 i32 width = LargeurJumelle;
-                if (JumelleXMin + LargeurJumelle > 320) {
-                    width = 320 - JumelleXMin;
+                i32 draw_x = JumelleXMin;
+                i32 source_x = 0;
+                if (JumelleXMin < 0) {
+                    source_x = -JumelleXMin;
+                    width += JumelleXMin;
+                    draw_x = 0;
                 }
-                memcpy(draw_buf + 320 * (JumelleYMin + i) + JumelleXMin, effet_buf + 320 * i, width);
+                if (JumelleXMin + LargeurJumelle > 320) {
+                    width -= (JumelleXMin + LargeurJumelle) - 320;
+                }
+                memcpy(draw_buf + 320 * (JumelleYMin + i) + draw_x, effet_buf + 320 * i + source_x, width);
             } else {
-//                printf("out of bounds!\n");
-                break;
+                continue;
             }
         }
+
 #else
         memcpy(draw_buf, effet_buf, 320*200);
 #endif
         return;
     }
 
-    i32 v6 = 0;
+    // TODO: draw jumelle circle
+    i32 v10 = x;
+    i32 v6 = rayon;
     i32 v7 = 0;
-    i32 v8 = rayon;
-    while (v8 >= v7) {
-        plot2linejumelle(x, y, v7, v8, a4, effet_buf, draw_buf);
-        plot2linejumelle(x, y, v8, v7, a4, effet_buf, draw_buf);
-        v6 = v6 + 2 * v7 + 1;
-        ++v7;
-        if (v6 >= v8) {
-            v6 = v6 - 2 * v8 + 1;
-            --v8;
+    i32 v8 = 0;
+    if ( rayon >= 0 )
+    {
+        i32 v11 = 1;
+        i32 v12 = 2 * rayon - 1;
+        do
+        {
+            plot2linejumelle(x, y, v7, v6, a4, effet_buf, draw_buf);
+            plot2linejumelle(x, y, v6, v7, a4, effet_buf, draw_buf);
+            v8 += v11;
+            ++v7;
+            v11 += 2;
+            if ( v8 >= v6 )
+            {
+                v8 -= v12;
+                --v6;
+                v12 -= 2;
+            }
         }
+        while ( v7 <= v6 );
     }
+
+//    i32 v6 = 0;
+//    i32 v7 = 0;
+//    i32 v8 = rayon;
+//    while (v8 >= v7) {
+//        plot2linejumelle(x, y, v7, v8, a4, effet_buf, draw_buf);
+//        plot2linejumelle(x, y, v8, v7, a4, effet_buf, draw_buf);
+//        v6 = v6 + 2 * v7 + 1;
+//        ++v7;
+//        if (v6 >= v8) {
+//            v6 = v6 - 2 * v8 + 1;
+//            --v8;
+//        }
+//    }
     if (ParamZoomChange) {
         PrepareJumelleZoom();
     }
@@ -231,6 +264,11 @@ void ChangeJumelleVariable(void) {
     scroll_start_y = (i16)(half_height + 2);
     scroll_end_x = (i16)(WidthNworld - half_width - 4);
     scroll_end_y = (i16)(HeightNworld - half_height - 4);
+
+//    scroll_start_x = (half_width + 2);
+//    scroll_start_y = (half_height + 2);
+//    scroll_end_x = WidthNworld - SCREEN_WIDTH + 32;
+//    scroll_end_y = HeightNworld - SCREEN_HEIGHT + 32;
 }
 
 //43730
@@ -263,11 +301,13 @@ void PrepareJumelleZoom(void) {
 
 //43A50
 void RecaleRayPosInJumelle(void) {
+    // NOTE: in the PS1 version this is identical to recale_ray_pos()
+    //recale_ray_pos(); return;
     if (scroll_y == -1) {
         i32 v13 = ((3 * HauteurJumelle) >> 2) - ray.offset_by;
         if (v_scroll_speed != 255 || decalage_en_cours != 0) {
             i32 v14 = ray.screen_y - v13;
-            v_scroll_speed = ashr16(ray.screen_y - v13, 2);
+            v_scroll_speed = ashr16(v14, 2);
             if (Abs(ray.speed_y) <= Abs(v_scroll_speed)) {
                 i32 v16 = MAX(3, Abs(ray.speed_y));
                 if (v_scroll_speed <= 0) {
@@ -350,8 +390,8 @@ void RecaleRayPosInJumelle(void) {
 void DisplayJumellesFondNormal(void) {
     i32 width = LargeurJumelle + 2;
     i32 height = HauteurJumelle + 2;
-//    sprite_clipping(0, width, 0, height); //TODO: re-enable this
-    // TODO: check if the source buffer might be read out of bounds?
+    sprite_clipping(0, width, 0, height);
+//    DisplayAnyPictureNormal(PLAN2BIT, EffetBufferNormal, xmap - LargeurJumelle/2, ymap - HauteurJumelle/2, 0, 0, WidthNworld, 320, 200);
     DisplayAnyPictureNormal(PLAN2BIT, EffetBufferNormal, xmap - LargeurJumelle/2, ymap - HauteurJumelle/2, 0, 0, WidthNworld, width, height);
 }
 
@@ -370,7 +410,7 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
                     need_scroll_xmap = false;
                 }
             } else {
-                delta_pos_x = 16 * (160 - JumellePosX);
+                delta_pos_x = 16 * ((SCREEN_WIDTH/2) - JumellePosX);
                 ChangeDeltaPosXJumelleWithoutLimit(delta_pos_x);
             }
 
@@ -381,14 +421,14 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
                     need_scroll_ymap = false;
                 }
             } else {
-                delta_pos_y = 16 * (160 - JumellePosY);
+                delta_pos_y = 16 * (SCREEN_HEIGHT/2 - JumellePosY);
                 ChangeDeltaPosYJumelleWithoutLimit(delta_pos_y);
             }
         } else {
-            PositionJumelleDemandeY = 100;
-            PositionJumelleDemandeX = 160;
-            delta_pos_x = 16 * (160 - JumellePosX);
-            delta_pos_y = 16 * (160 - JumellePosY);
+            PositionJumelleDemandeY = SCREEN_HEIGHT/2;
+            PositionJumelleDemandeX = SCREEN_WIDTH/2;
+            delta_pos_x = 16 * (PositionJumelleDemandeX - JumellePosX);
+            delta_pos_y = 16 * (PositionJumelleDemandeY - JumellePosY);
             ChangeDeltaPosXJumelleWithoutLimit(delta_pos_x);
             ChangeDeltaPosYJumelleWithoutLimit(delta_pos_y);
         }
@@ -460,8 +500,8 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
                     if (JumelleZoomAmp == 31500) {
                         ModeAutoJumelle |= 1;
                         RayonJumelle = 25;
-                        ModeAutoPosXJumelle = myRand(320) + 8;
-                        ModeAutoPosYJumelle = myRand(200) + RayonJumelle / 3;
+                        ModeAutoPosXJumelle = myRand(SCREEN_WIDTH) + 8;
+                        ModeAutoPosYJumelle = myRand(SCREEN_HEIGHT) + RayonJumelle / 3;
                         PositionJumelleDemandeX = ModeAutoPosXJumelle;
                         PositionJumelleDemandeY = ModeAutoPosYJumelle;
                         Xmap16 = 16 * xmap;
@@ -478,8 +518,8 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
             ChangeDeltaPosXJumelleWithoutLimit(XSpeedJumelle);
             ChangeDeltaPosYJumelleWithoutLimit(YSpeedJumelle);
             if (JumellePosX == ModeAutoPosXJumelle && JumellePosY == ModeAutoPosYJumelle) {
-                ModeAutoPosXJumelle = myRand(320) + RayonJumelle / 3;
-                ModeAutoPosYJumelle = myRand(200) + RayonJumelle / 3;
+                ModeAutoPosXJumelle = myRand(SCREEN_WIDTH) + RayonJumelle / 3;
+                ModeAutoPosYJumelle = myRand(SCREEN_HEIGHT) + RayonJumelle / 3;
                 PositionJumelleDemandeX = ModeAutoPosXJumelle;
                 PositionJumelleDemandeY = ModeAutoPosYJumelle;
             }

@@ -608,7 +608,7 @@ void DrawSpriteFlipNormalNoClip(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_
 
 //16B08
 void DrawSpriteFlipNormal(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
-    if (clip_sprite_on_screen(&x, &y, &size, &image_data) && size.x > 0) {
+    if (clip_sprite_on_screen_flipped(&x, &y, &size, &image_data) && size.x > 0) {
         u8* draw_pos = draw_buf + y * 320 + x;
         u8* draw_end = draw_pos + size.y * 320;
         i32 sprite_width = saved_sprite_width; // this was saved in clip_sprite_on_screen()
@@ -675,7 +675,7 @@ void DrawSpriteColorNormal(i32 x /*eax*/, i32 color /*edx*/, i32 y /*ebx*/, vec2
 //16C89
 void DrawSpriteColorFlipNormal(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
     saved_sprite_color = color * 8;
-    if (clip_sprite_on_screen(&x, &y, &size, &image_data) && size.x > 0) {
+    if (clip_sprite_on_screen_flipped(&x, &y, &size, &image_data) && size.x > 0) {
         u8* draw_pos = draw_buf + y * 320 + x;
         u8* draw_end = draw_pos + size.y * 320;
         i32 sprite_width = saved_sprite_width; // this was saved in clip_sprite_on_screen()

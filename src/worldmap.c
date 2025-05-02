@@ -13,22 +13,21 @@ void TEST_DISPLAY_PTS_WAY(i16 world, i16 connected_world, i16 xpos, i16 ypos) {
             }
         }
     }
-    //stub
 }
 
 //678E8
 void DISPLAY_PTS_WAY(void) {
-    for (i32 i = 0; i < 24; ++i) {
+    for (i16 i = 0; i < 24; ++i) {
         world_info_t* world_info = t_world_info + i;
         world_info->state &= ~2;
     }
-    for (i32 i = 0; i < 24; ++i) {
+    for (i16 i = 0; i < 24; ++i) {
         world_info_t* world_info = t_world_info + i;
         if (world_info->state & 1) {
-            TEST_DISPLAY_PTS_WAY(world_index, world_info->index_up, world_info->xpos, world_info->ypos);
-            TEST_DISPLAY_PTS_WAY(world_index, world_info->index_down, world_info->xpos, world_info->ypos);
-            TEST_DISPLAY_PTS_WAY(world_index, world_info->index_left, world_info->xpos, world_info->ypos);
-            TEST_DISPLAY_PTS_WAY(world_index, world_info->index_right, world_info->xpos, world_info->ypos);
+            TEST_DISPLAY_PTS_WAY(i, world_info->index_up, world_info->xpos, world_info->ypos);
+            TEST_DISPLAY_PTS_WAY(i, world_info->index_down, world_info->xpos, world_info->ypos);
+            TEST_DISPLAY_PTS_WAY(i, world_info->index_left, world_info->xpos, world_info->ypos);
+            TEST_DISPLAY_PTS_WAY(i, world_info->index_right, world_info->xpos, world_info->ypos);
             world_info->state |= 2;
         }
     }
@@ -40,13 +39,17 @@ void DISPLAY_PLAT_WAY(void) {
         world_info_t* world_info = t_world_info + i;
         obj_t* obj = mapobj + i;
         if ((world_info->state & 1) || i == 17) {
-            i32 x = obj->screen_x + obj->offset_bx + 8;
+
+            display2(obj); // seems to be DISPLAY_PLATEAU() inlined
+
+            // NOTE: disabling clipping for now
+            /*i32 x = obj->screen_x + obj->offset_bx + 8;
             if (x > -8 && x < LargeurJumelle + 14) {
                 i32 y = obj->screen_y + obj->offset_by;
                 if (y > -10 && y < HauteurJumelle + 12) {
                     display2(obj); // seems to be DISPLAY_PLATEAU() inlined
                 }
-            }
+            }*/
             if (chemin_percent != 0 && i != 17) {
                 world_info_t* wi_up = t_world_info + world_info->index_up;
                 world_info_t* wi_down = t_world_info + world_info->index_down;
