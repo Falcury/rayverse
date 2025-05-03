@@ -2117,7 +2117,7 @@ u8 dir_on_wldmap; //CFA5A
 u8 Nb_total_cages; //CFA5B
 u8 fin_continue; //CFA5C
 u8 display_txt_fee; //CFA5D
-u8 ray_inertia; //CFA5E
+u8 ray_inertie; //CFA5E
 u8 old_num_world; //CFA5F
 u8 world_index; // 0xCFA60
 u8 ALL_WORLD; // 0xCFA61

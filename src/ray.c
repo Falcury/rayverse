@@ -790,7 +790,80 @@ void RAY_STOP(void) {
 
 //6D7D4
 void RAY_HELICO(void) {
-    //stub
+    /* 5F054 80183854 -O2 -msoft-float */
+    eta_t *sel_eta;
+
+    eta_t** eta = ray.eta;
+    if (ray.eta[ray.main_etat][ray.sub_etat].flags & 4 && button_released == 1 && options_jeu.test_fire1()) {
+        if (RayEvts.super_helico && RayEvts.force_run == 0) {
+            button_released = 2;
+            set_sub_etat(&ray, 14);
+            sel_eta = &eta[ray.main_etat][ray.sub_etat];
+            sel_eta->anim_speed = (sel_eta->anim_speed & 0xF) | 0x30;
+            sel_eta = &eta[2][15];
+            sel_eta->anim_speed = (sel_eta->anim_speed & 0xF) | 0x20;
+            ray_Suphelico_bis = false;
+            helico_time = -1;
+            ray.link = -1;
+            ray.timer = 0;
+            ray_clic = 0;
+            ray_inertie = 0;
+        } else if (RayEvts.helico && RayEvts.force_run == 0) {
+            button_released = 2;
+            set_sub_etat(&ray, 3);
+            ray.anim_frame = 0;
+            helico_time = 50;
+            ray.link = -1;
+        }
+    }
+    if (ray.sub_etat == 15) {
+        sel_eta = &eta[ray.main_etat][ray.sub_etat];
+        if ((sel_eta->anim_speed & 0xF0) == 0x20) {
+            sel_eta->anim_speed = (sel_eta->anim_speed & 0xF) | 0xA0;
+            ray.gravity_value_1 = 0;
+            ray.gravity_value_2 = 20;
+        }
+    }
+    if ((button_released == 3 && options_jeu.test_fire1()) || helico_time == 0) {
+        if (RayEvts.super_helico && RayEvts.force_run == 0) {
+            if (ray.sub_etat == 15 && helico_time != 0) {
+                ray.gravity_value_1 = 0;
+                ray_Suphelico_bis = true;
+                button_released = 2;
+                sel_eta = &eta[ray.main_etat][ray.sub_etat];
+                sel_eta->anim_speed = (sel_eta->anim_speed & 0xF) | 0xA0;
+                ray_clic++;
+                ray.gravity_value_2 = 20;
+                ray.speed_y = -1;
+
+                if (ray_clic > 1) {
+                    if (ray_between_clic >= 0) {
+                        if (!ray.flags.flip_x && ray.speed_x < -1 && leftjoy()) {
+                            ray.speed_x = -48;
+                        } else if (ray.flags.flip_x && ray.speed_x > 1 && rightjoy()) {
+                            ray.speed_x = 48;
+                        } else if (ray.speed_x == 0) {
+                            ray.speed_y = -2;
+                        }
+
+                        helico_time = 70;
+                        ray_clic = 0;
+                        ray_inertia_speed(255, 0, ashl16(ray.speed_x, 4), ray_wind_force);
+                    } else {
+                        ray_clic = 1;
+                        ray_between_clic = 20;
+                    }
+                } else {
+                    ray_between_clic = 20;
+                }
+            }
+        } else {
+            button_released = 4;
+            set_sub_etat(&ray, 5);
+            helico_time = -1;
+            ray.link = 0;
+        }
+    }
 }
 
 //6DB1C
