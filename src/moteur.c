@@ -1181,7 +1181,7 @@ void DO_OBJECTS(void) {
         obj_t* obj = level.objects + actobj.objects[i];
         ot = obj->type;
         if ((flags[ot] & flags3_8_switch_off) ||
-            (ot == TYPE_161_WIZ && obj->sub_etat == 2) ||
+            (ot == TYPE_161_WIZ && obj->sub_etat == 23) ||
             (ot == TYPE_83_EXPLOSION && obj->sub_etat == 1) ||
             (ot == TYPE_33_DARK2_SORT && obj->sub_etat == 35)
         ) {
@@ -1798,7 +1798,7 @@ void INIT_MOTEUR(u8 new_lvl) {
         ymap = ymapsave;
     }
     INIT_OBJECTS(new_lvl);
-    correct_link(); //TODO
+    correct_link();
     deactivate_ship_links(); //TODO
     special_flags_init();
     if (num_world_choice == world_5_cave && num_level_choice == 4 && finBosslevel.helped_joe_1) {

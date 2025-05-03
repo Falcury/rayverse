@@ -528,7 +528,33 @@ void DoGraineRaymanCollision(obj_t* obj) {
 
 //61F50
 void DoWizRaymanCollision(obj_t* obj) {
-    //stub
+    PlaySnd(14, obj->id);
+    set_sub_etat(obj, 23);
+    if (bonus_map) {
+        --nb_wiz;
+        ++nb_wiz_collected;
+        status_bar.num_wiz =  nb_wiz_collected;
+        if (nb_wiz == 0) {
+            loop_time = -32;
+            INIT_FADE_OUT();
+        }
+    } else {
+        ++status_bar.num_wiz;
+    }
+    if (status_bar.num_wiz > 99) {
+        DO_NOVA(obj);
+        if (bonus_map) {
+            id_Cling_1up = -1;
+        } else {
+            id_Cling_1up = NOVA_STATUS_BAR();
+        }
+        if (id_Cling_1up == -1) {
+            Add_One_RAY_lives();
+        }
+        life_becoz_wiz = 1;
+        status_bar.num_wiz -= 100;
+    }
+    start_pix_gerbe(obj->screen_x + 10, obj->screen_y + 10); //TODO
 }
 
 //62024

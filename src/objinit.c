@@ -638,7 +638,7 @@ void INIT_OBJECTS(u8 a1) {
             } break;
             case TYPE_21_PHOTOGRAPHE: {
                 obj->timer = 0;
-            }
+            } break;
             case TYPE_23_RAYMAN: {
                 obj->flags.alive = 0;
                 rayman_obj_id = i;

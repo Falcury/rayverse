@@ -92,18 +92,17 @@ bool box_inter_h_line(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
 }
 
 //2B430
-i32 inter_box(i16 box1_x, i16 box1_y, i16 box1_width, i16 box1_height, i16 box2_x, i16 box2_y, i16 box2_width, i16 box2_height) {
-    i32 temp1 = box1_x - box2_width;
-    i32 temp2 = box1_y - box2_height;
-    if (box2_x < temp1 || box2_y < temp2) {
-        return 0;
-    }
-    i32 temp3 = temp1 + (box1_width + box2_width);
-    if (box2_x <= temp3 && box2_width <= (box1_height + box2_height) + temp2) {
-        return 1;
-    } else {
-        return 0;
-    }
+i16 inter_box(i32 x_1, i32 y_1, i32 w_1, i32 h_1, s16 x_2, s16 y_2, i32 w_2, i32 h_2) {
+    /* 1B57C 8013FD7C -O2 -msoft-float */
+    s16 unk_1 = x_1 - w_2;
+    s16 unk_2 = y_1 - h_2;
+    s16 unk_3 = w_1 + w_2;
+    s16 unk_4 = h_1 + h_2;
+    u8 res = false;
+
+    if (x_2 >= unk_1 && y_2 >= unk_2 && (unk_1 + unk_3 >= x_2))
+        res = (unk_2 + unk_4 < y_2) ^ 1;
+    return res;
 }
 
 //2B48C
@@ -1112,6 +1111,7 @@ void DO_COLLISIONS(void) {
                         collision = CHECK_BOX_COLLISION(TYPE_23_RAYMAN, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h, obj);
                     }
                     if (collision != -1) {
+//                        CHECK_BOX_COLLISION(TYPE_23_RAYMAN, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h, obj);
                         ObjectsFonctions[obj->type].rayman_collision(obj);
                     }
                 }

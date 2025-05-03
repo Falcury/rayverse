@@ -578,13 +578,38 @@ void ANGLE_RAYMAN(obj_t* obj) {
 }
 
 //7B56C
-void allocateNOVA(void) {
-    //stub
+obj_t* allocateNOVA(void) {
+    for (i32 i = 0; i < level_alw.nb_objects; ++i) {
+        obj_t* obj = level.objects + level_alw.obj_ids[i];
+        if (obj->type == TYPE_143_NOVA2 && !obj->is_active) {
+            set_main_and_sub_etat(obj, 5, 20);
+            obj->flags.alive = 1;
+            add_alwobj(obj);
+            obj->anim_index = get_eta(obj)->anim_index;
+            obj->anim_frame = 0;
+            return obj;
+        }
+    }
+    return NULL;
 }
 
 //7B628
 void DO_NOVA(obj_t* obj) {
-    // stub
+    obj_t* nova = allocateNOVA();
+    if (nova) {
+        nova->x = obj->x;
+        nova->y = obj->y;
+        i16 nova_x, nova_y, nova_w, nova_h;
+        i16 obj_x, obj_y, obj_w, obj_h;
+        GET_ANIM_POS(nova, &nova_x, &nova_y, &nova_w, &nova_h);
+        GET_ANIM_POS(nova, &obj_x, &obj_y, &obj_w, &obj_h);
+        obj->is_active = 1;
+        obj->display_prio = 1;
+        obj->cmd_arg_1 = 0;
+        obj->x += (obj_x + (obj_w >> 1)) - (nova_x + (nova_w >> 1));
+        obj->y += (obj_y + (obj_h >> 1)) - (nova_y + (nova_h >> 1));
+        calc_obj_pos(obj);
+    }
 }
 
 //7B708
@@ -593,8 +618,18 @@ void DO_NOVA2(obj_t* obj) {
 }
 
 //7B838
-void NOVA_STATUS_BAR(void) {
-    //stub
+i16 NOVA_STATUS_BAR(void) {
+    obj_t* obj = allocateNOVA();
+    if (!obj) {
+        return -1;
+    }
+    obj->display_prio = 0;
+    obj->timer = 10;
+    obj->cmd_arg_1 = 255;
+    obj->is_active = 1;
+    obj->x = xmap + obj->offset_bx;
+    obj->y = ymap + obj->offset_by;
+    return obj->id;
 }
 
 //7B920
