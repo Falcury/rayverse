@@ -443,7 +443,7 @@ void ray_inertia_speed(i16 a1, i16 a2, i16 prev_speed_x, i16 a4) {
     s16 unk_2;
     s16 unk_3;
     s16 unk_4;
-    s16 unk_5;
+    s16 unk_5 = 0;
     s16 unk_6;
 
     if (a1 == 0) {
@@ -549,7 +549,6 @@ void RAY_SWIP(void) {
     s32 var_v0_2;
     s32 var_v0_3;
     s32 var_a1;
-    u8 var_s0;
     s32 var_v1;
     u8 temp_v1_2;
 
@@ -618,6 +617,7 @@ void RAY_SWIP(void) {
         var_a1 = 0;
     }
     /* could try gotos-only for this entire section... */
+    u8 var_s0 = 0;
     if (ray.main_etat == 2) {
         if ((ray.sub_etat == 0x0F) || (ray.nb_cmd != 0)) {
             if (ray.flags.flip_x) {
@@ -967,38 +967,42 @@ void RAY_RESPOND_TO_DIR(i16 flip_x) {
     s32 unk_1;
     s16 to_speed;
 
-    switch (ray.main_etat)
-    {
+    switch (ray.main_etat) {
         case 1:
-            // TODO: this section seems completely different in the PS1 and PC versions. Need to check.
-            joy_done++;
-            if (
-                    ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40 /*&&
-                    !FUN_80133984(0) && !FUN_801339f4(0)*/
-                    )
-            {
-                if (!(block_flags[(u8) calc_typ_trav(&ray, 2)] & 0x10))
-                {
-                    if (ray.main_etat != 0 || ray.sub_etat != 60)
-                        set_main_and_sub_etat(&ray, 0, 60);
+            // NOTE: this section is substantially different in the PS1 and PC versions.
+            ++joy_done;
+            if (ray.sub_etat ==  8 || ray.sub_etat == 10) {
+                i32 v5 = 1;
+                if (options_jeu.test_fire1() && !ray_on_poelle && downjoy()) {
+                    v5 = 0;
                 }
-                else if (ray.main_etat != 0 || (ray.sub_etat != 15 && ray.sub_etat != 61))
-                {
-                    sel_anim = &ray.animations[ray.anim_index];
-                    set_main_and_sub_etat(&ray, 0, 15);
-                    ray.anim_frame = sel_anim->frame_count - 1;
+                if (v5) {
+                    set_main_and_sub_etat(&ray, 0, 47);
                 }
+            } else if (ray.sub_etat == 9 || ray.sub_etat == 11) {
+                i32 v5 = 1;
+                if (options_jeu.test_fire1() && !ray_on_poelle && downjoy()) {
+                    v5 = 0;
+                }
+                if (v5) {
+                    set_main_and_sub_etat(&ray, 0, 48);
+                }
+            } else if (options_jeu.test_fire1() && !ray_on_poelle && downjoy() && ray.sub_etat == 0) {
+                set_main_and_sub_etat(&ray, 3, 6);
             }
-            else if (
-                    (ray.flags.flip_x != flip_x) &&
-                    ray.sub_etat != 11 && ray.sub_etat != 50 && ray.sub_etat != 51 &&
-                    ray_last_ground_btyp != true
-                    )
+            if (ray.flags.flip_x == flip_x) {
+                if (ray.sub_etat == 9 || ray.sub_etat == 11) {
+                    set_sub_etat(&ray, 10);
+                }
+            } else if (ray.sub_etat == 8 || ray.sub_etat == 10) {
+                set_main_and_sub_etat(&ray, 0, 50);
+            } else if (ray.sub_etat != 11 && ray.sub_etat != 50 && ray.sub_etat != 51 && ray_last_ground_btyp != 1) {
                 set_main_and_sub_etat(&ray, 1, 4);
-            if (!(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40))
-                ray.flags.flip_x = flip_x;
+            }
+            ray.flags.flip_x = flip_x;
             RAY_SWIP();
             break;
+
         case 0:
             joy_done++;
             if (
