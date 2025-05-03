@@ -6,7 +6,23 @@ void allocateRayLandingSmoke(void) {
 
 //6C004
 void recale_ray_on_liane(void) {
-    //stub
+    /* 5D1E8 801819E8 -O2 -msoft-float */
+
+    s16 x;
+    if (hand_btyp == BTYP_LIANE) {
+        x = (ray.offset_bx + ray.x) & ~0xF;
+    } else if (hand_btypg == BTYP_LIANE) {
+        x = (ray.offset_bx + ray.x - 15) & ~0xF;
+        hand_btyp = hand_btypg;
+    } else if (hand_btypd == BTYP_LIANE) {
+        x = (ray.offset_bx + ray.x + 15) & ~0xF;
+        hand_btyp = hand_btypd;
+    } else {
+        // NOTE: possible bug: x might not be initialized.
+        return; // added
+    }
+
+    ray.x = x - (ray.offset_bx - 8);
 }
 
 //6C088
@@ -31,7 +47,31 @@ void calc_bhand_typ(void) {
 
 //6C138
 void IS_RAY_ON_LIANE(void) {
-    //stub
+    /* 5D3AC 80181BAC -O2 -msoft-float */
+    s16 speed_y;
+
+    if (ray.main_etat != 2 || ray.timer == 0) {
+        if (jump_time > 10) {
+            speed_y = ray.speed_y;
+            ray.speed_y = 0;
+            calc_bhand_typ();
+            ray.speed_y = speed_y;
+            if ((hand_btyp == BTYP_LIANE || hand_btypg == BTYP_LIANE || hand_btypd == BTYP_LIANE) && RayEvts.force_run == 0) {
+                if (ray.main_etat == 2 && ray.sub_etat == 8) {
+                    ray.iframes_timer = 90;
+                }
+                recale_ray_on_liane();
+                set_main_and_sub_etat(&ray, 4, 1);
+                ray.speed_y = 0;
+                ray.speed_x = 0;
+                ray.link = 0; // landing speed
+                decalage_en_cours = 0;
+                PlaySnd(9, -1);
+            }
+        }
+    } else {
+        --ray.timer;
+    }
 }
 
 //6C224
@@ -1057,7 +1097,7 @@ void RAY_RESPOND_TO_DOWN(void) {
             }
             RAY_SWIP();
             break;
-        case 5: // hanging
+        case 5: // while hanging: fall down
             ray.y += 14;
             RAY_TOMBE();
             break;
@@ -1682,7 +1722,7 @@ void RAY_IN_THE_AIR(void) {
         }
     }
     if (ray_mode != MODE_3_MORT_DE_RAYMAN && ray.main_etat == 2 && ray.sub_etat != 31) {
-        IS_RAY_ON_LIANE(); //TODO
+        IS_RAY_ON_LIANE();
         CAN_RAY_HANG_BLOC();
     }
 
