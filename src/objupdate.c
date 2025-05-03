@@ -553,17 +553,119 @@ void DoReducteurRaymanCollision(obj_t* obj) {
 
 //62140
 void DoSignPostRaymanCollision(obj_t* obj) {
-    //stub
+    TEST_SIGNPOST();
+    life_becoz_wiz = 0;
 }
 
 //62150
 void TEST_SIGNPOST(void) {
-    //stub
+    if (ray.main_etat == 2 && ray.sub_etat != 8) {
+        if (ray.speed_x != 0 && decalage_en_cours == 0) {
+            ray.x -= ray.speed_x;
+        }
+
+        no_ray_landing_smoke = true;
+        ray.speed_x = 0;
+        decalage_en_cours = 0;
+        if (ray.speed_y <= -1) {
+            ray.speed_y = 0;
+        }
+        //NOTE: below is added in PC version
+        if (gele != 0) {
+            h_scroll_speed = 0;
+            xmap = xmap_old;
+            v_scroll_speed = 0;
+            ymap = ymap_old;
+        }
+    } else if (ray.main_etat < 2 && ray.iframes_timer == -1 && gele == 0) {
+        //NOTE: some differences with PS1 version
+        stop_all_snd();
+        if (fin_boss) {
+            set_main_and_sub_etat(&ray, 3, 7);
+        } else {
+            set_main_and_sub_etat(&ray, 3, 23);
+            ray.anim_frame = 0;
+        }
+        if (poing.is_active) {
+            poing.is_active = false;
+            poing_obj->flags.alive = 0;
+            DO_NOVA(poing_obj);
+            fin_poing_follow(0);
+        }
+        test_fin_cling();
+        if (ray_on_poelle == true) {
+            RayEvts = SauveRayEvts;
+            decalage_en_cours = 0;
+            Reset_air_speed(false);
+            Reset_air_speed(true);
+            ray_on_poelle = false;
+        }
+        // NOTE: test_fin_cling() seems to be manually inlined again here in the PC/Android versions (?)
+        // Seems to serve no purpose though, so I'm leaving it out.
+        decalage_en_cours = 0;
+        ray.speed_x = 0;
+        if (!fin_boss && !ray_on_poelle && num_world != 6)
+            gele = 2;
+        start_cd_gagne(); // play win music (nullsub on PC/Android)
+    } else if (ray.main_etat == 3 && (ray.sub_etat == 23 || ray.sub_etat == 7)) { //NOTE: 53 instead of 7 in PS1 version
+        //TODO: something weird going on here with condition (fin_boss && num_world  == 6) ??
+        if (EOA(&ray))  {
+            DO_FADE_OUT(); // added in PC version
+            ChangeLevel();
+            gele = 0;
+        } else {
+            ray.speed_x = 0;
+            ray.speed_y = 0;
+            decalage_en_cours = 0;
+            NumScrollObj = 0;
+            if (ray.cmd_arg_2 != -1) {
+                level.objects[ray.cmd_arg_2].speed_y = 0;
+                level.objects[ray.cmd_arg_2].speed_x = 0;
+                level.objects[ray.cmd_arg_2].gravity_value_1 = 0;
+                level.objects[ray.cmd_arg_2].gravity_value_2 = 0;
+            }
+        }
+    } else if (ray.main_etat == 6) /* on moskito, al3? */ {
+        if (ray.sub_etat != 14) {
+            start_cd_gagne();
+            set_sub_etat(&ray, 14);
+            ray.anim_frame = 0;
+        }
+        gele = 2;
+        decalage_en_cours = 0;
+        ray.speed_x = 0;
+        ray.speed_y = 0;
+        if (ray.sub_etat == 14) {
+            if (EOA(&ray)) {
+                ChangeLevel();
+                gele = 0;
+            }
+        }
+    }
 }
 
 //6252C
 void DoPancarteRaymanCollision(obj_t* obj) {
-    //stub
+    if (bonus_map) {
+        status_bar.num_wiz = nb_wiz_save;
+        nb_wiz_save = 0;
+        departlevel = 0;
+        fix_numlevel(obj);
+        stop_all_snd();
+        DO_FADE_OUT();
+    } else if (!(ray.main_etat == 2 && ray.sub_etat == 8) && ray.hit_points != -1 && gele == 0) {
+        stop_all_snd();
+        DO_FADE_OUT();
+        restoreGameState(&save2);
+        new_world = 1;
+        if (life_becoz_wiz) {
+            --status_bar.lives;
+            if (status_bar.lives == -1) {
+                status_bar.lives =  0;
+            }
+            life_becoz_wiz =  0;
+        }
+    }
 }
 
 //625E8

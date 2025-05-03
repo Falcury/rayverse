@@ -182,8 +182,8 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
         // Convert 6-bit colors into 8-bit colors by multiplying by 4
         for (i32 i = 0; i < COUNT(rvb); ++i) {
             u8* colors = (u8*)&rvb[i].colors;
-            for (i32 j = 0; i < 256*3; ++i) {
-                colors[i] <<= 2;
+            for (i32 j = 0; j < 256*3; ++j) {
+                colors[j] <<= 2;
             }
         }
         mem_read(&last_plan1_palette, mem, 1);

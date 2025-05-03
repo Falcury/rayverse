@@ -19,6 +19,11 @@ void start_cd_ubi_soft(void) {
     //stub
 }
 
+//optimized out
+void start_cd_gagne(void) {
+    //nullsub
+}
+
 //1CF7C
 void start_cd_gros_rayman(void) {
     //play_cd_track(19); // Menu music - "World Map"
@@ -58,7 +63,7 @@ void start_cd_bbdead(void) {
 
 //1CFFC
 void start_cd_gameover(void) {
-    //stub
+    //nullsub
 }
 
 //1D028

@@ -2294,10 +2294,10 @@ void DO_RAYMAN(void) {
             DO_SURF_CHANGE_HAIRS();
         }
 
-        GET_RAY_ZDC(&ray, &ray_zdc_x, &ray_zdc_y, &ray_zdc_w, &ray_zdc_h); //TODO
+        GET_RAY_ZDC(&ray, &ray_zdc_x, &ray_zdc_y, &ray_zdc_w, &ray_zdc_h);
         DO_COLLISIONS(); //TODO
-        if (!fin_boss) {
-            TEST_SIGNPOST(); //TODO
+        if (fin_boss) {
+            TEST_SIGNPOST();
         }
     }
 

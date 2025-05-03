@@ -2069,7 +2069,7 @@ void DO_MOTEUR2(void) {
             --dead_time;
         }
     }
-    DO_FIXE(); //TODO
+    DO_FIXE();
     if (MapAvecPluieOuNeige) {
         do_flocons(xmap, ymap, xmap_old, ymap_old);
         DO_SNOW_SEQUENCE();
@@ -2118,8 +2118,27 @@ void DO_MOTEUR_GELE(void) {
         if (gele == 2) {
             horloges(1);
             TEST_SIGNPOST();
-            // stub
+            h_scroll_speed = 0;
+            v_scroll_speed = 0;
+            DO_ANIM(&ray);
+        } else {
+            DO_MEDAILLON_TOON_GELE(); //TODO
+        }
+        if (MapAvecPluieOuNeige) {
+            do_flocons(xmap, ymap, xmap_old, ymap_old);
+            DO_SNOW_SEQUENCE();
+            ProchainEclair = 1;
+            numero_palette_special = 0;
+        }
+        for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+            obj_t* obj = level.objects + actobj.objects[i];
+            if ((flags[obj->type] & flags2_8_can_jump) || (obj->type == TYPE_161_WIZ && obj->sub_etat == 23) ||
+                    (obj->type == TYPE_83_EXPLOSION && obj->sub_etat == 1) ||
+                    (obj->type == TYPE_33_DARK2_SORT && obj->sub_etat != 35)) {
+                DO_ANIM(obj);
+                switchOff(obj);
+            }
         }
     }
-    //stub
+    build_active_table();
 }

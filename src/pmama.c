@@ -60,8 +60,100 @@ void update_couteau(obj_t* obj) {
 }
 
 //64B70
-void get_cou_zdc(obj_t* obj, i16* a2, i16* a3, i16* a4, i16* a5) {
-    //stub
+void get_cou_zdc(obj_t* obj, i16 *x, i16 *y, i16 *w, i16 *h) {
+    /* 268E0 8014B0E0 -O2 -msoft-float */
+    s16 spr_x; s16 spr_y; s16 spr_w; s16 spr_h;
+    u8 sub_etat;
+
+    GET_SPRITE_POS(obj, 0, &spr_x, &spr_y, &spr_w, &spr_h);
+    *w = 6;
+    *h = 6;
+    if (obj->main_etat == 2)
+    {
+        sub_etat = obj->sub_etat;
+        if (sub_etat - 10 <= 1U)
+        {
+            switch (obj->anim_frame)
+            {
+                case 0:
+                    *x = spr_x + ((spr_w - *w) >> 1);
+                    *y = spr_y + spr_h - *h;
+                    return;
+                case 1:
+                case 2:
+                case 3:
+                    *x = spr_x + spr_w - *w;
+                    *y = spr_y + spr_h - *h;
+                    return;
+                case 4:
+                    *w = spr_w;
+                    *x = spr_x + spr_w - *w;
+                    *y = spr_y + ((spr_h - *h) >> 1);
+                    return;
+                case 5:
+                case 6:
+                case 7:
+                    *x = spr_x + spr_w - *w;
+                    *y = spr_y;
+                    return;
+                case 8:
+                    *x = spr_x + ((spr_w - *w) >> 1);
+                    *y = spr_y;
+                    return;
+                case 9:
+                case 10:
+                case 11:
+                    *x = spr_x;
+                    *y = spr_y;
+                    return;
+                case 12:
+                    *w = spr_w;
+                    *x = spr_x;
+                    *y = spr_y + ((spr_h - *h) >> 1);
+                    return;
+                case 13:
+                case 14:
+                case 15:
+                    *x = spr_x;
+                    *y = spr_y + spr_h - *h;
+                    return;
+                default:
+                    *x = spr_x + ((spr_w - *w) >> 1);
+                    *y = spr_y + spr_h - *h;
+                    return;
+            }
+        }
+        else
+        {
+            if (obj->sub_etat == 14 && !(obj->eta[2][obj->sub_etat].anim_speed & 0xf))
+            {
+                *h = spr_h;
+                *x = spr_x + ((spr_w - *w) >> 1);
+                *y = spr_y;
+                return;
+            }
+            if (obj->main_etat == 2)
+            {
+                if (
+                        (obj->sub_etat == 13) ||
+                        (obj->sub_etat == 14 && obj->eta[2][obj->sub_etat].anim_speed & 0xf)
+                        )
+                {
+                    *x = -((*w >> 1) + -0x80) + obj->x;
+                    *y = -((*h >> 1) + -0x60) + obj->y;
+                    return;
+                }
+                if (obj->main_etat == 2 && obj->sub_etat == 12)
+                {
+                    *x = spr_x + ((spr_w - *w) >> 1);
+                    *y = spr_y + spr_h - *h;
+                    return;
+                }
+            }
+        }
+    }
+    *x = -*w;
+    *y = -*h;
 }
 
 //64EA4

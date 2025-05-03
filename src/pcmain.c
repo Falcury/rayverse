@@ -50,7 +50,6 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
         }
         */
         fades();
-        ++map_time; //TODO: remove this (should get incremented in rayMayLandOnAnObject()
         if (dead_time >= 32 && !gele) {
             DoPaletteSpecialPC(); //TODO
         }
@@ -176,8 +175,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
         }
         endsynchro();
     }
-
-    //stub
+    RaymanDansUneMapDuJeu = 0;
 }
 
 //176A8
@@ -294,97 +292,96 @@ void PcMain(void) {
 //			play_movie("intro.dat", 20);
         }
 
-        if (fin_du_jeu || status_bar.lives < 0 || new_world == 0) {
-            FIN_GAME_LOOP();
-            if (ModeDemo) {
-                FinDemoJeu();
-            }
-            continue;
-        }
-
-        MakeMyRand(1);
-        SPECIAL_INIT();
-        default_sprite_clipping();
-        DO_WORLD_MAP();
-        sprite_clipping(0, 320, 0, 200);
-        DEPART_WORLD();
-        if (!SonLimite) {
-            LoadBnkWorld(num_world_choice);
-        }
-
-        while (!(fin_du_jeu || new_world || new_level == 0)) {
-            WaitNSynchro(5);
-			speaker_enable();
-            DEPART_LEVEL();
-            init_divers_level_PC(&v1);
-            if ((GameModeVideo == MODE_NORMAL && num_world == 6 && num_level == 4) || get_casse_brique_active()) {
-                InitClipping();
+        while (!fin_du_jeu && status_bar.lives > -1 && new_world)  {
+            MakeMyRand(1);
+            SPECIAL_INIT();
+            default_sprite_clipping();
+            DO_WORLD_MAP();
+            sprite_clipping(0, 320, 0, 200);
+            DEPART_WORLD();
+            if (!SonLimite) {
+                LoadBnkWorld(num_world_choice);
             }
 
-            INIT_MOTEUR_LEVEL(new_level);
-            init_fee();
-			init_moustique();
-			InitPaletteSpecialPC(); //TODO
-
-            if (byte_CFA2A != 0) {
-                fade_out(2, &rvb_plan3);
-            }
-
-            while(!(fin_du_jeu || new_level || new_world)) {
-                WaitNSynchro(15);
-                INIT_MOTEUR_DEAD();
-                INIT_RAY_ON_MS();
-                START_LEVEL_ANIM(); //TODO: implement DO_LEVEL_ANIM()
-                BackgroundOn = IsBackgroundOn();
-                if (GameModeVideo != MODE_NORMAL) {
-                    default_sprite_clipping();
-                    InitModeXWithFrequency(VGA_FREQ);
-                    NewFrequency(Frequence);
-                    //INIT_GAME_MODE_X(xmap, ymap);
-                    if (P486 == 1) {
-                        //sub_1268A(...);
-                    }
-                    During_The_Menu = 0;
-                    DO_MAIN_LOOP_PC_X();
-                    During_The_Menu = 1;
-                } else {
+            while (!fin_du_jeu && !new_world && new_level) {
+                WaitNSynchro(5);
+                speaker_enable();
+                DEPART_LEVEL();
+                init_divers_level_PC(&v1);
+                if ((GameModeVideo == MODE_NORMAL && num_world == 6 && num_level == 4) || get_casse_brique_active()) {
                     InitClipping();
+                }
+
+                INIT_MOTEUR_LEVEL(new_level);
+                init_fee();
+                init_moustique();
+                InitPaletteSpecialPC(); //TODO
+
+                if (byte_CFA2A != 0) {
+                    fade_out(2, &rvb_plan3);
+                }
+
+                while(!(fin_du_jeu || new_level || new_world)) {
+                    WaitNSynchro(15);
+                    INIT_MOTEUR_DEAD();
+                    INIT_RAY_ON_MS();
+                    START_LEVEL_ANIM(); //TODO: implement DO_LEVEL_ANIM()
+                    BackgroundOn = IsBackgroundOn();
+                    if (GameModeVideo != MODE_NORMAL) {
+                        default_sprite_clipping();
+                        InitModeXWithFrequency(VGA_FREQ);
+                        NewFrequency(Frequence);
+                        //INIT_GAME_MODE_X(xmap, ymap);
+                        if (P486 == 1) {
+                            //sub_1268A(...);
+                        }
+                        During_The_Menu = 0;
+                        DO_MAIN_LOOP_PC_X();
+                        During_The_Menu = 1;
+                    } else {
+                        InitClipping();
+                        InitModeNormalWithFrequency(VGA_FREQ);
+                        NewFrequency(Frequence);
+                        INIT_GAME_MODE_NORMAL(); //TODO
+                        During_The_Menu = 0;
+                        DO_MAIN_LOOP_PC_NORMAL(NULL);
+                        During_The_Menu = 1;
+                        FIN_GAME_MODE_NORMAL();
+                    }
+
+                    if (CarteSonAutorisee) {
+                        stop_all_snd();
+                    }
+
                     InitModeNormalWithFrequency(VGA_FREQ);
-                    NewFrequency(Frequence);
-                    INIT_GAME_MODE_NORMAL(); //TODO
-                    During_The_Menu = 0;
-                    DO_MAIN_LOOP_PC_NORMAL(NULL);
-                    During_The_Menu = 1;
-                    FIN_GAME_MODE_NORMAL();
+                    sprite_clipping(0, 320, 0, 200);
+                    START_LEVEL_ANIM();
+                    if (ExitMenu) {
+                        INIT_CONTINUE();
+                    } else {
+                        DO_CONTINUE();
+                        DO_VICTOIRE();
+                    }
+                    ExitMenu = 0;
                 }
 
-                if (CarteSonAutorisee) {
-                    stop_all_snd();
-                }
-
-                InitModeNormalWithFrequency(VGA_FREQ);
-                sprite_clipping(0, 320, 0, 200);
-                START_LEVEL_ANIM();
-                if (ExitMenu) {
-                    INIT_CONTINUE();
-                } else {
-                    DO_CONTINUE();
-                    DO_VICTOIRE();
-                }
-                ExitMenu = 0;
+                DONE_MOTEUR_LEVEL();
+                FIN_DEAD_LOOP();
             }
 
-            DONE_MOTEUR_LEVEL();
-            FIN_DEAD_LOOP();
+
+            if (MusicCdActive) {
+                stop_cd();
+            }
+            FIN_MAP_LOOP();
+            if (ModeDemo) {
+                fin_du_jeu = 1;
+            }
         }
 
-
-        if (MusicCdActive) {
-            stop_cd();
-        }
-        FIN_MAP_LOOP();
+        FIN_GAME_LOOP();
         if (ModeDemo) {
-            fin_du_jeu = 1;
+            FinDemoJeu();
         }
     }
 

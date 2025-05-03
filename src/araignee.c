@@ -1,7 +1,30 @@
 
 //1C0C0
-void get_spi_zdc(obj_t* obj, i16* a2, i16* a3, i16* a4, i16* a5) {
-    //stub
+void get_spi_zdc(obj_t* obj, i16* x, i16* y, i16* w, i16* h) {
+    /* 537C0 80177FC0 -O2 -msoft-float */
+    u8 eta_flags = obj->eta[obj->main_etat][obj->sub_etat].flags;
+
+    if (eta_flags & 0x40)
+    {
+        *x = obj->x + 69;
+        *y = obj->y + 38;
+        *w = 21;
+        *h = 30;
+    }
+    else if (eta_flags & 0x80)
+    {
+        *x = obj->x + 69;
+        *y = obj->y + 86;
+        *w = 34;
+        *h = 10;
+    }
+    else
+    {
+        *x = obj->x + 71;
+        *y = obj->y + 71;
+        *w = 29;
+        *h = 19;
+    }
 }
 
 //1C160

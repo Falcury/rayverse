@@ -6,7 +6,7 @@ i32 get_nb_zdc(obj_t* obj) {
 
 //2B2E0
 i32 get_zdc_index(obj_t* obj) {
-    return (i32)(obj->zdc & 7);
+    return (i32)(obj->zdc & 0x7FF);
 }
 
 //2B2E8
@@ -21,7 +21,64 @@ u16 get_ZDCPTR(void) {
 
 //2B308
 i32 in_coll_sprite_list(obj_t* obj, i16 a2) {
-    return 0; //stub
+    /* 1B2E0 8013FAE0 -O2 -msoft-float */
+    u8 unk_1[16];
+    s16 i;
+    s16 res = false;
+
+    switch (obj->type)
+    {
+        case TYPE_GENEBADGUY:
+            unk_1[0] = 0;
+            unk_1[1] = 1;
+            unk_1[2] = 2;
+            unk_1[3] = 0xFF;
+            break;
+        case TYPE_BADGUY3:
+            if (obj->main_etat == 0)
+            {
+                if (obj->sub_etat == 15 || obj->sub_etat == 16 || obj->sub_etat == 17)
+                    unk_1[0] = 4;
+                else
+                    unk_1[0] = 2;
+            }
+            else
+                unk_1[0] = 2;
+            unk_1[1] = 0xFF;
+            break;
+        case TYPE_MITE:
+        case TYPE_MITE2:
+            unk_1[0] = 1;
+            if (obj->sub_etat == 11)
+            {
+                if (obj->main_etat == 2)
+                    unk_1[1] = 3;
+                else
+                {
+                    if (obj->anim_frame > 15)
+                        unk_1[1] = 2;
+                    else
+                        unk_1[1] = 0xFF;
+                }
+                unk_1[2] = 0xFF;
+            }
+            else
+                unk_1[1] = 0xFF;
+            break;
+        default:
+            unk_1[0] = 0;
+            unk_1[1] = 0xFF;
+            break;
+    }
+
+    i = 0;
+    do
+    {
+        res = a2 == unk_1[i];
+        i++;
+    } while (unk_1[i] != 0xFF && res != true);
+
+    return res;
 }
 
 //2B3B8
@@ -50,42 +107,592 @@ i32 inter_box(i16 box1_x, i16 box1_y, i16 box1_width, i16 box1_height, i16 box2_
 }
 
 //2B48C
-void GET_OBJ_ZDC(obj_t* obj) {
-    switch(obj->type) {
-        case TYPE_2_POWERUP:
-        case TYPE_8_FALLING_OBJ:
-        case TYPE_134_FALLING_OBJ2:
-        case TYPE_167_FALLING_OBJ3: {
-            //GET_ANIM_POS(obj, ..)
-        } break;
+void GET_OBJ_ZDC(obj_t* obj, i16 *out_x, i16 *out_y, i16 *out_w, i16 *out_h) {
+    s16 anim_x; s16 anim_y; s16 anim_w; s16 anim_h;
+    s32 unk_1;
+    s32 unk_2;
+    s16 old_flip_x;
+    s32 bc_x_pos;
+    s16 new_x;
+    u8 unk_3;
+    s16 new_y;
 
-            //stub
+    switch (obj->type)
+    {
+        case TYPE_STALAG:
+            GET_SPRITE_POS(obj, 1, out_x, out_y, out_w, out_h);
+            unk_1 = 3;
+            if ((s32) *out_w > *out_h)
+            {
+                *out_x += 4;
+                *out_w -= 8;
+                *out_y += 8;
+                *out_h -= 12;
+            }
+            else
+            {
+                *out_x = *out_x - unk_1 + (*out_w >> 1);
+                *out_w = 6;
+                *out_y += 16;
+                *out_h -= 32;
+            }
+            break;
+        case TYPE_BLACK_RAY:
+            GET_RAY_ZDC(obj, out_x, out_y, out_w, out_h);
+            break;
+        case TYPE_STONECHIP:
+            GET_ANIM_POS(obj, &anim_x, &anim_y, &anim_w, &anim_h);
+            *out_x = anim_x + 13;
+            *out_y = anim_y + 13;
+            *out_w = 4;
+            *out_h = 4;
+            break;
+        case TYPE_POWERUP:
+        case TYPE_FALLING_OBJ:
+        case TYPE_FALLING_OBJ2:
+        case TYPE_FALLING_OBJ3:
+            GET_ANIM_POS(obj, &anim_x, &anim_y, &anim_w, &anim_h);
+            *out_x = anim_x + 10;
+            *out_y = anim_y + 10;
+            *out_w = anim_w - 20;
+            *out_h = anim_h - 20;
+            break;
+        case TYPE_FLASH:
+            GET_ANIM_POS(obj, out_x, out_y, out_w, out_h);
+            unk_2 = 2;
+            *out_x = *out_x - unk_2 + (*out_w >> 1);
+            *out_y = *out_y - unk_2 + (*out_h >> 1);
+            *out_w = 4;
+            *out_h = 4;
+            break;
+        case TYPE_ECLAIR:
+        case TYPE_ETINC:
+            GET_ANIM_POS(obj, &anim_x, &anim_y, &anim_w, &anim_h);
+            *out_x = anim_x + 10;
+            *out_y = anim_y + 4;
+            *out_w = anim_w - 30;
+            *out_h = anim_h - 8;
+            break;
+        case TYPE_CLASH:
+        case TYPE_NOTE:
+            GET_ANIM_POS(obj, &anim_x, &anim_y, &anim_w, &anim_h);
+            *out_x = anim_x + 2;
+            *out_y = anim_y - 4;
+            *out_w = anim_w - 4;
+            *out_h = anim_h + 3;
+            break;
+        case TYPE_BBL:
+            old_flip_x = obj->flags.flip_x;
+            obj->flags.flip_x = 0;
+            GET_ANIM_POS(obj, &anim_x, &anim_y, &anim_w, &anim_h); /* ... */
+            obj->flags.flip_x = old_flip_x;
+            if (obj->cmd_arg_1 != 2)
+            {
+                *out_x = anim_x + 3;
+                *out_y = anim_y + 20;
+                *out_w = 50;
+                *out_h = 40;
+            }
+            else
+            {
+                *out_x = anim_x + 20;
+                *out_y = anim_y + 35;
+                *out_w = 1;
+                *out_h = 1;
+            }
+            break;
+        case TYPE_MARTEAU:
+        case TYPE_MOVE_MARTEAU:
+            GET_SPRITE_POS(obj, 2, &anim_x, &anim_y, &anim_w, &anim_h);
+            *out_x = anim_x;
+            *out_y = anim_y;
+            *out_w = 16;
+            *out_h = 32;
+            break;
+        case TYPE_STONEDOG:
+        case TYPE_STONEDOG2:
+            GET_ANIM_POS(obj, &anim_x, &anim_y, &anim_w, &anim_h);
+            *out_x = anim_x + 4;
+            *out_y = anim_y + 2;
+            *out_w = anim_w - 8;
+            *out_h = anim_h - 6;
+            break;
+        case TYPE_CAGE:
+            GET_ANIM_POS(obj, &anim_x, &anim_y, &anim_w, &anim_h);
+            *out_x = anim_x + 8;
+            *out_y = anim_y + 8;
+            *out_w = anim_w - 16;
+            *out_h = anim_h - 16;
+            break;
+        case TYPE_STONEMAN1:
+        case TYPE_STONEMAN2:
+        case TYPE_STONEWOMAN2:
+        case TYPE_STONEWOMAN:
+            if (obj->main_etat == 0 && (obj->sub_etat == 3 || obj->sub_etat == 4))
+            {
+                *out_x = obj->x;
+                *out_y = obj->y;
+                *out_w = 0;
+                *out_h = 0;
+            }
+            else
+            {
+                *out_x = obj->x + obj->offset_bx - 10;
+                *out_y = obj->y + obj->offset_by - 60;
+                *out_w = 20;
+                *out_h = 50;
+            }
+            break;
+        case TYPE_CAGE2:
+            *out_x = obj->x;
+            *out_y = obj->y;
+            *out_w = 0;
+            *out_h = 0;
+            break;
+        case TYPE_WIZARD1:
+            *out_x = obj->x;
+            *out_y = obj->y;
+            *out_w = 50;
+            *out_h = 110;
+            break;
+        case TYPE_BIG_CLOWN:
+            if (obj->main_etat == 0 && obj->sub_etat == 2 && obj->anim_frame >= 16)
+            {
+                bc_x_pos = obj->x;
+                if (obj->flags.flip_x)
+                    new_x = bc_x_pos + 80;
+                else
+                    new_x = bc_x_pos + 16;
+                *out_x = new_x;
+                *out_y = obj->y + 40;
+                *out_w = 68;
+            }
+            else if (obj->main_etat == 0 && obj->sub_etat == 2)
+            {
+                bc_x_pos = obj->x;
+                if (obj->flags.flip_x)
+                    new_x = bc_x_pos + 80;
+                else
+                    new_x = bc_x_pos + 48;
+                *out_x = new_x;
+                *out_y = obj->y + 38;
+                *out_w = 32;
+            }
+            else
+            {
+                *out_x = obj->x + 64;
+                *out_y = obj->y + 38;
+                *out_w = 32;
+            }
+            *out_h = 48;
+            break;
+        case TYPE_DROP:
+            GET_SPRITE_POS(obj, 0, &anim_x, &anim_y, &anim_w, &anim_h);
+            if (obj->main_etat == 2)
+            {
+                if (obj->sub_etat == 2)
+                {
+                    *out_x = anim_x + 5;
+                    *out_y = anim_y + 28;
+                    *out_w = 6;
+                    *out_h = 22;
+                }
+                else if (obj->sub_etat == 1)
+                {
+                    *out_x = anim_x + 6;
+                    *out_y = anim_y + 18;
+                    *out_w = 13;
+                    *out_h = 11;
+                }
+                else if (obj->sub_etat == 0)
+                {
+                    *out_x = anim_x + 7;
+                    *out_y = anim_y + 8;
+                    *out_w = 19;
+                    *out_h = 11;
+                }
+            }
+            break;
+        case TYPE_TROMPETTE:
+            GET_ANIM_POS(obj, &anim_x, &anim_y, &anim_w, &anim_h);
+            *out_x = anim_x + 24;
+            *out_y = anim_y + 14;
+            *out_w = anim_w - 48;
+            *out_h = anim_h - 27;
+            break;
+        case TYPE_TNT_BOMB:
+            *out_x = obj->x + 76;
+            *out_y = obj->y + 85;
+            *out_w = 8;
+            *out_h = 8;
+            break;
+        case TYPE_EXPLOSION:
+            *out_x = obj->x;
+            *out_y = obj->y;
+            if (obj->sub_etat == 0)
+            {
+                *out_w = 22;
+                *out_h = 22;
+                *out_x += 68;
+                *out_y += 65;
+                break;
+            }
+            *out_w = 0;
+            *out_h = 0;
+            break;
+        case TYPE_COUTEAU:
+            get_cou_zdc(obj, out_x, out_y, out_w, out_h);
+            break;
+        case TYPE_SPIDER_PLAFOND:
+            get_spi_zdc(obj, out_x, out_y, out_w, out_h);
+            break;
+        case TYPE_POI3:
+            if (
+                    (obj->main_etat == 2) &&
+                    (obj->sub_etat == 15 || obj->sub_etat == 12 || obj->sub_etat == (unk_3 = 13))
+                    )
+            {
+                *out_x = obj->x + 54;
+                new_y = obj->y + 55;
+            }
+            else
+            {
+                *out_x = obj->x + 74;
+                new_y = obj->y + 45;
+            }
+            *out_y = new_y;
+            *out_w = 14;
+            *out_h = 21;
+            break;
+        case TYPE_PETIT_COUTEAU:
+            if (obj->hit_points == 1)
+            {
+                *out_x = obj->x + 138;
+                *out_y = obj->y + 138;
+                *out_w = 43;
+                *out_h = 15;
+            }
+            if (obj->hit_points == 2)
+            {
+                *out_x = obj->x + 131;
+                *out_y = obj->y + 88;
+                *out_w = 17;
+                *out_h = 49;
+            }
+            if (obj->hit_points == 3)
+            {
+                *out_x = obj->x + 62;
+                *out_y = obj->y + 138;
+                *out_w = 43;
+                *out_h = 16;
+            }
+            if (obj->hit_points == 4)
+            {
+                *out_x = obj->x + 96;
+                *out_y = obj->y + 87;
+                *out_w = 17;
+                *out_h = 48;
+            }
+            break;
+        default:
+            GET_ANIM_POS(obj, out_x, out_y, out_w, out_h);
+            break;
     }
 }
 
 //2C028
-void GET_SPRITE_ZDC(obj_t* obj, i16 a2, i16* a3, i16* a4, i16* a5, i16* a6) {
-    //stub
+i16 GET_SPRITE_ZDC(obj_t* obj, i16 index, i16 *out_x, i16 *out_y, i16 *out_w, i16 *out_h) {
+    s16 type;
+    s32 unk_x; s32 unk_y; s32 unk_w; s32 unk_h;
+    s16 spr_x; s16 spr_y; s16 spr_w; s16 spr_h;
+    s16 succ;
+    s16 temp_h;
+
+    type = obj->type;
+    unk_h = 0;
+    unk_w = 0;
+    unk_y = 0;
+    unk_x = 0;
+    succ = GET_SPRITE_POS(obj, index, &spr_x, &spr_y, &spr_w, &spr_h);
+    if (succ)
+    {
+        switch (type)
+        {
+            case TYPE_CYMBALE:
+                switch (index)
+                {
+                    case 3:
+                        unk_x = 4;
+                        unk_y = 2;
+                        unk_w = -4;
+                        unk_h = -10;
+                        break;
+                    case 4:
+                        unk_x = 0;
+                        unk_y = 2;
+                        unk_w = 0;
+                        unk_h = -10;
+                        break;
+                    case 5:
+                        unk_x = 0;
+                        unk_y = 2;
+                        unk_w = -4;
+                        unk_h = -10;
+                        break;
+                }
+                break;
+            case TYPE_GENEBADGUY:
+                if (
+                        (obj->main_etat == 0 && obj->sub_etat == 0) ||
+                        (obj->main_etat == 1 && obj->sub_etat == 0)
+                        )
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            unk_x = 10;
+                            unk_y = 0;
+                            spr_w = 34;
+                            spr_h = 32;
+                            break;
+                        case 1:
+                            unk_x = 4;
+                            unk_y = 0;
+                            spr_w = 26;
+                            break;
+                        case 2:
+                            unk_x = 4;
+                            unk_y = 0;
+                            spr_w = 48;
+                            spr_h = 24;
+                            break;
+                    }
+                }
+                else if (obj->main_etat == 0 && obj->sub_etat == 1)
+                {
+                    spr_x = obj->x + 112;
+                    spr_y = obj->y + 184;
+                    spr_w = 32;
+                    spr_h = 16;
+                }
+                else
+                {
+                    spr_w = 0;
+                    spr_h = 0;
+                    succ = false;
+                }
+                break;
+            case TYPE_BADGUY3:
+                if (index != 2)
+                {
+                    if (index == 4)
+                    {
+                        unk_x = -3;
+                        unk_y = 0;
+                        spr_w = 21;
+                        spr_h = 10;
+                        break;
+                    }
+                }
+                else
+                {
+                    unk_x = 1;
+                    unk_y = -4;
+                    unk_w = -2;
+                    unk_h = 6;
+                }
+                break;
+            case TYPE_MITE:
+            case TYPE_MITE2:
+                switch (index)
+                {
+                    case 1:
+                        if (obj->main_etat == 0)
+                        {
+                            if (obj->sub_etat == 9 || obj->sub_etat == 10 || obj->sub_etat == 11)
+                            {
+                                unk_x = -8;
+                                unk_y = 5;
+                                spr_w = 26;
+                                temp_h = 8;
+                            }
+                            else
+                            {
+                                unk_x = 1;
+                                unk_y = -5;
+                                spr_w = 16;
+                                temp_h = 30;
+                            }
+                        }
+                        else
+                        {
+                            unk_x = 1;
+                            unk_y = -5;
+                            spr_w = 16;
+                            temp_h = 30;
+                        }
+                        spr_h = temp_h;
+                        break;
+                    case 2:
+                        unk_x = 0;
+                        unk_y = 7;
+                        spr_w = 16;
+                        spr_h = 16;
+                        break;
+                    case 3:
+                        unk_x = 0;
+                        unk_y = 2;
+                        spr_w = 13;
+                        spr_h = 9;
+                        break;
+                }
+                break;
+        }
+        *out_x = unk_x + spr_x;
+        *out_y = unk_y + spr_y;
+        *out_w = unk_w + spr_w;
+        *out_h = unk_h + spr_h;
+    }
+    return succ;
 }
 
 //2C33C
-void BOX_HIT_SPECIAL_ZDC(i16 a1, i16 a2, i16 a3, i16 a4, obj_t* obj) {
-    //stub
+i32 BOX_HIT_SPECIAL_ZDC(i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
+    return -1; //stub
 }
 
 //2C670
-void BOX_IN_COLL_ZONES(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, obj_t* obj) {
-    //stub
+i32 BOX_IN_COLL_ZONES(i16 type, i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
+    /* 1C7E4 80140FE4 -O2 -msoft-float */
+    s16 res;
+    s16 unk_x; s16 unk_y; s16 unk_w; s16 unk_h;
+    s16 nb_zdc;
+    s16 i;
+    zdc_t* cur_zdc;
+    anim_t* cur_anim;
+    anim_layer_t* cur_layer;
+    s16 layers_count;
+
+    unk_h = 0;
+    unk_w = 0;
+    unk_y = 0;
+    unk_x = 0;
+    res = -1;
+
+    if (obj->zdc != 0)
+    {
+        nb_zdc = get_nb_zdc(obj);
+        if (
+                num_world == 1 &&
+                (
+                        ((obj->type == TYPE_MOSKITO || obj->type == TYPE_MOSKITO2) &&
+                         !(obj->eta[obj->main_etat][obj->sub_etat].flags & 0x40)) ||
+                        (obj->type == TYPE_BADGUY3 &&
+                         obj->eta[obj->main_etat][obj->sub_etat].flags & 0x40)
+                )
+                )
+            nb_zdc--;
+
+        for (i = 0; i < nb_zdc; i++)
+        {
+            cur_zdc = get_zdc(obj, i);
+            if (!(cur_zdc->flags & 4) || type == TYPE_POING)
+            {
+                if (cur_zdc->flags & 2)
+                {
+                    cur_anim = &obj->animations[obj->anim_index];
+                    cur_layer = &cur_anim->layers[(cur_anim->layers_per_frame & 0x3FFF) * obj->anim_frame];
+                    if (cur_layer[cur_zdc->sprite].sprite_index != 0)
+                    {
+                        GET_SPRITE_POS(obj, cur_zdc->sprite, &unk_x, &unk_y, &unk_w, &unk_h);
+                        if (obj->flags.flip_x)
+                            unk_x += unk_w - cur_zdc->width - cur_zdc->x_pos;
+                        else
+                            unk_x += cur_zdc->x_pos;
+
+                        unk_y += cur_zdc->y_pos;
+                        unk_w = cur_zdc->width;
+                        unk_h = cur_zdc->height;
+                    }
+                }
+                else
+                {
+                    unk_x = obj->x + cur_zdc->x_pos;
+                    unk_y = obj->y + cur_zdc->y_pos;
+                    unk_w = cur_zdc->width;
+                    unk_h = cur_zdc->height;
+                    /* TODO: can't take << 1 or * 2??? */
+                    if (obj->flags.flip_x)
+                        unk_x =
+                                (obj->x + obj->offset_bx) + (obj->x + obj->offset_bx) -
+                                (unk_x + unk_w);
+                }
+
+                if (inter_box(x, y, w, h, unk_x, unk_y, unk_w, unk_h))
+                {
+                    res = cur_zdc->sprite;
+                    break;
+                }
+            }
+        }
+    }
+    else
+    {
+        if (obj->hit_sprite == 0xFE)
+        {
+            GET_OBJ_ZDC(obj, &unk_x, &unk_y, &unk_w, &unk_h);
+            if (obj->flags.flip_x)
+                unk_x =
+                        (obj->x + obj->offset_bx) + (obj->x + obj->offset_bx) -
+                        (unk_x + unk_w);
+
+            res = inter_box(x, y, w, h, unk_x, unk_y, unk_w, unk_h);
+            res = res ? res : -1;
+        }
+        else if (obj->hit_sprite == 0xFF)
+        {
+            layers_count = obj->animations[obj->anim_index].layers_per_frame & 0x3FFF;
+            for (i = 0; i < layers_count; i++)
+            {
+                if (
+                        in_coll_sprite_list(obj, i) &&
+                        GET_SPRITE_ZDC(obj, i, &unk_x, &unk_y, &unk_w, &unk_h) &&
+                        inter_box(x, y, w, h, unk_x, unk_y, unk_w, unk_h)
+                        )
+                {
+                    res = i;
+                    break;
+                }
+            }
+        }
+    }
+
+    return res;
 }
 
 //2CA84
-void COLL_BOX_SPRITE(i16 a1, i16 a2, i16 a3, i16 a4, obj_t* obj) {
-    //stub
+i32 COLL_BOX_SPRITE(i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
+    i16 spr_x;
+    i16 spr_y;
+    i16 spr_w;
+    i16 spr_h;
+    if (GET_SPRITE_POS(obj, obj->hit_sprite, &spr_x, &spr_y, &spr_w, &spr_h)) {
+        if (inter_box(x, y, w, h, spr_x, spr_y, spr_w, spr_h)) {
+            return obj->hit_sprite;
+        }
+    }
+    return -1;
 }
 
 //2CB1C
-void CHECK_BOX_COLLISION(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, obj_t* obj) {
-    //stub
+i16 CHECK_BOX_COLLISION(i16 type, i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
+    if (obj->hit_sprite == 0xFD) {
+        return BOX_HIT_SPECIAL_ZDC(x, y, w, h, obj);
+    } else if (obj->hit_sprite < 0xFD) {
+        return COLL_BOX_SPRITE(x, y, w, h, obj);
+    } else {
+        return BOX_IN_COLL_ZONES(type, x, y, w, h, obj);
+    }
 }
 
 //2CB9C
@@ -180,8 +787,11 @@ void COLL_RAY_BLK_MORTEL(void) {
 }
 
 //2DBAC
-void RAY_KO(obj_t* obj) {
-    //stub
+void RAY_KO(void) {
+    set_main_and_sub_etat(&ray, 3, 0);
+    ray.speed_y = 0;
+    ray.speed_x = 0;
+    ray.configuration = 0;
 }
 
 //2DBDC
@@ -487,7 +1097,52 @@ void SHOW_COLLISIONS_ZONES(void) {
 
 //2EAE8
 void DO_COLLISIONS(void) {
-    //stub
+    for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+        if (new_world || new_level || fin_boss || boss_mort) {
+            break;
+        }
+        obj_t* obj = level.objects + actobj.objects[i];
+        if (get_eta(obj)->flags & 0x20)  {
+            if (flags[obj->type] & flags2_0x10_do_not_check_ray_collision) {
+                if (!(ray.main_etat == 3 && ray.sub_etat == 32)) {
+                    i16 collision;
+                    if (obj->type  == TYPE_81_CYMBALE || obj->type == TYPE_169_CYMBAL2) {
+                        collision = 0;
+                    } else {
+                        collision = CHECK_BOX_COLLISION(TYPE_23_RAYMAN, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h, obj);
+                    }
+                    if (collision != -1) {
+                        ObjectsFonctions[obj->type].rayman_collision(obj);
+                    }
+                }
+            } else if (ray.configuration == 0 && ray.iframes_timer == -1) {
+                if ((get_eta(&ray)->flags & 8) && !(flags[obj->type] & flags0_4_no_collision)) {
+                    i16 collision;
+                    if ((obj->type == TYPE_170_RAYON && (obj->anim_frame == 0 || obj->anim_frame > 3)) ||
+                            (obj->type == TYPE_147_MST_SCROLL && obj->hit_points != 0)
+                    ) {
+                        collision = -1;
+                    } else {
+                        collision = CHECK_BOX_COLLISION(TYPE_23_RAYMAN, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h, obj);
+                    }
+                    if (collision != -1) {
+                        ObjectsFonctions[obj->type].rayman_collision(obj);
+                        if ((flags[obj->type] & flags0_8_hurts_rayman) && ray.iframes_timer == -1 &&
+                                !(ray.main_etat == 3 && ray.sub_etat  == 32)
+                        ) {
+                            RAY_HIT(1, obj);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (ray.configuration != 0) {
+        RAY_KO();
+    }
+    if (ray.iframes_timer > -1) {
+        --ray.iframes_timer;
+    }
 }
 
 //2ED74
