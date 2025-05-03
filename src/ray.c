@@ -1074,6 +1074,7 @@ void RAY_RESPOND_TO_DOWN(void) {
                 if (EOA(&ray))
                 {
                     sel_eta_1 = &ray.eta[ray.main_etat][ray.sub_etat];
+                    // TODO: check this, seems to be different between PS1 and PC
                     if (horloge[sel_eta_1->anim_speed & 0xF] == 0)
                     {
                         /* ??? */
@@ -1084,6 +1085,17 @@ void RAY_RESPOND_TO_DOWN(void) {
                         unk_1 = ((sel_eta_2->flags >> 4 ^ 1) & 1) * 0x10;
                         sel_eta_2->flags = (sel_eta_2->flags & ~0x10) | unk_1;
                     }
+                }
+            }
+            // NOTE: not present in the PS1 version
+            else if (options_jeu.test_fire1() && !ray_on_poelle)  {
+                if (!poing.is_active && (ray.sub_etat == 11 || ray.sub_etat == 12)) {
+                    poing.is_charging = 0;
+                    poing.charge = 0;
+                    set_main_and_sub_etat(&ray, 3, 6);
+                } else {
+                    set_main_and_sub_etat(&ray, 1, 8);
+
                 }
             }
             RAY_SWIP();
@@ -1908,17 +1920,41 @@ void stackRay(void) {
 
 //70964
 void RAY_SURF(void) {
-    //stub
+    /* 63BD0 801883D0 -O2 -msoft-float */
+    if (ray.cmd_arg_2 == -1 || (level.objects[ray.cmd_arg_2].type != TYPE_159_TIBETAIN_6 && level.objects[ray.cmd_arg_2].type != TYPE_160_TIBETAIN_2)) {
+        if (ray.main_etat == 0 && !(ray.sub_etat == 13 || ray.sub_etat == 11 || ray.sub_etat == 12)) {
+            if (Abs(ray.speed_x) > 3 && ray.sub_etat != 40) {
+                if (!(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40) &&
+                        !(ray.sub_etat == 8 || ray.sub_etat == 52 || ray.sub_etat == 53)
+                ) {
+                    set_main_and_sub_etat(&ray, 0, 41);
+                }
+            } else if (Abs(ray.speed_x) < 3 && ray.sub_etat == 40) {
+                if (!(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40)) {
+                    set_main_and_sub_etat(&ray, 0, 42);
+                }
+            }
+        }
+    }
 }
 
 //70A8C
 void DO_SURF_CHANGE_HAIRS(void) {
-    //stub
+    /* 63D70 80188570 -O2 -msoft-float */
+    if (ray.main_etat == 0 && ray.sub_etat == 40) {
+        s16 x_sign = (ray.flags.flip_x) ? 1 : -1;
+
+        if (x_sign == sgn(ray.speed_x)) {
+            ray.anim_index = 79;
+        } else {
+            ray.anim_index = 80;
+        }
+    }
 }
 
 //70AE4
 void DO_PIEDS_RAYMAN(obj_t* obj) {
-    //stub
+    //nullsub
 }
 
 //70AE8
@@ -2235,7 +2271,7 @@ void DO_RAYMAN(void) {
             RepousseRay(); //TODO
         }
 
-        RAY_SURF(); //TODO
+        RAY_SURF();
         STOPPE_RAY_EN_XY();
 
         if (ray.speed_y <= 0) {
@@ -2255,7 +2291,7 @@ void DO_RAYMAN(void) {
 
         if (ray.flags.alive && ray.main_etat != 7) {
             DO_ANIM(&ray);
-            DO_SURF_CHANGE_HAIRS(); //TODO
+            DO_SURF_CHANGE_HAIRS();
         }
 
         GET_RAY_ZDC(&ray, &ray_zdc_x, &ray_zdc_y, &ray_zdc_w, &ray_zdc_h); //TODO
