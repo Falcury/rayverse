@@ -1481,7 +1481,7 @@ void DO_TIR(obj_t* obj);
 void DO_INTERACT_PLAT(obj_t* obj);
 void oldest_planted(void);
 void DO_GROWING_PLATFORM(void);
-void allocateExplosion(obj_t* obj);
+obj_t* allocateExplosion(obj_t* obj);
 void BombExplosion(obj_t* obj);
 void MARACAS_GO(obj_t* obj);
 void ANGLE_RAYMAN(obj_t* obj);

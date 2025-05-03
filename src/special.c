@@ -542,8 +542,24 @@ void DO_GROWING_PLATFORM(void) {
 }
 
 //7B29C
-void allocateExplosion(obj_t* obj) {
-    //stub
+obj_t* allocateExplosion(obj_t* obj) {
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        obj_t* cur_obj = level.objects + i;
+        if (cur_obj->type == TYPE_83_EXPLOSION && !cur_obj->is_active) {
+            set_main_and_sub_etat(cur_obj, 0, 0);
+            cur_obj->flags.alive = 1;
+            cur_obj->is_active = 1;
+            add_alwobj(cur_obj);
+            cur_obj->x = obj->x + obj->offset_bx - cur_obj->offset_bx;
+            cur_obj->y = obj->y + obj->offset_by - cur_obj->offset_by + 10;
+            calc_obj_pos(cur_obj);
+            cur_obj->anim_index = get_eta(cur_obj)->anim_index;
+            cur_obj->anim_frame = 0;
+            cur_obj->change_anim_mode = 2;
+            return cur_obj;
+        }
+    }
+    return NULL;
 }
 
 //7B370

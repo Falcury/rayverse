@@ -1,7 +1,13 @@
 
 //6BFD0
 void allocateRayLandingSmoke(void) {
-    //stub
+    if (!no_ray_landing_smoke) {
+        obj_t* explosion_obj = allocateExplosion(&ray);
+        if (explosion_obj) {
+            set_main_and_sub_etat(explosion_obj, 0, 1);
+            calc_obj_pos(explosion_obj);
+        }
+    }
 }
 
 //6C004
@@ -288,7 +294,7 @@ void rayMayLandOnAnObject(u8* param_1, i16 obj_id) {
                         set_main_etat(&ray, 0);
                         set_sub_etat(&ray, 8);
                         if (ray.link > 200) {
-                            allocateRayLandingSmoke(); //TODO
+                            allocateRayLandingSmoke();
                         }
                     }
                 }
@@ -1431,9 +1437,38 @@ void RAY_RESPOND_TO_NOTHING(void) {
     }
 }
 
+// optimized out
+void RAY_RESPOND_TO_BUTTON4(void) {
+    //nullsub
+}
+
 //6F0B0
 void RAY_RESPOND_TO_BUTTON3(void) {
-    //stub
+    /* 61568 80185D68 -O2 -msoft-float */
+    if (ray.main_etat != 2) {
+        if (ray.main_etat == 1) {
+            if (RayEvts.force_run == 0 && RayEvts.run && ray.sub_etat == 0) {
+                set_sub_etat(&ray, 3);
+            }
+        } else {
+            RAY_STOP();
+            if (ray.main_etat == 0 &&
+                    (ray.sub_etat == 0 || ray.sub_etat == 1 || ray.sub_etat == 2 ||
+                     ray.sub_etat == 63 || ray.sub_etat == 59 || ray.sub_etat == 62 ||
+                     ray.sub_etat == 3 || ray.sub_etat == 8)
+             ) {
+                if (RayEvts.magicseed) {
+                    if (ray.cmd_arg_2 == -1) {
+                        set_main_and_sub_etat(&ray, 3, 16);
+                        ray.speed_x = 0;
+                        ray.speed_y = 0;
+                    }
+                } else if ( !ray_on_poelle && ray.sub_etat != 18 && RayEvts.force_run == 0 && !RayEvts.run && ray.sub_etat != 8) {
+                    set_sub_etat(&ray, 18);
+                }
+            }
+        }
+    }
 }
 
 //6F1C8
@@ -1703,7 +1738,7 @@ void RAY_IN_THE_AIR(void) {
                 set_main_and_sub_etat(&ray, 0, 8);
             }
             if (ray.link >= 200) { // landing speed
-                allocateRayLandingSmoke(); //TODO
+                allocateRayLandingSmoke();
             }
             ray.link = -1; // landing speed
         } else {
@@ -2098,7 +2133,7 @@ void DO_RAYMAN(void) {
         }
 
         if ((ray.main_etat == 2 && ray.sub_etat == 8) || (ray.main_etat == 2 && ray.sub_etat == 31)) {
-            RAY_IN_THE_AIR(); //TODO
+            RAY_IN_THE_AIR();
         } else if (ray.main_etat == 3) {
             if (ray.sub_etat == 16) {
                 DO_GROWING_PLATFORM(); //TODO
@@ -2117,13 +2152,13 @@ void DO_RAYMAN(void) {
                 RAY_RESPOND_TO_FIRE1(); // jump
             }
             if (options_jeu.test_fire0()) {
-                RAY_RESPOND_TO_FIRE0(); // weapon //TODO
+                RAY_RESPOND_TO_FIRE0(); // weapon
             }
             if (options_jeu.test_button3()) {
-                RAY_RESPOND_TO_BUTTON3(); // action //TODO
+                RAY_RESPOND_TO_BUTTON3(); // action
             }
             if (options_jeu.test_button4()) {
-                //RAY_RESPOND_TO_BUTTON4(); //unused; NOTE: nullsub present in the Android version optimized out?
+                RAY_RESPOND_TO_BUTTON4(); //unused; NOTE: nullsub present in the Android version optimized out?
             }
 
             if (record.is_playing && butX1pressed() && butX0pressed()) {

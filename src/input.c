@@ -198,7 +198,7 @@ i32 but2pressed(void) {
         if (Main_Control && notbut[2] != 1) {
             result = (joy_buttonB1 == 1 || (input_mode == 1 && TEST_KEY_BUTTON2()));
         } else {
-            result = (input_mode == 1 && TEST_KEY_BUTTON1());
+            result = (input_mode == 1 && TEST_KEY_BUTTON2());
             if (ModeDemo) {
                 result |= (joy_buttonB1 == 1);
             }

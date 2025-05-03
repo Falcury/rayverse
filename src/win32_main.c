@@ -123,7 +123,7 @@ void win32_process_keyboard_event(u32 vk_code, bool is_down) {
             0, 0, 0, 0, 0, 0, 0, 0, SC_BACKSPACE, SC_TAB, 0, 0, 0, SC_ENTER, 0, 0,
             SC_LSHIFT, SC_CONTROL, SC_ALT, 0, SC_CAPSLOCK, 0, 0, 0, 0, 0, 0, SC_ESCAPE, 0, 0, 0, 0,
             SC_SPACE, SC_PAGEUP, SC_PAGEDOWN, SC_END, SC_HOME, SC_LEFT, SC_UP, SC_RIGHT, SC_DOWN, 0, 0, 0, 0, SC_INSERT, SC_DELETE, 0,
-            SC_0, SC_1, SC_2, SC_3, SC_4, SC_5, SC_6, SC_7, SC_8, SC_9, 0, 0, 0, 0, 0, 0,
+            SC_0, SC_1, SC_2, SC_3, SC_4, SC_5, SC_6, SC_7, SC_8, SC_9, 0, 0, 0, 0, 0, 0, 0,
             SC_A, SC_B, SC_C, SC_D, SC_E, SC_F, SC_G, SC_H, SC_I, SC_J, SC_K, SC_L, SC_M, SC_N, SC_O,
             SC_P, SC_Q, SC_R, SC_S, SC_T, SC_U, SC_V, SC_W, SC_X, SC_Y, SC_Z, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -133,7 +133,7 @@ void win32_process_keyboard_event(u32 vk_code, bool is_down) {
             SC_LSHIFT, SC_RSHIFT, SC_CONTROL, SC_CONTROL, SC_ALT, SC_ALT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SC_SEMICOLON, SC_PLUS, SC_COMMA, SC_MINUS, SC_PERIOD, SC_SLASH,
             SC_TILDE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SC_LEFTBRACKET, SC_BACKSLASH, SC_RIGHTBRACKET, SC_QUOTE, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SC_LEFTBRACKET, SC_BACKSLASH, SC_RIGHTBRACKET, SC_QUOTE, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     };
