@@ -293,6 +293,24 @@ void DO_POING(obj_t* obj) {
 
 //66FF8
 void allocatePoingBoum(void) {
-    //stub
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        obj_t* obj = level.objects + i;
+        if (obj->type == TYPE_11_BOUM && !obj->is_active) {
+            add_alwobj(obj);
+            i16 poing_x, poing_y, poing_w, poing_h;
+            i16 anim_x, anim_y, anim_w, anim_h;
+            GET_SPRITE_POS(poing_obj, 0, &poing_x, &poing_y, &poing_w, &poing_h);
+            GET_ANIM_POS(obj, &anim_x, &anim_y, &anim_w, &anim_h);
+            obj->anim_frame = 0;
+            obj->x = poing_x - obj->offset_bx;
+            if (poing_obj->speed_x > 0) {
+                obj->x += poing_w;
+            }
+            obj->y = poing_y + (poing_h >> 1) - ((obj->offset_by + obj->offset_hy) >> 1);
+            calc_obj_pos(obj);
+            obj->flags.alive = 1;
+            obj->is_active = 1;
+        }
+    }
 }
 

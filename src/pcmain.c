@@ -121,6 +121,17 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
             DISPLAY_FIXE(left_time);
         }
 
+        // DEBUG: display ray main and sub etat
+        static bool display_debug_etat_info;
+        if (TOUCHE(SC_F3)) {
+            display_debug_etat_info = true;
+        }
+        if (display_debug_etat_info) {
+            char debug_text[64];
+            snprintf(debug_text, 64, "%d : %d", ray.main_etat, ray.sub_etat);
+            display_text(debug_text, 132, 26, 1, 0);
+        }
+
         if (JeuCracker) {
             DisplayCrackers(); //TODO
         }

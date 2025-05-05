@@ -810,7 +810,12 @@ void DoChasseurRaymanZDD(obj_t* obj) {
 
 //62988
 void DO_CHASSEUR_COMMAND(obj_t* obj) {
-    //stub
+    DO_ONE_CMD(obj);
+    if (obj->detect_zone_flag == 0 && obj->main_etat == 0 && obj->sub_etat == 21) {
+        if (obj->anim_frame >= obj->animations[obj->anim_index].frame_count - 1) {
+            set_main_and_sub_etat(obj, 0, 0);
+        }
+    }
 }
 
 //629D8

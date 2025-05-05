@@ -731,17 +731,56 @@ void SET_RAY_DIST(obj_t* obj) {
 
 //2D5CC
 void do_boum(void) {
-    //stub
+    allocatePoingBoum();
+    poing.is_boum = true;
+    if (!poing.is_returning) {
+        poing.is_returning = true;
+        poing.charge = 0;
+        poing_obj->speed_x = 0;
+    }
 }
 
 //2D5FC
 void DO_POING_COLLISION(void) {
-    //stub
+    i16 x, y, w, h;
+    GET_SPRITE_POS(poing_obj, 0, &x, &y, &w, &h);
+    u8 btyp = 0;
+
+    btyp = BTYP((poing_obj->x + poing_obj->offset_bx) >> 4,
+                   (poing_obj->y + ((poing_obj->offset_by + poing_obj->offset_hy) >> 1)) >> 4);
+    if (block_flags[btyp] & 2) {
+        do_boum();
+        fin_poing_follow(1);
+    } else {
+        for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+            obj_t* obj = level.objects + actobj.objects[i];
+            if (new_world || new_level || fin_boss || boss_mort) {
+                break;
+            }
+            if (obj->display_prio != 0 && obj->hit_points != 0 && (get_eta(obj)->flags & 8)) {
+                i16 sprite = CHECK_BOX_COLLISION(TYPE_POING, x, y, w, h, obj);
+                if (sprite != -1) {
+                    i8 old_hp = obj->hit_points;
+                    ObjectsFonctions[obj->type].poing_collision(obj, sprite);
+                    do_boum();
+                    obj->gravity_value_1 = 0;
+                    i32 unk_1 = get_eta(obj)->anim_speed >> 4;
+                    if (!(unk_1 == 10 || unk_1 == 11)) {
+                        obj->gravity_value_2 = 0;
+                    }
+                    if (obj->hit_points == old_hp && (flags[obj->type] & flags3_1_poing_collision_snd)) {
+                        PlaySnd(214, obj->id);
+                    }
+                    break;
+                }
+            }
+        }
+    }
 }
 
 //2D858
 void DoPoingCollisionDefault(obj_t* obj, i16 a2) {
-    //stub
+    //nullsub
 }
 
 //2D85C
@@ -861,6 +900,19 @@ void RAY_HIT(bool hurt, obj_t* obj) {
                 ray.speed_y = ~bump_speed;
             }
 
+            in_air_because_hit = true;
+            jump_time = 0;
+            helico_time = -1;
+            ray.gravity_value_1 = 0;
+            ray.gravity_value_2 = 0;
+            ray.cmd_arg_2 = -1;
+            poing.is_charging = false;
+            decalage_en_cours = 0;
+            ray.nb_cmd = 0;
+            if (RayEvts.super_helico) {
+                button_released = 1;
+            }
+            Reset_air_speed(false);
         }
     }
 }
@@ -1226,16 +1278,44 @@ void DO_ONE_CMD_WAIT(obj_t* obj) {
         obj->speed_x = 0;
         obj->speed_y = 0;
         set_main_and_sub_etat(obj, 0, 0);
-    } else {
-        if (!(obj->type == TYPE_10_FISH && obj->main_etat == 0 && obj->sub_etat == 0)) {
-            obj->speed_y = 0;
-        }
+    } else if (obj->type == TYPE_10_FISH && obj->main_etat == 0 && obj->sub_etat == 0) {
+        obj->speed_y = 0;
     }
 }
 
 //2F488
 void DO_ONE_CMD_LR_ATTENTE(obj_t* obj) {
-    //stub
+    /* 4956C 8016DD6C -O2 */
+    s16 sub_etat = obj->sub_etat;
+    s16 type = obj->type;
+
+    if (!(sub_etat == 1 || sub_etat == 2 || sub_etat == 11 || sub_etat == 22 ||
+          sub_etat == 3 || sub_etat == 9 || sub_etat == 4 || sub_etat == 5 ||
+          sub_etat == 6 || sub_etat == 15 || sub_etat == 16 || sub_etat == 17)
+    ) {
+        if (!(type == TYPE_CHASSEUR1 || type == TYPE_CHASSEUR2))
+            set_main_and_sub_etat(obj, 1, 0);
+
+        SET_X_SPEED(obj);
+        CALC_MOV_ON_BLOC(obj);
+    }
+    else if (sub_etat == 3 || sub_etat == 6) {
+        obj->flags.read_commands = 0;
+        obj->speed_y = -8;
+    } else if (sub_etat == 11 || sub_etat == 2 || sub_etat == 22) {
+        switch (type) {
+            case TYPE_CHASSEUR1:
+            case TYPE_CHASSEUR2:
+                DO_TIR(obj);
+                break;
+            case TYPE_BIG_CLOWN:
+                DO_BIG_CLOWN_ATTAK(obj);
+                break;
+            case TYPE_WAT_CLOWN:
+                DO_WAT_CLOWN_ATTAK(obj);
+                break;
+        }
+    }
 }
 
 //2F594
@@ -1258,7 +1338,7 @@ void DO_ONE_CMD_UPDOWN(obj_t* obj) {
         // This procedure is only called for commands 3 and 4, so, not sure why we are checking for command 2 here?
         if (obj->cmd != GO_WAIT) {
             --obj->nb_cmd;
-            if (obj->nb_cmd <= 0) {
+            if (obj->nb_cmd > 0) {
                 if (obj->cmd == GO_UP) {
                     obj->speed_y = -1;
                 } else if (obj->cmd == GO_DOWN) {
@@ -1284,30 +1364,41 @@ void special_pour_liv(obj_t* event) {
 
 //2F658
 void DO_ONE_CMD(obj_t* obj) {
+    /* 49844 8016E044 -O2 */
+    i16 etat = obj->main_etat;
     special_pour_liv(obj);
-    u8 cmd = obj->cmd;
-    u8 etat = obj->main_etat;
-    if (cmd == GO_LEFT || cmd == GO_RIGHT) {
-        if (cmd == GO_LEFT) {
-            obj->flags.flip_x = false;
-        } else {
-            obj->flags.flip_x = true;
-        }
-        if (etat == 1) {
-            SET_X_SPEED(obj);
-            CALC_MOV_ON_BLOC(obj);
-        } else if (etat == 2) {
-            SET_X_SPEED(obj);
-        } else if (etat == 0) {
-            DO_ONE_CMD_LR_ATTENTE(obj);
-        }
-    } else if (cmd == GO_WAIT) {
-        DO_ONE_CMD_WAIT(obj);
-    } else if (cmd == GO_UP || cmd == GO_DOWN) {
-        DO_ONE_CMD_WAIT(obj);
-    } else if (cmd == GO_SPEED) {
-        obj->speed_x = obj->iframes_timer;
-        obj->speed_y = obj->cmd_arg_2;
+    switch (obj->cmd) {
+        case GO_WAIT:
+            DO_ONE_CMD_WAIT(obj);
+            break;
+        case GO_LEFT:
+        case GO_RIGHT:
+            if (obj->cmd == GO_LEFT) {
+                obj->flags.flip_x = 0;
+            } else {
+                obj->flags.flip_x = 1;
+            }
+
+            if (etat == 1) {
+                SET_X_SPEED(obj);
+                CALC_MOV_ON_BLOC(obj);
+            }
+            else if (etat == 2) {
+                SET_X_SPEED(obj);
+            } else if (etat == 0) {
+                DO_ONE_CMD_LR_ATTENTE(obj);
+            }
+            break;
+        case GO_UP:
+        case GO_DOWN:
+            DO_ONE_CMD_UPDOWN(obj);
+            break;
+        case GO_SPEED:
+            obj->speed_x = obj->iframes_timer;
+            obj->speed_y = obj->cmd_arg_2;
+            break;
+        case GO_NOP:
+            break;
     }
 }
 

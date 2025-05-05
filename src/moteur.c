@@ -1030,7 +1030,9 @@ void MOVE_OBJECT(obj_t* obj) {
 
 //58270
 void DO_RAY_IN_ZONE(obj_t* obj) {
-    //stub
+    if (OBJ_IN_ZONE(obj)) {
+        ObjectsFonctions[obj->type].rayman_in_zone(obj);
+    }
 }
 
 //5829C

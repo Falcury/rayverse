@@ -287,6 +287,7 @@ void calc_obj_dir(obj_t* obj) {
 
 //1DFF4
 u8 OBJ_IN_ZONE(obj_t* obj) {
+    /* 236C4 80147EC4 -O2 -msoft-float */
     switch(obj->type) {
         case TYPE_BADGUY2:
         case TYPE_BADGUY3:
