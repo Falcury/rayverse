@@ -1019,7 +1019,50 @@ void COLL_BOX_ALL_SPRITES(i16 a1, i16 a2, i16 a3, i16 a4, obj_t* obj) {
 
 //2D914
 bool COLL_RAY_PIC(void) {
-    return false; //stub
+    /* 1F1B4 801439B4 -O2 -msoft-float */
+    s32 ray_dist;
+    s32 unk_1;
+    s32 unk_2;
+    s32 unk_3;
+    s32 unk_4;
+    s32 unk_5;
+    s16 res = false;
+
+    if ((ray.y + ray.offset_by) < (mp.height * 16)) {
+        ray_dist = ray.ray_dist;
+        if (ray.cmd_arg_2 == -1) {
+            res = (mp.map[ray_dist].tile_type) == BTYP_HURT;
+        }
+        if (!res) {
+            unk_1 = ray_dist - mp.width;
+            res = (mp.map[unk_1].tile_type) == BTYP_HURT;
+            if (!res)
+            {
+                unk_2 = unk_1 + 1;
+                unk_3 = unk_1 - 1;
+                if (ray.main_etat != 2 || ray.speed_x != 0) {
+                    res = false;
+                    if ((mp.map[unk_3].tile_type) == BTYP_HURT || (mp.map[unk_2].tile_type) == BTYP_HURT) {
+                        res = true;
+                    }
+                }
+
+                if (!res && !(RayEvts.tiny) && !(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40)) {
+                    unk_4 = unk_1 - mp.width;
+                    unk_5 = unk_4 - mp.width;
+                    while (unk_5 < 0)
+                        unk_5 += mp.width;
+                    while (unk_4 < 0)
+                        unk_4 += mp.width;
+                    res = false;
+                    if ((mp.map[unk_5].tile_type) == BTYP_HURT || (mp.map[unk_4].tile_type) == BTYP_HURT) {
+                        res = true;
+                    }
+                }
+            }
+        }
+    }
+    return res;
 }
 
 //2DA98
