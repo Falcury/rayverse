@@ -513,12 +513,12 @@ i32 get_offset_in_safe_zone(i16 obj_id) {
 
 //74250
 void reset_save_zone_level(void) {
-    //stub
+    memset(save_zone + get_offset_in_safe_zone(0), 0, 32);
 }
 
 //74270
-void take_bonus(i16 a1) {
-    //stub
+void take_bonus(i16 obj_id) {
+    save_zone[get_offset_in_safe_zone(obj_id)] |= (0x80 >> (obj_id & 7));
 }
 
 //742A8
@@ -529,7 +529,12 @@ u8 bonus_taken(i16 obj_id) {
 
 //742E0
 void storeWorldInfoAcces(void) {
-    //stub
+    for (i32 i = 0; i < COUNT(t_world_info); ++i) {
+        world_info_t* world_info = t_world_info + i;
+        wi_save_zone[i] = (wi_save_zone[i] & ~1) | (world_info->state & 1); // unlocked bit
+        wi_save_zone[i] = (wi_save_zone[i] & ~2) | ((world_info->state & 4) >> 1); // unknown flag
+        wi_save_zone[i] = (wi_save_zone[i] & ~0x1C) | ((world_info->nb_cages & 7) << 2); // cages
+    }
 }
 
 //7435C

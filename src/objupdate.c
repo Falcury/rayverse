@@ -486,7 +486,19 @@ void DoOneUpPoingCollision(obj_t* obj, i16 a2) {
 
 //61C84
 void DoOneUpRaymanCollision(obj_t* obj) {
-    //stub
+    DO_NOVA(obj);
+    PlaySnd(194, obj->id);
+    if (id_Cling_1up != -1) {
+        Add_One_RAY_lives();
+        level.objects[id_Cling_1up].flags.alive = 0;
+    }
+    fixontemp = 300;
+    id_Cling_1up = NOVA_STATUS_BAR();
+    if (id_Cling_1up == -1) {
+        Add_One_RAY_lives();
+    }
+    obj->flags.alive = 0;
+    take_bonus(obj->id);
 }
 
 //61D10
@@ -496,12 +508,60 @@ void DoMorningStarPoingCollision(obj_t* obj, i16 a2) {
 
 //61D54
 void DoGrapBonusRaymanCollision(obj_t* obj) {
-    //stub
+    DO_NOVA(obj);
+    obj->flags.alive = 0;
+    RayEvts.grab = 1;
 }
 
 //61DB0
 void DoPoingPowerupRaymanCollision(obj_t* obj) {
-    //stub
+    if (obj->sub_etat == 7) {
+        // gold fist
+        if (RayEvts.poing) {
+            switch(poing_obj->init_sub_etat) {
+                case 1:
+                    poing_obj->init_sub_etat = 8;
+                    break;
+                case 3:
+                    poing_obj->init_sub_etat = 10;
+                    break;
+                case 5:
+                    poing_obj->init_sub_etat = 12;
+                    break;
+            }
+        } else {
+            poing_obj->init_sub_etat = 8;
+        }
+    } else if (obj->sub_etat == 14) {
+        // speed fist
+        if (RayEvts.poing) {
+            switch(poing_obj->init_sub_etat) {
+                case 1:
+                    poing_obj->init_sub_etat = 3; // speed 1
+                    break;
+                case 3:
+                case 5:
+                    poing_obj->init_sub_etat = 5; // speed 2
+                    break;
+                case 8:
+                    poing_obj->init_sub_etat = 10; // speed 1 gold
+                    break;
+                case 10:
+                case 12:
+                    poing_obj->init_sub_etat = 12; // speed 2 gold
+                    break;
+            }
+        } else {
+            poing_obj->init_sub_etat = 1; // no speed
+        }
+    }
+    DO_NOVA(obj);
+    obj->flags.alive = 0;
+    RayEvts.poing = 1;
+    poing.sub_etat = poing_obj->init_sub_etat;
+    save1.poing_sub_etat = poing.sub_etat;
+    poing_obj->sub_etat = poing_obj->init_sub_etat;
+    PlaySnd(11, obj->id);
 }
 
 //61EA0
@@ -518,12 +578,18 @@ void DoPowerupRaymanCollision(obj_t* obj) {
 
 //61EE4
 void DoSuperHelicoRaymanCollision(obj_t* obj) {
-    //stub
+    PlaySnd(213, obj->id);
+    DO_NOVA(obj);
+    obj->flags.alive = 0;
+    RayEvts.super_helico = 1;
 }
 
 //61F20
 void DoGraineRaymanCollision(obj_t* obj) {
-    //stub
+    RayEvts.magicseed = 1;
+    obj->is_active = 0;
+    obj->flags.alive = 0;
+    PlaySnd(10, obj->id);
 }
 
 //61F50
@@ -559,7 +625,24 @@ void DoWizRaymanCollision(obj_t* obj) {
 
 //62024
 void DoJaugeUpRaymanCollision(obj_t* obj) {
-    //stub
+    DO_NOVA(obj);
+    if (id_Cling_Pow != -1) {
+        ray.hit_points = 4;
+        status_bar.max_hitp = 4;
+        level.objects[id_Cling_Pow].flags.alive = 0;
+    }
+    fixontemp = 300;
+    id_Cling_Pow = NOVA_STATUS_BAR();
+    if (id_Cling_Pow == -1 ) {
+        ray.hit_points = 4;
+        status_bar.max_hitp = 4;
+    }
+    obj->flags.alive = 0;
+    PlaySnd(12, obj->id);
+    if (ray_mode != MODE_3_MORT_DE_RAYMAN && ray_mode != MODE_4_MORT_DE_RAYMAN_ON_MS) {
+        ray.hit_points = 4;
+        status_bar.max_hitp = 4;
+    }
 }
 
 //620C4

@@ -602,19 +602,62 @@ void DO_NOVA(obj_t* obj) {
         i16 nova_x, nova_y, nova_w, nova_h;
         i16 obj_x, obj_y, obj_w, obj_h;
         GET_ANIM_POS(nova, &nova_x, &nova_y, &nova_w, &nova_h);
-        GET_ANIM_POS(nova, &obj_x, &obj_y, &obj_w, &obj_h);
-        obj->is_active = 1;
-        obj->display_prio = 1;
-        obj->cmd_arg_1 = 0;
-        obj->x += (obj_x + (obj_w >> 1)) - (nova_x + (nova_w >> 1));
-        obj->y += (obj_y + (obj_h >> 1)) - (nova_y + (nova_h >> 1));
-        calc_obj_pos(obj);
+        GET_ANIM_POS(obj, &obj_x, &obj_y, &obj_w, &obj_h);
+        nova->is_active = 1;
+        nova->display_prio = 1;
+        nova->cmd_arg_1 = 0;
+        nova->x += (obj_x + (obj_w >> 1)) - (nova_x + (nova_w >> 1));
+        nova->y += (obj_y + (obj_h >> 1)) - (nova_y + (nova_h >> 1));
+        calc_obj_pos(nova);
     }
 }
 
 //7B708
 void DO_NOVA2(obj_t* obj) {
-    //stub
+    /* 3B034 8015F834 -O2 -msoft-float */
+    s16 i;
+    obj_t* nova_obj;
+    s16 nova_x; s16 nova_y; s16 nova_w; s16 nova_h;
+    s16 in_x; s16 in_y; s16 in_w; s16 in_h;
+    s16 new_x; s16 new_y;
+
+    for (i = 0; i < 5; i++) {
+        nova_obj = allocateNOVA();
+        if (nova_obj)
+        {
+            nova_obj->x = obj->x;
+            nova_obj->y = obj->y;
+            GET_ANIM_POS(nova_obj, &nova_x, &nova_y, &nova_w, &nova_h);
+            GET_ANIM_POS(obj, &in_x, &in_y, &in_w, &in_h);
+            new_x = in_x - (nova_x + (nova_w >> 1));
+            new_y = in_y - (nova_y + (nova_h >> 1));
+            nova_obj->is_active = 1;
+            switch (i)
+            {
+                case 0:
+                    break;
+                case 1:
+                    new_x += in_w;
+                    break;
+                case 2:
+                    new_x += in_w;
+                    new_y += in_h;
+                    break;
+                case 3:
+                    new_y += in_h;
+                    break;
+                case 4:
+                    new_x += in_w >> 1;
+                    new_y += in_h >> 1;
+                    break;
+            }
+            nova_obj->display_prio = 0;
+            nova_obj->cmd_arg_1 = i * 5;
+            nova_obj->x += new_x;
+            nova_obj->y += new_y;
+            calc_obj_pos(nova_obj);
+        }
+    }
 }
 
 //7B838

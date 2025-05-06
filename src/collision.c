@@ -1499,7 +1499,20 @@ void DO_CFUMEE_COMMAND(obj_t* obj) {
 
 //31190
 void DO_NOVA2_COMMAND(obj_t* obj) {
-    //stub
+    if (obj->cmd_arg_1 != 255) {
+        if (obj->cmd_arg_1 == -1) {
+            if (EOA(obj)) {
+                obj->flags.alive = 0;
+                obj->is_active = 0;
+            }
+        } else if (obj->cmd_arg_1 != 0) {
+            --obj->cmd_arg_1;
+        } else {
+            obj->anim_frame = 0;
+            obj->cmd_arg_1 = -1;
+            obj->display_prio = 2;
+        }
+    }
 }
 
 //31208

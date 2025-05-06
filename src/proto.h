@@ -1403,7 +1403,7 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state);
 void restoreGameState(save_state_t* save_state);
 i32 get_offset_in_safe_zone(i16 obj_id);
 void reset_save_zone_level(void);
-void take_bonus(i16 a1);
+void take_bonus(i16 obj_id);
 u8 bonus_taken(i16 obj_id);
 void storeWorldInfoAcces(void);
 void retrieveWorldInfoAccess(void);
