@@ -2135,7 +2135,7 @@ void DO_RAYMAN(void) {
             ray.speed_y = 0;
         }
         if (ray.iframes_timer == -1 && get_eta(&ray)->flags & 8) {
-            if (COLL_RAY_PIC()) { // TODO
+            if (COLL_RAY_PIC()) {
                 RAY_HIT(1, 0);
             }
         }
@@ -2244,7 +2244,7 @@ void DO_RAYMAN(void) {
             if (RayEvts.force_run == 1) {
                 RayEvts.force_run = 2;
                 RayEvts.run = 1;
-                DO_NOVA(&ray); //TODO
+                DO_NOVA(&ray);
                 set_main_and_sub_etat(&ray, 1, 3);
             } else if (!((ray.main_etat == 1 && (ray.sub_etat == 3 || ray.sub_etat == 7)) || ray.main_etat == 2)) {
                 RayEvts.run = 1;
@@ -2295,7 +2295,7 @@ void DO_RAYMAN(void) {
         }
 
         GET_RAY_ZDC(&ray, &ray_zdc_x, &ray_zdc_y, &ray_zdc_w, &ray_zdc_h);
-        DO_COLLISIONS(); //TODO
+        DO_COLLISIONS();
         if (fin_boss) {
             TEST_SIGNPOST();
         }

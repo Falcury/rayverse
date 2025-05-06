@@ -369,17 +369,17 @@ void pushCmdContext(obj_t* obj, u8 count) {
 void skipToLabel(obj_t* obj, u8 label, u8 skip_label_cmd) {
     u8 initial_read_commands = obj->flags.read_commands;
     i16 initial_offset = obj->cmd_offset;
-    while (1) {
+    i16 current_offset;
+    do {
         skipOneCommand(obj);
-        if (initial_offset == obj->cmd_offset) {
+        current_offset = obj->cmd_offset;
+        if (current_offset == initial_offset) {
             break;
         }
-        if (obj->cmd == GO_LABEL && obj->cmds[obj->cmd_offset] == label) {
-            break;
-        }
-    }
+    } while(obj->cmd != GO_LABEL || obj->cmds[current_offset] != label);
+
     if (skip_label_cmd) {
-        if (initial_offset != obj->cmd_offset) {
+        if (initial_offset != current_offset) {
             obj->nb_cmd = 0;
             obj->flags.read_commands = true;
             GET_OBJ_CMD(obj);
@@ -647,7 +647,9 @@ void DoJaugeUpRaymanCollision(obj_t* obj) {
 
 //620C4
 void DoGeneratingDoorRaymanCollision(obj_t* obj) {
-    //stub
+    obj->is_active = 0;
+    obj->flags.alive = 0;
+    unleashMonsterHost(obj);
 }
 
 //620E4

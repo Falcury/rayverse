@@ -1405,12 +1405,97 @@ void SET_DETECT_ZONE_FLAG(obj_t* obj) {
 
 //2E738
 void goToRay(obj_t* obj) {
-    //stub
+    /* 201D8 801449D8 -O2 -msoft-float */
+    s32 follow_sprite;
+
+    PlaySnd(204, obj->id); // spawn sound
+    switch (obj->type)
+    {
+        case TYPE_STALAG:
+            if (obj->sub_etat == 4)
+                calc_obj_dir(obj);
+            else
+                obj->flags.flip_x = 0;
+            break;
+        case TYPE_PLATFORM:
+        case TYPE_FALLPLAT:
+        case TYPE_LIFTPLAT:
+        case TYPE_MOVE_PLAT:
+        case TYPE_INST_PLAT:
+        case TYPE_CRUMBLE_PLAT:
+        case TYPE_BOING_PLAT:
+        case TYPE_ONOFF_PLAT:
+        case TYPE_AUTOJUMP_PLAT:
+        case TYPE_OUYE:
+        case TYPE_SIGNPOST:
+        case TYPE_MOVE_OUYE:
+        case TYPE_STONEBOMB2:
+        case TYPE_CAGE:
+        case TYPE_MOVE_START_NUA:
+        case TYPE_BIG_BOING_PLAT:
+        case TYPE_STONEBOMB3:
+        case TYPE_JAUGEUP:
+        case TYPE_MORNINGSTAR_MOUNTAI:
+        case TYPE_MARTEAU:
+        case TYPE_MOVE_MARTEAU:
+        case TYPE_GROSPIC:
+        case TYPE_PI:
+        case TYPE_ONEUP:
+        case TYPE_KILLING_EYES:
+        case TYPE_RUBIS:
+        case TYPE_MARK_AUTOJUMP_PLAT:
+            obj->flags.flip_x = 0;
+            break;
+        case TYPE_BADGUY1:
+        case TYPE_BADGUY2:
+        case TYPE_BADGUY3:
+            calc_obj_dir(obj);
+            if (obj->flags.flip_x)
+                skipToLabel(obj, 3, true);
+            else
+                skipToLabel(obj, 2, true);
+            break;
+        case TYPE_BLACKTOON1:
+            follow_sprite = obj->follow_sprite;
+            if (follow_sprite < 2 || (follow_sprite >= 4 && ((s16) follow_sprite >= 8 || follow_sprite < 6))) {
+                calc_obj_dir(obj);
+                if (obj->flags.flip_x)
+                    skipToLabel(obj, 3, true);
+                else
+                    skipToLabel(obj, 2, true);
+            }
+            break;
+        case TYPE_BIG_CLOWN:
+            calc_obj_dir(obj);
+            skipToLabel(obj, 7, true);
+            break;
+        default:
+            calc_obj_dir(obj);
+            break;
+    }
 }
 
 //2E998
 void unleashMonsterHost(obj_t* obj) {
-    //stub
+    /* 20304 80144B04 -O2 -msoft-float */
+    obj_t* linked_obj;
+    s16 prev_id;
+    s16 linked_id = obj->link;
+
+    if (linked_id != obj->id) {
+        do {
+            linked_obj = &level.objects[linked_id];
+            if (!((flags[linked_obj->type] & flags1_2_is_collectible) && (bonus_taken(linked_obj->id)))) {
+                obj_init(linked_obj);
+                linked_obj->flags.alive = 1;
+                make_active(linked_obj, true);
+                goToRay(linked_obj);
+            }
+            prev_id = linked_id;
+            linked_id = link_init[linked_obj->id];
+            suppressFromLinkList(linked_obj);
+        } while (prev_id != linked_id);
+    }
 }
 
 //2EA2C
@@ -1435,7 +1520,6 @@ void DO_COLLISIONS(void) {
                         collision = CHECK_BOX_COLLISION(TYPE_23_RAYMAN, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h, obj);
                     }
                     if (collision != -1) {
-//                        CHECK_BOX_COLLISION(TYPE_23_RAYMAN, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h, obj);
                         ObjectsFonctions[obj->type].rayman_collision(obj);
                     }
                 }

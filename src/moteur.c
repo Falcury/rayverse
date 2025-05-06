@@ -1061,7 +1061,7 @@ void DO_ONE_OBJECT(obj_t* obj) {
         OBJ_IN_THE_AIR(obj); //TODO
     }
     if (obj->flags.follow_enabled) {
-        SET_RAY_DIST(obj); //TODO
+        SET_RAY_DIST(obj);
     } else {
         obj->ray_dist = 10000;
     }
@@ -1069,7 +1069,7 @@ void DO_ONE_OBJECT(obj_t* obj) {
         DO_SPECIAL_PLATFORM(obj); //TODO
     }
     if (flags[ot] & flags2_0x20_kill_if_outside_active_zone) {
-        DO_RAY_IN_ZONE(obj); //TODO
+        DO_RAY_IN_ZONE(obj);
     }
 }
 
@@ -1105,7 +1105,7 @@ void build_active_table(void) {
                 FatalError("Error On MAX_ACTOBJ.");
             }
         } else {
-            if (flags[obj->type] & flags2_1_check_tile_type) {
+            if (flags[obj->type] & flags0_1_always) {
                 del_alwobj(obj->id);
             }
         }
@@ -1208,7 +1208,28 @@ void MOVE_OBJECTS(void) {
 
 //58964
 void RECALE_ALL_OBJECTS(void) {
-    //stub
+    /* 30930 80155130 -O2 -msoft-float */
+    s16 x; s16 y; s16 w; s16 h;
+    s16 i = 0;
+    obj_t* cur_obj = &level.objects[actobj.objects[0]];
+
+    while (i < actobj.num_active_objects)
+    {
+        calc_obj_pos(cur_obj);
+        i++;
+        cur_obj = &level.objects[actobj.objects[i]];
+    }
+
+    if (ray.cmd_arg_2 != -1)
+    {
+        cur_obj = &level.objects[ray.cmd_arg_2];
+        if (cur_obj->is_active)
+        {
+            GET_SPRITE_POS(cur_obj, cur_obj->follow_sprite, &x, &y, &w, &h);
+            ray.y = y + cur_obj->offset_hy - ray.offset_by;
+            calc_obj_pos(&ray);
+        }
+    }
 }
 
 //58AAC
@@ -1442,8 +1463,20 @@ void deactivate_ship_links(void) {
 
 //5965C
 u8 linkListHoldsAGendoor(obj_t* obj) {
-    return 0;
-    //stub
+    /* 31DEC 801565EC -O2 -msoft-float */
+    s32 res = false;
+    u8 linked = link_init[obj->id];
+
+    while (linked != obj->id)
+    {
+        if (level.objects[linked].type == TYPE_GENERATING_DOOR)
+        {
+            res = true;
+            break;
+        }
+        linked = link_init[linked];
+    }
+    return res;
 }
 
 //596C0
@@ -1513,7 +1546,7 @@ void correct_link(void) {
             obj->link_has_gendoor = 0;
         } else {
             if ((flags[obj->type] & flags3_0x40_no_link) ||
-                    ((flags[obj->type] & flags3_0x20_link_requires_gendoor) && linkListHoldsAGendoor(obj))) {
+                    ((flags[obj->type] & flags3_0x20_link_requires_gendoor) && !linkListHoldsAGendoor(obj))) {
                 suppressFromLinkList(obj);
             } else {
                 obj->link_has_gendoor = 1;
@@ -2054,7 +2087,7 @@ void DO_MOTEUR2(void) {
         }
         DO_SCROLL(&h_scroll_speed, &v_scroll_speed); //TODO
         build_active_table();
-        RECALE_ALL_OBJECTS(); //TODO
+        RECALE_ALL_OBJECTS();
         if (ray.cmd_arg_2 != -1) {
             obj_t* v20 = level.objects + ray.cmd_arg_2;
             oldPrio = v20->display_prio;
