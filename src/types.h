@@ -1377,7 +1377,7 @@ enum obj_type_flags_enum {
 	flags1_1_keep_linked_objects_active     = 1 << 8,  // byte 1, 0x1
 	flags1_2_is_collectible                 = 1 << 9,  // byte 1, 0x2     Indicates if the event can be collected and thus not respawn again
 	flags1_4_fast_bump                      = 1 << 10, // byte 1, 0x4
-	flags1_8                                = 1 << 11, // byte 1, 0x8
+	flags1_8_ray_dist_multispr_cantchange   = 1 << 11, // byte 1, 0x8
 	flags1_0x10_move_x                      = 1 << 12, // byte 1, 0x10    Indicates if the object x position should be changed by SpeedX in MOVE_OBJECT
 	flags1_0x20_move_y                      = 1 << 13, // byte 1, 0x20    Indicates if the object y position should be changed by SpeedY in MOVE_OBJECT
 	flags1_0x40_special_platform            = 1 << 14, // byte 1, 0x40    Indicates if DO_SPECIAL_PLATFORM should be called

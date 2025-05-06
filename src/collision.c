@@ -695,13 +695,110 @@ i16 CHECK_BOX_COLLISION(i16 type, i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
 }
 
 //2CB9C
-void possible_sprite(obj_t* obj, i16 a2) {
-    //stub
+i16 possible_sprite(obj_t* obj, i16 index) {
+    /* 1CF08 80141708 -O2 -msoft-float */
+    s16 spr[12];
+
+    switch (obj->type) {
+        case TYPE_BON3:
+            spr[0] = 0;
+            spr[1] = 1;
+            spr[2] = 2;
+            spr[3] = 3;
+            spr[4] = 4;
+            spr[5] = 255;
+            break;
+        case TYPE_CYMBALE:
+        case TYPE_CYMBAL2:
+            spr[0] = 0;
+            spr[1] = 1;
+            spr[2] = 2;
+            spr[3] = 255;
+            break;
+        case TYPE_ROULETTE:
+            spr[0] = 5;
+            spr[1] = 6;
+            spr[2] = 7;
+            spr[3] = 8;
+            spr[4] = 255;
+            break;
+        case TYPE_ROULETTE2:
+            spr[0] = 1;
+            spr[1] = 2;
+            spr[2] = 3;
+            spr[3] = 4;
+            spr[4] = 255;
+            break;
+        case TYPE_ROULETTE3:
+            spr[0] = 1;
+            spr[1] = 2;
+            spr[2] = 3;
+            spr[3] = 255;
+            break;
+        case TYPE_FALLPLAT:
+        case TYPE_LIFTPLAT:
+        case TYPE_INTERACTPLT:
+            spr[0] = 0;
+            spr[1] = 1;
+            spr[2] = 255;
+            break;
+        case TYPE_TIBETAIN_6:
+            if (ray.flags.flip_x)
+            {
+                spr[0] = 4;
+                spr[1] = 5;
+                spr[2] = 6;
+                spr[3] = 7;
+                spr[4] = 8;
+                spr[5] = 9;
+            }
+            else
+            {
+                spr[0] = 9;
+                spr[1] = 8;
+                spr[2] = 7;
+                spr[3] = 6;
+                spr[4] = 5;
+                spr[5] = 4;
+            }
+            spr[6] = 255;
+            break;
+        case TYPE_TIBETAIN_2:
+            spr[0] = 4;
+            spr[1] = 5;
+            spr[2] = 0x00FF;
+            break;
+    }
+    return spr[index];
 }
 
 //2CE34
-void setToleranceDist(i16 a1, i16 a2, i16 a3) {
-    //stub
+i16 setToleranceDist(i16 x, i16 w, i16 y) {
+    /* 1D11C 8014191C -O2 -msoft-float */
+    s16 dist;
+    s16 ray_x = ray.x + ray.offset_bx;
+    s16 ray_y = ray.y + ray.offset_by;
+    s16 unk_1 = x + w - 1;
+
+    s16 unk_2 = (RayEvts.tiny) ? 4 : 8;
+    if ((ray_x >= x - unk_2) && (ray_x <= unk_1 + unk_2)) {
+        if (ray_x >= x && ray_x <= unk_1) {
+            /* abs??? */
+            if (ray_y - y >= 0)
+                dist = ray_y - y;
+            else
+                dist = y - ray_y;
+        } else {
+            if (ray_y - y < 0)
+                dist = ray_y - y;
+            else
+                dist = y - ray_y;
+            dist--;
+        }
+    }
+    else
+        dist = 10000;
+    return dist;
 }
 
 //2CF14
@@ -711,22 +808,154 @@ void SET_RAY_DIST_SLOPEY_PLAT(obj_t* obj) {
 
 //2D0D4
 void SET_RAY_DIST_MULTISPR_CANTCHANGE(obj_t* obj) {
-    //stub
+    /* 1D228 80141A28 -O2 -msoft-float */
+
+    s16 i;
+    s16 new_dist;
+    s16 ray_x; s16 ray_y;
+    s16 spr_x; s16 spr_y; s16 spr_w; s16 spr_h;
+    s16 diff_x;
+    s16 sprite;
+
+    s16 unk_1 = (RayEvts.tiny) ? 4 : 8;
+    i = 0;
+    new_dist = 10000;
+    ray_x = ray.x + ray.offset_bx;
+    ray_y = ray.y + ray.offset_by;
+
+    if (ray.cmd_arg_2 == obj->id) {
+        GET_SPRITE_POS(obj, obj->follow_sprite, &spr_x, &spr_y, &spr_w, &spr_h);
+        spr_y += obj->offset_hy;
+        if (obj->type == TYPE_ROULETTE || obj->type == TYPE_ROULETTE2 || obj->type == TYPE_ROULETTE3) {
+            spr_w -= 10;
+            spr_x += 5;
+        }
+
+        if (obj->type == TYPE_TIBETAIN_6 && ray.main_etat == 0 && (obj->anim_frame >= 10 && obj->anim_frame < 40))
+        {
+            diff_x = (ray.x + ray.offset_bx) - (spr_x + (spr_w >> 1));
+            if (diff_x > 0)
+                ray.x--;
+            else if (diff_x < 0)
+                ray.x++;
+            ray_x = ray.x + ray.offset_bx;
+        }
+        new_dist = setToleranceDist(spr_x, spr_w, spr_y);
+    }
+
+    if (new_dist == 10000)
+    {
+        sprite = possible_sprite(obj, i++);
+        while (sprite != 0xFF)
+        {
+            GET_SPRITE_POS(obj, sprite, &spr_x, &spr_y, &spr_w, &spr_h);
+            spr_y += obj->offset_hy;
+            if (obj->type == TYPE_ROULETTE || obj->type == TYPE_ROULETTE2 || obj->type == TYPE_ROULETTE3)
+            {
+                spr_w -= 10;
+                spr_x += 5;
+            }
+
+            if ((ray_x <= spr_x + spr_w + unk_1) && (ray_x >= spr_x - unk_1))
+            {
+                new_dist = ray_y - spr_y;
+                if (obj->type == TYPE_TIBETAIN_6 && (new_dist >= 8 && new_dist <= 10))
+                    new_dist = 0;
+            }
+            else
+                new_dist = 10000;
+
+            if (new_dist != 10000)
+                obj->follow_sprite = sprite;
+
+            sprite = possible_sprite(obj, i++);
+            if (Abs(new_dist) < 8)
+                break;
+        }
+    }
+    obj->ray_dist = new_dist;
 }
 
 //2D334
 void SET_RAY_DIST_PI(obj_t* obj) {
-    //stub
+    /* 1D594 80141D94 -O2 -msoft-float */
+    s16 x; s16 y; s16 w; s16 h;
+    s16 new_dist;
+    s16 prev_flip_x = obj->flags.flip_x;
+
+    obj->flags.flip_x = 0;
+    GET_SPRITE_POS(obj, 2, &x, &y, &w, &h);
+    obj->flags.flip_x = prev_flip_x;
+    y += obj->offset_hy;
+    x += 4;
+    w = 55;
+    new_dist = setToleranceDist(x, w, y);
+    if (new_dist != 10000)
+        obj->follow_sprite = 2;
+    obj->ray_dist = new_dist;
 }
 
 //2D3EC
 void SET_RAY_DIST_BAG(obj_t* obj) {
-    //stub
+    /* 1D66C 80141E6C -O2 -msoft-float */
+    s16 x; s16 y; s16 w; s16 h;
+    s16 new_w;
+    s16 new_dist = 0;
+
+    // NOTE: slight difference from PS1 version: parentheses placed differently
+    if ((obj->sub_etat == 3 ||obj->sub_etat == 6) && obj->anim_frame < 12) {
+        GET_SPRITE_POS(obj, obj->follow_sprite, &x, &y, &w, &h);
+        new_w = 45;
+        y += obj->offset_hy;
+        x += ((s16) (w - new_w) >> 1);
+        w = new_w;
+        new_dist = setToleranceDist(x, w, y);
+    } else {
+        new_dist = 10000;
+    }
+
+    if (ray.cmd_arg_2 == obj->id && obj->sub_etat == 6 && obj->anim_frame == 11) {
+        ray.cmd_arg_2 = -1;
+        set_main_and_sub_etat(&ray, 2, 0);
+        new_dist = 10000;
+        ray.speed_y -= 10;
+    }
+    obj->ray_dist = new_dist;
 }
 
 //2D4D0
 void SET_RAY_DIST(obj_t* obj) {
-    //stub
+    /* 1D798 80141F98 -O2 -msoft-float */
+    ObjType type;
+    s16 x; s16 y; s16 w; s16 h;
+
+    type = obj->type;
+    if (flags[type] & flags1_8_ray_dist_multispr_cantchange) {
+        SET_RAY_DIST_MULTISPR_CANTCHANGE(obj);
+    } else {
+        if (type == TYPE_PI || type == TYPE_BBL)
+            SET_RAY_DIST_PI(obj);
+        else if (type == TYPE_BAG3)
+            SET_RAY_DIST_BAG(obj);
+        else
+        {
+            GET_SPRITE_POS(obj, obj->follow_sprite, &x, &y, &w, &h);
+            y += obj->offset_hy;
+            type = obj->type;
+            if (
+                    type == TYPE_FALLING_OBJ || type == TYPE_FALLING_OBJ2 || type == TYPE_FALLING_OBJ3 ||
+                    type == TYPE_FALLING_YING || type == TYPE_FALLING_YING_OUYE
+                    )
+            {
+                x -= 2;
+                w += 4;
+            }
+            else if (type == TYPE_MOVE_START_NUA || (type == TYPE_PLATFORM && num_world == 2))
+                w -= 8;
+
+            obj->ray_dist = setToleranceDist(x, w, y);
+        }
+    }
 }
 
 //2D5CC
