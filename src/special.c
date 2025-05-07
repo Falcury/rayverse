@@ -504,7 +504,36 @@ void fix_numlevel(obj_t* obj) {
 
 //7AD20
 void allocate_splash(obj_t* obj) {
-    //stub
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        obj_t* cur_obj = level.objects + i;
+        if (cur_obj->type == TYPE_19_SPLASH && !cur_obj->is_active) {
+            cur_obj->flags.alive = 1;
+            make_active(cur_obj, 0);
+            if (cur_obj->is_active) {
+                add_alwobj(cur_obj);
+            }
+            cur_obj->x = obj->x + obj->offset_bx - cur_obj->offset_bx;
+            if (obj->btypes[0] == BTYP_WATER) {
+                cur_obj->y = obj->offset_by + obj->y - cur_obj->offset_by;
+            } else {
+                i16 offset_by;
+                i16 height;
+                if (!(block_flags[obj->btypes[0]] & 2)) {
+                    offset_by = cur_obj->offset_by;
+                    height = (*(u16 *) &mp.height - 1) * 16;
+                } else {
+                    height = (*(u16 *) &mp.height - 1) * 16;
+                    offset_by = cur_obj->offset_by - 10;
+                }
+                cur_obj->y = height - offset_by;
+            }
+            calc_obj_pos(cur_obj);
+            set_main_and_sub_etat(cur_obj, 0, 0);
+            cur_obj->anim_frame = 0;
+            cur_obj->flags.flag_0x40 = 1;
+            break;
+        }
+    }
 }
 
 //7AE1C
@@ -564,7 +593,9 @@ obj_t* allocateExplosion(obj_t* obj) {
 
 //7B370
 void BombExplosion(obj_t* obj) {
-    //stub
+    obj_t* explosion_obj = allocateExplosion(obj);
+    obj->flags.alive = 0;
+    obj->is_active = 0;
 }
 
 //7B390

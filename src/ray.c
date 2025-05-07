@@ -1394,20 +1394,39 @@ void RAY_RESPOND_TO_NOTHING(void) {
                         sel_eta_2->flags = (sel_eta_2->flags & 0xEF) | unk_1;
                     }
                 }
-                else if (ray.sub_etat == 59 || ray.sub_etat == 62 || ray.sub_etat == 63)
-                {
-                    if (EOA(&ray))
-                    {
+                else if (ray.sub_etat == 59 || ray.sub_etat == 62 || ray.sub_etat == 63 ||
+                    ray.sub_etat == 64 || ray.sub_etat == 65 // NOTE: last 2 are added in PC version
+                ) {
+                    if (EOA(&ray)) {
                         compteur_attente = 0;
                         set_sub_etat(&ray, 0);
                     }
                 }
-                else if (
-                        (ray.sub_etat == 0 || ray.sub_etat == 1 || ray.sub_etat == 2) &&
-                        ++compteur_attente >= 500
-                        ) {
-                    set_sub_etat(&ray, 59);
-                    //TODO: add animation_attente
+                else if ((ray.sub_etat == 0 || ray.sub_etat == 1 || ray.sub_etat == 2)) {
+                    // Idle animations
+                    //NOTE: this is different from the PS1 version
+                    ++compteur_attente;
+                    if (compteur_attente >= 500) {
+                        compteur_attente -= 100;
+                        if (animation_attente != 0) {
+                            if (animation_attente == 1) {
+                                set_sub_etat(&ray, 64);
+                                animation_attente = 2;
+                            } else if (animation_attente == 2) {
+                                set_sub_etat(&ray, 62);
+                                animation_attente = 3;
+                            } else if (animation_attente == 3) {
+                                set_sub_etat(&ray, 63);
+                                animation_attente = 4;
+                            } else if (animation_attente == 4) {
+                                set_sub_etat(&ray, 65);
+                                animation_attente = 0;
+                            }
+                        } else {
+                            set_sub_etat(&ray, 59);
+                            animation_attente = 1;
+                        }
+                    }
                 }
             }
             RAY_SWIP();

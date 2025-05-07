@@ -105,7 +105,7 @@ u8 handle_SELF_HANDLED(obj_t* obj) {
 
 //60C60
 u8 skipInvalidArg(obj_t* obj) {
-    --obj->cmd_offset;
+    obj->cmd_offset = -1;
     return skipOneCommand(obj);
 }
 
@@ -913,7 +913,24 @@ void DoBadGuy23PoingCollision(obj_t* obj, i16 a2) {
             obj->y -= 2;
             obj->flags.read_commands = false;
         } else {
-            //stub
+            if (poing_obj->flags.flip_x) {
+                if (poing_obj->speed_x > -1) {
+                    skipToLabel(obj, 3, 1);
+                } else if (poing_obj->speed_x < -1) {
+                    skipToLabel(obj, 2, 1);
+                }
+            } else {
+                if (poing_obj->speed_x > 1) {
+                    skipToLabel(obj, 3, 1);
+                } else if (poing_obj->speed_x < 1) {
+                    skipToLabel(obj, 2, 1);
+                }
+            }
+            obj->speed_x = 0;
+            obj->y -= 2;
+            obj->speed_y = -4;
+            set_main_and_sub_etat(obj, 2, 2);
+            PlaySnd(28, obj->id);
         }
     }
 }
@@ -931,7 +948,6 @@ void DoBadGuy23RaymanZDD(obj_t* obj) {
 
 
 //62B54
-// sub_62B54
 void DoBadGuy1PoingCollision(obj_t* obj, i16 a2) {
     obj_hurt(obj);
     if (poing_obj->speed_x > 0) {

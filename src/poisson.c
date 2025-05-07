@@ -49,7 +49,7 @@ void DO_PYRANHA(obj_t* obj) {
             obj->speed_y = 6;
             if ((obj->y + obj->offset_hy > ymap + 200) || (y_offset_by + 14 > mp.height * 16)) {
                 if (y_offset_by + 14 > mp.height * 16) {
-                    //allocate_splash(obj); // TODO: fix this
+                    allocate_splash(obj);
                 }
                 obj->y = ymap + 200;
                 obj->is_active = 0;

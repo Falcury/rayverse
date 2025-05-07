@@ -1,37 +1,192 @@
 
 //23030
 void allocateBlacktoonEyes(obj_t* obj) {
-    //stub
+    for (i32 i = 0; i < level_alw.nb_objects; ++i) {
+        obj_t* cur_obj = level.objects + level_alw.obj_ids[i];
+        if (cur_obj->type == TYPE_130_BLACKTOON_EYES && !cur_obj->is_active) {
+            cur_obj->anim_frame = 0;
+            cur_obj->x = obj->x;
+            cur_obj->y = obj->y;
+            cur_obj->speed_y = 0;
+            cur_obj->speed_x = 0;
+            set_main_and_sub_etat(cur_obj, cur_obj->init_main_etat, cur_obj->init_sub_etat);
+            calc_obj_pos(cur_obj);
+            calc_obj_dir(cur_obj);
+            cur_obj->cmd_offset = -1;
+            cur_obj->nb_cmd = 0;
+            cur_obj->flags.alive = 1;
+            cur_obj->is_active = 1;
+            add_alwobj(cur_obj);
+            cur_obj->flags.flag_0x40 = 0;
+        }
+    }
 }
 
 //2311C
 void DO_BLK_SPEED_COMMAND(obj_t* obj) {
-    //stub
+    /* 6721C 8018BA1C -O2 -msoft-float */
+    s16 cen_x; s16 cen_y;
+
+    if (obj->configuration & 4) {
+        cen_x = get_center_x(obj);
+        cen_y = get_center_y(obj);
+        if (on_block_chdir(obj, cen_x, cen_y) && test_allowed(obj, cen_x, cen_y))
+            skipToLabel(obj, 99, true);
+
+        obj->speed_x = obj->iframes_timer;
+        obj->speed_y = obj->cmd_arg_2;
+        if (obj->speed_x > 0)
+            obj->flags.flip_x = 1;
+        else if (obj->speed_x < 0)
+            obj->flags.flip_x = 0;
+    }
+    if (obj->configuration & 8) {
+        obj->speed_x = obj->iframes_timer;
+        obj->speed_y = obj->cmd_arg_2;
+    }
 }
 
 //231BC
 void blkUTurn(obj_t* obj) {
-    //stub
+    if (obj->cmd == GO_LEFT) {
+        obj->flags.flip_x = 1;
+        skipToLabel(obj, 3, 1);
+    } else if (obj->cmd == GO_RIGHT) {
+        obj->flags.flip_x = 0;
+        skipToLabel(obj, 2, 1);
+    }
 }
 
 //2320C
 void DO_BLK_LR_COMMAND(obj_t* obj) {
-    //stub
+    /* 6732C 8018BB2C -O2 -msoft-float */
+    s16 cen_x; s16 cen_y;
+
+    if ((obj->main_etat == 0) && (obj->sub_etat == 4)) {
+        SET_X_SPEED(obj);
+        obj->speed_x = -obj->speed_x;
+    } else {
+        if (obj->cmd == GO_LEFT)
+            obj->flags.flip_x = 0;
+        else
+            obj->flags.flip_x = 1;
+
+        if (obj->configuration & 2) {
+            SET_X_SPEED(obj);
+            if (block_flags[calc_typ_travd(obj, false)] & 1) {
+                if (obj->cmd == GO_LEFT)
+                    skipToLabel(obj, 3, true);
+                else
+                    skipToLabel(obj, 2, true);
+            }
+            CALC_MOV_ON_BLOC(obj);
+        }
+        if (obj->configuration & 1) {
+            obj->speed_y = sinYspeed(obj, 48, 40, &obj->cmd_arg_2);
+            cen_x = get_center_x(obj);
+            cen_y = get_center_y(obj);
+            if (on_block_chdir(obj, cen_x, cen_y) && test_allowed(obj, cen_x, cen_y))
+            {
+                obj->x -= obj->speed_x;
+                if (obj->cmd == GO_LEFT) {
+                    skipToLabel(obj, 3, true);
+                    obj->flags.flip_x = 1;
+                } else {
+                    skipToLabel(obj, 2, true);
+                    obj->flags.flip_x = 0;
+                }
+            }
+            SET_X_SPEED(obj);
+        }
+        if (obj->configuration & 0x10)
+        {
+            SET_X_SPEED(obj);
+            obj->speed_y = 0;
+        }
+    }
 }
 
 //23350
 void DO_BLK_NOP_COMMAND(obj_t* obj) {
-    //stub
+    /* 6753C 8018BD3C -O2 -msoft-float */
+    if (obj->configuration & 0x10 &&
+            ((obj->main_etat == 0 && obj->sub_etat == 2) || (obj->main_etat == 2 && obj->sub_etat == 3))
+    ) {
+        if (obj->timer == 255) {
+            if (((obj->y + obj->speed_y <= obj->cmd_arg_1) && obj->y >= obj->cmd_arg_1) || obj->speed_y == 0) {
+                obj->timer = 60;
+            }
+        } else if (obj->timer == 0) {
+            set_main_and_sub_etat(obj, 2, 0);
+            if (obj->flags.flip_x)
+                skipToLabel(obj, 3, true);
+            else
+                skipToLabel(obj, 2, true);
+
+            obj->speed_y = 0;
+        } else {
+            obj->speed_y = 0;
+            obj->timer--;
+        }
+    }
+
+    if ((obj->follow_sprite == 4) && (
+            (obj->main_etat == 0 && obj->sub_etat == 2) || (obj->main_etat == 2 && obj->sub_etat == 3))
+    ) {
+        if (obj->detect_zone_flag != 0) {
+            if ((obj->y + obj->speed_y <= obj->cmd_arg_1) && obj->y >= obj->cmd_arg_1) {
+                set_main_and_sub_etat(obj, 0, 3);
+                obj->speed_y = 0;
+            }
+        } else {
+            set_main_and_sub_etat(obj, 2, 1);
+        }
+    }
+
+    if (obj->configuration & 2 && obj->speed_x != 0 && block_flags[calc_typ_travd(obj, false)] & 1) {
+        if (obj->cmd == GO_LEFT)
+            skipToLabel(obj, 3, true);
+        else
+            skipToLabel(obj, 2, true);
+    }
 }
 
 //234CC
 void DO_BLKTOON_COMMAND(obj_t* obj) {
-    //stub
+    /* 71A0 8012B9A0 -O2 -msoft-float */
+    switch (obj->cmd) {
+        case GO_SPEED:
+            DO_BLK_SPEED_COMMAND(obj);
+            break;
+        case GO_LEFT:
+        case GO_RIGHT:
+            DO_BLK_LR_COMMAND(obj);
+            break;
+        case GO_NOP:
+            DO_BLK_NOP_COMMAND(obj);
+        case GO_WAIT:
+        default:
+            break;
+    }
 }
 
 //234FC
 void DoBlackToonPoingCollision(obj_t* obj, i16 a2) {
-    //stub
+    obj_hurt(obj);
+    set_main_and_sub_etat(obj, 0, 4);
+    obj->speed_y = 0;
+    if (poing_obj->speed_x >= 0 && (poing_obj->speed_x != 0 || poing_obj->flags.flip_x)) {
+        obj->flags.flip_x = 0;
+    } else {
+        obj->flags.flip_x = 1;
+    }
+    allocateBlacktoonEyes(obj);
+    if (obj->flags.flip_x) {
+        skipToLabel(obj, 2, 1);
+    } else {
+        skipToLabel(obj, 3, 1);
+    }
+
 }
 
 //235A0

@@ -1577,8 +1577,18 @@ void DO_OBJ_COLLISIONS(obj_t* obj, i16 a2) {
 }
 
 //2F1E0
-void test_allowed(obj_t* obj, i16 center_x, i16 center_y) {
-    //stub
+u8 test_allowed(obj_t* obj, i16 center_x, i16 center_y) {
+    /* 487A4 8016CFA4 -O2 -msoft-float */
+    s16 map_index =
+            ((center_x + obj->x) >> 4) +
+            ((center_y + obj->y) >> 4) * mp.width;
+    u8 res = false;
+
+    if (map_index != obj->test_block_index) {
+        obj->test_block_index = map_index;
+        res = true;
+    }
+    return res;
 }
 
 //2F224

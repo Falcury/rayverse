@@ -487,7 +487,7 @@ void DO_ANIM(obj_t* obj) {
     i32 prev_anim_frame = obj->anim_frame;
     i32 prev_anim_index = obj->anim_index;
     eta_t* eta = get_eta(obj);
-    anim_t* anim = obj->animations + obj->anim_index;
+    anim_t* prev_anim = obj->animations + obj->anim_index;
     u8 anim_speed = eta->anim_speed & 15;
     if (anim_speed != 0 && horloge[anim_speed] == 0) {
         if (eta->flags & eta_flags_0x10_anim_reverse) {
@@ -497,7 +497,7 @@ void DO_ANIM(obj_t* obj) {
         }
     }
     obj->anim_index = eta->anim_index;
-    anim = obj->animations + obj->anim_index;
+    anim_t* anim = obj->animations + obj->anim_index;
     if ((obj->change_anim_mode == 1 && obj->anim_index != prev_anim_index) || obj->change_anim_mode == 2) {
         if (eta->flags & eta_flags_0x10_anim_reverse) {
             obj->anim_frame = anim->frame_count - 1;
@@ -532,7 +532,7 @@ void DO_ANIM(obj_t* obj) {
     }
     obj->change_anim_mode = 0;
     if (obj->flags.follow_enabled) {
-        //calc_follow_sprite_speed(); //STUB
+        CALC_FOLLOW_SPRITE_SPEED(obj, anim, prev_anim, prev_anim_frame);
     }
     u8 anim_changed_bit = 0;
     if (obj->anim_frame != prev_anim_frame || obj->anim_index != prev_anim_index) {
@@ -542,75 +542,451 @@ void DO_ANIM(obj_t* obj) {
 
 }
 
-
 //56A38
-void prof_in_bloc(obj_t* obj) {
-    //stub
+i16 prof_in_bloc(obj_t* obj) {
+    return (obj->y + obj->offset_by) & 0xF;
 }
 
 //56A4C
-void do_boing(obj_t* obj, u8 a2, u8 a3) {
-    //stub
+void do_boing(obj_t* obj, u8 main_etat, u8 sub_etat) {
+    /* 2C8D0 801510D0 -O2 -msoft-float */
+    if (obj->speed_y < 2) {
+        obj->speed_y = 0;
+        set_main_and_sub_etat(obj, main_etat, sub_etat);
+        if (main_etat != 2)
+            recale_position(obj);
+    } else {
+        if (horloge[2] == 0) {
+            switch (obj->btypes[0]) {
+                case BTYP_NONE:
+                    break;
+                case BTYP_SOLID_RIGHT_45:
+                case BTYP_SLIPPERY_RIGHT_45:
+                    obj->speed_y = 1 - (obj->speed_y >> 1);
+                    obj->speed_x -= 2;
+                    break;
+                case BTYP_SOLID_LEFT_45:
+                case BTYP_SLIPPERY_LEFT_45:
+                    obj->speed_y = 1 - (obj->speed_y >> 1);
+                    obj->speed_x += 2;
+                    break;
+                case BTYP_SOLID_RIGHT1_30:
+                case BTYP_SOLID_RIGHT2_30:
+                case BTYP_SLIPPERY_RIGHT1_30:
+                case BTYP_SLIPPERY_RIGHT2_30:
+                    obj->speed_y = 1 - ((obj->speed_y + 1) >> 1);
+                    obj->speed_x--;
+                    break;
+                case BTYP_SOLID_LEFT1_30:
+                case BTYP_SOLID_LEFT2_30:
+                case BTYP_SLIPPERY_LEFT1_30:
+                case BTYP_SLIPPERY_LEFT2_30:
+                    obj->speed_y = 1 - ((obj->speed_y + 1) >> 1);
+                    obj->speed_x++;
+                    break;
+                case BTYP_SOLID_PASSTHROUGH:
+                case BTYP_SOLID:
+                case BTYP_SLIPPERY:
+                    obj->speed_y = -((obj->speed_y + 1) >> 1);
+                    break;
+                case BTYP_RESSORT:
+                    obj->speed_y = -((obj->speed_y + 3) >> 1);
+                    break;
+            }
+        }
+
+        if (obj->speed_y < 0)
+            set_sub_etat(obj, 0);
+    }
 }
 
 //56BC4
-void underSlope(obj_t* obj) {
-    //stub
+u8 underSlope(obj_t* obj) {
+    /* 2CA58 80151258 -O2 -msoft-float */
+    u8 res = false;
+    if (block_flags[obj->btypes[0]] & 1)
+        res = block_flags[obj->btypes[3]] & 0x40;
+
+    return res;
 }
 
 //56BEC
 void DO_STONEBOMB_REBOND(obj_t* obj) {
-    //stub
+    /* 2CAAC 801512AC -O2 -msoft-float */
+    s16 new_spd_x; s16 new_spd_y;
+    ObjType obj_type = obj->type;
+
+    if (obj_type == TYPE_STONEBOMB2) {
+        new_spd_x = 32;
+        new_spd_y = -4;
+    }
+    else if (obj_type == TYPE_STONEBOMB3) {
+        new_spd_x = 48;
+        new_spd_y = -6;
+    }
+
+    if (underSlope(obj))
+        obj->btypes[0] = obj->btypes[3];
+
+    switch (obj->btypes[0]) {
+        case BTYP_SOLID_LEFT1_30:
+        case BTYP_SOLID_LEFT2_30:
+        case BTYP_SLIPPERY_LEFT1_30:
+        case BTYP_SLIPPERY_LEFT2_30:
+            obj->speed_y = new_spd_y;
+            obj->speed_x = new_spd_x;
+            break;
+        case BTYP_SOLID_RIGHT1_30:
+        case BTYP_SOLID_RIGHT2_30:
+        case BTYP_SLIPPERY_RIGHT1_30:
+        case BTYP_SLIPPERY_RIGHT2_30:
+            obj->speed_y = new_spd_y;
+            obj->speed_x = -new_spd_x;
+            break;
+        case BTYP_SOLID_LEFT_45:
+        case BTYP_SLIPPERY_LEFT_45:
+            obj->speed_y = new_spd_y + 2;
+            obj->speed_x = new_spd_x + 16;
+            break;
+        case BTYP_SOLID_RIGHT_45:
+        case BTYP_SLIPPERY_RIGHT_45:
+            obj->speed_y = new_spd_y + 2;
+            obj->speed_x = -16 - new_spd_x;
+            break;
+        case BTYP_SOLID_PASSTHROUGH:
+        case BTYP_SOLID:
+        case BTYP_SLIPPERY:
+            obj->speed_y = new_spd_y;
+            break;
+        case BTYP_RESSORT:
+            obj->speed_y = new_spd_y - 3;
+            break;
+    }
+    obj->gravity_value_1 = 0;
+    obj->gravity_value_2 = 2;
 }
 
 //56CD8
-void DO_THROWN_BOMB_REBOND(obj_t* obj, i16 a2, i16 a3) {
-    //stub
+void DO_THROWN_BOMB_REBOND(obj_t* obj, i16 pesanteur, i16 a3) {
+    /* 2CBC4 801513C4 -O2 -msoft-float */
+    ObjType old_type;
+    u8 under;
+    u8 btyp;
+    u8 anim_speed;
+    s32 mul_45 = 5;
+    s32 mul_30 = 3;
+    u8 div_45 = 1;
+    u8 div_30 = 1;
+
+    if (obj->main_etat == 2) {
+        if (obj->sub_etat == 1) {
+            DO_STONE_EXPLOSION(obj, -1);
+            return;
+        }
+        if (obj->sub_etat == 0) {
+            old_type = obj->type;
+            obj->type = TYPE_STONEBOMB2;
+            DO_STONEBOMB_REBOND(obj);
+            obj->type = old_type;
+            return;
+        }
+    }
+
+    if (obj->speed_y >= 0) {
+        under = underSlope(obj);
+        if (under)
+            btyp = obj->btypes[3];
+        else
+            btyp = obj->btypes[0];
+
+        switch (btyp) {
+            case BTYP_NONE:
+            case BTYP_SLIPPERY:
+                break;
+            case BTYP_SOLID_RIGHT_45:
+            case BTYP_SLIPPERY_RIGHT_45:
+                if (obj->speed_y == 0)
+                    obj->speed_y++;
+                obj->speed_x -= mul_45 * obj->speed_y / div_45;
+                break;
+            case BTYP_SOLID_LEFT_45:
+            case BTYP_SLIPPERY_LEFT_45:
+                if (obj->speed_y == 0)
+                    obj->speed_y++;
+                obj->speed_x += mul_45 * obj->speed_y / div_45;
+                break;
+            case BTYP_SOLID_RIGHT1_30:
+            case BTYP_SOLID_RIGHT2_30:
+            case BTYP_SLIPPERY_RIGHT1_30:
+            case BTYP_SLIPPERY_RIGHT2_30:
+                if (obj->speed_y == 0)
+                    obj->speed_y++;
+                obj->speed_x -= mul_30 * obj->speed_y / div_30;
+                break;
+            case BTYP_SOLID_LEFT1_30:
+            case BTYP_SOLID_LEFT2_30:
+            case BTYP_SLIPPERY_LEFT1_30:
+            case BTYP_SLIPPERY_LEFT2_30:
+                if (obj->speed_y == 0)
+                    obj->speed_y++;
+                obj->speed_x += mul_30 * obj->speed_y / div_30;
+                break;
+            case BTYP_RESSORT:
+                if (obj->speed_y == 0)
+                    obj->speed_y++;
+                break;
+        }
+        if (a3 > 0) {
+            if (obj->speed_y >= 2) {
+                obj->speed_y = a3 - obj->speed_y;
+                if (pesanteur)
+                    obj->speed_y++;
+            }
+            else
+                obj->speed_y = 0;
+        }
+        else
+            obj->speed_y = -3;
+
+        if (under) {
+            while (BTYP((obj->x + obj->offset_bx) >> 4, (obj->y + obj->offset_by) >> 4) == obj->btypes[0]) {
+                obj->y--;
+            }
+
+            recale_position(obj);
+            calc_btyp(obj);
+        } else if ((block_flags[obj->btypes[0]] & 1) && prof_in_bloc(obj) >= 4 && obj->speed_y < 3) {
+            if (obj->speed_y == 0)
+                obj->speed_y = 1;
+        }
+        else
+            recale_position(obj);
+    }
+    obj->gravity_value_1 = 0;
+    anim_speed = obj->eta[obj->main_etat][obj->sub_etat].anim_speed >> 4;
+    if (!(anim_speed == 10 || anim_speed == 11))
+        obj->gravity_value_2 = 0;
 }
 
 //56F00
-void DO_FRUIT_REBOND(obj_t* obj, i16 a2, i16 a3) {
-    //stub
+void DO_FRUIT_REBOND(obj_t* obj, i16 pesanteur, i16 a3) {
+    /* 2D008 80151808 -O2 -msoft-float */
+    u8 under;
+    u8 btyp;
+    ObjType obj_type;
+    u8 anim_speed;
+    s16 accel_x;
+    s16 speed_x_bnd;
+    s32 mul_45;
+    s32 mul_30;
+    u8 div_45;
+    u8 div_30;
+
+    if (obj->type == TYPE_GRAINE) {
+        accel_x = 1;
+        speed_x_bnd = 1;
+        mul_45 = 1;
+        mul_30 = 1;
+        div_45 = 1;
+        div_30 = 2;
+    }
+    else {
+        accel_x = 5;
+        speed_x_bnd = 4;
+        mul_45 = 5;
+        mul_30 = 3;
+        div_45 = 1;
+        div_30 = 1;
+    }
+
+    if (obj->speed_y >= 0) {
+        if (obj->speed_x > 0)
+            obj->speed_x -= accel_x;
+        else if (obj->speed_x < 0)
+            obj->speed_x += accel_x;
+
+        if (obj->speed_x >= -speed_x_bnd && obj->speed_x <= speed_x_bnd)
+            obj->speed_x = 0;
+
+        under = underSlope(obj);
+        if (under)
+            btyp = obj->btypes[3];
+        else
+            btyp = obj->btypes[0];
+
+        switch (btyp) {
+            case BTYP_NONE:
+            case BTYP_SLIPPERY:
+                break;
+            case BTYP_SOLID_RIGHT_45:
+            case BTYP_SLIPPERY_RIGHT_45:
+                if (obj->speed_y == 0)
+                    obj->speed_y++;
+                obj->speed_x -= mul_45 * obj->speed_y / div_45;
+                break;
+            case BTYP_SOLID_LEFT_45:
+            case BTYP_SLIPPERY_LEFT_45:
+                if (obj->speed_y == 0)
+                    obj->speed_y++;
+                obj->speed_x += mul_45 * obj->speed_y / div_45;
+                break;
+            case BTYP_SOLID_RIGHT1_30:
+            case BTYP_SOLID_RIGHT2_30:
+            case BTYP_SLIPPERY_RIGHT1_30:
+            case BTYP_SLIPPERY_RIGHT2_30:
+                if (obj->speed_y == 0)
+                    obj->speed_y++;
+                obj->speed_x -= mul_30 * obj->speed_y / div_30;
+                break;
+            case BTYP_SOLID_LEFT1_30:
+            case BTYP_SOLID_LEFT2_30:
+            case BTYP_SLIPPERY_LEFT1_30:
+            case BTYP_SLIPPERY_LEFT2_30:
+                if (obj->speed_y == 0)
+                    obj->speed_y++;
+                obj->speed_x += mul_30 * obj->speed_y / div_30;
+                break;
+            case BTYP_RESSORT:
+                if (obj->speed_y == 0)
+                    obj->speed_y++;
+                break;
+        }
+
+        if (a3 > 0) {
+            if (obj->speed_y >= 2) {
+                obj->speed_y = a3 - obj->speed_y;
+                if (pesanteur)
+                    obj->speed_y++;
+            } else {
+                obj->speed_y = 0;
+                obj->hit_points = 2;
+            }
+        } else {
+            obj_type = obj->type;
+            if (obj_type == TYPE_FALLING_OBJ || obj_type == TYPE_FALLING_OBJ2 || obj_type == TYPE_FALLING_OBJ3 ||
+                obj_type == TYPE_FALLING_YING || obj_type == TYPE_FALLING_YING_OUYE
+            ) {
+                if (ray.cmd_arg_2 == obj->id) {
+                    obj->speed_y = RayEvts.tiny ? -4 : -3;
+                }
+                else
+                    obj->speed_y = -5;
+
+                if (obj->type == TYPE_FALLING_YING_OUYE)
+                    obj->speed_y++;
+            }
+            else
+                obj->speed_y = -3;
+        }
+
+        if (under) {
+            while (BTYP((obj->x + obj->offset_bx) >> 4, (obj->y + obj->offset_by) >> 4) == obj->btypes[0]) {
+                obj->y--;
+            }
+
+            calc_btyp(obj);
+            recale_position(obj);
+        } else if ((block_flags[obj->btypes[0]] & 1) && prof_in_bloc(obj) >= 4 && obj->speed_y < 3) {
+            if (obj->speed_y == 0)
+                obj->speed_y = 1;
+        }
+        else
+            recale_position(obj);
+    }
+
+    obj->gravity_value_1 = 0;
+    anim_speed = obj->eta[obj->main_etat][obj->sub_etat].anim_speed >> 4;
+    if (!(anim_speed == 10 || anim_speed == 11))
+        obj->gravity_value_2 = 0;
 }
 
 //5720C
 void Drop_Atter(obj_t* obj) {
-    //stub
+    set_main_and_sub_etat(obj, 2, 3);
+    obj->speed_y = 0;
+    obj->speed_x = 0;
 }
 
 //57230
 void BadGuyAtter(obj_t* obj) {
-    //stub
+    recale_position(obj);
+    if (obj->hit_points == obj->init_hit_points) {
+        set_main_and_sub_etat(obj, 1, 0);
+        obj->flags.read_commands = 1;
+    } else {
+        set_main_and_sub_etat(obj, 1, (get_eta(obj)->flags & 0x40) ? 2 : 11);
+    }
+    calc_obj_dir(obj);
+    skipToLabel(obj, obj->flags.flip_x ? 3 : 2, 1);
 }
 
 //572C4
 void MiteAtter(obj_t* obj) {
-    //stub
+    if (obj->speed_y > 0) {
+        recale_position(obj);
+        skipToLabel(obj, 2, 1);
+        if (obj->cmd_arg_2 > 500) {
+            obj->cmd_arg_2 = 0;
+        }
+    }
 }
 
 //572F8
 void LidolPinkAtter(obj_t* obj) {
-    //stub
+    if (gerbe != 0 && obj->sub_etat == 1) {
+        do_boing(obj, 1, 0);
+    } else {
+        skipToLabel(obj, 1, 1);
+        obj->speed_y = 0;
+        recale_position(obj);
+    }
 }
 
 //57344
 void stoneDogAtter(obj_t* obj) {
-    //stub
+    if (obj->sub_etat == 2) {
+        skipToLabel(obj, 4, 1);
+        recale_position(obj);
+    }
 }
 
 //5736C
 void stoneDogBounces(obj_t* obj) {
-    //stub
+    /* 2D7D0 80151FD0 -O2 -msoft-float */
+    s32 x = obj->x + obj->offset_bx;
+    s32 y = obj->y + obj->offset_by;
+    s32 block_l = mp.map[((x - 2) >> 4) + ((y >> 4) * mp.width)].tile_type;
+    s32 block_r = mp.map[((x + 2) >> 4) + ((y >> 4) * mp.width)].tile_type;
+
+    if (obj->main_etat == 2 && !(block_flags[obj->btypes[0]] & 2) &&
+            ((block_flags[block_l] & 1 && !(obj->flags.flip_x)) || (block_flags[block_r] & 1 && obj->flags.flip_x))
+    ) {
+        if (obj->speed_y < 0) {
+            if (obj->flags.flip_x)
+                skipToLabel(obj, 6, true);
+            else
+                skipToLabel(obj, 7, true);
+        } else {
+            obj->x += obj->speed_x / 16;
+            skipToLabel(obj, 4, true);
+            obj->flags.flip_x ^= 1;
+        }
+    }
 }
 
 //574B8
 void Spider_Atter(obj_t* obj) {
-    //stub
+    set_main_and_sub_etat(obj, 1, 0);
+    if (obj->flags.flip_x) {
+        skipToLabel(obj, 3, 1);
+    } else {
+        skipToLabel(obj, 1, 1);
+    }
 }
 
 //574F4
 void NormalAtter(obj_t* obj) {
-    //stub
+    set_main_and_sub_etat(obj, obj->init_main_etat, obj->init_sub_etat);
 }
 
 //57530
@@ -646,7 +1022,7 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
     }
     else if (obj->type == TYPE_STONEDOG || obj->type == TYPE_STONEDOG2)
     {
-        stoneDogBounces(obj); //TODO
+        stoneDogBounces(obj);
         if (obj->main_etat == 2)
         {
             spd_y = obj->speed_y;
@@ -739,11 +1115,11 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
                 }
                 break;
             case TYPE_DROP:
-                Drop_Atter(obj); //TODO
+                Drop_Atter(obj);
                 break;
             case TYPE_MITE:
             case TYPE_MITE2:
-                MiteAtter(obj); //TODO
+                MiteAtter(obj);
                 break;
             case TYPE_STONEWOMAN:
                 if (obj->speed_y >= 0)
@@ -754,30 +1130,30 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
                 break;
             case TYPE_TNT_BOMB:
                 PlaySnd(187, obj->id);
-                BombExplosion(obj); //TODO
+                BombExplosion(obj);
                 break;
             case TYPE_BADGUY1:
             case TYPE_BADGUY2:
             case TYPE_BADGUY3:
-                BadGuyAtter(obj); //TODO
+                BadGuyAtter(obj);
                 break;
             case TYPE_STONEBOMB2:
             case TYPE_STONEBOMB3:
                 if (obj->speed_y != 0)
                     PlaySnd(200, obj->id);
-                DO_STONEBOMB_REBOND(obj); //TODO
+                DO_STONEBOMB_REBOND(obj);
                 break;
             case TYPE_STONEBOMB:
                 if (obj->speed_y != 0)
                     PlaySnd(200, obj->id);
-                DO_THROWN_BOMB_REBOND(obj, pesanteur, 1); //TODO
+                DO_THROWN_BOMB_REBOND(obj, pesanteur, 1);
                 break;
             case TYPE_STONEDOG:
             case TYPE_STONEDOG2:
-                stoneDogAtter(obj); //TODO
+                stoneDogAtter(obj);
                 break;
             case TYPE_PIRATE_BOMB:
-                DO_FRUIT_REBOND(obj, pesanteur, 1); //TODO
+                DO_FRUIT_REBOND(obj, pesanteur, 1);
                 break;
             case TYPE_MST_SHAKY_FRUIT:
                 if (obj->cmd_arg_1 != 0)
@@ -877,28 +1253,28 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
                 break;
             case TYPE_BB1:
                 if (obj->iframes_timer < 10)
-                    DO_BBMONT_ATTER(obj);
+                    DO_BBMONT_ATTER(obj); //TODO
                 break;
             case TYPE_BB12:
-                DO_BBMONT2_ATTER(obj);
+                DO_BBMONT2_ATTER(obj); //TODO
                 break;
             case TYPE_BB13:
-                DO_BBMONT3_ATTER(obj);
+                DO_BBMONT3_ATTER(obj); //TODO
                 break;
             case TYPE_SAXO2:
-                DO_SAXO2_ATTER(obj);
+                DO_SAXO2_ATTER(obj); //TODO
                 break;
             case TYPE_SAXO:
-                DO_SAXO_ATTER(obj);
+                DO_SAXO_ATTER(obj); //TODO
                 break;
             case TYPE_MAMA_PIRATE:
-                DO_PMA_ATTER(obj);
+                DO_PMA_ATTER(obj); //TODO
                 break;
             case TYPE_COUTEAU:
-                DO_COU_ATTER(obj);
+                DO_COU_ATTER(obj); //TODO
                 break;
             case TYPE_BOUT_TOTEM:
-                DO_TOTBT_REBOND(obj);
+                DO_TOTBT_REBOND(obj); //TODO
                 break;
             case TYPE_SPIDER_PLAFOND:
                 if (obj->main_etat == 2 && obj->speed_y > 0)

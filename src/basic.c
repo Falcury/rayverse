@@ -61,8 +61,14 @@ void findfirstInactiveObject(i16 a1) {
 }
 
 //1D528
-void sinYspeed(obj_t* obj, i16 a2, i16 a3, i16* a4) {
-    //stub
+i32 sinYspeed(obj_t* obj, i16 a2, i16 a3, i16* a4) {
+    /* 225B8 80146DB8 -O2 -msoft-float */
+    s16 unk_1 = (*a4 + a2) & 0xFFF;
+    s16 diff_y = obj->y - obj->init_y;
+    s32 unk_2 = sinus(unk_1 >> 3) * a3;
+
+    *a4 = unk_1;
+    return (unk_2 >> 9) - diff_y;
 }
 
 //1D560
@@ -163,23 +169,197 @@ void set_main_and_sub_etat(obj_t* obj, u8 etat, u8 sub_etat) {
 }
 
 //1D824
-void get_center_x(obj_t* obj) {
-    //stub
+i16 get_center_x(obj_t* obj) {
+    /* 22C84 80147484 -O2 -msoft-float */
+    s16 res;
+
+    switch (obj->type) {
+        case TYPE_MOVE_MARTEAU:
+            res = 70;
+            break;
+        case TYPE_MOVE_PLAT:
+            switch (num_world) {
+                case 1:
+                    res = 40;
+                    break;
+                case 2:
+                    res = 64;
+                    break;
+                default:
+                    res = 40;
+                    break;
+            }
+            break;
+        case TYPE_MOVE_OUYE:
+            /* TODO: ... why does this work? */
+            switch (num_world) {
+                case 1:
+                    res = 40;
+                    break;
+                case 2:
+                    res = 64;
+                    break;
+                default:
+                    res = 40;
+                    break;
+            }
+            res = 18;
+            break;
+        case TYPE_MOVE_RUBIS:
+            res = 18;
+            break;
+        case TYPE_MOVE_START_PLAT:
+            res = 128;
+            break;
+        case TYPE_BLACKTOON1:
+            switch (obj->follow_sprite) {
+                case 5:
+                case 6:
+                case 7:
+                    res = 80;
+                    break;
+                default:
+                    res = 40;
+                    break;
+            }
+            break;
+        case TYPE_PIRATE_P_45:
+        case TYPE_PIRATE_P_D_45:
+        case TYPE_PIRATE_POELLE:
+        case TYPE_PIRATE_POELLE_D:
+            res = 80;
+            break;
+        case TYPE_ROULETTE:
+        case TYPE_ROULETTE2:
+        case TYPE_ROULETTE3:
+            res = 104;
+            break;
+        case TYPE_PT_GRAPPIN:
+            res = 36;
+            break;
+        default:
+            res = 40;
+            break;
+    }
+
+    return res;
 }
 
 //1D954
-void get_center_y(obj_t* obj) {
-    //stub
+i16 get_center_y(obj_t* obj) {
+    /* 22DEC 801475EC -O2 -msoft-float */
+    s16 res;
+
+    switch (obj->type) {
+        case TYPE_SPIDER_PLAFOND:
+            res = 90;
+            break;
+        case TYPE_MOVE_MARTEAU:
+            res = 40;
+            break;
+        case TYPE_MOVE_PLAT:
+            /* TODO: ... why does this work? */
+            switch (num_world) {
+                case 1:
+                    res = 40;
+                    break;
+                case 2:
+                    res = 40;
+                    break;
+                default:
+                    res = 40;
+                    break;
+            }
+            break;
+        case TYPE_MOVE_OUYE:
+            /* TODO: ... why does this work? */
+            switch (num_world) {
+                case 1:
+                    res = 40;
+                    break;
+                case 2:
+                    res = 64;
+                    break;
+                default:
+                    res = 40;
+                    break;
+            }
+            res = 18;
+            break;
+        case TYPE_MOVE_RUBIS:
+            res = 18;
+            break;
+        case TYPE_MOVE_START_PLAT:
+            res = 64;
+            break;
+        case TYPE_BLACKTOON1:
+            switch (obj->follow_sprite) {
+                case 6:
+                case 7:
+                    if (obj->speed_y > 0)
+                        res = 64;
+                    else
+                        res = 78;
+                    break;
+                case 5:
+                    res = 72;
+                    break;
+                default:
+                    /* TODO: ??? */
+                    res = 40; // NOTE: added to prevent returning an uninitialized value
+                    break;
+            }
+            break;
+        case TYPE_PIRATE_P_45:
+        case TYPE_PIRATE_P_D_45:
+        case TYPE_PIRATE_POELLE:
+        case TYPE_PIRATE_POELLE_D:
+            res = 96;
+            break;
+        case TYPE_ROULETTE:
+        case TYPE_ROULETTE2:
+        case TYPE_ROULETTE3:
+            res = 104;
+            break;
+        case TYPE_PT_GRAPPIN:
+            res = 32;
+            break;
+        default:
+            res = 40;
+            break;
+    }
+
+    return res;
 }
 
 //1DAC8
-void on_block_chdir(obj_t* obj, i16 center_x, i16 center_y) {
-    //stub
+u8 on_block_chdir(obj_t* obj, i16 center_x, i16 center_y) {
+    return (block_flags[BTYP((obj->x + center_x) >> 4, (obj->y + center_y) >> 4)] & 0x20) != 0;
 }
 
 //1DB04
-void CALC_FOLLOW_SPRITE_SPEED(obj_t* obj, i32 a2, i32 a3, i16 a4) {
-    //stub
+void CALC_FOLLOW_SPRITE_SPEED(obj_t* obj, anim_t* anim_1, anim_t* anim_2, i16 anim_frame_2) {
+    u8 width_1;
+    s32 unk_1;
+    s32 x_1;
+    s32 x_2;
+    s32 unk_2;
+    u8 foll_spr = obj->follow_sprite;
+    anim_layer_t* layer_1 = &anim_1->layers[(anim_1->layers_per_frame & 0x3FFF) * obj->anim_frame];
+    anim_layer_t* layer_2 = &anim_2->layers[(anim_2->layers_per_frame & 0x3FFF) * anim_frame_2];
+
+    width_1 = obj->sprites[layer_1[foll_spr].sprite_index].outer_width;
+    if (obj->flags.flip_x) {
+        unk_1 = (u16) obj->x + (obj->offset_bx * 2) - width_1;
+        x_2 = unk_1 - layer_2[foll_spr].x;
+        x_1 = unk_1 - layer_1[foll_spr].x;
+    } else {
+        unk_2 = (u16) obj->x;
+        x_1 = unk_2 + layer_1[foll_spr].x;
+        x_2 = unk_2 + layer_2[foll_spr].x;
+    }
+    obj->follow_y = (layer_1[foll_spr].y + obj->y) - (layer_2[foll_spr].y + obj->y);
+    obj->follow_x = x_1 - x_2;
 }
 
 //1DBB4
@@ -307,7 +487,221 @@ void calc_obj_pos(obj_t* obj) {
 
 //1E05C
 void makeUturn(obj_t* obj) {
-    //stub
+    /* 2375C 80147F5C -O2 -msoft-float */
+    u8 label = 255;
+    u8 foll_spr;
+
+    switch (obj->type)
+    {
+        case TYPE_BLACKTOON1:
+            foll_spr = obj->follow_sprite;
+            if (foll_spr == 1 || foll_spr == 2 || obj->follow_sprite == 4 || obj->follow_sprite == 7)
+            {
+                if (obj->cmd == GO_LEFT)
+                {
+                    label = 3;
+                    obj->flags.flip_x = 1;
+                }
+                else if (obj->cmd == GO_RIGHT)
+                {
+                    label = 2;
+                    obj->flags.flip_x = 0;
+                }
+            }
+            break;
+        case TYPE_MITE:
+            if (!(obj->main_etat == 0 && obj->sub_etat == 3))
+            {
+                label = 3;
+                obj->cmd_arg_2 = 0;
+            }
+            break;
+        case TYPE_BADGUY1:
+            if (
+                    !(obj->main_etat == 0 &&
+                      (obj->sub_etat == 3 || obj->sub_etat == 1 || obj->sub_etat == 4 ||
+                       obj->sub_etat == 5 || obj->sub_etat == 6))
+                    )
+            {
+                if (obj->cmd == GO_LEFT)
+                {
+                    label = 1;
+                    obj->flags.flip_x = 1;
+                }
+                else if (obj->cmd == GO_RIGHT)
+                {
+                    label = 0;
+                    obj->flags.flip_x = 0;
+                }
+            }
+            break;
+        case TYPE_BADGUY2:
+        case TYPE_BADGUY3:
+            if (!(obj->main_etat == 0 && (obj->sub_etat == 3 || obj->sub_etat == 1)))
+            {
+                if (obj->flags.read_commands)
+                {
+                    if (obj->cmd == GO_LEFT)
+                    {
+                        label = 1;
+                        obj->flags.flip_x = 1;
+                    }
+                    else if (obj->cmd == GO_RIGHT)
+                    {
+                        label = 0;
+                        obj->flags.flip_x = 0;
+                    }
+                }
+                else
+                {
+                    if (obj->cmd == GO_LEFT)
+                    {
+                        label = 6;
+                        obj->flags.flip_x = 1;
+                    }
+                    else if (obj->cmd == GO_RIGHT)
+                    {
+                        label = 5;
+                        obj->flags.flip_x = 0;
+                    }
+                }
+            }
+            break;
+        case TYPE_GENEBADGUY:
+            if (!(obj->main_etat == 0 && obj->sub_etat == 3))
+            {
+                if (obj->cmd == GO_LEFT)
+                {
+                    label = 1;
+                    obj->flags.flip_x = 1;
+                }
+                else if (obj->cmd == GO_RIGHT)
+                {
+                    label = 0;
+                    obj->flags.flip_x = 0;
+                }
+            }
+            break;
+        case TYPE_STONEMAN1:
+        case TYPE_STONEMAN2:
+            if (obj->cmd == GO_LEFT)
+            {
+                label = 5;
+                obj->flags.flip_x = 1;
+            }
+            else if (obj->cmd == GO_RIGHT)
+            {
+                label = 4;
+                obj->flags.flip_x = 0;
+            }
+            break;
+        case TYPE_TROMPETTE:
+            if (!(obj->main_etat == 0 && obj->sub_etat == 1))
+            {
+                if (obj->flags.read_commands)
+                {
+                    if (obj->cmd == GO_LEFT)
+                    {
+                        label = 1;
+                        obj->flags.flip_x = 1;
+                    }
+                    else if (obj->cmd == GO_RIGHT)
+                    {
+                        label = 0;
+                        obj->flags.flip_x = 0;
+                    }
+                }
+            }
+            break;
+        case TYPE_BIG_CLOWN:
+        case TYPE_WAT_CLOWN:
+            if (obj->flags.read_commands)
+            {
+                if (obj->cmd == GO_LEFT)
+                {
+                    label = 1;
+                    obj->flags.flip_x = 1;
+                }
+                else if (obj->cmd == GO_RIGHT)
+                {
+                    label = 0;
+                    obj->flags.flip_x = 0;
+                }
+            }
+            break;
+        case TYPE_SPIDER:
+            if (obj->cmd == GO_LEFT)
+            {
+                label = 2;
+                obj->flags.flip_x = 1;
+            }
+            else
+            {
+                label = 0;
+                obj->flags.flip_x = 0;
+            }
+            break;
+        case TYPE_MITE2:
+            if (!(obj->flags.flip_x))
+                obj->flags.flip_x = 1;
+            else
+                obj->flags.flip_x = 0;
+
+            if (!(obj->main_etat == 0 && obj->sub_etat == 3))
+            {
+                label = 3;
+                obj->cmd_arg_2 = 0;
+            }
+            break;
+        case TYPE_CAISSE_CLAIRE:
+            if (!(obj->main_etat == 0 && obj->sub_etat == 2))
+            {
+                set_main_and_sub_etat(obj, 1, 1);
+                if (!(obj->flags.flip_x))
+                {
+                    obj->flags.flip_x = 1;
+                    label = 3;
+                }
+                else
+                {
+                    obj->flags.flip_x = 0;
+                    label = 2;
+                }
+            }
+            break;
+        case TYPE_WALK_NOTE_1:
+            if (obj->cmd == GO_LEFT)
+            {
+                label = 2;
+                obj->flags.flip_x = 1;
+            }
+            else if (obj->cmd == GO_RIGHT)
+            {
+                label = 1;
+                obj->flags.flip_x = 0;
+            }
+            break;
+        case TYPE_SPIDER_PLAFOND:
+            if (!(obj->main_etat == 0 && (obj->sub_etat == 24 || obj->sub_etat == 18 || obj->sub_etat == 19)))
+            {
+                set_main_and_sub_etat(obj, 0, 24);
+                obj->speed_y = 0;
+                obj->speed_x = 0;
+                obj->flags.flip_x = 1 - obj->flags.flip_x;
+            }
+            break;
+    }
+
+    if (label != 255) {
+        // NOTE: difference with PS1 version
+        if (flags[obj->type] & flags1_0x10_move_x) {
+            obj->x -= instantSpeed(obj->speed_x);
+        } else {
+            obj->x -= obj->speed_x;
+        }
+        obj->speed_x = 0;
+        skipToLabel(obj, label, true);
+    }
 }
 
 //1E588
