@@ -379,7 +379,7 @@ u8 GET_SPRITE_POS(obj_t* obj, i16 index, i16* x, i16* y, i16* w, i16* h) {
     if (sprite_ind != 0 && sprite->id != 0) {
         *w = sprite->inner_width;
         *h = sprite->inner_height;
-        if (obj->flags.flip_x == ((sprite->flags & 4) != 0)) {
+        if (obj->flags.flip_x != ((sprite->flags & 4) != 0)) {
             *x = obj->x + (obj->offset_bx * 2 - (layer->x + (sprite->sprite_pos & 0xF)) - sprite->outer_width);
         } else {
             *x = obj->x + layer->x + (sprite->sprite_pos & 0xF);
