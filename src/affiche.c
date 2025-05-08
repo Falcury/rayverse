@@ -462,7 +462,57 @@ void display_grp_stars(void) {
 
 //1AF1C
 void DISPLAY_TEXT_FEE(void) {
-    //stub
+    /* 19D20 8013E520 -O2 -msoft-float */
+    u8 txt_fee;
+    obj_t* obj;
+    display_item_t ttd;
+    s16 cen_x;
+    s16 obj_x;
+    s16 marg_x;
+
+    DISPLAY_BLACKBOX(0, 0, SCREEN_WIDTH, 20, 255, false);
+    DISPLAY_BLACKBOX(0, 190, SCREEN_WIDTH, 50, 255, false);
+    txt_fee = display_txt_fee;
+    if (txt_fee != 255)
+    {
+        obj = &level.objects[png_or_fee_id];
+        memcpy(&ttd, &text_to_display[txt_fee], sizeof(ttd));
+        if (ttd.text[0] != '\0')
+        {
+            if (obj->flags.alive)
+            {
+                i16 y_fee = (SCREEN_HEIGHT < 240) ? SCREEN_HEIGHT - 10 : SCREEN_HEIGHT - 20; // added to account for PC/PS1 difference
+                obj->screen_y = y_fee - obj->offset_by;
+                cen_x = ttd.centered_x_pos;
+                obj_x = obj->offset_bx + obj->screen_x;
+                marg_x = 8;
+                if (cen_x < obj_x - marg_x)
+                {
+                    if (cen_x + ttd.width > obj_x)
+                    {
+                        ttd.text[(s16) ((obj_x - (cen_x + marg_x)) / 7)] = '\0';
+                        display_box_text(&ttd);
+                    }
+                    else
+                        display_box_text(&ttd);
+                }
+                else if (cen_x + ttd.width <= obj_x)
+                    display_box_text(&ttd);
+
+                DISPLAY_BLACKBOX(obj_x, obj->screen_y + obj->offset_by - 20, 30, 18, 255, 0);
+                display2(obj);
+            }
+            else
+                display_box_text(&ttd);
+        }
+    }
+
+    txt_fee = old_txt_fee;
+    if (txt_fee != 255) {
+        memcpy(&ttd, &text_to_display[txt_fee], sizeof(ttd));
+        if (ttd.text[0] != '\0')
+            display_box_text(&ttd);
+    }
 }
 
 //1B0E0

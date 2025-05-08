@@ -642,7 +642,7 @@ void sub_391C0(void);
 void INIT_TXT_FEE(void);
 void allocate_poing_or_free(void);
 void init_fee(void);
-void wait_for_dialogue_fee(obj_t* obj, i16 a2);
+void wait_for_dialogue_fee(obj_t* obj, i16 time);
 void DO_FEE_ETAPE(obj_t* obj);
 void fee_gives_super_evts(void);
 void DO_FEE(obj_t* obj);

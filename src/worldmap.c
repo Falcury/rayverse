@@ -571,6 +571,7 @@ void INIT_NEW_GAME(void) {
     departlevel = 1;
     memset(wi_save_zone, 0, sizeof(wi_save_zone));
     memset(save_zone, 0, sizeof(save_zone));
+    memset(&RayEvts, 0, sizeof(RayEvts)); // added; TODO: figure out why RayEvts doesn't 'leak' into a new game?
     INIT_RAY_BEGIN();
     u8 first_world_is_accessible_flag = (t_world_info[0].state | 1);
     for (i32 i = 0; i < 24; ++i) {

@@ -116,7 +116,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
                              Bloc_lim_W2 - Bloc_lim_W1 + 4); //TODO
 
         if (is_fee) {
-            DISPLAY_TEXT_FEE(); //TODO
+            DISPLAY_TEXT_FEE();
         } else {
             DISPLAY_FIXE(left_time);
         }
