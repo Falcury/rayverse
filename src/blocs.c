@@ -413,22 +413,23 @@ u8 TEST_IS_ON_RESSORT_BLOC(obj_t* obj) {
 
 //25708
 u8 IS_ON_RESSORT_BLOC(obj_t* obj) {
+    u8 result = false;
     if (obj->btypes[0] == BTYP_RESSORT && obj->speed_y >= 0) {
         if (obj->type == TYPE_23_RAYMAN) {
             button_released = 1;
             set_main_and_sub_etat(&ray, 0, 0);
             ray_jump();
             PlaySnd(249, -1);
-            ray.speed_y = -3;
-            allocatePaillette(obj); //TODO
-            return true;
-        } else {
-            obj_jump(obj); //TODO
-            return (flags[obj->type] & flags2_8_can_jump) != 0;
+            ray.speed_y -= 3;
+            jump_time = 12;
+            allocatePaillette(&ray);
+            result = true;
+        } else if ((flags[obj->type] & flags2_8_can_jump) != 0) {
+            obj_jump(obj);
+            result = true;
         }
-    } else {
-        return false;
     }
+    return result;
 }
 
 //25820

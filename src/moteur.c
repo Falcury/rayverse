@@ -515,8 +515,9 @@ void DO_ANIM(obj_t* obj) {
         eta = get_eta(obj);
         obj->anim_index = eta->anim_index;
         anim = obj->animations + obj->anim_index;
-        if ((obj->type == TYPE_23_RAYMAN && (ray_old_main_etat == 2 || ray_old_main_etat == 6)) ||
-            (obj->sub_etat == 61 && ray_old_sub_etat == 61 && ray_old_main_etat == 0)) {
+        if ((obj->type == TYPE_23_RAYMAN && ray_old_sub_etat == 8 && (ray_old_main_etat == 2 || ray_old_main_etat == 6) && obj->sub_etat != 8) ||
+                (ray_old_sub_etat == 61 && ray_old_main_etat == 0 && obj->sub_etat != 61)
+        ) {
             if (ray.timer > 60 && !RayEvts.squashed) {
                 ray.timer = 60;
             }
@@ -2533,7 +2534,7 @@ void DO_MOTEUR_GELE(void) {
             v_scroll_speed = 0;
             DO_ANIM(&ray);
         } else {
-            DO_MEDAILLON_TOON_GELE(); //TODO
+            DO_MEDAILLON_TOON_GELE();
         }
         if (MapAvecPluieOuNeige) {
             do_flocons(xmap, ymap, xmap_old, ymap_old);

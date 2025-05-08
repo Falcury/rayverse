@@ -1387,7 +1387,19 @@ void Change_Wait_Anim(void) {
 
 //1F8E8
 void add_alwobj(obj_t* obj) {
-    level_obj.obj_ids[level_obj.nb_objects++] = obj->id;
+    // Added check to prevent duplicate entries
+    i32 found_index = -1;
+    for (i32 i = 0; i < level_obj.nb_objects; ++i) {
+        if (level_obj.obj_ids[i] == obj->id) {
+            found_index = i;
+            break;
+        }
+    }
+    if (found_index == -1) {
+        level_obj.obj_ids[level_obj.nb_objects++] = obj->id;
+    } else {
+        printf("add_alwobj(): tried to add an object for the second time\n");
+    }
 }
 
 //1F918

@@ -467,6 +467,7 @@ void ray_jump(void) {
             else
                 set_main_and_sub_etat(&ray, 2, 0);
         }
+        compteur_attente = 0;
         in_air_because_hit = false;
         jump_time = 0;
         helico_time = -1;
@@ -1094,8 +1095,7 @@ void RAY_RESPOND_TO_DOWN(void) {
                     poing.charge = 0;
                     set_main_and_sub_etat(&ray, 3, 6);
                 } else {
-                    set_main_and_sub_etat(&ray, 1, 8);
-
+                    set_main_and_sub_etat(&ray, 1, 8); // start crawling
                 }
             }
             RAY_SWIP();
@@ -1337,11 +1337,9 @@ void RAY_RESPOND_TO_NOTHING(void) {
     switch (ray.main_etat)
     {
         case 1:
-            if (
-                    !(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40) && // TODO: check: this part not in the PC version?
-                    !(ray.sub_etat == 4 || ray.sub_etat == 5) && RayEvts.force_run == 0
-                    )
-            {
+            // NOTE: this additional check in the PS1 version is removed in the PC version:
+            // !(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40) &&
+            if (!(ray.sub_etat == 4 || ray.sub_etat == 5) && RayEvts.force_run == 0) {
                 set_main_etat(&ray, 0);
                 if (ray.sub_etat == 8 || ray.sub_etat == 10)
                     set_sub_etat(&ray, 47);

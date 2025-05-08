@@ -11,7 +11,14 @@ void set_rubis_list(void) {
 
 //78F94
 void allocate_rayon(i16 a1, i16 a2) {
-    //stub
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        obj_t* cur_obj = level.objects + i;
+        if (cur_obj->type == TYPE_170_RAYON && !cur_obj->is_active) {
+            //stub
+
+            break;
+        }
+    }
 }
 
 //7903C

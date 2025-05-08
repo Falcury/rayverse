@@ -772,7 +772,35 @@ void allocateSupHelico(obj_t* obj) {
 
 //7C274
 void allocatePaillette(obj_t* obj) {
-    //stub
+    obj_t* pailette_obj = NULL;
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        obj_t* cur_obj = level.objects + i;
+        if (cur_obj->type == TYPE_75_PAILLETTE && !cur_obj->is_active) {
+            pailette_obj = cur_obj;
+            break;
+        }
+    }
+    if (pailette_obj) {
+        add_alwobj(pailette_obj);
+    } else {
+        pailette_obj = findfirstObject(TYPE_75_PAILLETTE);
+        // NOTE: added the below just to be sure
+        del_alwobj(pailette_obj->id);
+        add_alwobj(pailette_obj);
+    }
+    pailette_obj->is_active = 1;
+    pailette_obj->flags.alive = 1;
+    pailette_obj->active_timer = 0;
+    pailette_obj->flags.flag_0x40 = 0;
+    pailette_obj->x = obj->x - 40;
+    pailette_obj->y = obj->y - 20;
+    pailette_obj->anim_index = 0;
+    pailette_obj->anim_frame = 1;
+    pailette_obj->main_etat = 0;
+    pailette_obj->init_main_etat = 0;
+    pailette_obj->init_sub_etat = 0;
+    pailette_obj->sub_etat = 0;
+    calc_obj_pos(obj);
 }
 
 //7C328

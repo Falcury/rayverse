@@ -7,27 +7,109 @@ void DO_CAGE2(obj_t* obj) {
 
 //28B50
 void DO_CAGE(obj_t* obj) {
-    //stub
+    /* 3CF18 80161718 -O2 */
+    if (obj->main_etat == 0 && obj->sub_etat == 7 && obj->anim_frame == 0 &&
+            horloge[obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0x0f] == 0
+    ) {
+        obj->display_prio = 5;
+        allocateGrille(obj);
+    }
 }
 
 //28BA4
 void DoCagePoingCollision(obj_t* obj, i16 a2) {
-    //stub
+    obj_hurt(obj);
+    if (obj->hit_points != 0) {
+        set_sub_etat(obj, 10);
+    } else {
+        obj->init_main_etat = 0;
+        obj->init_sub_etat = 8;
+        obj->init_x = obj->x;
+        obj->init_y = obj->y;
+        set_sub_etat(obj, 12);
+        obj->init_flag = 7;
+        ALLOCATE_MEDAILLON_TOON();
+        ++Nb_total_cages;
+        lidol_to_allocate = 5;
+        PlaySnd(17, obj->id);
+        lidol_source_obj = obj;
+        take_bonus(obj->id);
+    }
 }
 
 //28C2C
 void DO_MEDAILLON_TOON(obj_t* obj) {
-    //stub
+    /* 3CFA0 801617A0 -O2 -msoft-float */
+    if (obj->sub_etat == 32 || obj->sub_etat == 33 || obj->sub_etat == 34 ||
+            obj->sub_etat == 35 || obj->sub_etat == 36 || obj->sub_etat == 37
+    ) {
+        if (obj->anim_frame == 41)
+            PlaySnd(192, obj->id);
+        else if (obj->anim_frame == 64)
+            PlaySnd(193, obj->id);
+    }
+    else if (obj->sub_etat == 38) {
+        obj->flags.alive = 0;
+        obj->is_active = 0;
+    }
 }
 
 //28CA0
 void DO_MEDAILLON_TOON_GELE(void) {
-    //stub
+    /* 3D050 80161850 -O2 -msoft-float */
+    for (i16 i = 0; i < actobj.num_active_objects; ++i) {
+        obj_t* obj = &level.objects[actobj.objects[i]];
+        if (obj->type == TYPE_MEDAILLON_TOON) {
+            if (!snd_flag_medaillon) {
+                mute_snd_bouclant();
+                snd_flag_medaillon = true;
+            }
+            xmap = xmap_old; // added in PC version
+            ymap = ymap_old; // added in PC version
+            DO_ANIM(obj);
+            if (obj->sub_etat == 32 || obj->sub_etat == 33 || obj->sub_etat == 34 ||
+                    obj->sub_etat == 35 || obj->sub_etat == 36 || obj->sub_etat == 37
+            ) {
+                if (obj->anim_frame == 41) {
+                    PlaySnd(192, obj->id);
+                } else if (obj->anim_frame == 64) {
+                    PlaySnd(193, obj->id);
+                }
+            } else if (obj->sub_etat == 38) {
+                gele = 0;
+                snd_flag_medaillon = false;
+                obj->flags.alive = 0;
+                obj->is_active = 0;
+                PlaySnd(61, -1);
+            }
+            horloges(1); // added in PC version
+            break; // added - though I guess this doesn't matter if there is only one TYPE_MEDAILLON_TOON in the level
+        }
+    }
 }
 
 //28DD4
 void ALLOCATE_MEDAILLON_TOON(void) {
-    //stub
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        obj_t* cur_obj = level.objects + i;
+        if (cur_obj->type == TYPE_197_MEDAILLON_TOON && !cur_obj->is_active) {
+            cur_obj->init_x = cur_obj->x = xmap - (cur_obj->offset_bx - 160);
+            cur_obj->init_y = cur_obj->y = ymap - cur_obj->offset_by;
+            cur_obj->flags.alive = 1;
+            cur_obj->is_active = 1;
+            cur_obj->flags.read_commands = 0;
+            set_sub_etat(cur_obj, t_world_info[world_index].nb_cages + 32);
+            if (t_world_info[world_index].nb_cages == 6)
+                t_world_info[world_index].nb_cages = 5;
+            t_world_info[world_index].nb_cages++;
+            gele = 1;
+            h_scroll_speed = 0;
+            v_scroll_speed = 0;
+            xmap = xmap_old;
+            ymap = ymap_old;
+            break;
+        }
+    }
 }
 
 //28F14
@@ -88,7 +170,20 @@ void allocate_toons(obj_t* src_obj, u8 count) {
 
 //2912C
 void allocateGrille(obj_t* obj) {
-    //stub
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        obj_t* cur_obj = level.objects + i;
+        if (cur_obj->type == TYPE_59_CAGE2 && !cur_obj->is_active) {
+            cur_obj->flags.alive = 1;
+            cur_obj->is_active = 1;
+            add_alwobj(cur_obj);
+            cur_obj->x = obj->x;
+            cur_obj->y = obj->y;
+            cur_obj->screen_x = cur_obj->x - xmap;
+            cur_obj->screen_y = cur_obj->y - ymap;
+            cur_obj->speed_y = -4;
+            break;
+        }
+    }
 }
 
 //291B4
