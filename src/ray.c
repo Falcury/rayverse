@@ -2022,12 +2022,60 @@ void DO_MORT_DE_RAY(void) {
 
 //70C20
 void TEST_FIN_FOLLOW(void) {
-    //stub
+    /* 318D8 801560D8 -O2 -msoft-float */
+    u16 unk_1;
+    s16 btyp;
+
+    if (block_flags[calc_typ_travd(&ray, false)] & 1) {
+        ray.speed_x = 0;
+    }
+
+    unk_1 = !(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40) * 2;
+    if (ray.speed_y > 0) {
+        ray.y -= ray.speed_y;
+        btyp = BTYP((ray.x + ray.offset_bx) >> 4, (ray.y + ray.offset_by) >> 4);
+        ray.y += ray.speed_y;
+    } else {
+        btyp = (u8) calc_typ_trav(&ray, unk_1);
+    }
+
+    if (block_flags[btyp] & 2) {
+        ray.y -= ray.speed_y;
+        if (!(block_flags[ray.btypes[4]] & 2) && ray.speed_y < 0) {
+            ray.y += 4;
+            ray.speed_y = 0;
+        } else {
+            recale_position(&ray);
+        }
+
+        ray.speed_x = 0;
+        ray.cmd_arg_2 = -1;
+    }
 }
 
 //70D58
 void RAY_FOLLOW(void) {
-    //stub
+    /* 31AA8 801562A8 -O2 -msoft-float */
+    s16 other_spd_x;
+    s16 other_spd_y;
+    obj_t* other_obj = &level.objects[ray.cmd_arg_2];
+
+    if (flags[other_obj->type] & flags1_0x10_move_x)
+        other_spd_x = instantSpeed(other_obj->speed_x);
+    else
+        other_spd_x = (u16) other_obj->speed_x;
+
+    if (flags[other_obj->type] & flags1_0x20_move_y)
+        other_spd_y = instantSpeed(other_obj->speed_y);
+    else
+        other_spd_y = (u16) other_obj->speed_y;
+
+    ray.speed_x = other_spd_x + ray.speed_x;
+    ray.speed_x += other_obj->follow_x; /* a little strange */
+    ray.speed_y = other_spd_y + (ray.speed_y + other_obj->follow_y);
+    TEST_FIN_FOLLOW();
+    if (!(other_obj->is_active))
+        ray.cmd_arg_2 = -1;
 }
 
 //70E14
