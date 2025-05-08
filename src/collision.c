@@ -1572,8 +1572,108 @@ void DoRaymanCollisionDefault(obj_t* obj) {
 }
 
 //2EE20
-void DO_OBJ_COLLISIONS(obj_t* obj, i16 a2) {
-    //stub
+void DO_OBJ_COLLISIONS(obj_t* obj, i16 offs) {
+    /* 218C0 801460C0 -O2 -msoft-float */
+    s16 in_x; s16 in_y; s16 in_w; s16 in_h;
+    u8 done;
+    s16 i;
+    obj_t* cur_obj;
+    s16 cur_x; s16 cur_y; s16 cur_w; s16 cur_h;
+
+    GET_ANIM_POS(obj, &in_x, &in_y, &in_w, &in_h);
+    done = false;
+    if (obj->type == TYPE_FALLING_OBJ || obj->type == TYPE_FALLING_OBJ2 || obj->type == TYPE_FALLING_OBJ3)
+    {
+        in_x += 10;
+        in_y += 20;
+        in_w += -20;
+        in_h += -25;
+    }
+    else
+    {
+        in_x = offs + in_x;
+        in_y = offs + in_y;
+        in_w -= offs * 2;
+        in_h -= offs * 2;
+    }
+    i = 0;
+    cur_obj = &level.objects[actobj.objects[i]];
+    if (i < actobj.num_active_objects)
+    {
+        do
+        {
+            if (obj != cur_obj)
+            {
+                switch (cur_obj->type)
+                {
+                    case TYPE_BADGUY1:
+                        if (
+                                !(cur_obj->main_etat == 2 || (cur_obj->main_etat == 0 && cur_obj->sub_etat == 3)) &&
+                                (!(cur_obj->eta[cur_obj->main_etat][cur_obj->sub_etat].flags & 0x40) &&
+                                 GET_SPRITE_POS(cur_obj, cur_obj->follow_sprite, &cur_x, &cur_y, &cur_w, &cur_h) &&
+                                 inter_box(cur_x, cur_y, cur_w, cur_h, in_x, in_y, in_w, in_h)
+                                )
+                                )
+                        {
+                            set_main_and_sub_etat(cur_obj, 0, 4);
+                            cur_obj->follow_sprite = 4;
+                            cur_obj->follow_y = 0;
+                            cur_obj->speed_x = 0;
+                            cur_obj->speed_y = 0;
+                            cur_obj->offset_hy = 11;
+                            cur_obj->flags.follow_enabled = 1;
+                            if (ray.cmd_arg_2 == obj->id)
+                                RAY_TOMBE();
+                            if (cur_obj->cmd == GO_WAIT)
+                            {
+                                if ((cur_obj->flags.flip_x))
+                                    skipToLabel(cur_obj, 3, true);
+                                else
+                                    skipToLabel(cur_obj, 2, true);
+                            }
+                            set_sub_etat(obj, 9);
+                            obj->is_active = 0;
+                            done = true;
+                        }
+                        break;
+                    case TYPE_BOUEE_JOE:
+                        if (
+                                GET_SPRITE_POS(cur_obj, cur_obj->follow_sprite, &cur_x, &cur_y, &cur_w, &cur_h) &&
+                                obj->type == TYPE_POI2 &&
+                                inter_box(cur_x, cur_y, cur_w, cur_h, in_x, in_y, in_w, in_h) &&
+                                !(cur_obj->main_etat == 2 && cur_obj->sub_etat == 6)
+                                )
+                        {
+                            /* sgn() on android */
+                            if (
+                                    obj->flags.flip_x &&
+                                    (cur_obj->x + cur_obj->offset_bx) - obj->x - obj->offset_bx > -1
+                                    )
+                            {
+                                cur_obj->configuration = 1;
+                                skipToLabel(obj, 3, true);
+                                cur_obj->speed_x = 8;
+                            }
+                            if (
+                                    !(obj->flags.flip_x) &&
+                                    (cur_obj->x + cur_obj->offset_bx) - obj->x - obj->offset_bx < 0
+                                    )
+                            {
+                                cur_obj->configuration = 1;
+                                skipToLabel(obj, 4, true);
+                                cur_obj->speed_x = -8;
+                            }
+                        }
+                        break;
+                }
+
+                if (done)
+                    break;
+            }
+            i++;
+            cur_obj = &level.objects[actobj.objects[i]];
+        } while (i < actobj.num_active_objects);
+    }
 }
 
 //2F1E0
@@ -1630,7 +1730,23 @@ void obj_jump(obj_t* obj) {
 
 //2F2FC
 void DO_MOVING_PLATFORM_COMMAND(obj_t* obj) {
-    //stub
+    /* 49320 8016DB20 -O2 */
+    s16 x_cen;
+    s16 y_cen;
+    s16 chdir;
+
+    x_cen = get_center_x(obj);
+    y_cen = get_center_y(obj);
+    chdir = on_block_chdir(obj, x_cen, y_cen);
+    /* TODO: remove cast once sure of test_allowed() return */
+    if (chdir && (s16) test_allowed(obj, x_cen, y_cen))
+        skipToLabel(obj, 99, true);
+
+    obj->flags.flip_x = 0;
+    if (obj->cmd == GO_SPEED) {
+        obj->speed_x = obj->iframes_timer;
+        obj->speed_y = obj->cmd_arg_2;
+    }
 }
 
 //2F378
@@ -2051,22 +2167,114 @@ void DO_PROP_COMMAND(obj_t* obj) {
 
 //314A4
 void move_fruit_in_water(obj_t* obj) {
-    //stub
+    s16 btyp;
+    s16 x;
+    s16 y;
+    s16 w;
+    s16 h;
+    s32 x2;
+
+    u8 obj_flip_x = obj->flags.flip_x;
+    if (obj->main_etat == 0)
+    {
+        if (obj->sub_etat == 13 && ray.cmd_arg_2 == obj->id)
+            set_main_and_sub_etat(obj, 0, 15);
+
+        if (obj->main_etat == 0 && obj->sub_etat == 15)
+        {
+            if (obj->type == TYPE_FALLING_OBJ2 && ray.cmd_arg_2 == -1)
+            {
+                set_sub_etat(obj, 13);
+                obj->speed_x = 0;
+            }
+            else if (ray.cmd_arg_2 == obj->id)
+            {
+                obj->flags.flip_x = ray.flags.flip_x;
+                SET_X_SPEED(obj);
+                obj->flags.flip_x = obj_flip_x;
+            }
+
+            if (obj->speed_x != 0)
+            {
+                GET_ANIM_POS(obj, &x, &y, &w, &h);
+                x2 = x;
+                if (obj->speed_x > -1)
+                    x2 += w;
+                btyp = BTYP(x2 >> 4, (y + 16) >> 4);
+                if (block_flags[btyp] & 2) {
+                    set_main_and_sub_etat(obj, 0, 13);
+                    obj->speed_x = 0;
+                }
+            }
+        }
+    }
 }
 
 //315F0
 void DO_FALLING_OBJ_CMD(obj_t* obj) {
-    //stub
+    /* 50A30 80175230 -O2 */
+    if (obj->main_etat == 2 && obj->btypes[0] == BTYP_WATER) {
+        set_main_and_sub_etat(obj, 0, 14);
+        obj->y = ((obj->offset_by + obj->y) & 0xfff0) - obj->offset_by + 7;
+    }
+    move_fruit_in_water(obj);
+    DO_OBJ_COLLISIONS(obj, 10);
+    if (obj->sub_etat == 9)
+        REINIT_OBJECT(obj);
 }
 
 //3167C
 void DoFallingObjPoingCollision(obj_t* obj, i16 a2) {
-    //stub
+    i32 fall_x_accel = 0;
+    switch (obj->type)
+    {
+        case TYPE_FALLING_OBJ:
+        case TYPE_FALLING_OBJ2:
+        case TYPE_FALLING_OBJ3:
+            PlaySnd(44, obj->id);
+            break;
+        case TYPE_FALLING_YING:
+        case TYPE_FALLING_YING_OUYE:
+            PlaySnd(139, obj->id);
+            break;
+    }
+
+    switch (poing.sub_etat)
+    {
+        case 1:
+        case 3:
+        case 5:
+            fall_x_accel = poing.damage;
+            break;
+        case 8:
+        case 10:
+        case 12:
+            fall_x_accel = poing.damage - 2;
+        case 2:
+        case 4:
+        case 6:
+        case 7:
+        case 9:
+        case 11:
+            break;
+    }
+    fall_x_accel = fall_x_accel * 5 + 10;
+    if (poing_obj->speed_x < 0)
+        fall_x_accel = -fall_x_accel;
+
+    make_my_fruit_go_down(obj, fall_x_accel);
 }
 
 //3171C
 void DO_BLKTOON_EYES_CMD(obj_t* obj) {
-    //stub
+    /* 50C60 80175460 -O2 -msoft-float */
+    s16 prev_spd_x = obj->speed_x;
+
+    SET_X_SPEED(obj);
+    if (prev_spd_x * obj->speed_x < 0) {
+        obj->speed_x = prev_spd_x;
+        obj->flags.flip_x ^= 1;
+    }
 }
 
 //31768

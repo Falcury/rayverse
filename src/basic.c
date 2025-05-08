@@ -854,8 +854,26 @@ void init_obj_in_the_air(obj_t* obj) {
 }
 
 //1EAB4
-void make_my_fruit_go_down(obj_t* obj, i16 a2) {
-    //stub
+void make_my_fruit_go_down(obj_t* obj, i16 x_accel) {
+    /* 243C4 80148BC4 -O2 -msoft-float */
+    if (obj->main_etat == 2 && Abs(obj->speed_x) < 32)
+        obj->speed_x += x_accel;
+    if (obj->type == TYPE_FALLING_YING_OUYE)
+    {
+        if (obj->main_etat != 2 || obj->sub_etat != 0)
+        {
+            set_main_and_sub_etat(obj, 2, 0);
+            init_obj_in_the_air(obj);
+        }
+    }
+    else
+    {
+        if (obj->main_etat != 2 || obj->sub_etat != 2)
+        {
+            set_main_and_sub_etat(obj, 2, 2);
+            init_obj_in_the_air(obj);
+        }
+    }
 }
 
 //1EB18

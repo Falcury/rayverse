@@ -1054,7 +1054,446 @@ void PIRATE_POELLE_REACT(obj_t* obj) {
 
 //63800
 void DO_SPECIAL_PLATFORM(obj_t* obj) {
-    //stub
+    /* 3FFAC 801647AC -O2 -msoft-float */
+    ObjType obj_type;
+    s16 plat_x; s16 plat_y; s16 plat_w; s16 plat_h;
+    u8 unk_2;
+    u16 test_1;
+    s32 temp_a0_4;
+    s32 temp_a0_6;
+    s32 unk_1 = RayEvts.tiny ? 0x0100 : 0x0200;
+    u8 is_rolling_speed = unk_1 < __builtin_abs(decalage_en_cours);
+
+    switch (obj->type)
+    {
+        case TYPE_AUTOJUMP_PLAT:
+        case TYPE_MOVE_AUTOJUMP_PLAT:
+        case TYPE_CAISSE_CLAIRE:
+        case TYPE_GOMME:
+        case TYPE_MARK_AUTOJUMP_PLAT:
+            if (ray.cmd_arg_2 == obj->id)
+            {
+                if (obj->iframes_timer == 0 || --obj->iframes_timer == 0)
+                {
+                    button_released = 1;
+                    switch (ray.main_etat * 0x100 + ray.sub_etat)
+                    {
+                        case 0xb:
+                        case 0xc:
+                            RAY_THROW_FIST();
+                            break;
+                    }
+
+                    set_main_and_sub_etat(&ray, 0, 0);
+                    ray_jump();
+                    obj->ray_dist = 10000;
+                    jump_time = 12;
+                    ray.speed_y -= 3;
+                    obj_type = obj->type;
+                    if (obj_type == TYPE_MARK_AUTOJUMP_PLAT)
+                        set_main_and_sub_etat(obj, 0, 17);
+                    else if (obj_type == TYPE_CAISSE_CLAIRE)
+                    {
+                        if (!(obj->main_etat == 0 && obj->sub_etat == 2))
+                            set_main_and_sub_etat(obj, 0, 1);
+                        else
+                            set_main_and_sub_etat(obj, 0, 3);
+                    }
+                    else if (obj_type == TYPE_GOMME)
+                    {
+                        if (obj->main_etat == 0 && obj->sub_etat == 0)
+                        {
+                            allocatePaillette(&ray);
+                            skipToLabel(obj, 1, true);
+                        }
+                    }
+                    GET_SPRITE_POS(obj, obj->follow_sprite, &plat_x, &plat_y, &plat_w, &plat_h);
+                    if (ray.x + ray.offset_bx - plat_x < plat_w >> 1) /* TODO: ternary? */
+                        decalage_en_cours = -0x0200;
+                    else
+                        decalage_en_cours = 0x0200;
+                }
+            }
+            else
+                obj->iframes_timer = obj->cmd_arg_2;
+            break;
+        case TYPE_INST_PLAT:
+            if (ray.cmd_arg_2 == obj->id)
+            {
+                if (obj->iframes_timer == 0 || --obj->iframes_timer == 0)
+                {
+                    GET_SPRITE_POS(obj, obj->follow_sprite, &plat_x, &plat_y, &plat_w, &plat_h);
+                    RAY_HIT(false, NULL);
+                    if (ray.x + ray.offset_bx - plat_x < plat_w >> 1)
+                        ray.flags.flip_x = 1;
+                    else
+                        ray.flags.flip_x = 0;
+                }
+            }
+            else
+                obj->iframes_timer = obj->cmd_arg_2;
+            break;
+        case TYPE_COUTEAU:
+            if (
+                    ray.cmd_arg_2 == obj->id &&
+                    obj->main_etat == 0 && obj->sub_etat == 9
+                    )
+            {
+                if (obj->iframes_timer == 0 || --obj->iframes_timer == 0)
+                {
+                    button_released = 1;
+                    switch (ray.main_etat * 0x100 + ray.sub_etat)
+                    {
+                        case 0xb:
+                        case 0xc:
+                            RAY_THROW_FIST();
+                            break;
+                    }
+
+                    set_main_and_sub_etat(&ray, 0, 0);
+                    ray_jump();
+                    obj->ray_dist = 10000;
+                    jump_time = 12;
+                    ray.speed_y -= 4;
+                    set_main_and_sub_etat(obj, 0, 10);
+                    GET_SPRITE_POS(obj, obj->follow_sprite, &plat_x, &plat_y, &plat_w, &plat_h);
+                    if (ray.x + ray.offset_bx - plat_x < plat_w >> 1)
+                        decalage_en_cours = -0x0200;
+                    else
+                        decalage_en_cours = 0x0200;
+                }
+            }
+            else
+                obj->iframes_timer = obj->cmd_arg_2;
+            break;
+        case TYPE_PAILLETTE:
+        case TYPE_DESTROYING_DOOR:
+            if (obj->flags.alive)
+            {
+                if (ray.cmd_arg_2 == obj->id || obj->link != obj->cmd_arg_1)
+                {
+                    if (obj->link == obj->cmd_arg_1)
+                    {
+                        set_sub_etat(obj, 11);
+                        obj->link--;
+                    }
+                    else if (obj->link == 0 || --obj->link == 0)
+                    {
+                        obj_init(obj);
+                        obj->flags.alive = 0;
+                        obj->is_active = 0;
+                        if (ray.cmd_arg_2 == obj->id)
+                        {
+                            ray.cmd_arg_2 = -1;
+                            obj->ray_dist = 1000;
+                            set_main_and_sub_etat(&ray, 2, 2);
+                            Reset_air_speed(is_rolling_speed);
+                            jump_time = 0;
+                            ray.link = 0;
+                        }
+                    }
+                }
+            }
+            else
+                obj->ray_dist = 1000;
+            break;
+        case TYPE_CRUMBLE_PLAT:
+            if (obj->link != 0) {
+                if (
+                        (ray.cmd_arg_2 == obj->id || obj->link != 0x0014) &&
+                        --obj->link == 0
+                        )
+                    set_sub_etat(obj, 11);
+            }
+            else
+            {
+                if (obj->cmd_arg_1 != 0)
+                {
+                    obj->cmd_arg_1--;
+                    if (num_world == 1)
+                    {
+                        if (horloge[2] != 0) /* TODO: ternary? */
+                            obj->display_prio = 0;
+                        else
+                            obj->display_prio = 4;
+                    }
+
+                    if (obj->cmd_arg_1 <= obj->iframes_timer)
+                    {
+                        if (ray.cmd_arg_2 == obj->id)
+                        {
+                            ray.cmd_arg_2 = -1;
+                            set_main_and_sub_etat(&ray, 2, 1);
+                            Reset_air_speed(is_rolling_speed);
+                            jump_time = 0;
+                            ray.link = 0;
+                            obj->ray_dist = 10000;
+                            ray.speed_y = 0;
+                        }
+                        obj->flags.follow_enabled = 0;
+                    }
+                }
+                else if (num_world != 1) /* this? or else{} then nest? */
+                {
+                    if (ray.cmd_arg_2 == obj->id)
+                    {
+                        ray.cmd_arg_2 = -1;
+                        set_main_and_sub_etat(&ray, 2, 1);
+                        Reset_air_speed(is_rolling_speed);
+                        jump_time = 0;
+                        ray.link = 0;
+                        ray.speed_y = 0;
+                        obj->ray_dist = 10000;
+                    }
+
+                    if (obj->sub_etat == 6 && EOA(obj))
+                        obj_init(obj);
+
+                    if (obj->sub_etat == 20)
+                        obj->flags.follow_enabled = 1;
+                }
+                else
+                {
+                    obj->is_active = 0;
+                    obj->active_flag = 4;//ACTIVE_SPECIAL;
+                    obj->display_prio = 4;
+                    obj->flags.follow_enabled = 1;
+                    if (ray.cmd_arg_2 == obj->id)
+                    {
+                        ray.cmd_arg_2 = -1;
+                        set_main_and_sub_etat(&ray, 2, 1);
+                        Reset_air_speed(is_rolling_speed);
+                        jump_time = 0;
+                        ray.link = 0;
+                        ray.speed_y = 0;
+                        obj->ray_dist = 10000;
+                    }
+                }
+            }
+            break;
+        case TYPE_BIG_BOING_PLAT:
+            unk_2 = false;
+            if (ray.cmd_arg_2 == obj->id)
+            {
+                if (!(obj->main_etat == 2 || obj->cmd_arg_2 == 0))
+                {
+                    unk_2 = true;
+                    set_main_and_sub_etat(obj, 2, 4);
+                    obj->link = 0;
+                    obj->gravity_value_1 = 0;
+                    obj->gravity_value_2 = 0;
+                    obj->speed_y =
+                    obj->iframes_timer =
+                            obj->cmd_arg_2 + 1;
+                    obj->cmd_arg_2 = 0;
+                }
+                else if (obj->iframes_timer == obj->cmd_arg_2 + 1)
+                    unk_2 = true;
+            }
+            if (obj->main_etat == 2)
+            {
+                if (obj->speed_y < -obj->iframes_timer)
+                {
+                    set_main_and_sub_etat(obj, 0, 2);
+                    obj->iframes_timer = 0;
+                    obj->y = obj->init_y;
+                    obj->speed_y = 0;
+
+                    if (ray.cmd_arg_2 == obj->id)
+                    {
+                        ray.y += obj->init_y - obj->y;
+                        switch (ray.main_etat * 0x100 + ray.sub_etat)
+                        {
+                            case 0xb:
+                            case 0xc:
+                                RAY_THROW_FIST();
+                                break;
+                        }
+
+                        set_main_and_sub_etat(&ray, 0, 0);
+                        button_released = 1;
+                        ray_jump();
+                        obj->ray_dist = 10000;
+                        jump_time = 12;
+                    }
+                }
+                else
+                {
+                    test_1 = 1; /* TODO: remove? */
+                    if (
+                            !unk_2 && ray.cmd_arg_2 == obj->id &&
+                            (button_released & 1) == test_1 &&
+                            options_jeu.test_fire1()
+                            )
+                    {
+                        ray_jump();
+                        if (ray.main_etat == 2)
+                            obj->ray_dist = 10000;
+
+                        /* TODO: ??? */
+                        temp_a0_4 = (u16) obj->speed_y;
+                        if ((u16) (temp_a0_4 + 2) >= 5U)
+                        {
+                            if ((s16) temp_a0_4 < -2)
+                            {
+                                ray.speed_y -= 2;
+                                ray.speed_y += temp_a0_4;
+                            }
+                        }
+                        else
+                        {
+                            ray.speed_y -= 2;
+                        }
+                    }
+                }
+            }
+            break;
+        case TYPE_BOING_PLAT:
+            unk_2 = false;
+            if (ray.cmd_arg_2 == obj->id)
+            {
+                if (!(obj->main_etat == 2 || obj->cmd_arg_2 == 0))
+                {
+                    unk_2 = true;
+                    set_main_and_sub_etat(obj, 2, 3);
+                    obj->link = 0;
+                    obj->gravity_value_1 = 0;
+                    obj->gravity_value_2 = 0;
+                    obj->speed_y =
+                    obj->iframes_timer =
+                            obj->cmd_arg_2 + 1;
+                    obj->cmd_arg_2 = 0;
+                }
+                else if (obj->iframes_timer == obj->cmd_arg_2 + 1)
+                    unk_2 = true;
+            }
+
+            if (obj->main_etat == 2)
+            {
+                if (obj->speed_y < -obj->iframes_timer)
+                {
+                    set_main_and_sub_etat(obj, 0, 24);
+                    obj->iframes_timer = 0;
+                    obj->speed_y = 0;
+                    if (ray.cmd_arg_2 == obj->id)
+                    {
+                        ray.y += obj->init_y - obj->y;
+                        switch (ray.main_etat * 0x100 + ray.sub_etat)
+                        {
+                            case 0xb:
+                            case 0xc:
+                                RAY_THROW_FIST();
+                                break;
+                        }
+
+                        set_main_and_sub_etat(&ray, 0, 0);
+                        button_released = 1;
+                        ray_jump();
+                        obj->ray_dist = 10000;
+                        jump_time = 12;
+                    }
+                    obj->y = obj->init_y;
+                }
+                else
+                {
+                    test_1 = 1;
+                    if (
+                            !unk_2 && ray.cmd_arg_2 == obj->id &&
+                            (button_released & 1) == test_1 &&
+                            options_jeu.test_fire1()
+                            )
+                    {
+                        ray_jump();
+                        if (ray.main_etat == 2)
+                            obj->ray_dist = 10000;
+
+                        temp_a0_6 = (u16) obj->speed_y;
+                        if ((u16) ((temp_a0_6 + 2)) < 5U)
+                        {
+                            ray.speed_y -= 2;
+                        }
+                        else if ((s16) temp_a0_6 < -2)
+                        {
+                            ray.speed_y += temp_a0_6;
+                            MAX_2(ray.speed_y, -7);
+                        }
+                    }
+                }
+            }
+            break;
+        case TYPE_ONOFF_PLAT:
+            if (obj->sub_etat == 20)
+            {
+                if (obj->iframes_timer == 0)
+                {
+                    obj->iframes_timer = obj->cmd_arg_2;
+                    if (num_world != 1)
+                        set_sub_etat(obj, 7);
+                    else
+                    {
+                        if (obj->display_prio != 0)
+                            obj->display_prio = 0;
+                        else
+                            obj->display_prio = 3;
+                    }
+                }
+                else
+                    obj->iframes_timer--;
+            }
+
+            if (
+                    (num_world != 1 || obj->display_prio == 0) &&
+                    (num_world == 1 || obj->sub_etat != 20)
+                    )
+            {
+                if (ray.cmd_arg_2 == obj->id)
+                {
+                    ray.cmd_arg_2 = -1;
+                    set_main_and_sub_etat(&ray, 2, 2);
+                    Reset_air_speed(is_rolling_speed);
+                    jump_time = 0;
+                    ray.link = 0;
+                    ray.speed_y = 0;
+                }
+                obj->ray_dist = 1000;
+            }
+            break;
+        case TYPE_BB1_PLAT:
+            if (obj->sub_etat == 7)
+            {
+                if (
+                        obj->anim_frame == obj->animations[obj->anim_index].frame_count - 1 &&
+                        horloge[obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0xf] == 0
+                        )
+                {
+                    obj->is_active = 0;
+                    obj->flags.alive = 0;
+                }
+
+                if (ray.cmd_arg_2 == obj->id)
+                {
+                    ray.cmd_arg_2 = -1;
+                    set_main_and_sub_etat(&ray, 2, 2);
+                    Reset_air_speed(is_rolling_speed);
+                    jump_time = 0;
+                    ray.link = 0;
+                    ray.speed_y = 0;
+                }
+                obj->ray_dist = 1000;
+            }
+
+            if (obj->sub_etat == 20)
+            {
+                if (ray.cmd_arg_2 == obj->id || obj->link != obj->cmd_arg_1)
+                    obj->link--;
+
+                if (obj->iframes_timer == 0 || obj->link == 0)
+                    set_sub_etat(obj, 7);
+                else
+                    obj->iframes_timer--;
+            }
+            break;
+    }
 }
 
 //643BC
