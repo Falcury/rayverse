@@ -412,7 +412,7 @@ obj_procs_t ObjectsFonctions[262] = {
         {TEST_WIZARD,                      DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 5: magician
         {DO_ONE_CMD,                       DoFallingObjPoingCollision,       DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 6: yin with pin
         {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 7: swinging spiky fruit
-        {DO_ONE_CMD,                       DoFallingObjPoingCollision,       DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 8: plum 1
+        {DO_FALLING_OBJ_CMD,               DoFallingObjPoingCollision,       DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 8: plum 1
         {DO_ONE_CMD,                       DoBadGuy23PoingCollision,         DoRaymanCollisionDefault,        DoBadGuy23RaymanZDD,       ObjectUTurnDefault}, // 9: small livingstone
         {DO_PYRANHA,                       DoFishPoingCollision,             DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 10: piranha
         {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 11: hit effect

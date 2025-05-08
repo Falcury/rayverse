@@ -530,7 +530,7 @@ void allocate_splash(obj_t* obj) {
             calc_obj_pos(cur_obj);
             set_main_and_sub_etat(cur_obj, 0, 0);
             cur_obj->anim_frame = 0;
-            cur_obj->flags.flag_0x40 = 1;
+            obj->flags.flag_0x40 = 1;
             break;
         }
     }
