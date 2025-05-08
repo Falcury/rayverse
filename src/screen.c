@@ -167,9 +167,9 @@ void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2
                         draw_height = h2 - v34;
                     }
                     Copy_Plan0_To_Buf(source_buffer_pos - BufferNormalDeplt, dest_buffer_pos, plan_width, draw_height, w2 - w1);
-
+                } else {
+                    Copy_Plan0_To_Buf(source_buffer_pos + (y - v34) * plan_width - BufferNormalDeplt, dest_buffer_pos + 320 * (y - v34), plan_width, draw_height - (y - v34), w2 - w1);
                 }
-                Copy_Plan0_To_Buf(source_buffer_pos + (y - v34) * plan_width - BufferNormalDeplt, dest_buffer_pos + 320 * (y - v34), plan_width, draw_height - (y - v34), w2 - w1);
             }
         }
         plan_width /= 2;
