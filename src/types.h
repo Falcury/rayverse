@@ -582,8 +582,8 @@ typedef struct bnk_header_t {
 } bnk_header_t;
 
 typedef struct bande_t {
-    i16 height;
-    i16 field_2;
+    i16 length;
+    i16 offset;
     i16 field_4;
     i16 field_6;
     u8 field_8;
@@ -597,7 +597,7 @@ typedef struct bande_t {
 } bande_t;
 
 typedef struct def_bande_t {
-    i16 height;
+    i16 length;
     u8 field_2;
     //u8 field_3_align;
     u8 field_4;
@@ -607,8 +607,8 @@ typedef struct def_bande_t {
 } def_bande_t;
 
 typedef struct def_sprite_t {
-    i16 field_0;
-    i16 field_2;
+    i16 x;
+    i16 y;
     i16 bande_index;
     //i16 field_6_align;
 } def_sprite_t;
