@@ -409,13 +409,13 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             mem_read(&flags_hi, mem, 1);
             obj_flags_t flags = {0};
             flags.flag_1 = flags_lo & 1u;
-            flags.command_test = flags_lo & 2u;
-            flags.alive = flags_lo & 4u;
-            flags.flip_x = flags_lo & 8u;
-            flags.read_commands = flags_lo & 0x10u;
-            flags.follow_enabled = flags_lo & 0x20u;
-            flags.flag_0x40 = flags_lo & 0x40u;
-            flags.anim_changed = flags_lo & 0x80u;
+            flags.command_test = (flags_lo & 2u) != 0;
+            flags.alive = (flags_lo & 4u) != 0;
+            flags.flip_x = (flags_lo & 8u) != 0;
+            flags.read_commands = (flags_lo & 0x10u) != 0;
+            flags.follow_enabled = (flags_lo & 0x20u) != 0;
+            flags.flag_0x40 = (flags_lo & 0x40u) != 0;
+            flags.anim_changed = (flags_lo & 0x80u) != 0;
             flags.flag_0x100 = flags_hi & 1u;
             obj->flags = flags;
 
