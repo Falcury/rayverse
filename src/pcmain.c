@@ -131,6 +131,11 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
             snprintf(debug_text, 64, "%d : %d", ray.main_etat, ray.sub_etat);
             display_text(debug_text, 132, 26, 1, 0);
         }
+        // DEBUG: skip level
+        if (TOUCHE(SC_F4)) {
+            DO_FADE_OUT();
+            ChangeLevel();
+        }
 
         if (JeuCracker) {
             DisplayCrackers(); //TODO
