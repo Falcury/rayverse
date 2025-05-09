@@ -851,7 +851,10 @@ void LOAD_GENERAL_SCREEN(void) {
 
 //36C88
 void LOAD_OPTIONS_SCREEN(void) {
-    //stub
+    i16 width = 0;
+    i16 height = 0;
+    LoadPcxOptions(EffetBufferNormal, 12, &width, &height, &rvb_plan3);
+    //LoadPcxPaletteInVignet(12, &rvb_plan3);
 }
 
 //36CBC

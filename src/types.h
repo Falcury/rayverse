@@ -440,8 +440,8 @@ typedef struct voice_t {
 } voice_t;
 
 typedef struct options_t {
-	i16 field_0;
-	i16 field_2;
+	i16 music_enabled;
+	i16 sound_volume;
 	i16 SizeScreen;
 	i16 Frequence;
 	i16 fixon;

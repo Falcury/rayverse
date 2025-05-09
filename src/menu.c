@@ -256,12 +256,14 @@ void DO_NEW_MENUS(void) {
         switch(menuEtape) {
             default: break;
             case 0: {
+                // Main menu screen
                 pINIT_SCREEN = INIT_GENERAL_CHOICE;
                 pLOAD_SCREEN = LOAD_GENERAL_SCREEN;
                 INIT_FADE_IN();
                 DO_MENU();
             } break;
             case 3: {
+                // Save selection screen
                 DO_SAVE_CHOICE();
                 if (!MENU_RETURN) {
                     fin_du_jeu = 0;
@@ -270,6 +272,7 @@ void DO_NEW_MENUS(void) {
                 }
             } break;
             case 4: {
+                // Options screen
                 pINIT_SCREEN = INIT_OPTIONS_CHOICE;
                 if (pLOAD_SCREEN) {
                     byte_E4CFD = 1;
@@ -278,16 +281,19 @@ void DO_NEW_MENUS(void) {
                 DO_MENU();
             } break;
             case 7: {
+                // Setup keys screen (in options)
                 pINIT_SCREEN = INIT_KEY_SCREEN;
                 pLOAD_SCREEN = NULL;
                 DO_MENU();
             } break;
             case 8: {
+                // Setup pad screen (in options)
                 pINIT_SCREEN = INIT_PAD_SCREEN;
                 pLOAD_SCREEN = NULL;
                 DO_MENU();
             } break;
             case 9: {
+                // Graphics details screen (in options)
                 pINIT_SCREEN = INIT_GRAPHIC_SCREEN;
                 pLOAD_SCREEN = NULL;
                 DO_MENU();
@@ -475,27 +481,334 @@ void END_GENERAL_SCREEN(void) {
 
 //4A44C
 void INIT_OPTIONS_CHOICE(void) {
-    //stub
+    /*if (WindowsLance == 0) {
+        if (__readdr(0) || __readdr(1) || __readdr(2) || __readdr(3)) { exit(); }
+    }*/
+    pINIT_AFFICHE_SCREEN = INIT_AFFICHE_ECRAN_OPTIONS;
+    pAFFICHE_SCREEN = AFFICHE_ECRAN_OPTIONS;
+    pDO_COMMANDE = DO_COMMANDE_OPTIONS;
+    pEND_SCREEN = END_OPTIONS_SCREEN;
+    delai_repetition = 12;
+    repetition = 6;
+    max_sound = 20;
+    ecart_barre = 4;
+    compteur = 0;
+    max_compteur = 100;
+    button_released = 1;
+    delai_barre = 3;
+    delai_stereo = 8;
+    if (language != 0) {
+        byte_E4CFC = 90;
+    } else {
+        byte_E4CFC = 75;
+    }
+    basex = 160 - byte_E4CFC;
+    if (OptionGame) {
+        position = 6;
+        option_exit = 6;
+        nbre_options = 6;
+    } else {
+        position = 5;
+        option_exit = 5;
+        nbre_options = 5;
+    }
+    first_option = 0;
+    general_init_screen(20, 60, 5);
+    if (byte_96883) {
+        options.sound_volume = byte_E4CD9;
+        byte_96883 = 0;
+        options.music_enabled = byte_E4CD8;
+    } else {
+        options.music_enabled = options_jeu.music_enabled;
+        options.sound_volume = options_jeu.sound_volume;
+    }
+    ExitMenu = 0;
+    sortie_options = 0;
 }
 
 //4A628
 void INIT_AFFICHE_ECRAN_OPTIONS(void) {
-    //stub
+    char* v32 = "off";
+    u8 v28[8] = {5, 5, 5, 5, 5, 5, 3, 0}; //0x5050505;
+//    u8 v29[4] = {5, 5, 3, 0}; // 0x30505; //dword_49294[1]
+    u32 v30 = 0; //dword_49294[2];
+    menu_to_display[9].is_fond = 1;
+    menu_to_display[9].font_size = 2;
+    menu_to_display[9].field_D5 = 0;
+    menu_to_display[9].color = 1;
+    char v39[4];
+    strncpy(v39, "on", 4);
+    for (i32 i = first_option; i <= first_option + nbre_options; ++i) {
+        display_item_t* to_display = menu_to_display + i;
+        to_display->font_size = 2;
+        to_display->field_D5 = 0;
+        to_display->is_fond = 1;
+        if (i == option_exit) {
+            strcpy(to_display->text, language_txt[232]); // /exit/
+            to_display->xpos = (SCREEN_WIDTH / 2);
+            to_display->ypos = debut_sortie;
+            to_display->color = v28[6];
+        } else {
+            to_display->color = v28[i];
+            strcpy(to_display->text, language_txt[190 + i]); // { "music", "sound", "/setup keys/", "/graphics details/", "/quit game/" }
+            switch(i) {
+                case 0: {
+                    // Text "music" offsetted to the left with "on off" to the right
+                    i32 text_width = calc_largmax_text(to_display->text, -1, 8, 1, 2) + 16 +
+                                     calc_largmax_text(v39, -1, 8, 1, 2) + calc_largmax_text(v32, -1, 8, 1, 2);
+                    to_display->xpos = (SCREEN_WIDTH / 2) - (text_width >> 1);
+                } break;
+                case 1: {
+                    // Text "sound" offsetted to the left
+                    i32 text_width = calc_largmax_text(to_display->text, -1, 8, 1, 2) + 16 +
+                             20 * calc_largmax_text("|", -1, 8, 1, 2);
+                    to_display->xpos = (SCREEN_WIDTH / 2) - (text_width >> 1);
+                } break;
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    // Text centered
+                    to_display->xpos = (SCREEN_WIDTH / 2);
+                    break;
+                default:
+                    break;
+            }
+            to_display->ypos = i * (ecart_options + 15) + debut_options;
+        }
+        INIT_TXT_BOX(to_display);
+    }
+
+    strcpy(msg_to_display[0].text, language_txt[136]); ///no joystick detected !/check if cable is connected/
+    msg_to_display[0].xpos = (SCREEN_WIDTH / 2);
+    msg_to_display[0].ypos = (SCREEN_HEIGHT / 2);
+    msg_to_display[0].font_size = 2;
+    msg_to_display[0].is_fond = 2;
+    msg_to_display[0].field_D5 = 0;
+    INIT_TXT_BOX(&msg_to_display[0]);
+    msg_to_display[1].xpos = (SCREEN_WIDTH / 2);
+    msg_to_display[1].ypos = (SCREEN_HEIGHT / 2);
+    msg_to_display[1].font_size = 2;
+    msg_to_display[1].is_fond = 2;
+    msg_to_display[1].field_D5 = 0;
+
+    if (byte_E4CFD) {
+        if (OptionGame) {
+            word_E4CEC_x = basex;
+            word_E4CF4_w = 2 * byte_E4CFC;
+            word_E4CF0_y = debut_titre - 25;
+            word_E4CEE_h = menu_to_display[option_exit].ypos - debut_titre + 35;
+            FonduOption(word_E4CEC_x, word_E4CF0_y, word_E4CF4_w, word_E4CEE_h, 0);
+        }
+    } else {
+        i16 v21 = debut_titre - 25;
+        i16 v42_hi = menu_to_display[option_exit].ypos - debut_titre + 35;
+        i16 v22_x = (basex >= word_E4CEC_x) ? word_E4CEC_x : basex;
+        i16 v23_y = word_E4CF0_y;
+        if (v21 < word_E4CF0_y) {
+            v23_y = debut_titre - 25;
+        }
+        i16 v24 = word_E4CF4_w + word_E4CEC_x;
+        i32 v37 = basex;
+        i32 v33 = v24;
+        i32 v25 = basex + 2 * byte_E4CFC;
+        i32 v34 = (v25 >= v24) ? v25 - v22_x : v24 - v22_x;
+        i16 unk_w = v34;
+        i32 v26 = word_E4CEE_h + word_E4CF0_y;
+        i32 v31 = v21;
+        i32 v38 = v42_hi;
+        i32 v36 = v42_hi + v21;
+        if (v26 <= v36) {
+            v26 = v36;
+        }
+        i32 v27_h = v26 - v23_y;
+        word_E4CEC_x = basex;
+        word_E4CF0_y = debut_titre - 25;
+        word_E4CEE_h = v42_hi;
+        word_E4CF4_w = 2 * byte_E4CFC;
+        if (OptionGame) {
+            FonduOption(v22_x, v23_y, unk_w, v27_h, 1); //TODO
+
+        } else {
+            FonduPixel(v22_x, v23_y, unk_w, v27_h); //TODO
+        }
+    }
+    byte_E4CFD = 0;
 }
 
 //4AB34
 void AFFICHE_ECRAN_OPTIONS(void) {
-    //stub
+    DISPLAY_FOND_MENU();
+    if (OptionGame) {
+        CadreTrans(word_E4CEC_x, word_E4CF0_y, word_E4CF4_w, word_E4CEE_h);
+    }
+    display_text(language_txt[181], SCREEN_WIDTH / 2, debut_titre, 1, 1); // /options/
+    for (i32 option_index = first_option; option_index <= first_option + nbre_options; ++option_index) {
+        i16 x = menu_to_display[option_index].xpos;
+        i16 y = menu_to_display[option_index].ypos;
+        if (option_index == position) {
+            display_box_text_plasma(menu_to_display + option_index, 1);
+        } else if (option_index == option_exit) {
+            display_text(language_txt[232], x, y, 2, menu_to_display[option_index].color); // /exit/
+        } else {
+            display_text(language_txt[190 + option_index], x, y, 2, menu_to_display[option_index].color); // { "music", "sound", "/setup keys/", "/graphics details/", "/quit game/" }
+        }
+
+        // NOTE: some parts of the code below don't seem to make sense in the disassembly.
+        // I rewrote it slightly to make it functionally correct.
+        if (option_index == 0) {
+            i32 v5 = calc_largmax_text(menu_to_display[0].text, -1, 8, 1, 2);
+            i32 v6 = v5 + x;
+            const char* nonselected_text;
+            const char* other_text;
+            i32 v18;
+            i32 v8;
+            if (options.music_enabled) {
+                nonselected_text = "off";
+                v18 = v6 + calc_largmax_text("on", -1, 8, 1, 2) + 32;
+                v8 = v6 + 16;
+                other_text = "on";
+            } else {
+                nonselected_text = "on";
+                v18 = v6 + 16;
+                v8 = v6 + calc_largmax_text("on", -1, 8, 1, 2) + 32;
+                other_text = "off";
+            }
+            display_text(nonselected_text, v18, y, 2, 5);
+            if (position == option_index) {
+                display_item_t* to_display = menu_to_display + 9;
+                strcpy(to_display->text, other_text);
+                to_display->xpos = v8;
+                to_display->ypos = menu_to_display[0].ypos;
+                INIT_TXT_BOX(to_display);
+                display_box_text_plasma(to_display, 0);
+            } else {
+                display_text(other_text, v8, y, 2, 5);
+            }
+        } else if (option_index == 1) {
+            i32 draw_x = x + calc_largmax_text(menu_to_display[1].text, -1, 8, 1, 2u) + 16;
+            DrawBlackBorderBox(draw_x, y - 14, 15, 20 * ecart_barre + 1, 1);
+            for (i32 i = 0; i < options.sound_volume; ++i) {
+                u8 color;
+                if (i >= (2 * max_sound) / 3) {
+                    color = 1;
+                } else if (i >= (max_sound / 3)) {
+                    color = 3;
+                } else {
+                    color = 5;
+                }
+                display_text("|", draw_x + ecart_barre * i, y, 2, color);
+            }
+        }
+    }
 }
 
 //4AF28
 void DO_COMMANDE_OPTIONS(void) {
-    //stub
+    TestCompteur();
+    if (SelectButPressed()) {
+        MENU_RETURN = 1;
+    }
+    if (upjoy() && !rightjoy() && !leftjoy() &&
+            (button_released || (delai_repetition < compteur && (compteur % repetition) == 0))
+    ) {
+        PlaySnd_old(68);
+        if (position == first_option) {
+            position = option_exit;
+        } else {
+            --position;
+        }
+    }
+    if (downjoy() && !rightjoy() && !leftjoy() &&
+        (button_released || (delai_repetition < compteur && (compteur % repetition) == 0))
+    ) {
+        PlaySnd_old(68);
+        if (position == option_exit) {
+            position = first_option;
+        } else {
+            ++position;
+        }
+    }
+    if (position == 0 && button_released && (ValidButPressed() || rightjoy() || leftjoy())) {
+        options.music_enabled = !options.music_enabled;
+        if (options.music_enabled) {
+            SetCompteurTrameAudio();
+            cdTime = 0;
+            if (OptionMusicCdActive) {
+                MusicCdActive = 1;
+            }
+        } else {
+            stop_cd();
+            if (OptionMusicCdActive) {
+                MusicCdActive = 0;
+            }
+        }
+    } else if (position == 1 && rightjoy()) {
+        if (options.sound_volume < max_sound) {
+            if (button_released || (delai_repetition < compteur && (compteur % repetition) == 0)) {
+                PlaySnd_old(68);
+                ++options.sound_volume;
+                raj_env_sound(options.sound_volume);
+            }
+        }
+    } else if (position == 1 && leftjoy()) {
+        if (options.sound_volume > 0) {
+            if (button_released || (delai_repetition < compteur && (compteur % repetition) == 0)) {
+                PlaySnd_old(68);
+                --options.sound_volume;
+                raj_env_sound(options.sound_volume);
+            }
+        }
+    } else if (position == 3 && ValidButPressed()) {
+        if (JoystickPresent()) {
+            byte_E4CD8 = options.music_enabled;
+            byte_E4CD9 = options.sound_volume;
+            byte_96883 = 1;
+            menuEtape = 8; // go to setup pad
+            sortie_options = 1;
+        } else {
+            display_box_msg(&msg_to_display[0]); // no joystick connected
+        }
+    } else if (position == 2 && ValidButPressed()) {
+        byte_E4CD8 = options.music_enabled;
+        byte_E4CD9 = options.sound_volume;
+        menuEtape = 7; // go to setup keys
+        sortie_options = 1;
+        byte_96883 = 1;
+    } else if (position == 4 && ValidButPressed()) {
+        byte_E4CD8 = options.music_enabled;
+        byte_E4CD9 = options.sound_volume;
+        menuEtape = 9; // go to graphics details
+        byte_96883 = 1;
+        sortie_options = 1;
+    } else if (position == 5 && ValidButPressed() && button_released && OptionGame) {
+        if (confirmation_msg(0)) {
+            ExitMenu = 1;
+            fin_du_jeu = 1;
+            new_world = 1;
+        }
+
+    }
+    TestButtonReleased();
 }
 
 //4B334
 void END_OPTIONS_SCREEN(void) {
-    //stub
+    if ((position == option_exit && MENU_RETURN != 1) || fin_du_jeu) {
+        options_jeu.music_enabled = options.music_enabled;
+        options_jeu.sound_volume = options.sound_volume;
+    }
+    if (position == option_exit || MENU_RETURN == 1 || fin_du_jeu) {
+        if (OptionMusicCdActive) {
+            MusicCdActive = options_jeu.music_enabled;
+        }
+        menuEtape = 0;
+        if (OptionGame) {
+            FonduOption(word_E4CEC_x, word_E4CF0_y, word_E4CF4_w, word_E4CEE_h, 2);
+        } else {
+            DO_FADE_OUT();
+        }
+    }
 }
 
 //4B3EC
@@ -923,36 +1236,37 @@ void DO_YESNOBIS(void) {
 
 //4FB94
 u8 confirmation_msg(u8 which_message) {
-    msg_to_display.xpos = 160;
-    msg_to_display.ypos = 100;
-    msg_to_display.font_size = 2;
-    msg_to_display.is_fond = 2;
-    msg_to_display.field_D5 = 0;
+    display_item_t* to_display = &msg_to_display[1];
+    to_display->xpos = 160;
+    to_display->ypos = 100;
+    to_display->font_size = 2;
+    to_display->is_fond = 2;
+    to_display->field_D5 = 0;
     switch(which_message) {
         default: break;
         case 0: {
             pos_YN = 1;
             if (OptionGame) {
-                strncpy(msg_to_display.text, language_txt[131], sizeof(msg_to_display.text)); // /do you really want/to quit the game ?/ /
+                strncpy(to_display->text, language_txt[131], sizeof(to_display->text)); // /do you really want/to quit the game ?/ /
             } else {
-                strncpy(msg_to_display.text, language_txt[132], sizeof(msg_to_display.text)); // /return to dos !/are you sure ?/ /
+                strncpy(to_display->text, language_txt[132], sizeof(to_display->text)); // /return to dos !/are you sure ?/ /
             }
-            INIT_TXT_BOX(&msg_to_display);
-            display_box_msg_commande(&msg_to_display, DO_YESNOBIS);
+            INIT_TXT_BOX(to_display);
+            display_box_msg_commande(to_display, DO_YESNOBIS);
         } break;
         case 1: {
             pos_YN = 1;
             pAFFICHE_SCREEN = AFFICHE_ECRAN_SAVE;
-            strncpy(msg_to_display.text, language_txt[129], sizeof(msg_to_display.text)); // /do you really want to erase/this game ?/ /
-            INIT_TXT_BOX(&msg_to_display);
-            display_box_msg_commande(&msg_to_display, DO_YESNOBIS);
+            strncpy(to_display->text, language_txt[129], sizeof(to_display->text)); // /do you really want to erase/this game ?/ /
+            INIT_TXT_BOX(to_display);
+            display_box_msg_commande(to_display, DO_YESNOBIS);
         } break;
         case 2: {
             pos_YN = 1;
             pAFFICHE_SCREEN = AFFICHE_ECRAN_SAVE;
-            strncpy(msg_to_display.text, language_txt[130], sizeof(msg_to_display.text)); // /do you really want to erase/the previously saved game ?/ /
-            INIT_TXT_BOX(&msg_to_display);
-            display_box_msg_commande(&msg_to_display, DO_YESNOBIS);
+            strncpy(to_display->text, language_txt[130], sizeof(to_display->text)); // /do you really want to erase/the previously saved game ?/ /
+            INIT_TXT_BOX(to_display);
+            display_box_msg_commande(to_display, DO_YESNOBIS);
         } break;
         case 3: {
             default_key();
@@ -964,9 +1278,9 @@ u8 confirmation_msg(u8 which_message) {
             // not sure what happens here exactly (something with display buffer copying)
             rvb[0] = MenuPalette;
             INIT_FADE_IN();
-            strncpy(msg_to_display.text, language_txt[130], sizeof(msg_to_display.text)); // /do you really want to erase/the previously saved game ?/ /
-            INIT_TXT_BOX(&msg_to_display);
-            display_box_msg_commande(&msg_to_display, DO_YESNOBIS);
+            strncpy(to_display->text, language_txt[130], sizeof(to_display->text)); // /do you really want to erase/the previously saved game ?/ /
+            INIT_TXT_BOX(to_display);
+            display_box_msg_commande(to_display, DO_YESNOBIS);
             DO_FADE_OUT();
             rvb[0] = rvb_menu_save;
             INIT_FADE_IN();
@@ -982,9 +1296,9 @@ u8 confirmation_msg(u8 which_message) {
             // not sure what happens here exactly (something with display buffer copying)
             rvb[0] = MenuPalette;
             INIT_FADE_IN();
-            strncpy(msg_to_display.text, language_txt[131], sizeof(msg_to_display.text)); // /do you really want/to quit the game ?/ /
-            INIT_TXT_BOX(&msg_to_display);
-            display_box_msg_commande(&msg_to_display, DO_YESNOBIS);
+            strncpy(to_display->text, language_txt[131], sizeof(to_display->text)); // /do you really want/to quit the game ?/ /
+            INIT_TXT_BOX(to_display);
+            display_box_msg_commande(to_display, DO_YESNOBIS);
             DO_FADE_OUT();
             rvb[0] = rvb_menu_save;
             INIT_FADE_IN();
@@ -1017,16 +1331,23 @@ void change_couleur_prg(void) {
 }
 
 //502FC
-void FonduOption(i16 a1, i16 a2, i16 a3, i16 a4, u8 a5) {
+void FonduOption(i16 x, i16 y, i16 w, i16 h, u8 a5) {
     //stub
 }
 
 //50A38
-bool FonduPixel_prg(void) {
+i16 FonduPixel_prg(u32 a1) {
     return false; //stub
 }
 
 //50B0C
-void FonduPixel(i16 a1, i16 a2, i16 a3, i16 a4) {
-    //stub
+void FonduPixel(i16 x, i16 y, i16 w, i16 h) {
+    xFondu = x;
+    yFondu = y;
+    wFondu = w;
+    hFondu = h;
+    draw_buffer = EffetBufferNormal + 64000;
+    pAFFICHE_SCREEN();
+    draw_buffer = DrawBufferNormal;
+    SYNCHRO_LOOP(FonduPixel_prg);
 }

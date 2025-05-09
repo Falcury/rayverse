@@ -1654,10 +1654,9 @@ u8 wi_save_zone[24]; //CAF88
 u8 save_zone[2592]; //CAFA0
 i16 allowed_time[192]; //CB9C0
 u8 bonus_perfect[24]; //CBB40
-display_item_t info_dialog_text; //CBB58 //?
-display_item_t msg_to_display; //CBC30
-display_item_t menu_to_display[9]; //CBD08
-display_item_t text_to_display[11]; //CC4A0
+display_item_t msg_to_display[2]; //CBB58
+display_item_t menu_to_display[10]; //CBD08
+display_item_t text_to_display[10]; //CC4A0
 level_obj_t level_alw; //CCDE8
 level_t level; //CCDF0
 level_obj_t level_obj; //CCDFC
@@ -2353,17 +2352,20 @@ void (*pAFFICHE_SCREEN)(void); //E4CC8
 void (*pEND_SCREEN)(void); //E4CCC
 void (*pLOAD_SCREEN)(void); //E4CD0
 void (*pCOMMANDE_BOX)(void); //E4CD4
+u8 byte_E4CD8; //E4CD8
+u8 byte_E4CD9; //E4CD9
 
+i16 word_E4CE0; //E4CE0
 i16 hFondu; //E4CE2
 i16 xFondu; //E4CE4
 i16 yFondu; //E4CE6
 i16 wFondu; //E4CE8
 i16 EtapeFondu; //E4CEA
-i16 word_E4CEC; //E4CEC
-i16 word_E4CEE; //E4CEE
-i16 word_E4CF0; //E4CF0
+i16 word_E4CEC_x; //E4CEC
+i16 word_E4CEE_h; //E4CEE
+i16 word_E4CF0_y; //E4CF0
 i16 VideoSpeed; //E4CF2
-i16 word_E4CF4; //E4CF4
+i16 word_E4CF4_w; //E4CF4
 u8 but_options[4]; //E4CF6
 u8 InOut; //E4CFB
 u8 byte_E4CFC; //E4CFC

@@ -327,5 +327,5 @@ void Reset_Clavier(void) {
 
 //42790
 bool JoystickPresent(void) {
-    return true; //stub
+    return false; //stub
 }

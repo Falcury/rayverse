@@ -313,8 +313,8 @@ void Fire(i16 x, i16 y, i16 width, i16 height);
 void FireBox(i16 x, i16 y, i16 width, i16 height);
 void InitMenuPalette(void);
 void CaptureVideo(u8* a1, u8 a2);
-void CadreTrans(i16 a1, i16 a2, i16 a3, i16 a4);
-void DrawBlackBorderBox(i16 a1, i16 a2, i16 a3, i16 a4, u8 a5);
+void CadreTrans(i16 x, i16 y, i16 w, i16 h);
+void DrawBlackBorderBox(i16 x, i16 y, i16 height, i16 width, u8 a5);
 void InitGauge(void);
 void gauge(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7);
 void ClearBorder(i16 lim_H1, i16 lim_H2, i16 lim_W1, i16 lim_W2);
@@ -923,9 +923,9 @@ void SYNCHRO_LOOP_PALETTE(void* func);
 void apparition_prg(void);
 void fondu_prg(void);
 void change_couleur_prg(void);
-void FonduOption(i16 a1, i16 a2, i16 a3, i16 a4, u8 a5);
-bool FonduPixel_prg(void);
-void FonduPixel(i16 a1, i16 a2, i16 a3, i16 a4);
+void FonduOption(i16 x, i16 y, i16 w, i16 h, u8 a5);
+i16 FonduPixel_prg(u32 a1);
+void FonduPixel(i16 x, i16 y, i16 w, i16 h);
 
 // meredenis.c
 void findMereDenisWeapon(void);

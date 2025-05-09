@@ -192,13 +192,27 @@ void CaptureVideo(u8* a1, u8 a2) {
 }
 
 //24A98
-void CadreTrans(i16 a1, i16 a2, i16 a3, i16 a4) {
-    //stub
+void CadreTrans(i16 x, i16 y, i16 w, i16 h) {
+    u8* line = draw_buffer + SCREEN_WIDTH * y + x;
+    for (i32 j = 0; j < h; ++j) {
+        u8* pos = line;
+        for (i32 i = 0; i < w; ++i) {
+            if (*pos) {
+                *pos += 0x40;
+            } else {
+                *pos = 0xC8;
+            }
+        }
+        line += SCREEN_WIDTH;
+    }
+    DrawBorderBoxNormal(draw_buffer, x, y, h, w, 0x2026);
 }
 
 //24B80
-void DrawBlackBorderBox(i16 a1, i16 a2, i16 a3, i16 a4, u8 a5) {
-    //stub
+void DrawBlackBorderBox(i16 x, i16 y, i16 height, i16 width, u8 a5) {
+    u16 colors = a5 ? 0x2026 : 0x2620;
+    DrawBlackBoxNormal(draw_buffer, x, y, height, width);
+    DrawBorderBoxNormal(draw_buffer, x, y, height, width, colors);
 }
 
 //24BF0
