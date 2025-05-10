@@ -106,6 +106,9 @@ LRESULT CALLBACK main_window_callback(HWND window, UINT message, WPARAM wparam, 
             result = DefWindowProc(window, message, wparam, lparam);
         }
     } break;
+    case WM_KILLFOCUS: {
+        memset(Touche_Enfoncee, 0, sizeof(Touche_Enfoncee)); // Window loses focus -> release all keys
+    } break;
 	//case WM_ERASEBKGND: {
 	//	result = TRUE; // prevent flickering
 //						} break;
@@ -211,6 +214,7 @@ void process_message(HWND window, MSG message) {
 					}
 				} break;
 			}
+            break;
 		}
 	}
 }
