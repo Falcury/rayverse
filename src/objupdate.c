@@ -456,7 +456,37 @@ void allocate_badguy(obj_t* tentacle_obj, i16 which_enemy, i16 xspeed, i16 yspee
 
 //61A90
 void DO_PTI_ESQUIVE(obj_t* obj) {
-    //stub
+    /* 3C7F4 80160FF4 -O2 -msoft-float */
+    s16 diff_x; s16 diff_y; s16 unk_1;
+    u8 label;
+
+    DO_ONE_CMD(obj);
+    if (poing.is_active || poing.is_charging)
+    {
+        calc_esquive_poing(obj, &diff_x, &diff_y, &unk_1);
+        if (Abs(diff_x) <= unk_1 && diff_y < 15)
+        {
+            if (((obj->main_etat == 0 && (obj->sub_etat == 0 || obj->sub_etat == 2)) || obj->main_etat == 1) &&
+                    poing_obj->flags.flip_x != obj->flags.flip_x
+            ) {
+                obj->speed_x = 0;
+                obj->speed_y = 0;
+                set_main_and_sub_etat(obj, 0, 15);
+                obj->flags.read_commands = 0;
+
+                if (obj->flags.flip_x)
+                    label = 3;
+                else
+                    label = 2;
+                skipToLabel(obj, label, true);
+            }
+            return; /* TODO: different control flow?? */
+        }
+    }
+
+    if (obj->main_etat == 0 && obj->sub_etat == 16) {
+        set_sub_etat(obj, 17);
+    }
 }
 
 //61BB0
@@ -877,7 +907,7 @@ void DoChasseurPoingCollision(obj_t* obj, i16 a2) {
         } else {
             set_main_and_sub_etat(obj, 0, 3); // dead
         }
-        obj->cmd = obj->flags.flip_x ? GO_LEFT : GO_RIGHT;
+        obj->cmd = obj->flags.flip_x ? GO_RIGHT : GO_LEFT;
     }
 }
 
@@ -905,7 +935,7 @@ void DO_CHASSEUR_COMMAND(obj_t* obj) {
 
 //629D8
 void DoBadGuy23PoingCollision(obj_t* obj, i16 a2) {
-    if (a2 == 255 || !(get_eta(obj)->flags & 1)) {
+    if (a2 == 255 || (get_eta(obj)->flags & 1)) {
         obj_hurt(obj);
         if (obj->hit_points == 0) {
             set_main_and_sub_etat(obj, 0, 3);

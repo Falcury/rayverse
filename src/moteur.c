@@ -1445,7 +1445,7 @@ void DO_ONE_OBJECT(obj_t* obj) {
     if (flags[ot] & flags1_0x40_special_platform) {
         DO_SPECIAL_PLATFORM(obj);
     }
-    if (flags[ot] & flags2_0x20_kill_if_outside_active_zone) {
+    if (flags[ot] & flags0_0x20_has_detect_zone) {
         DO_RAY_IN_ZONE(obj);
     }
 }

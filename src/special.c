@@ -552,7 +552,100 @@ void DO_BALLE(obj_t* obj) {
 
 //7AE78
 void DO_TIR(obj_t* obj) {
-    //stub
+    /* 38608 8015CE08 -O2 -msoft-float */
+    //TODO: non-matching, check
+    obj_t* cur_obj;
+    obj_t* var_s0;
+    s16 temp_a0;
+    s16 temp_a1;
+    s16 temp_v0_1;
+    s16 temp_v0_4;
+    s16 i;
+    s16 var_v0;
+    s32 temp_v0_2;
+    s32 temp_v0_3;
+    u32 temp_v1_3;
+    s32 temp_v1_4;
+    s32 temp_v1_5;
+    s32 temp_v1_6;
+    u16 var_v1;
+    s16 var_a2;
+    u8 temp_v1_1;
+    u8 var_a1;
+    s16 test_1;
+    s32 test_2;
+    u32 test_3;
+    u32 test_4;
+
+    if (obj->main_etat == 0) {
+        if (obj->sub_etat == 11) {
+            if (obj->link == 0) {
+                cur_obj = level.objects;
+                i = 0;
+                test_1 = level.nb_objects;
+                while (i < test_1) {
+                    if (((cur_obj->type == TYPE_13_BALLE1) || (cur_obj->type == TYPE_15_BALLE2)) && !cur_obj->is_active) {
+                        cur_obj->flags.flip_x = obj->flags.flip_x;
+                        cur_obj->flags.alive = 1;
+                        cur_obj->is_active = 1;
+                        add_alwobj(cur_obj);
+                        set_main_and_sub_etat(cur_obj, 2, 2);
+                        cur_obj->anim_frame = 0;
+                        cur_obj->anim_index = (u8) cur_obj->eta[2][2].anim_index;
+                        temp_v1_4 = (obj->x + obj->offset_bx) - cur_obj->offset_bx;
+                        if (cur_obj->flags.flip_x) {
+                            temp_v1_4 = temp_v1_4 + 64;
+                        } else {
+                            temp_v1_4 = temp_v1_4 - 64;
+                        }
+                        cur_obj->x = temp_v1_4;
+                        cur_obj->y = obj->y;
+                        cur_obj->init_x = cur_obj->x;
+                        cur_obj->init_y = cur_obj->y;
+                        calc_obj_pos(cur_obj);
+                        PlaySnd(24, cur_obj->id);
+                        if (cur_obj->flags.flip_x) {
+                            skipToLabel(cur_obj, 3, 1);
+                        } else {
+                            skipToLabel(cur_obj, 1, 1);
+                        }
+
+                        if (obj->type == TYPE_14_CHASSEUR2) {
+                            if (obj->x - ray.x < 0) {
+                                var_a2 = (ray.x - obj->x) >> 5;
+                            } else {
+                                var_a2 = (obj->x - ray.x) >> 5;
+                            }
+                            cur_obj->type = TYPE_15_BALLE2;
+                            temp_v1_6 = (ray.y - obj->y) * 2;
+                            test_3 = (s16) var_a2;
+                            temp_v0_2 = obj->x - ray.x;
+
+                            if (temp_v0_2 >= 0) {
+                                var_v0 = (temp_v1_6 / temp_v0_2) - test_3;
+                            } else {
+                                temp_v0_3 = ray.x - obj->x;
+                                var_v0 = (temp_v1_6 / temp_v0_3) - test_3;
+                            }
+                            cur_obj->speed_y = var_v0;
+                            cur_obj->gravity_value_2 = 10;
+                        } else {
+                            cur_obj->type = TYPE_13_BALLE1;
+                            cur_obj->speed_y = 0;
+                        }
+                        calc_obj_pos(cur_obj);
+                        break;
+                    }
+                    cur_obj += 1;
+                    i = i + 1;
+                }
+                obj->link = 1;
+                return;
+            }
+        } else if (obj->sub_etat == 2) {
+            obj->link = 0;
+        }
+    }
 }
 
 //7B060
