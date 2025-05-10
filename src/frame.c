@@ -125,7 +125,11 @@ void clear_palette(rgb_palette_t* palette) {
 
 //3C520
 void set_fade_palette(rgb_palette_t* palette) {
-    //stub
+    for (i32 i = 0; i < 256*3; ++i) {
+        u8 c1 = ((u8*)(palette))[i];
+        u32 temp = c1 << 6;
+        rvb_fade[i] = temp;
+    }
 }
 
 //3C54C
@@ -188,7 +192,14 @@ void fade_out(i16 speed, rgb_palette_t* palette) {
 
 //3C6F8
 void actualize_palette(u8 new_pal_id) {
-    //stub
+    if (new_pal_id != current_pal_id) {
+        current_pal_id = new_pal_id;
+        current_rvb = rvb[new_pal_id];
+        set_fade_palette(&current_rvb);
+        if (fade == 65) {
+            SetPalette(&current_rvb, 0, 256);
+        }
+    }
 }
 
 //3C770
@@ -198,7 +209,92 @@ void cyclage_palette(i16 a1, i16 a2, i16 a3) {
 
 //3C8C8
 void DO_SWAP_PALETTE(void) {
-    //stub
+    if (last_plan1_palette != 0) {
+        if (fade & 0x40) {
+            for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+                obj_t* obj = level.objects + actobj.objects[i];
+                if (obj->type == TYPE_158_PALETTE_SWAPPER) {
+                    u8 pal_a = 0;
+                    u8 pal_b = 0;
+                    u8 new_pal = current_pal_id;
+                    i16 ray_pos;
+                    i16 obj_pos;
+                    switch(obj->sub_etat) {
+                        default: break;
+                        case 0:
+                            pal_a = 1;
+                            pal_b = 0;
+                            goto SwapHorizontal;
+                        case 1:
+                            pal_a = 2;
+                            pal_b = 0;
+                            goto SwapHorizontal;
+                        case 2:
+                            pal_a = 2;
+                            pal_b = 1;
+                            goto SwapHorizontal;
+                        case 3:
+                            pal_a = 0;
+                            pal_b = 1;
+                            goto SwapHorizontal;
+                        case 4:
+                            pal_a = 0;
+                            pal_b = 2;
+                            goto SwapHorizontal;
+                        case 5:
+                            pal_a = 1;
+                            pal_b = 2;
+                            goto SwapHorizontal;
+                        case 6:
+                            pal_a = 1;
+                            pal_b = 0;
+                            goto SwapVertical;
+                        case 7:
+                            pal_a = 2;
+                            pal_b = 0;
+                            goto SwapVertical;
+                        case 8:
+                            pal_a = 2;
+                            pal_b = 1;
+                            goto SwapVertical;
+                        case 9:
+                            pal_a = 0;
+                            pal_b = 1;
+                            goto SwapVertical;
+                        case 10:
+                            pal_a = 0;
+                            pal_b = 2;
+                            goto SwapVertical;
+                        case 11:
+                            pal_a = 1;
+                            pal_b = 2;
+                            goto SwapVertical;
+
+                        SwapVertical:
+                            ray_pos = ray.y + ray.offset_by;
+                            obj_pos = obj->y + obj->offset_by;
+                            if (ray_pos > obj_pos) {
+                                new_pal = pal_a;
+                            } else if (ray_pos < obj_pos) {
+                                new_pal = pal_b;
+                            }
+                            break;
+
+                        SwapHorizontal:
+                            ray_pos = ray.x + ray.offset_bx;
+                            obj_pos = obj->x + obj->offset_bx;
+                            if (ray_pos > obj_pos) {
+                                new_pal = pal_a;
+                            } else if (ray_pos < obj_pos) {
+                                new_pal = pal_b;
+                            }
+                            break;
+                    }
+                    actualize_palette(new_pal);
+                }
+            }
+        }
+    }
 }
 
 //3CA64
