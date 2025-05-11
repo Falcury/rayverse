@@ -305,10 +305,12 @@ void DO_FEE(obj_t* obj) {
         }
     }
     if (new_txt_fee != 0) {
-        if (text_to_display[old_txt_fee].ypos < SCREEN_HEIGHT + 20)
+        // NOTE: fixed out-of-bounds access: old_txt_fee may be 255!
+        if (old_txt_fee != 255 & text_to_display[old_txt_fee].ypos < SCREEN_HEIGHT + 20) {
             text_to_display[old_txt_fee].ypos++;
-        else
+        } else {
             new_txt_fee = 0;
+        }
     }
     if (png_or_fee->flags.alive) {
         //NOTE: below is added in PC versino
