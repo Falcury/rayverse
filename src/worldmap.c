@@ -379,6 +379,11 @@ void INIT_CHEMIN(void) {
 
     INIT_PASTILLES_SAUVE();
     INIT_STAGE_NAME();
+
+    // Added: unlock first world if flag is set incorrectly
+    if (!(t_world_info[17].state & 1)) {
+        t_world_info[17].state |= 1;
+    }
 }
 
 //68F38

@@ -39,6 +39,7 @@ void game_init_sound(game_sound_buffer_t* sound, i32 samples_per_second) {
 void game_init(game_state_t* game) {
 	CarteSonAutorisee = 1;
 	game->draw_buffer = create_palettized_image(320, 200);
+	game->prev_frame = create_palettized_image(320, 200);
 	game->initialized = true;
 	global_game = game;
 }
@@ -48,7 +49,18 @@ void advance_frame(void) {
 	game_state_t* game = &app_state->game;
 	rgb_t clear_color = { 0, 0, 0 };
 	render_clear(app_state->active_surface, clear_color);
+    memcpy(game->prev_frame.memory, game->draw_buffer.memory, game->draw_buffer.memory_size);
+
+    // The draw buffer memory source may sometimes be overridden by EffetBufferNormal (we need to allow this).
+    u8* saved_memory = game->draw_buffer.memory;
+    if (draw_buffer && draw_buffer != game->draw_buffer.memory) {
+        game->draw_buffer.memory = draw_buffer;
+    }
+
     surface_blit_palettized_image(&game->draw_buffer, &game->draw_palette, NULL, app_state->active_surface, NULL);
+
+    game->draw_buffer.memory = saved_memory;
+
 #if _WIN32
 	win32_advance_frame(app_state);
 #else

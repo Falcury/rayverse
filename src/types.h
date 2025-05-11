@@ -70,6 +70,7 @@ typedef struct snd_t {
 typedef struct game_state_t {
 	bool initialized;
 	image_t draw_buffer; // draw_buffer
+	image_t prev_frame; // saved previous frame for CaptureVideo()
     rgb_palette_t draw_palette;
 	game_sound_buffer_t sound_buffer;
 } game_state_t;

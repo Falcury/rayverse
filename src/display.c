@@ -282,12 +282,13 @@ i16 WORLD_CHOICE(u32 a1) {
         next_clock_target = word_CF7EE + a1;
     }
 
+    DO_RAYMAN_IN_WLD_MAP();
+    DO_CHEMIN();
+
     let_shadow = 0;
     memset(DrawBufferNormal, 0, 320*200);
     draw_buffer = EffetBufferNormal;
 
-    DO_RAYMAN_IN_WLD_MAP();
-    DO_CHEMIN();
     DisplayJumellesFondNormal();
     display2(&ray);
     DISPLAY_PLAT_WAY();

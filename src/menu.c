@@ -1272,13 +1272,14 @@ u8 confirmation_msg(u8 which_message) {
             default_key();
             pos_YN = 1;
             rvb_menu_save = rvb[0];
-            InitMenuPalette(); //TODO
-            CaptureVideo(draw_buffer, 1); //TODO
+            InitMenuPalette();
+            CaptureVideo(global_game->prev_frame.memory, EffetBufferNormal, 1);
             DO_FADE_OUT();
             // not sure what happens here exactly (something with display buffer copying)
             rvb[0] = MenuPalette;
             INIT_FADE_IN();
             strncpy(to_display->text, language_txt[130], sizeof(to_display->text)); // /do you really want to erase/the previously saved game ?/ /
+            pAFFICHE_SCREEN = DISPLAY_FOND_MENU;
             INIT_TXT_BOX(to_display);
             display_box_msg_commande(to_display, DO_YESNOBIS);
             DO_FADE_OUT();
@@ -1290,8 +1291,8 @@ u8 confirmation_msg(u8 which_message) {
             default_key();
             pos_YN = 1;
             rvb_menu_save = rvb[0];
-            InitMenuPalette(); //TODO
-            CaptureVideo(draw_buffer, 1); //TODO
+            InitMenuPalette();
+            CaptureVideo(global_game->prev_frame.memory, EffetBufferNormal, 1);
             DO_FADE_OUT();
             // not sure what happens here exactly (something with display buffer copying)
             rvb[0] = MenuPalette;

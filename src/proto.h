@@ -312,7 +312,7 @@ void InitFire(void);
 void Fire(i16 x, i16 y, i16 width, i16 height);
 void FireBox(i16 x, i16 y, i16 width, i16 height);
 void InitMenuPalette(void);
-void CaptureVideo(u8* a1, u8 a2);
+void CaptureVideo(u8* source_buf, u8* dest_buf, u8 grayscale);
 void CadreTrans(i16 x, i16 y, i16 w, i16 h);
 void DrawBlackBorderBox(i16 x, i16 y, i16 height, i16 width, u8 a5);
 void InitGauge(void);

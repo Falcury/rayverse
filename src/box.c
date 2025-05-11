@@ -183,12 +183,61 @@ void FireBox(i16 x, i16 y, i16 width, i16 height) {
 
 //2479C
 void InitMenuPalette(void) {
-    //stub
+    rgb_palette_t* cur_pal = rvb + current_pal_id;
+    MenuPalette = rvb[current_pal_id];
+    {
+        // red-green gradient
+        u8 r = 126;
+        u8 g = 0;
+        u8 b = 0;
+        for (i32 i = 70, j = 0; i < 102; ++i, ++j) {
+            MenuPalette.colors[i].r = r;
+            MenuPalette.colors[i].g = g;
+            MenuPalette.colors[i].b = b;
+            r -= 2;
+            g += 2;
+        }
+    }
+    for (i32 i = 112, j = 0; i < 128; ++i, ++j) {
+        MenuPalette.colors[i] = PalPlasma[j];
+    }
+    // grayscale palette
+    for (i32 i = 128, j = 0; i < 192; ++i, ++j) {
+        u8 c = j << 2;
+        MenuPalette.colors[i].r = c;
+        MenuPalette.colors[i].g = c;
+        MenuPalette.colors[i].b = c;
+    }
+    if (dans_la_map_monde) {
+        MenuPalette.colors[32].r = 16 << 2;
+        MenuPalette.colors[32].g = 14 << 2;
+        MenuPalette.colors[32].b = 13 << 2;
+        MenuPalette.colors[38].r = 49 << 2;
+        MenuPalette.colors[38].g = 47 << 2;
+        MenuPalette.colors[38].b = 45 << 2;
+
+    }
 }
 
 //2494C
-void CaptureVideo(u8* a1, u8 a2) {
-    //stub
+void CaptureVideo(u8* source_buf, u8* dest_buf, u8 grayscale) {
+    if (ModeVideoActuel == MODE_X) {
+        //stub
+    } else {
+        if (grayscale) {
+            u8* source_pos = source_buf;
+            u8* dest_pos = dest_buf;
+            rgb_palette_t* palette = rvb + current_pal_id;
+            for (i32 i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; ++i) {
+                u8 c = *source_pos++;
+                rgb_t rgb = palette->colors[c];
+                u8 gray = ((rgb.r + rgb.g + rgb.b) >> 2) / 3 + 128;
+                *dest_pos++ = gray;
+            }
+        } else {
+            memcpy(dest_buf, source_buf, SCREEN_WIDTH * SCREEN_HEIGHT);
+        }
+    }
 }
 
 //24A98
