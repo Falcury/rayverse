@@ -1092,7 +1092,7 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
     s32 temp_a0_4;
     s32 temp_a0_6;
     s32 unk_1 = RayEvts.tiny ? 0x0100 : 0x0200;
-    u8 is_rolling_speed = unk_1 < __builtin_abs(decalage_en_cours);
+    u8 is_rolling_speed = unk_1 < Abs(decalage_en_cours);
 
     switch (obj->type)
     {
