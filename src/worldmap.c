@@ -74,24 +74,26 @@ void DISPLAY_PLAT_WAY(void) {
 
 //67B2C
 void DO_MEDAILLONS(void) {
+    bool unlocked = false;
     if (chemin_percent < 128 && (horloge[2] != 0 || ALL_WORLD)) {
         ++chemin_percent;
     }
-    for (i32 i = 0; i < 24; ++i) {
+    for (i32 i = 0; i < COUNT(t_world_info); ++i) {
         world_info_t* world_info = t_world_info + i;
         obj_t* obj = mapobj + i;
         if ((world_info->state & 4) || (world_info->state & 2)) {
             CalcObjPosInWorldMap(obj);
 
             if (chemin_percent == 128 && (world_info->state & 4) &&
-                (t_world_info[world_info->index_right].state & 2) &&
-                (t_world_info[world_info->index_left].state & 2) &&
-                (t_world_info[world_info->index_up].state & 2) &&
-                (t_world_info[world_info->index_down].state & 2)
+                ((t_world_info[world_info->index_right].state & 2) ||
+                (t_world_info[world_info->index_left].state & 2) ||
+                (t_world_info[world_info->index_up].state & 2) ||
+                (t_world_info[world_info->index_down].state & 2))
             ) {
                 // set unlocked
                 world_info->state = (world_info->state & ~7) | 1;
                 set_sub_etat(obj, 46);
+                unlocked = true;
             }
 
             if (i == 17 && !(obj->sub_etat == 59 || obj->sub_etat == 46) && (world_info->state & 1)) {
@@ -117,6 +119,15 @@ void DO_MEDAILLONS(void) {
             }
 
             DO_ANIM(obj);
+        }
+    }
+    if (unlocked) {
+        chemin_percent = 0;
+        for (i32 i = 0; i < COUNT(t_world_info); ++i) {
+            world_info_t* world_info = t_world_info + i;
+            if (!(world_info->state & 2) && (world_info->state & 1)) {
+                world_info->state |= 2;
+            }
         }
     }
 }

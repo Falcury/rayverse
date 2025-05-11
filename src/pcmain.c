@@ -53,7 +53,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
         if (dead_time >= 32 && !gele) {
             DoPaletteSpecialPC(); //TODO
         }
-        DO_SWAP_PALETTE(); //TODO
+        DO_SWAP_PALETTE();
         if (fixon || fixontemp) {
             if (Mode_Pad == 1 && Main_Control) {
                 Swap_And_Test_Joystick(DrawBufferNormal, DisplayBufferNormal, 320, Bloc_lim_H2);
@@ -81,7 +81,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
             readinput();
         }
         // NOTE: may be repeated depending on display_mode?
-        DO_GROS_MOTEUR_NORMAL(1); //TODO
+        DO_GROS_MOTEUR_NORMAL(1);
         if (need_timer) {
             clock_ticks();
         }
