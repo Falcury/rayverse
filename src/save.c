@@ -567,6 +567,7 @@ void SaveGameOnDisk(u8 which_save) {
 
     mem_write(save_ray[which_save-1], raw, 4);
     mem_write(&nb_continue, raw, 1);
+    storeWorldInfoAcces();
     mem_write(wi_save_zone, raw, 24);
     mem_write(&RayEvts, raw, 2);
     mem_write(&poing, raw, 20);
