@@ -24,7 +24,8 @@ void message_box(const char* message) {
 }
 
 void toggle_fullscreen(SDL_Window* window) {
-    //stub
+    bool fullscreen = SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN_DESKTOP;
+    SDL_SetWindowFullscreen(window, fullscreen ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP);
 }
 
 void linux_process_keyboard_event(SDL_Scancode scancode, bool is_down) {
@@ -54,8 +55,13 @@ void linux_process_keyboard_event(SDL_Scancode scancode, bool is_down) {
             0, 0, 0, 0, 0, SC_CONTROL, SC_LSHIFT, SC_ALT, 0, SC_CONTROL,
             SC_RSHIFT, SC_ALT, 0, 0,
     };
-    u8 dos_scancode = sdl_scancode_to_dos_scancode[scancode & 0xFF];
-    Touche_Enfoncee[dos_scancode & 0x7F] = is_down;
+
+    if (is_down && scancode == SDL_SCANCODE_RETURN && Touche_Enfoncee[SC_ALT]) {
+        toggle_fullscreen(global_app_state.sdl.window);
+    } else {
+        u8 dos_scancode = sdl_scancode_to_dos_scancode[scancode & 0xFF];
+        Touche_Enfoncee[dos_scancode & 0x7F] = is_down;
+    }
 }
 
 bool process_input(SDL_Window* window) {
