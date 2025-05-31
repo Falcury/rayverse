@@ -1119,7 +1119,7 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                     obj->ray_dist = 10000;
                     jump_time = 12;
                     ray.speed_y -= 3;
-                    obj_type = obj->type;
+                    obj_type = (ObjType)obj->type;
                     if (obj_type == TYPE_MARK_AUTOJUMP_PLAT)
                         set_main_and_sub_etat(obj, 0, 17);
                     else if (obj_type == TYPE_CAISSE_CLAIRE)

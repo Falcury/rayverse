@@ -176,7 +176,7 @@ image_t load_vignet_pcx(u32 resource_id) {
 }
 
 void detect_and_remove_invalid_link_cycles(void) {
-    u8* visited = malloc(level.nb_objects);
+    u8* visited = (u8*)malloc(level.nb_objects);
     for (i32 i = 0; i < level.nb_objects; ++i) {
         memset(visited, 0, level.nb_objects);
         obj_t* obj = level.objects + i;

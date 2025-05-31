@@ -243,7 +243,7 @@ void InitMemoryVariable(void) {
 //18228
 void AllocVariablesAutorisee(void) {
     MessageProgram = 0;
-    flocon_tab = calloc(512, sizeof(flocon_t));
+    flocon_tab = (flocon_t*)calloc(512, sizeof(flocon_t));
     if (!flocon_tab) {
         fatal_error();
     }

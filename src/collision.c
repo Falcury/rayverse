@@ -929,7 +929,7 @@ void SET_RAY_DIST(obj_t* obj) {
     ObjType type;
     s16 x; s16 y; s16 w; s16 h;
 
-    type = obj->type;
+    type = (ObjType)obj->type;
     if (flags[type] & flags1_8_ray_dist_multispr_cantchange) {
         SET_RAY_DIST_MULTISPR_CANTCHANGE(obj);
     } else {
@@ -941,7 +941,7 @@ void SET_RAY_DIST(obj_t* obj) {
         {
             GET_SPRITE_POS(obj, obj->follow_sprite, &x, &y, &w, &h);
             y += obj->offset_hy;
-            type = obj->type;
+            type = (ObjType)obj->type;
             if (
                     type == TYPE_FALLING_OBJ || type == TYPE_FALLING_OBJ2 || type == TYPE_FALLING_OBJ3 ||
                     type == TYPE_FALLING_YING || type == TYPE_FALLING_YING_OUYE

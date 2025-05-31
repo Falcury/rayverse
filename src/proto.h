@@ -728,7 +728,7 @@ void DigiMusicDone(void);
 void LoadTchatchPerdu(void);
 void PlayTchatch(i32 snd, i32 volume);
 void FreeTchatchVignette(void);
-void SetPort(i32 port);
+void SetPort_(i32 port); // NOTE: extra underscore added because SetPort is also used by the Win32 API (in winspool.h)
 void SetIrq(i32 irq);
 void SetDma(i32 dma);
 void SetParam(i32 param);

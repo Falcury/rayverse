@@ -140,7 +140,7 @@ void win32_process_keyboard_event(u32 vk_code, bool is_down) {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     };
-    enum dos_scancode_enum dos_scancode = windows_code_to_dos_scancode[vk_code & 0xFF];
+    enum dos_scancode_enum dos_scancode = (enum dos_scancode_enum)windows_code_to_dos_scancode[vk_code & 0xFF];
     Touche_Enfoncee[dos_scancode & 0x7F] = is_down;
 }
 
@@ -174,6 +174,8 @@ void process_message(HWND window, MSG message) {
                 scancode = MAKEWORD(scancode, 0xE0);
             }
             u32 vk_code_ext = vk_code;
+            // NOTE: MAPVK_VSC_TO_VK_EX is not available on Win9x
+#ifdef MAPVK_VSC_TO_VK_EX
             switch(vk_code) {
                 default: break;
                 case VK_SHIFT:   // converts to VK_LSHIFT or VK_RSHIFT
@@ -182,6 +184,7 @@ void process_message(HWND window, MSG message) {
                     vk_code_ext = LOWORD(MapVirtualKeyW(scancode, MAPVK_VSC_TO_VK_EX));
                     break;
             }
+#endif
 //			u32 hid_code = keycode_windows_to_hid(scancode);
 //			if (vk_code == VK_SPACE) {
 //				hid_code = KEY_Space; // NOTE: for some reason, Space is missing from the table in keycode_windows_to_hid()
@@ -330,7 +333,7 @@ int main(int argc, char** argv) {
 	sound_output->safety_bytes = (u32)((float)(sound_output->samples_per_second * sound_output->bytes_per_sample) * app_state->target_seconds_per_frame * 0.3333f);
 	win32_init_dsound(app_state->win32.window, sound_output);
 	win32_clear_sound_buffer(sound_output);
-	sound_output->secondary_buffer->lpVtbl->Play(sound_output->secondary_buffer, 0, 0, DSBPLAY_LOOPING);
+	VFUNC(sound_output->secondary_buffer, Play) (SELF(sound_output->secondary_buffer) 0, 0, DSBPLAY_LOOPING);
 
 	game_init_sound(&app_state->game.sound_buffer, (i32)sound_output->samples_per_second);
 

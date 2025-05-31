@@ -6,7 +6,7 @@ static inline void set_def_bande(i32 index, i16 field_0, u8 field_2, u8 field_4,
 }
 
 static void init_def_bande(void) {
-    Def_Bande = calloc(18000, sizeof(def_bande_t));
+    Def_Bande = (def_bande_t*)calloc(18000, sizeof(def_bande_t));
     for (i32 i = 0; i < 18000; i += 300) {
         set_def_bande(i, 288, 2, 0, 0);
     }

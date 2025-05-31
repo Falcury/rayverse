@@ -1,4 +1,18 @@
+#ifndef __cplusplus
+// If we don't have access to C99, stdbool.h is not available and we need to supply 'bool' and 'inline'
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 #include <stdbool.h>
+#else 
+typedef unsigned char bool;
+#define true 1
+#define false 0
+#ifdef _MSC_VER
+#define inline __inline
+#else
+#define inline __inline__
+#endif
+#endif
+#endif
 
 typedef int bool32;
 typedef unsigned char u8;

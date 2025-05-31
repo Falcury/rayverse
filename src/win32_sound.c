@@ -3,6 +3,21 @@
 #define FUNC_DIRECT_SOUND_CREATE(name) HRESULT WINAPI name(LPGUID lpGUID, LPDIRECTSOUND *ppDS, LPUNKNOWN pUnkOuter)
 typedef FUNC_DIRECT_SOUND_CREATE(Func_DirectSoundCreate);
 
+// Under MSVC 6 (for Win9x), compiling as C code is a bit annoying because you can only declare variables
+// at the top of a block. However, we can still get the code to work by compiling as C++ using the /TP flag.
+// To make this work, the code must be C/C++ agnostic and work as either C or C++
+// DirectSound's virtual functions can be called as either C++ (using normal virtual functions)
+// or as C (through explicitly accessing the virtual table using a lpVtbl member).
+// In C mode, the 'self' pointer also has to be passed explicitly as a first parameter.
+// Because the syntax is different, we'd like to have a wrapper that covers both use cases.
+
+#ifdef __cplusplus
+#define VFUNC(x, method) (x)->method
+#define SELF(x)
+#else
+#define VFUNC(x, method) (x)->lpVtbl->method
+#define SELF(x) (x),
+#endif
 
 
 static void win32_init_dsound(HWND window, win32_sound_output_t* sound) {
@@ -22,7 +37,7 @@ static void win32_init_dsound(HWND window, win32_sound_output_t* sound) {
 			waveformat.nAvgBytesPerSec = waveformat.nSamplesPerSec * waveformat.nBlockAlign;
 			waveformat.cbSize = 0;
 
-			if (SUCCEEDED(sound->dsound->lpVtbl->SetCooperativeLevel(sound->dsound, window, DSSCL_PRIORITY))) {
+			if (SUCCEEDED(VFUNC(sound->dsound, SetCooperativeLevel) (SELF(sound->dsound) window, DSSCL_PRIORITY))) {
 				// "create" a primary buffer
 				DSBUFFERDESC buffer_description = {0};
 				buffer_description.dwSize = sizeof(buffer_description);
@@ -31,8 +46,8 @@ static void win32_init_dsound(HWND window, win32_sound_output_t* sound) {
 
 				// NOTE: this is NOT a true buffer, just a handle to the actual sound device
 				// so that we can set the correct waveformat!
-				if (SUCCEEDED(sound->dsound->lpVtbl->CreateSoundBuffer(sound->dsound, &buffer_description, &primary_buffer, 0))) {
-					if (SUCCEEDED(primary_buffer->lpVtbl->SetFormat(primary_buffer, &waveformat))) {
+				if (SUCCEEDED(VFUNC(sound->dsound, CreateSoundBuffer) (SELF(sound->dsound) &buffer_description, &primary_buffer, 0))) {
+					if (SUCCEEDED(VFUNC(primary_buffer, SetFormat) (SELF(primary_buffer) &waveformat))) {
 						OutputDebugStringA("Primary buffer format was set\n");
 					} else {
 						// TODO: diagnostic
@@ -50,7 +65,7 @@ static void win32_init_dsound(HWND window, win32_sound_output_t* sound) {
 			secondary_buffer_description.dwBufferBytes = sound->secondary_buffer_size;
 			secondary_buffer_description.lpwfxFormat = &waveformat;
 
-			if (SUCCEEDED(sound->dsound->lpVtbl->CreateSoundBuffer(sound->dsound, &secondary_buffer_description, &sound->secondary_buffer, 0))) {
+			if (SUCCEEDED(VFUNC(sound->dsound, CreateSoundBuffer) (SELF(sound->dsound) &secondary_buffer_description, &sound->secondary_buffer, 0))) {
 				OutputDebugStringA("Secondary buffer format was created successfully\n");
 			}
 
@@ -70,7 +85,7 @@ static void win32_clear_sound_buffer(win32_sound_output_t* sound) {
 	DWORD region1_size;
 	VOID* region2;
 	DWORD region2_size;
-	if (FAILED(sound->secondary_buffer->lpVtbl->Lock(sound->secondary_buffer, 0, sound->secondary_buffer_size,
+	if (FAILED(VFUNC(sound->secondary_buffer, Lock) (SELF(sound->secondary_buffer) 0, sound->secondary_buffer_size,
 	                                         &region1, &region1_size,
 	                                         &region2, &region2_size, 0))) {
 		// TODO: diagnostics - could not lock the buffer
@@ -88,7 +103,7 @@ static void win32_clear_sound_buffer(win32_sound_output_t* sound) {
 			*dest_byte++ = 0;
 		}
 #endif
-		sound->secondary_buffer->lpVtbl->Unlock(sound->secondary_buffer, region1, region1_size, region2, region2_size);
+		VFUNC(sound->secondary_buffer, Unlock) (SELF(sound->secondary_buffer) region1, region1_size, region2, region2_size);
 	}
 }
 
@@ -98,7 +113,7 @@ static void win32_fill_sound_buffer(win32_sound_output_t* sound, DWORD byte_to_l
 	VOID* region2;
 	DWORD region2_size;
 
-	if (FAILED(sound->secondary_buffer->lpVtbl->Lock(sound->secondary_buffer, byte_to_lock, bytes_to_write,
+	if (FAILED(VFUNC(sound->secondary_buffer, Lock) (SELF(sound->secondary_buffer) byte_to_lock, bytes_to_write,
 	                                         &region1, &region1_size,
 	                                         &region2, &region2_size, 0))) {
 		// TODO: diagnostics - could not lock the buffer
@@ -125,7 +140,7 @@ static void win32_fill_sound_buffer(win32_sound_output_t* sound, DWORD byte_to_l
 			++sound->running_sample_index;
 		}
 
-		sound->secondary_buffer->lpVtbl->Unlock(sound->secondary_buffer, region1, region1_size, region2, region2_size);
+		VFUNC(sound->secondary_buffer, Unlock) (SELF(sound->secondary_buffer) region1, region1_size, region2, region2_size);
 	}
 }
 
@@ -137,7 +152,7 @@ static void win32_produce_sound_for_frame(app_state_t* app_state, win32_sound_ou
 	DWORD play_cursor;
 	DWORD write_cursor;
 
-	if (sound->secondary_buffer->lpVtbl->GetCurrentPosition(sound->secondary_buffer, &play_cursor, &write_cursor) == DS_OK) {
+	if (VFUNC(sound->secondary_buffer, GetCurrentPosition) (SELF(sound->secondary_buffer) &play_cursor, &write_cursor) == DS_OK) {
 
 		/*
 		We define a safety value that is the number of samples we think
@@ -181,7 +196,7 @@ static void win32_produce_sound_for_frame(app_state_t* app_state, win32_sound_ou
 
 		DWORD target_cursor;
 		if (audio_card_is_low_latency) {
-			target_cursor = expected_frame_boundary_byte + expected_sound_bytes_per_frame;
+			target_cursor = expected_frame_boundary_byte + expected_sound_bytes_per_frame + sound->safety_bytes;
 		} else {
 			target_cursor = write_cursor + expected_sound_bytes_per_frame + sound->safety_bytes;
 		}

@@ -1,6 +1,5 @@
 #ifdef _WIN32
 // Headers specific to Windows
-#include "StdAfx.h"
 #include <malloc.h>
 #include <windows.h>
 #include <mmsystem.h>

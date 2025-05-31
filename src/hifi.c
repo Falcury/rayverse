@@ -54,7 +54,7 @@ void LoadBnkFile(i32 header_index, i32 data_index, bnk_header_t* headers, u8** d
     if (*data != NULL) {
         free(*data);
     }
-    *data = malloc(header_info->size);
+    *data = (u8*)malloc(header_info->size);
     if (!*data) {
         rayman_sound_fatal_error("Mmoire insuffisante pour charger les samples.\n");
     }
@@ -199,7 +199,7 @@ void LoadTchatchPerdu(void) {
     FILE* fp = open_data_file("SNDVIG.DAT", true);
     if (fp) {
         archive_header_t* sndvig_header = sndvig_infos + 6;
-        ptrTchatch = malloc(sndvig_header->size);
+        ptrTchatch = (u8*)malloc(sndvig_header->size);
         fseek(fp, sndvig_header->offset, SEEK_SET);
         fread(ptrTchatch, 1, sndvig_header->size, fp);
         fclose(fp);
@@ -224,7 +224,7 @@ void FreeTchatchVignette(void) {
 }
 
 //3EFD4
-void SetPort(i32 port) {
+void SetPort_(i32 port) {
     current_port = port;
 }
 

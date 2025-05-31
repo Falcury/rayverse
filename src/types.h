@@ -944,10 +944,8 @@ enum obj_type_enum {
 	TYPE_259_EDU_LETTER = 259, // EDU letter
 	TYPE_260_EDU_DIGIT = 260, // EDU digit
 	TYPE_261_EDU_ROAD_SIGN = 261, // EDU road sign
-};
 
-// TODO: switch to these?
-typedef enum ObjType {
+    // Same names without number (original names, also for compatibility with PS1 decomp code)
     TYPE_BADGUY1=0,
     TYPE_PLATFORM=1,
     TYPE_POWERUP=2,
@@ -1204,7 +1202,8 @@ typedef enum ObjType {
     TYPE_PLANCHES=253,
     TYPE_SLOPEY_PLAT=254,
     TYPE_INVALID=255
-} ObjType;
+};
+typedef enum obj_type_enum ObjType;
 
 typedef enum btyp_enum {
     BTYP_NONE=0,

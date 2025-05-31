@@ -1723,7 +1723,7 @@ draw_func_t* DrawSpriteFlipNormalEtX; //CD118
 draw_func_t* DrawSpriteColorFlipNormalEtX; //CD11C
 swap_func_t* Swap_And_Test_Joystick; //CD120
 void (*Copy_Plan0_To_Buf)(u8* source, u8* dest, i32 width, i32 height, i32 a5); //CD124
-void* DrawBufferNormalIni; //CD128
+u8* DrawBufferNormalIni; //CD128
 void_func_t* drawflocon3NormalETX; //CD12C
 u8* EffetBufferNormal; //CD130
 i32 TempsDemo; //CD134

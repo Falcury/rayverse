@@ -142,7 +142,7 @@ void LOAD_CONFIG(void) {
 
         // STUB: this section seems to be related to sound card initialization
         if (CarteSonAutorisee && DeviceID != 999) {
-            SetPort(Port);
+            SetPort_(Port);
             SetIrq(Irq);
             SetDma(Dma);
             SetParam(Param);

@@ -615,7 +615,7 @@ u8 underSlope(obj_t* obj) {
 void DO_STONEBOMB_REBOND(obj_t* obj) {
     /* 2CAAC 801512AC -O2 -msoft-float */
     s16 new_spd_x; s16 new_spd_y;
-    ObjType obj_type = obj->type;
+    ObjType obj_type = (ObjType)obj->type;
 
     if (obj_type == TYPE_STONEBOMB2) {
         new_spd_x = 32;
@@ -685,7 +685,7 @@ void DO_THROWN_BOMB_REBOND(obj_t* obj, i16 pesanteur, i16 a3) {
             return;
         }
         if (obj->sub_etat == 0) {
-            old_type = obj->type;
+            old_type = (ObjType)obj->type;
             obj->type = TYPE_STONEBOMB2;
             DO_STONEBOMB_REBOND(obj);
             obj->type = old_type;
@@ -863,7 +863,7 @@ void DO_FRUIT_REBOND(obj_t* obj, i16 pesanteur, i16 a3) {
                 obj->hit_points = 2;
             }
         } else {
-            obj_type = obj->type;
+            obj_type = (ObjType)obj->type;
             if (obj_type == TYPE_FALLING_OBJ || obj_type == TYPE_FALLING_OBJ2 || obj_type == TYPE_FALLING_OBJ3 ||
                 obj_type == TYPE_FALLING_YING || obj_type == TYPE_FALLING_YING_OUYE
             ) {
