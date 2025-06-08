@@ -745,19 +745,28 @@ void calc_btyp_square(obj_t* obj) {
 
 //1E76C
 void DO_OBJ_REBOND_EN_X(obj_t* obj) {
-    //stub
+    if (block_flags[obj->btypes[2]] & 0x10 || block_flags[obj->btypes[1]] & 0x10) {
+        obj->speed_x = -obj->speed_x;
+    }
 }
 
 //1E790
 u8 calc_btyp(obj_t* obj) {
-    u8 btyp = BTYP_NONE;
-    calc_btyp_square(obj);
-    i32 x = obj->x + obj->offset_bx;
-    i32 y = obj->y + obj->offset_by;
+    /* 23F80 80148780 -O2 -msoft-float */
+    u8 btyp;
+    u8 btypes_1_2_solid;
+    s32 ray_x; s32 ray_y;
+    u8* ray_btypes;
+    u8* new_btyp;
+    u8 foll_spr;
 
-    if (obj->type == TYPE_RAYMAN) {
+    calc_btyp_square(obj);
+
+    if (obj->type == TYPE_RAYMAN)
+    {
         ray.cmd_arg_1 = -1;
-        switch (ray.btypes[0]) {
+        switch (ray.btypes[0])
+        {
             case BTYP_NONE:
             case BTYP_CHDIR:
                 break;
@@ -770,7 +779,7 @@ u8 calc_btyp(obj_t* obj) {
             case BTYP_LIANE:
             case BTYP_SOLID_PASSTHROUGH:
             case BTYP_SOLID:
-                ray_last_ground_btyp = 1;
+                ray_last_ground_btyp = true;
                 break;
             case BTYP_SLIPPERY_RIGHT_45:
             case BTYP_SLIPPERY_LEFT_45:
@@ -779,49 +788,61 @@ u8 calc_btyp(obj_t* obj) {
             case BTYP_SLIPPERY_LEFT1_30:
             case BTYP_SLIPPERY_LEFT2_30:
             case BTYP_SLIPPERY:
-                ray_last_ground_btyp = 0;
+                ray_last_ground_btyp = false;
                 break;
         }
     }
 
     if (!(block_flags[obj->btypes[0]] & 2)) {
-        if (obj->type == TYPE_23_RAYMAN) {
+        if (obj->type == TYPE_RAYMAN) {
             btyp = mp.map[ray.ray_dist].tile_type;
         } else {
-            btyp = BTYP(x >> 4, y >> 4);
+            btyp = BTYP((obj->x + obj->offset_bx) >> 4, (obj->y + obj->offset_by) >> 4);
         }
 
         if (obj->main_etat == 2 && !(block_flags[btyp] & 2)) {
-            btyp = BTYP(x >> 4, (y + 16) >> 4);
+            btyp = BTYP((obj->x + obj->offset_bx) >> 4, (obj->y + obj->offset_by + 16) >> 4);
         }
 
         if (!(block_flags[btyp] & 2)) {
-            u8 left_and_right_solid = (block_flags[obj->btypes[2]] & 2) + ((block_flags[obj->btypes[1]] & 2) != 0);
-            // left = 1, right = 2, both = 3
-            if (left_and_right_solid == 3) {
-                // decide whether the closest solid tile is to the left or right?
-                if ((x % 16) < 8) {
-                    left_and_right_solid = 1;
-                } else {
-                    left_and_right_solid = 2;
-                }
+            btypes_1_2_solid = ((block_flags[obj->btypes[1]] & 2) != 0) | (block_flags[obj->btypes[2]] & 2);
+            if (btypes_1_2_solid == 3) /* both 1 and 2 have solid flag */ {
+                if (((obj->offset_bx + (u16) obj->x) & 0xF) < 8)
+                    btypes_1_2_solid = 1;
+                else
+                    btypes_1_2_solid = 2;
             }
 
-            if (left_and_right_solid != 0) {
-                u8 left_or_right = left_and_right_solid - 1; // now 0 = left, 1 = right
-                if (obj->type == TYPE_23_RAYMAN) {
-                    if (ray_last_ground_btyp == 1) {
-                        i32 ground_x = left_or_right ? x + 16 : x - 16;
-                        if (!(block_flags[BTYP(ground_x >> 4, y >> 6)] & 2)) {
+            if (btypes_1_2_solid != 0) {
+                btypes_1_2_solid--;
+                if (obj->type == TYPE_RAYMAN) {
+                    if (ray_last_ground_btyp == true) {
+                        ray_x = ray.x + ray.offset_bx;
+                        if (btypes_1_2_solid)
+                            ray_x += 16;
+                        else
+                            ray_x -= 16;
+                        ray_y = ray.y + ray.offset_by - 16;
+                        if (!(block_flags[(u8) BTYP(ray_x >> 4, ray_y >> 4)] & 2)) {
                             if (ray.main_etat != 2) {
-                                obj->cmd_arg_1 = (left_or_right == ray.flags.flip_x);
+                                /* ??? don't understand */
+                                if (btypes_1_2_solid != (ray.flags.flip_x))
+                                    obj->cmd_arg_1 = 0;
+                                else
+                                    obj->cmd_arg_1 = 1;
                             }
-                            ray.btypes[0] = ray.btypes[1 + (left_or_right != 0)];
+
+                            ray_btypes = ray.btypes;
+                            if (btypes_1_2_solid)
+                                new_btyp = &ray_btypes[2];
+                            else
+                                new_btyp = &ray_btypes[1];
+                            ray_btypes[0] = *new_btyp;
                         }
                     }
-                } else if (left_or_right != ray.flags.flip_x && obj->main_etat != 2) {
-                    if (
-                            (obj->type == TYPE_BADGUY1 && obj->flags.flip_x) ||
+                } else {
+                    if ((obj->flags.flip_x) != btypes_1_2_solid && obj->main_etat != 2 &&
+                        ((obj->type == TYPE_BADGUY1 && obj->flags.read_commands) ||
                             obj->type == TYPE_BADGUY2 || obj->type == TYPE_BADGUY3 || obj->type == TYPE_GENEBADGUY ||
                             obj->type == TYPE_STONEMAN1 || obj->type == TYPE_STONEMAN2 ||
                             obj->type == TYPE_BIG_CLOWN || obj->type == TYPE_WAT_CLOWN ||
@@ -829,22 +850,25 @@ u8 calc_btyp(obj_t* obj) {
                             obj->type == TYPE_TROMPETTE || obj->type == TYPE_MITE || obj->type == TYPE_MITE2 ||
                             obj->type == TYPE_CAISSE_CLAIRE || obj->type == TYPE_WALK_NOTE_1 || obj->type == TYPE_SPIDER_PLAFOND ||
                             (obj->type == TYPE_BLACKTOON1 &&
-                             (obj->follow_sprite == 1 || obj->follow_sprite == 4 || (obj->follow_sprite == 7 && obj->configuration == 2)) &&
+                             (foll_spr = obj->follow_sprite, foll_spr == 1 || foll_spr == 4 || (foll_spr == 7 && obj->configuration == 2)) &&
                              !(obj->main_etat == 0 && obj->sub_etat == 4)
                             )
+                        )
                     ) {
                         makeUturn(obj);
                         obj->btypes[0] = BTYP_SOLID;
                     }
                 }
-            } else {
-                btyp = obj->btypes[0];
             }
+            btyp = obj->btypes[0];
+            return btyp;
+        } else {
+            return btyp;
         }
     } else {
         btyp = obj->btypes[0];
+        return btyp;
     }
-    return btyp;
 }
 
 //1EAA8

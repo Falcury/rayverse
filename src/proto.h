@@ -338,7 +338,9 @@ i32 blocs1_right2_30(i32 x, i32 y);
 i32 blocs1_left1_30(i32 x, i32 y);
 i32 blocs1_left2_30(i32 x, i32 y);
 i32 blocs3_empty(i32 x, i32 y);
+i32 blocs1_liane(i32 x, i32 y);
 i32 blocs4_empty(i32 x, i32 y);
+i32 blocs1_hor(i32 x, i32 y);
 i32 blocs2_empty(i32 x, i32 y);
 void init_calcbloc_func(void);
 

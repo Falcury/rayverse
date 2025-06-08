@@ -632,13 +632,21 @@ i32 blocs1_left2_30(i32 x, i32 y) {
 i32 blocs3_empty(i32 x, i32 y) {
     return y;
 }
-#define blocs1_liane blocs3_empty
+
+//25BF0 (identical to blocs3_empty)
+i32 blocs1_liane(i32 x, i32 y) {
+    return y;
+}
 
 //25BF4
 i32 blocs4_empty(i32 x, i32 y) {
     return 0;
 }
-#define blocs1_hor blocs4_empty
+
+//25BF4 (identical to blocs4_empty)
+i32 blocs1_hor(i32 x, i32 y) {
+    return 0;
+}
 
 //25BF8
 i32 blocs2_empty(i32 x, i32 y) {
