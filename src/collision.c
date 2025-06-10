@@ -1751,7 +1751,36 @@ void DO_MOVING_PLATFORM_COMMAND(obj_t* obj) {
 
 //2F378
 void DoPTGRAPPINPoingCollision(obj_t* obj, i16 a2) {
-    //stub
+    if (RayEvts.grap && ray_mode != MODE_3_MORT_DE_RAYMAN) {
+        if (Abs((ray.y + ray.offset_by) - obj->y + obj->offset_by) < 250) {
+            SET_RAY_BALANCE();
+            id_obj_grapped = obj->id;
+            i16 angle = ANGLE_RAYMAN(obj);
+            obj->follow_x = angle;
+            if (angle > 256) {
+                obj->link = -1;
+            } else if (angle <= 256) {
+                if (angle == 256 && !(ray.flags.flip_x)) {
+                    obj->link = -1;
+                } else {
+                    obj->link = 1;
+                }
+            }
+            else /* TODO: ??? */ {
+                obj->link = 1;
+            }
+
+            if (obj->main_etat == 0 && obj->sub_etat == 0) {
+                skipToLabel(obj, 0, true);
+            }
+
+            poing.is_active = false;
+            poing.is_returning = false;
+            poing_obj->flags.alive = 0;
+            poing_obj->is_active = 0;
+            fin_poing_follow(false);
+        }
+    }
 }
 
 //2F44C

@@ -266,7 +266,7 @@ void rayMayLandOnAnObject(u8* param_1, i16 obj_id) {
                             RayEvts.handstand_dash = 0;
                             RayEvts.handstand = 0;
                             RayEvts.magicseed = 0;
-                            RayEvts.grab = 0;
+                            RayEvts.grap = 0;
                             RayEvts.run = 0;
                             RayEvts.tiny = 0;
                             RayEvts.firefly = 0;
@@ -1529,29 +1529,208 @@ void RAY_RESPOND_TO_FIRE1(void) {
     }
 }
 
+
+static inline s16 inline_RAY_BALANCE_ANIM(s16 angle) {
+    /* 617C0 80185FC0 -O2 -msoft-float */
+    /* thanks :) https://decomp.me/scratch/IFC9r */
+    if (angle < 32) {
+        if (!ray.flags.flip_x)
+            return angle + 31;
+        else
+            return (32 - angle >= 0) ? 32 - angle : angle - 32;
+    } else {
+        if (!ray.flags.flip_x)
+            return angle - 31;
+        else
+            return (95 - angle >= 0) ? 95 - angle : angle - 95;
+    }
+}
+
 //6F24C
-void RAY_BALANCE_ANIM(i16 a1) {
-    //stub
+i16 RAY_BALANCE_ANIM(i16 grp_angle) {
+    if (grp_angle == 0)
+        grp_angle++;
+
+    return inline_RAY_BALANCE_ANIM((grp_angle - 1) >> 3);
 }
 
 //6F29C
 void SET_RAY_BALANCE(void) {
-    //stub
+    /* 6191C 8018611C -O2 -msoft-float */
+    if (ray.main_etat == 2 && ray.sub_etat == 8) {
+        ray.iframes_timer = 90;
+    }
+
+    set_main_and_sub_etat(&ray, 7, 0);
+    PlaySnd(0, -1);
+    ray.link = 0;
+    ray.gravity_value_1 = 0;
+    ray.gravity_value_2 = 0;
+    compteur_attente = 0; // added in PC/Android
+    ray.cmd_arg_2 = -1;
+    decalage_en_cours = 0;
+    button_released = 1;
+    ray.speed_y = 0;
 }
 
 //6F328
 void RAY_GOING_BALANCE(obj_t* obj) {
-    //stub
+    /* 619C0 801861C0 -O2 -msoft-float */
+    s16 sine_angle;
+    s16 cosine_angle;
+    s32 unk_3;
+    s32 unk_4;
+    s16 angle;
+    s16 follow_y;
+    s16 diff_x = (ray.x + ray.offset_bx) - obj->x - obj->offset_bx;
+    s16 diff_y = (ray.y + ray.offset_by) - obj->y - obj->offset_by;
+    s32 dist = diff_x * diff_x + diff_y * diff_y;
+
+    if (ray.sub_etat == 0) {
+        if (dist > 4512U) {
+            set_sub_etat(&ray, 1);
+            obj->timer = 0;
+            ray.speed_y = 0;
+            ray.speed_x = 0;
+            decalage_en_cours = 0;
+            angle = ANGLE_RAYMAN(obj);
+            obj->follow_x = angle;
+            if (angle > 256 || (angle == 256 && !(ray.flags.flip_x))) {
+                obj->link = -1;
+            } else {
+                obj->link = 1;
+            }
+
+            // This is different in PC/Android compared to PS1
+            if (diff_x < 0) {
+                diff_x = -diff_x;
+            }
+            if (diff_y < 0) {
+                diff_y = -diff_y;
+            }
+
+            abs_sinus_cosinus(angle + 128, &sine_angle, &cosine_angle);
+            if (sine_angle > 2) {
+                if (cosine_angle > 2) {
+                    unk_3 = (diff_x << 9) / cosine_angle;
+                    unk_4 = (diff_y << 9) / sine_angle;
+                    follow_y = (unk_3 + unk_4) >> 1;
+                } else {
+                    follow_y = diff_y;
+                }
+            } else {
+                follow_y = diff_x;
+            }
+            obj->follow_y = follow_y;
+        }
+        else {
+            ray.speed_x = 0;
+            ray.gravity_value_1++;
+            ray.speed_y -= obj->speed_y;
+            if (ray.gravity_value_1 > 2) {
+                ray.speed_y++;
+                ray.gravity_value_1 = 0;
+            }
+        }
+    }
 }
 
 //6F500
 void RAY_BALANCE(void) {
-    //stub
+    /* 61C48 80186448 -O2 -msoft-float */
+    s16 cosine_grp_angle; s16 sine_grp_angle;
+    s16 unk_1;
+    s16 unk_2;
+    s32 unk_3;
+    s16 unk_4;
+    s16 unk_spd_x; s16 unk_spd_y;
+    eta_t **ray_eta = ray.eta;
+    obj_t *obj_grp = &level.objects[id_obj_grapped];
+    s16 grp_angle = obj_grp->follow_x;
+
+    if (ray.sub_etat == 0) {
+        RAY_GOING_BALANCE(obj_grp);
+    } else if (ray.sub_etat == 1) {
+        if (obj_grp->timer == 0) {
+            if (obj_grp->follow_y > 100) {
+                obj_grp->follow_y -= 2;
+            } else if (obj_grp->follow_y < 95) {
+                obj_grp->follow_y += 1;
+            }
+
+            sinus_cosinus(grp_angle + 128, &cosine_grp_angle, &sine_grp_angle); // this is changed in the PC/Android versions
+
+            /* not in bottom half of circle? */
+            unk_1 = 128;
+            unk_2 = 384;
+            if (grp_angle >= unk_2) {
+                if (obj_grp->link > 0)
+                    obj_grp->timer = 5;
+                obj_grp->link = -1;
+            } else if (grp_angle <= unk_1) {
+                if (obj_grp->link < 0)
+                    obj_grp->timer = 5;
+                obj_grp->link = 1;
+            }
+
+            i16 v4 = (abs_cosinus(grp_angle) >> 7) + 1;
+            if (obj_grp->link < 0) {
+                v4 = -v4;
+            }
+            obj_grp->follow_x += v4;
+
+            /* unk_spd_*??? */
+            unk_spd_x = obj_grp->x + obj_grp->offset_bx + ((obj_grp->follow_y * cosine_grp_angle) >> 9) - ray.offset_bx - ray.x;
+            unk_spd_y = obj_grp->y + obj_grp->offset_by - ((obj_grp->follow_y * sine_grp_angle) >> 9) - ray.offset_by - ray.y;
+            ray.speed_x = unk_spd_x;
+            ray.speed_y = unk_spd_y;
+        }
+        else
+        {
+            obj_grp->timer--;
+            ray.speed_x = 0;
+            ray.speed_y = 0;
+            decalage_en_cours = 0;
+        }
+    }
+    ray.anim_index = ray_eta[ray.main_etat][ray.sub_etat].anim_index;
+    ray.anim_frame = RAY_BALANCE_ANIM(grp_angle);
+    ray.speed_x += obj_grp->speed_x;
+    ray.speed_y += obj_grp->speed_y;
+    if (
+            (block_flags[ray.btypes[0]] & 2) &&
+            (
+                    (!ray.flags.flip_x && (block_flags[ray.btypes[1]] & 2)) ||
+                    (ray.flags.flip_x && (block_flags[ray.btypes[2]] & 2))
+            ) &&
+            (ray.speed_y > 0 || obj_grp->speed_y > 0)
+            )
+    {
+        recale_position(&ray);
+        ray.y += ray.speed_y;
+        ray.speed_y = 0;
+        ray.timer = 0;
+        helico_time = -1;
+        set_main_and_sub_etat(&ray, 0, 8);
+        PlaySnd(19, -1);
+        ray.link = -1;
+    }
+    else if ((block_flags[ray.btypes[2]] & 0x10) || (block_flags[ray.btypes[1]] & 0x10)) {
+        RAY_FIN_BALANCE();
+    }
 }
 
 //6F7D0
 void RAY_FIN_BALANCE(void) {
-    //stub
+    /* 62144 80186944 -O2 -msoft-float */
+    ray.flags.flip_x = level.objects[id_obj_grapped].follow_x < 256;
+    set_main_and_sub_etat(&ray, 2, 2);
+    ray.speed_y = 0;
+    ray.gravity_value_1 = 0;
+    ray.gravity_value_2 = 0;
+    helico_time = -1;
+    ray.link = -1;
+    ray.x -= ray.speed_x;
 }
 
 //6F870

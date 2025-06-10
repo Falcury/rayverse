@@ -159,18 +159,56 @@ i32 sinus(i32 x) {
 }
 
 //5E03C
-i32 sinus_cosinus(i32 x) {
-    return 0; //stub
+void sinus_cosinus(i32 x, i16 *cosinus_result, i16 *sinus_result) {
+    i32 result;
+    x &= (512-1);
+    if (x >= 256) {
+        i32 index = x - 384;
+        if (index < 0) {
+            index = -index;
+            *cosinus_result = (i16)-costab[128 - index];
+        } else {
+            *cosinus_result = (i16)costab[128 - index];
+        }
+        *sinus_result = (i16)-costab[index];
+    } else {
+        i32 index = x - 128;
+        if (index < 0) {
+            index = -index;
+            *cosinus_result = (i16)costab[128 - index];
+        } else {
+            *cosinus_result = (i16)-costab[128 - index];
+        }
+        *sinus_result = costab[index];
+    }
+}
+
+//5E0F0
+i32 abs_sinus(i32 x) {
+    i32 t = (u8)x - 128;
+    if (t < 0) {
+        t = -t;
+    }
+    return costab[t];
 }
 
 //5E10C
 i32 abs_cosinus(i32 x) {
-    return 0; //stub
+    i32 t = (u8)(x + 128) - 128;
+    if (t < 0) {
+        t = -t;
+    }
+    return costab[t];
 }
 
-//5E10C
-i32 abs_sinus_cosinus(i32 x) {
-    return 0; //stub
+//5E12C
+void abs_sinus_cosinus(i32 x, i16 *sinus_result, i16 *cosinus_result) {
+    i32 t = (u8)x - 128;
+    if (t < 0) {
+        t = -t;
+    }
+    *sinus_result = costab[t];
+    *cosinus_result = costab[128 - t];
 }
 
 

@@ -196,7 +196,7 @@ void fee_gives_super_evts(void) {
             if (num_level == 8)
                 RayEvts.hang = true;
             if (num_level == 17)
-                RayEvts.grab = true;
+                RayEvts.grap = true;
             break;
         case 2:
             if (num_level == 11)
@@ -306,7 +306,7 @@ void DO_FEE(obj_t* obj) {
     }
     if (new_txt_fee != 0) {
         // NOTE: fixed out-of-bounds access: old_txt_fee may be 255!
-        if (old_txt_fee != 255 & text_to_display[old_txt_fee].ypos < SCREEN_HEIGHT + 20) {
+        if (old_txt_fee != 255 && text_to_display[old_txt_fee].ypos < SCREEN_HEIGHT + 20) {
             text_to_display[old_txt_fee].ypos++;
         } else {
             new_txt_fee = 0;

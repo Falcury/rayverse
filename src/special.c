@@ -39,7 +39,7 @@ void fix_numlevel(obj_t* obj) {
                     new_world = 1;
 
                 // Betilla: grab
-                if (num_level == 16 && (RayEvts.grab) != 0)
+                if (num_level == 16 && (RayEvts.grap) != 0)
                     new_world = 1;
                 break;
 
@@ -697,8 +697,58 @@ void MARACAS_GO(obj_t* obj) {
 }
 
 //7B470
-void ANGLE_RAYMAN(obj_t* obj) {
-    //stub
+i16 ANGLE_RAYMAN(obj_t* obj) {
+    /* 3AC88 8015F488 -O2 -msoft-float */
+    s16 x;
+    s16 y;
+    u8 x_gt_0;
+    u8 y_gt_0;
+    u8 tab_val;
+    s16 res;
+
+    x = ray.offset_bx + (ray.x - obj->x - obj->offset_bx);
+    y = ray.offset_by + (ray.y - obj->y - obj->offset_by);
+    x_gt_0 = x > 0;
+    y_gt_0 = y > 0;
+    if (!x_gt_0) {
+        x = -x;
+    }
+    if (!y_gt_0) {
+        y = -y;
+    }
+
+    if (x > 200) {
+        x = x >> 1;
+        y = y >> 1;
+    }
+
+    if (y == 0) {
+        if (x_gt_0) {
+            res = 384;
+        } else {
+            res = 128;
+        }
+    } else {
+        if (x < y) {
+            tab_val = angletab[(s16) ((x * 64) / y)];
+        } else {
+            tab_val = 128 - angletab[(s16) ((y * 64) / x)];
+        }
+        if (x_gt_0) {
+            if (y_gt_0) {
+                res = 384 - tab_val;
+            } else {
+                res = 384 + tab_val;
+            }
+        } else {
+            if (y_gt_0) {
+                res = 128 + tab_val;
+            } else {
+                res = 128 - tab_val;
+            }
+        }
+    }
+    return res;
 }
 
 //7B56C

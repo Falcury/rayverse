@@ -644,7 +644,7 @@ typedef struct rayevts_t {
     u8 handstand_dash : 1;      //0x10
     u8 handstand : 1;           //0x20
     u8 magicseed : 1;           //0x40
-    u8 grab : 1;                //0x80
+    u8 grap : 1;                //0x80
     u8 run : 1;                 //0x100
     u8 tiny : 1;                //0x200
     u8 firefly : 1;             //0x400

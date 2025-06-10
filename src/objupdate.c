@@ -540,7 +540,7 @@ void DoMorningStarPoingCollision(obj_t* obj, i16 a2) {
 void DoGrapBonusRaymanCollision(obj_t* obj) {
     DO_NOVA(obj);
     obj->flags.alive = 0;
-    RayEvts.grab = 1;
+    RayEvts.grap = 1;
 }
 
 //61DB0

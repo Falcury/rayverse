@@ -714,7 +714,7 @@ i16 EauDy[14] = {0, -3, -6, -8, -9, -10, -9, -7, -5, -2, 2, 6, 7, 4}; //94CF4
 i16 DecEau[4] = {9, 0, 7, 5}; //94D10
 
 //94D18
-u8 angle_tab[65] = {
+u8 angletab[65] = {
         128, 126, 125, 124, 122, 121, 120, 119, 117, 116, 115,
         114, 112, 111, 110, 109, 108, 106, 105, 104, 103, 102,
         101, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88,
@@ -1945,7 +1945,7 @@ i16 num_world_choice; //CF83A
 i16 ray_speed_inv; //CF83C
 i16 ymapinit; //CF83E
 i16 ray_clic; //CF840
-i16 id_obj_grabbed; //CF842
+i16 id_obj_grapped; //CF842
 i16 xmapinit; //CF844
 i16 id_Cling_Pow; //CF846
 i16 ray_between_clic; //CF848
