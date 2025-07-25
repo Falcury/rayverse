@@ -122,7 +122,7 @@ i16 play_digi_snd(snd_t* snd) {
         snd_t* voice = digi_voices + i;
         if (!voice->is_playing) {
             *voice = *snd;
-            voice->cursor = 0;
+            voice->position = 0.0f;
             voice->is_playing = true;
             return (i16)i;
         }
@@ -151,56 +151,64 @@ void game_get_sound_samples(game_sound_buffer_t* output_buffer) {
 
     // Play digi sounds
     lock_audio();
+
+    // We need to resample the sound's sample rate (which may also vary depending on pitch shifting) to the output rate.
+    const float output_sample_rate = 44100.0f;
     for (i32 i = 0; i < COUNT(digi_voices); ++i) {
         snd_t* voice = digi_voices + i;
-        if (voice->is_playing) {
-            // Source sample rate is 11025 Hz, target sample rate is 44100 Hz
-            // We can implement a simple upsampling with linear interpolation
-            // TODO: more advanced upsampling to account for pitch differences
-            i32 total_source_samples = voice->sample_count * 4;
-            i32 dest_samples_remaining = total_source_samples - voice->dest_cursor;
-            if (dest_samples_remaining > 0) {
+        if (!voice->is_playing) {
+            continue;
+        }
 
-                i32 dest_samples_to_output = MIN(output_buffer->sample_count, dest_samples_remaining);
-                i32 prev_source_sample = (voice->cursor > 0) ? (i32)voice->data[voice->cursor - 1] - 128 : 0;
-                i32 next_source_sample = (i32)(voice->data[voice->cursor]) - 128;
-                i16* dest_pos = output_buffer->samples;
-                for (i32 j = 0; j < dest_samples_to_output; ++j) {
+        // Calculate the step increment for the source sample position.
+        // This is the ratio of the sound's sample rate to the output sample rate.
+        float step = (float)voice->sample_rate / output_sample_rate;
 
-                    // Do the linear interpolation while also converting from 8-bit to 16-bit samples
-                    // TODO: account for volume
-                    i32 dest_sample;
-                    switch(voice->dest_cursor % 4) {
-                        default:
-                        case 0: {
-                            dest_sample = prev_source_sample * (256/2);
-                        } break;
-                        case 1: {
-                            dest_sample = prev_source_sample * (192/2) + next_source_sample * (64/2);
-                        } break;
-                        case 2: {
-                            dest_sample = prev_source_sample * (128/2) + next_source_sample * (128/2);
-                        } break;
-                        case 3: {
-                            dest_sample = prev_source_sample * (64/2) + next_source_sample * (192/2);
-                            // we're done with this source sample, move to the next one
-                            prev_source_sample = next_source_sample;
-                            next_source_sample = (i32)voice->data[voice->cursor] - 128;
-                            ++voice->cursor;
-                        } break;
-                    }
+        // Get a pointer to the start of the output buffer for this frame
+        i16* dest = output_buffer->samples;
 
-                    // Mix sound by adding together voices, then cap between INT16_MIN and INT16_MAX to prevent rollover
-                    i32 mixed = *dest_pos + dest_sample;
-                    mixed = MIN(32767, MAX(-32768, mixed));
+        // Loop through the number of samples we need to generate for this frame
+        for (i32 j = 0; j < output_buffer->sample_count; ++j) {
 
-                    *dest_pos++ = (i16)mixed;
-                    *dest_pos++ = (i16)mixed;
-                    ++voice->dest_cursor;
-                }
-            } else {
-                voice->is_playing = false; // sound finished playing
+            // 1. Find the current position and check boundaries
+            i32 source_index = (i32)voice->position;
+
+            // Stop if we've read past the end of the source data.
+            // We need source_index and source_index + 1 for interpolation, so we check against size - 1.
+            if (source_index >= voice->sample_count - 1) {
+                voice->is_playing = false;
+                break; // Stop processing this voice for this frame
             }
+
+            // 2. Get samples for interpolation
+            // Convert 8-bit unsigned samples to a signed range (-128 to 127)
+            i32 s1 = (i32)voice->data[source_index] - 128;
+            i32 s2 = (i32)voice->data[source_index + 1] - 128;
+
+            // 3. Perform Linear Interpolation
+            // Find the fractional part of our position, which is our interpolation factor 't'
+            float t = voice->position - (float)source_index;
+
+            // Interpolate between the two samples
+            float interpolated_sample = (1.0f - t) * (float)s1 + t * (float)s2;
+
+            // 4. Scale to 16-bit and apply volume
+            // Scale from the -128 to 127 range to the -32768 to 32767 range
+            // Also, apply the volume for this voice
+            i32 dest_sample = (i32)(interpolated_sample * 256.0f * voice->volume);
+
+            // 5. Mix into the output buffer (mono to stereo)
+            // Add the new sample to the existing data in the buffer
+            i32 mixed_l = dest[0] + dest_sample;
+            i32 mixed_r = dest[1] + dest_sample;
+
+            // Clamp the values to prevent 16-bit integer overflow (clipping)
+            dest[0] = (i16)MIN(32767, MAX(-32768, mixed_l));
+            dest[1] = (i16)MIN(32767, MAX(-32768, mixed_r));
+            dest += 2; // Move to the next stereo sample pair
+
+            // 6. Advance our position in the source sample data
+            voice->position += step;
         }
     }
     unlock_audio();
@@ -545,7 +553,7 @@ void PlaySnd(i16 snd, i16 obj_id) {
             case 14:
                 prog = hard_sound_table[14].prog;
                 tone = hard_sound_table[14].tone;
-                note = not_snd_wiz[level.objects[obj_id].sub_etat - 24]; // ting note depends on the sub_etat
+                note = hard_sound_table[14].note + not_snd_wiz[level.objects[obj_id].sub_etat - 24]; // ting note depends on the sub_etat
                 break;
             case 19:
                 prog = hard_sound_table[19].prog;

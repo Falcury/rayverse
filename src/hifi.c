@@ -155,8 +155,14 @@ void LoadBnkWorld(i16 world) {
 
 //3EABC
 i16 KeyOn(u8 bank, u8 prog, u8 tone, u8 note, u8 volume, u8 pan) {
-//    printf("KeyOn: bank %d prog %d tone %d note %d volume %d a6 %d\n", bank, prog, tone, note, volume, a6);
+//    printf("KeyOn: bank %d prog %d tone %d note %d volume %d pan %d\n", bank, prog, tone, note, volume, pan);
     snd_t snd = {0};
+    i32 sample_rate = 11025;
+    float base_note = 54.5f; // NOTE: I determined this value by trial and error, it may not be exactly correct
+    if (note != 60) {
+        sample_rate = (i32)((float)sample_rate * powf(2.0f, ((float)note - base_note) / 12.0f));
+    }
+
     if (bank == 1) {
         bnk_header_t* bnk_header = bnkHeaderWorld + prog;
         snd.data = bnkDataWorld + bnk_header->offset;
@@ -165,15 +171,19 @@ i16 KeyOn(u8 bank, u8 prog, u8 tone, u8 note, u8 volume, u8 pan) {
         snd.bytes_per_sample = 1;
         snd.sample_count = snd.size;
         snd.bnk_field_C = bnk_header->field_C;
-        snd.sample_rate = 11025; // TODO: resample
+        snd.sample_rate = sample_rate;
+        snd.position = 0.0;
+        snd.volume = MIN(1.0f, (float)volume / 50.0f);
     } else {
         bnk_header_t* bnk_header = bnkHeaderFixe + prog;
         snd.data = bnkDataFixe + bnk_header->offset;
         snd.offset = bnk_header->offset;
         snd.size = bnk_header->size;
         snd.sample_count = snd.size;
-        snd.sample_rate = 11025; // TODO: resample
+        snd.sample_rate = sample_rate;
         snd.bytes_per_sample = 1;
+        snd.position = 0.0;
+        snd.volume = MIN(1.0f, (float)volume / 50.0f);
     }
     i16 voice_index = play_digi_snd(&snd);
     return voice_index;

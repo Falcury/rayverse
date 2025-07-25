@@ -68,8 +68,8 @@ typedef struct snd_t {
     i32 size;
     i32 sample_count;
     i32 bnk_field_C;
-    i32 cursor;
-    i32 dest_cursor;
+    float position;
+    float volume;
     i32 sample_rate;
     u8 bytes_per_sample;
     u8 is_playing;
