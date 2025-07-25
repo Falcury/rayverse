@@ -1519,7 +1519,7 @@ u8 bank_to_use[256] = {
 
 u8 voice_is_working[32] = {0}; //97F44
 i16 Volume_Snd = 127; //97F64
-
+u8 not_snd_wiz[8] = {0, 2, 4, 5, 7, 9, 11, 12}; //97F6E
 i16 was_in_freeze = 0; //97F76
 u8 flagCDPlay; //97F78
 u8 phaseCd; //97F79
@@ -2408,6 +2408,7 @@ u8* anim_sequence; //E4E78
 i32 RandomIndex; //E548C
 i16 stk_obj[20]; //E5490
 i16 stk_snd[20]; //E54B8
+pile_snd_t pile_snd[9]; //E5490
 
 voice_t voice_table[32]; //E55D0
 

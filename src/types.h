@@ -53,6 +53,15 @@ typedef struct game_sound_buffer_t {
 } game_sound_buffer_t;
 
 
+typedef struct voice_t {
+    i16 obj;
+    i16 vol;
+    i16 pan;
+    i16 snd;
+    i16 field_8;
+    i16 field_A;
+} voice_t;
+
 typedef struct snd_t {
     u8* data;
     i32 offset;
@@ -65,6 +74,20 @@ typedef struct snd_t {
     u8 bytes_per_sample;
     u8 is_playing;
 } snd_t;
+
+typedef struct pile_snd_t {
+    i16 obj; // field_0
+    i16 snd; // field_2
+    i16 prog; // field_4
+    i16 tone; // field_6
+    i16 note; // field_8
+    i16 vol; // field_A
+    i16 field_C; // field_C
+    i16 pan; // field_E
+    i32 end_time; // field_10
+    i16 field_14; // field_14
+    i16 field_16; // padding?
+} pile_snd_t;
 
 
 typedef struct game_state_t {
@@ -310,7 +333,7 @@ typedef struct obj_t {
 	eta_t** eta;
 	u8* cmds;
 	i16* cmd_labels;
-	cmd_context_t* cmd_contexts;
+	cmd_context_t cmd_contexts[1];
 	u32 field_1C; // 0x1C
 	u32 link_has_gendoor; // 0x20 - ?
 	i32 is_active; // 24
@@ -430,15 +453,6 @@ typedef struct big_map_t {
     i16 field_1A;
     i16 field_1C;
 } big_map_t;
-
-typedef struct voice_t {
-	i16 field_0;
-	i16 field_2;
-	i16 field_4;
-    i16 sound_id;
-    i16 field_8;
-    i16 field_A;
-} voice_t;
 
 typedef struct options_t {
 	i16 music_enabled;

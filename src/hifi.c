@@ -154,7 +154,8 @@ void LoadBnkWorld(i16 world) {
 }
 
 //3EABC
-i16 KeyOn(u8 bank, u8 prog, u8 tone, u8 note, u8 volume, u8 a6) {
+i16 KeyOn(u8 bank, u8 prog, u8 tone, u8 note, u8 volume, u8 pan) {
+//    printf("KeyOn: bank %d prog %d tone %d note %d volume %d a6 %d\n", bank, prog, tone, note, volume, a6);
     snd_t snd = {0};
     if (bank == 1) {
         bnk_header_t* bnk_header = bnkHeaderWorld + prog;
@@ -164,14 +165,14 @@ i16 KeyOn(u8 bank, u8 prog, u8 tone, u8 note, u8 volume, u8 a6) {
         snd.bytes_per_sample = 1;
         snd.sample_count = snd.size;
         snd.bnk_field_C = bnk_header->field_C;
-        snd.sample_rate = 11025;
+        snd.sample_rate = 11025; // TODO: resample
     } else {
         bnk_header_t* bnk_header = bnkHeaderFixe + prog;
         snd.data = bnkDataFixe + bnk_header->offset;
         snd.offset = bnk_header->offset;
         snd.size = bnk_header->size;
         snd.sample_count = snd.size;
-        snd.sample_rate = 11025;
+        snd.sample_rate = 11025; // TODO: resample
         snd.bytes_per_sample = 1;
     }
     i16 voice_index = play_digi_snd(&snd);
@@ -179,8 +180,9 @@ i16 KeyOn(u8 bank, u8 prog, u8 tone, u8 note, u8 volume, u8 a6) {
 }
 
 //3EC0C
-void KeyOff(u32 a1, u8 bank, u8 prog, u8 tone, u8 note) {
-    //stub
+void KeyOff(u32 voice_id, u8 bank, u8 prog, u8 tone, u8 note) {
+    snd_t* digi_voice = digi_voices + voice_id;
+    digi_voice->is_playing = false;
 }
 
 //3EC1C
