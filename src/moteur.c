@@ -2457,7 +2457,7 @@ void DO_MOTEUR2(void) {
             v_scroll_speed = 0;
         }
         if (ray_mode > MODE_0_NONE) {
-            recale_ray_pos(); //TODO
+            recale_ray_pos();
         }
         if (ray_mode == MODE_2_RAY_ON_MS) {
             //stub

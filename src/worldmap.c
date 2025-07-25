@@ -891,7 +891,57 @@ void MAIN_NO_MORE_CONTINUE_PRG(void) {
 
 //6ABEC
 void INIT_VIGNET(void) {
-    //stub
+    loop_nb_trames = 0;
+    loop_timing = 5;
+    new_txt_fee = 0;
+    INIT_TEXT_TO_DISPLAY();
+    if (You_Win) {
+        INIT_CREDITS(); //Todo
+    }
+    switch (num_world) {
+        case 1: {
+            strcpy(text_to_display[0].text, language_txt[30]); // /tarayzan gives rayman a magic seed/
+            strcpy(text_to_display[1].text, language_txt[31]); // /to grow plants use the $ button/
+            strcpy(text_to_display[2].text, language_txt[32]); // (empty string)
+            strcpy(text_to_display[3].text, language_txt[33]); // (empty string)
+            Deter_Option_Caract(text_to_display[1].text, options_jeu.action, 255);
+            Deter_Option_Caract(text_to_display[2].text, options_jeu.action, 255);
+            Deter_Option_Caract(text_to_display[3].text, options_jeu.action, 255);
+        } break;
+        case 3: {
+            strcpy(text_to_display[0].text, language_txt[34]); // /the musician gives rayman/
+            strcpy(text_to_display[1].text, language_txt[35]); // /a super helicopter power/
+            strcpy(text_to_display[2].text, language_txt[36]); // /press the $ button to use it/
+            strcpy(text_to_display[3].text, language_txt[37]); // /press $ again to go higher/
+            Deter_Option_Caract(text_to_display[2].text, options_jeu.jump, 255);
+            Deter_Option_Caract(text_to_display[3].text, options_jeu.jump, 255);
+        } break;
+        case 4: {
+            start_cd_suspence();
+            strcpy(text_to_display[0].text, language_txt[38]); // /mr dark kidnaps betilla the fairy!/
+        } break;
+        case 5: {
+            if (num_level == 3) {
+                strcpy(text_to_display[0].text, language_txt[39]); // /joe offers rayman a firefly /
+                strcpy(text_to_display[1].text, language_txt[40]); // /to light up the dark/
+                strcpy(text_to_display[2].text, language_txt[41]); // (empty string)
+                strcpy(text_to_display[3].text, language_txt[42]); // (empty string)
+            } else if (num_level == 11) {
+                strcpy(text_to_display[0].text, language_txt[43]); // /rayman please help me! hurry!/
+            }
+        } break;
+        default: break;
+
+        for (i32 i = 0; i != 10; i += 2) {
+            text_to_display[i].xpos = SCREEN_WIDTH / 2;
+            text_to_display[i].ypos = ((SCREEN_HEIGHT / 4) * 3) + 23;
+            text_to_display[i].font_size = 2;
+
+            text_to_display[i+1].xpos = SCREEN_WIDTH / 2;
+            text_to_display[i+1].ypos = ((SCREEN_HEIGHT / 4) * 3) + 38;
+            text_to_display[i+1].font_size = 2;
+        }
+    }
 }
 
 //6AF40

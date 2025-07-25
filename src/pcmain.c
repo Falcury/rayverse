@@ -11,9 +11,9 @@ void DO_GROS_MOTEUR_NORMAL(u8 need_update_display_map) {
     }
     do_record(&record); //TODO
     if (gele) {
-        DO_MOTEUR_GELE(); //TODO
+        DO_MOTEUR_GELE();
     } else {
-        DO_MOTEUR(); //TODO
+        DO_MOTEUR();
         if (!gele) {
             DO_MOTEUR2(); //TODO
         }
@@ -32,6 +32,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
     MapTimePause = 0;
     ProchainEclair = 0;
     numero_palette_special = 0;
+    current_pal_id = 0; // added to prevent the wrong palette being loaded at the start of the level
     if (MusicCdActive) {
         TestCdLoop();
     }

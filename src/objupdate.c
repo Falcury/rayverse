@@ -1014,52 +1014,193 @@ void DoBadGuy1RaymanZDD(obj_t* obj) {
 
 //62CD4
 void DO_CCL_COMMAND(obj_t* obj) {
-    //stub
+    /* 4D6EC 80171EEC -O2 */
+    switch (obj->cmd) {
+        case GO_WAIT:
+        case GO_NOP:
+            SET_X_SPEED(obj);
+            CALC_MOV_ON_BLOC(obj);
+            if (obj->main_etat == 0 && obj->sub_etat == 2) {
+                u8 hp = obj->hit_points;
+                if (hp != obj->flags.flip_x) {
+                    obj->flags.flip_x = (hp & 1);
+                }
+            }
+            break;
+        case GO_LEFT:
+        case GO_RIGHT:
+            if (obj->cmd == GO_LEFT) {
+                obj->flags.flip_x = 0;
+            } else {
+                obj->flags.flip_x = 1;
+            }
+            SET_X_SPEED(obj);
+            CALC_MOV_ON_BLOC(obj);
+            break;
+    }
 }
 
 //62D68
 void DoCaisseClairePoingCollision(obj_t* obj, i16 a2) {
-    //stub
+    if (!(obj->main_etat == 0 && obj->sub_etat == 2)) {
+        set_main_and_sub_etat(obj, 1, 1);
+        if (!obj->flags.flip_x) {
+            obj->flags.flip_x = 1;
+            skipToLabel(obj, 3, true);
+        } else {
+            obj->flags.flip_x = 0;
+            skipToLabel(obj, 2, true);
+        }
+    }
 }
 
 //62DC4
 void DoCaisseClaireRaymanZDD(obj_t* obj) {
-    //stub
+    if (obj->main_etat == 0 && obj->sub_etat == 0) {
+        set_main_and_sub_etat(obj, 1, 0);
+        if (obj->flags.flip_x) {
+            skipToLabel(obj, 3, true);
+        } else {
+            skipToLabel(obj, 2, true);
+        }
+    }
 }
 
 //62E10
 void DoStalagRaymanZDD(obj_t* obj) {
-    //stub
+    if (obj->sub_etat == 4) {
+        skipToLabel(obj, 99, true);
+    }
 }
 
 //62E2C
 void DO_ENSEIGNE_COMMAND(obj_t* obj) {
-    //stub
+    /* 500FC 801748FC -O2 -msoft-float */
+    DO_ONE_CMD(obj);
+    if (prise_branchee) {
+        if (obj->main_etat == 0 && obj->sub_etat == 0)
+            skipToLabel(obj, 1, true);
+
+        if (obj->main_etat == 0 && obj->sub_etat == 1 && obj->anim_frame >= obj->animations[1].frame_count - 1) {
+            skipToLabel(obj, 2, true);
+        }
+
+        if (obj->main_etat == 0 && obj->sub_etat == 2 && obj->anim_frame >= obj->animations[2].frame_count - 1) {
+            skipToLabel(obj, 1, true);
+        }
+    } else {
+        skipToLabel(obj, 0, true);
+    }
 }
 
 //62ED0
 void DO_JOE_COMMAND(obj_t* obj) {
-    //stub
+    // NOTE: this has some differences compared to the PS1 version
+    if (num_level == 3) {
+        scroll_end_y = ymapmax;
+        scroll_start_y = ymapmax;
+        ymap = ymapmax;
+        scroll_end_x = 0;
+        scroll_start_x = 0;
+        xmap = 0;
+    }
+
+    if (joe_exp_probleme) {
+        if (obj->main_etat == 0 && obj->sub_etat == 10) {
+            vignet_joe_affichee = 1;
+        }
+        if (obj->main_etat == 0 && obj->sub_etat == 1) {
+            if (vignet_joe_affichee) {
+                Vignet_To_Display = 1;
+                vignet_joe_affichee = 0;
+                finBosslevel.helped_joe_1 = 1;
+                obj->timer = 0;
+            }
+            ++obj->timer;
+            if (obj->timer == 100) {
+                DISPLAY_GAME_VIGNET();
+            } else if (obj->timer == 101) {
+                ChangeLevel();
+                RayEvts.firefly = 1;
+            }
+        }
+    }
+
+    if (num_level == 8) {
+        if (prise_branchee) {
+            if (obj->main_etat == 0 && obj->sub_etat == 1)
+                skipToLabel(obj, 3, true);
+        } else {
+            obj->flags.alive = false;
+        }
+    }
 }
 
 //62FCC
 void DoJoeRaymanZDD(obj_t* obj) {
-    //stub
+    if (obj->main_etat == 0 && obj->sub_etat == 1 && !joe_exp_probleme) {
+        vignet_joe_affichee = false;
+        skipToLabel(obj, 2, true);
+        joe_exp_probleme = true;
+    }
+    if (obj->main_etat == 0 && obj->sub_etat == 2) {
+        skipToLabel(obj, 4, true);
+    }
 }
 
 //63030
 void DO_BOUEE_JOE_COMMAND(obj_t* obj) {
-    //stub
+    /* 504E8 80174CE8 -O2 -msoft-float */
+    s16 unk_1 = 43;
+
+    obj->y = obj->iframes_timer - unk_1 + GetY(obj->x + obj->offset_bx - 12);
+
+    if (ray.cmd_arg_2 == obj->id)
+        obj->cmd_arg_1 = 13;
+    else
+        obj->cmd_arg_1 = 0;
+
+    if (obj->iframes_timer < obj->cmd_arg_1)
+        obj->iframes_timer++;
+    else if (obj->iframes_timer > obj->cmd_arg_1)
+        obj->iframes_timer--;
 }
 
 //6309C
 void DO_PHOTOGRAPHE_CMD(obj_t* obj) {
-    //stub
+    DO_ONE_CMD(obj);
+    u8 anim_spd = (obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0xF);
+
+    if (obj->anim_index == 4 && obj->anim_frame == 10 && horloge[anim_spd] == 0) {
+        PlaySnd(40, obj->id);
+    }
+
+    if (obj->sub_etat == 1) {
+        ++obj->timer;
+        if (obj->timer == 255) {
+            obj->timer = 1;
+        }
+    } else if (obj->timer != 0) {
+        ProchainEclair = 1;
+        numero_palette_special = 0;
+        ray.is_active = 1;
+        restore_gendoor_link();
+        saveGameState(obj, &save1);
+        correct_gendoor_link(1);
+    } else if (!RayEvts.tiny && !obj->flags.flag_1 && OBJ_IN_ZONE(obj) && ray.cmd_arg_2 == -1
+                && !decalage_en_cours && ray.main_etat == 0 && ray.sub_etat == 0
+                && inter_box(obj->x + 42, obj->y + 48, 5, 15, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h)
+    ) {
+        obj->flags.flag_1 = 1;
+        ray.speed_x = 0;
+        ray.is_active = 0;
+        skipToLabel(obj, 0, 1);
+    }
 }
 
 //6323C
 void DoAudioStartRaymanCollision(obj_t* obj) {
-    //stub
+    manage_snd_event();
 }
 
 //63244

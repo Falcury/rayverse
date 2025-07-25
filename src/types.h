@@ -1245,6 +1245,16 @@ typedef enum btyp_enum {
     BTYP_SLIPPERY=30,
 } BlockType;
 
+typedef u8 BlockFlags;
+#define BLOCK_FULLY_SOLID 0
+#define BLOCK_SOLID 1
+#define BLOCK_HURT 2
+#define BLOCK_SLIPPERY 3
+#define BLOCK_FLAG_4 4
+#define BLOCK_CH_DIR 5
+#define BLOCK_SLOPE 6
+#define BLOCK_FLAG_7 7
+
 enum world_enum {
 	world_0_none     = 0,
 	world_1_jungle   = 1,

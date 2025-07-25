@@ -196,12 +196,16 @@ void KeyOff(u32 voice_id, u8 bank, u8 prog, u8 tone, u8 note) {
 }
 
 //3EC1C
-void KeyVol(u32 a1, u32 a2, u32 a3, i16 a4) {
-    //stub
+void KeyVol(i32 voice_id, i32 volume, i32 pan) {
+    snd_t* digi_voice = digi_voices + voice_id;
+    digi_voice->volume = MIN(1.0f, (float)volume / 50.0f);
 }
 
 //3EC78
 void DigiMusicDone(void) {
+    for (i32 i = 0; i < COUNT(voice_table); ++i) {
+        KeyOff(i, 0, 0, 0, 0);
+    }
     //stub
 }
 

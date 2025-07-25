@@ -925,8 +925,77 @@ void obj_hurt(obj_t* target) {
 }
 
 //1EBA0
-void Projectil_to_RM(obj_t* obj, i16* a2, i16* a3, i16 a4, i16 a5) {
-    //stub
+void Projectil_to_RM(obj_t* obj, i16* out_spd_x, i16* out_spd_y, i16 new_spd_x, i16 new_spd_y) {
+    /* 249D0 801491D0 -O2 -msoft-float */
+    s16 diff_x; s16 diff_y;
+    s16 diff_x_abs; s16 diff_y_abs;
+    s16 unk_x; s16 unk_y;
+    s32 spd_x;
+
+    *out_spd_x = 0;
+    *out_spd_y = 0;
+    diff_x = ray.offset_bx + obj->follow_x - obj->x - obj->offset_bx;
+    diff_y = ray.offset_by + obj->follow_y - obj->y - obj->offset_by;
+    diff_x_abs = Abs(diff_x);
+    diff_y_abs = Abs(diff_y);
+    if (diff_x != 0 && diff_y != 0) {
+        if (diff_x_abs > diff_y_abs) {
+            unk_x = diff_x / diff_y_abs;
+            unk_y = diff_y / diff_y_abs;
+            *out_spd_x = new_spd_x;
+            if (diff_x <= 0) {
+                *out_spd_x = -new_spd_x;
+            }
+            *out_spd_y = diff_y * new_spd_y / diff_x_abs;
+            if (*out_spd_y == 0) {
+                spd_x = *out_spd_x;
+                if (diff_x > 0) {
+                    spd_x += 16;
+                } else {
+                    spd_x -= 16;
+                }
+                *out_spd_x = spd_x;
+            }
+        } else {
+            unk_y = diff_y / diff_x_abs;
+            unk_x = diff_x / diff_x_abs;
+            *out_spd_y = new_spd_y;
+            if (diff_y <= 0) {
+                *out_spd_y = -new_spd_y;
+            }
+            *out_spd_x = diff_x * new_spd_x / diff_y_abs;
+        }
+    } else if (diff_y == 0) {
+        *out_spd_x = new_spd_x;
+        if (diff_x > 0) {
+            *out_spd_x = -new_spd_x;
+        }
+        unk_x = -1;
+        if (diff_x > 0) {
+            unk_x = 1;
+        }
+        unk_y = 0;
+    } else {
+        *out_spd_y = new_spd_y;
+        if (diff_y <= 0) {
+            *out_spd_y = -new_spd_y;
+        }
+        unk_x = 0;
+        unk_y = -1;
+        if (diff_y > 0) {
+            unk_y = 1;
+        }
+    }
+
+    if ((!(obj->flags.flip_x) && *out_spd_x > 0) || (obj->flags.flip_x && *out_spd_x < 0)) {
+        *out_spd_x = -*out_spd_x;
+        if (*out_spd_y == 0) {
+            *out_spd_y = 2;
+        }
+    }
+
+    obj->follow_x += unk_x * 2;
+    obj->follow_y += unk_y * 2;
 }
 
 //1EE18

@@ -708,6 +708,9 @@ void mute_snd_bouclant(void) {
 
 //73138
 void mute_snd(void) {
+    for (i32 i = 0; i < COUNT(voice_table); ++i) {
+        KeyVol(i, 0, 0);
+    }
     //stub
 }
 

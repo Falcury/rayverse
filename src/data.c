@@ -461,7 +461,7 @@ obj_procs_t ObjectsFonctions[262] = {
         {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 54: medaillon
         {DO_MUSICIEN,                      DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoMusicienRaymanInZDD,     ObjectUTurnDefault}, // 55: musician
         {DO_NOMOVE_STONEWOMAN_COMMAND,     DO_PNG_COLL_STONEWOMAN,           DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 56: nonmoving stoneman
-        {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 57: stake
+        {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoStalagRaymanZDD,         ObjectUTurnDefault}, // 57: stake
         {DO_CAGE,                          DoCagePoingCollision,             DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 58: cage
         {DO_CAGE2,                         DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 59: opened cage
         {DO_ONE_CMD,                       DoWatAndBigClownPoingCollision,   DoRaymanCollisionDefault,        DoWatAndBigClownRaymanZDD, ObjectUTurnDefault}, // 60: big clown

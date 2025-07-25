@@ -363,12 +363,19 @@ void RESTORE_PALETTE(void) {
 
 //3CD88
 void SAVE_PLAN3(void) {
-    //stub
+    PLANTMPBIT = PLAN3BIT;
+    plantmp_length = plan3bit_length;
+    plantmp_nb_bytes = plan3bit_nb_bytes;
+    PLAN3BIT = PLANVIGBIT[display_Vignet];
+    plan3bit_length = planVigbit_length[display_Vignet];
+    plan3bit_nb_bytes = planVigbit_nb_bytes[display_Vignet];
 }
 
 //3CDD8
 void RESTORE_PLAN3(void) {
-    //stub
+    PLAN3BIT = PLANTMPBIT;
+    plan3bit_length = plantmp_length;
+    plan3bit_nb_bytes = plantmp_nb_bytes;
 }
 
 //3CDF8

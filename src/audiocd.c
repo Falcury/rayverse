@@ -24,6 +24,11 @@ void start_cd_gagne(void) {
     //nullsub
 }
 
+//optimized out
+void start_cd_suspence(void) {
+    //nullsub
+}
+
 //1CF7C
 void start_cd_gros_rayman(void) {
     //play_cd_track(19); // Menu music - "World Map"

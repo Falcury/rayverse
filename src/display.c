@@ -389,17 +389,75 @@ void DO_WORLD_MAP(void) {
 
 //35370
 void DISPLAY_TXT_VIGNET(void) {
-    //stub
+    /* 9A14 8012E214 -O2 -msoft-float */
+    for (i32 i = new_txt_fee; text_to_display[i].text[0] != '\0' && (i <= new_txt_fee + 1); i++) {
+        display_box_text(&text_to_display[i]);
+    }
+
 }
 
 //353C8
-void display_vignet_prg(void) {
-    //stub
+i16 display_vignet_prg(u32 a1) {
+    readinput();
+    DISPLAY_FOND3();
+    DISPLAY_TXT_VIGNET();
+    ++loop_nb_trames;
+    if (loop_nb_trames == 60) {
+        loop_nb_trames = 0;
+        --loop_timing;
+    }
+
+    bool unk = ((ValidButPressed() || StartButPressed()) && loop_timing <= 3) || loop_timing <= 0;
+    if (unk) {
+        if (text_to_display[new_txt_fee + 2].text[0] != '\0') {
+            loop_timing = 5;
+            new_txt_fee += 2;
+        } else {
+            new_txt_fee = 10;
+        }
+    }
+    return unk && new_txt_fee == 10;
 }
 
 //354A4
 void DISPLAY_GAME_VIGNET(void) {
-    //stub
+    mute_snd();
+    ProchainEclair = 1;
+    numero_palette_special = 0;
+    DO_FADE_OUT();
+
+    i32 xmin, xmax, ymin, ymax;
+    get_sprite_clipping(&xmin, &xmax, &ymin, &ymax);
+    sprite_clipping(0, SCREEN_HEIGHT, 0, SCREEN_WIDTH);
+    display_Vignet = 0;
+    SAVE_PALETTE(rvb_Vig);
+    SAVE_PLAN3();
+
+    bool need_restore_mode_x = false;
+    if (ModeVideoActuel == MODE_X) {
+        need_restore_mode_x = true;
+        InitModeNormalWithFrequency(VGA_FREQ);
+    }
+    INIT_FADE_IN();
+    INIT_VIGNET();
+    if (CarteSonAutorisee && language == 0) {
+        PlayTchatchVignette(0); //TODO
+    }
+    SYNCHRO_LOOP(display_vignet_prg);
+    if (CarteSonAutorisee && language == 0) {
+        FreeTchatchVignette(); //TODO
+    }
+    DO_FADE_OUT();
+    EFFACE_VIDEO();
+    Vignet_To_Display = 0;
+    PROC_EXIT = 0;
+    if (need_restore_mode_x) {
+        InitModeXWithFrequency(VGA_FREQ);
+    }
+    RESTORE_PALETTE();
+    RESTORE_PLAN3();
+    sprite_clipping(xmin, xmax, ymin, ymax);
+    INIT_FADE_IN();
 }
 
 //355BC
@@ -408,8 +466,8 @@ void DISPLAY_TXT_CREDITS(void) {
 }
 
 //3561C
-void display_credits_prg(void) {
-    //stub
+i16 display_credits_prg(u32 a1) {
+    return 0; //stub
 }
 
 //35680

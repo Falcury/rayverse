@@ -191,5 +191,55 @@ void DoBlackToonPoingCollision(obj_t* obj, i16 a2) {
 
 //235A0
 void DoBlackToonRaymanZDD(obj_t* obj) {
-    //stub
+    switch (obj->follow_sprite) {
+        case 7:
+            if (obj->main_etat == 1 && obj->sub_etat == 1 && ray.main_etat != 2) {
+                skipToLabel(obj, 5, true);
+            }
+            break;
+        case 4:
+            if (ray.main_etat != 2) {
+                i16 blkt_x, blkt_y, blkt_w, blkt_h;
+                GET_ANIM_POS(obj, &blkt_x, &blkt_y, &blkt_w, &blkt_h);
+                blkt_y -= obj->detect_zone + blkt_h;
+                blkt_x -= blkt_w >> 1;
+                blkt_w += blkt_w;
+                blkt_h += obj->detect_zone;
+                if (obj->main_etat == 1 && obj->sub_etat == 0
+                        && inter_box(blkt_x, blkt_y, blkt_w, blkt_h, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h)
+                ) {
+                    calc_obj_dir(obj);
+                    obj->cmd_arg_1 = ray_zdc_y - obj->offset_hy;
+                    if (obj->cmd_arg_1 < obj->y - 16) {
+                        skipToLabel(obj, 4, true);
+                        obj->gravity_value_1 = 0;
+                        obj->gravity_value_2 = 6;
+                        obj->y--;
+                    }
+                }
+            }
+            break;
+        case 3:
+            if (obj->main_etat == 0 && obj->sub_etat == 0 && ray.main_etat != 2) {
+                calc_obj_dir(obj);
+                obj->cmd_arg_1 = ray.y + ray.offset_hy - obj->offset_hy;
+                if (obj->cmd_arg_1 < obj->y - 16) {
+                    skipToLabel(obj, 4, true);
+                    obj->gravity_value_2 = 6;
+                    obj->gravity_value_1 = 0;
+                    obj->timer = 255;
+                    obj->y--;
+                }
+            }
+            break;
+        case 2:
+            if (obj->main_etat == 0 && obj->sub_etat == 0 && ray.main_etat != 2) {
+                calc_obj_dir(obj);
+                skipToLabel(obj, 4, true);
+                obj->gravity_value_1 = 0;
+                obj->gravity_value_2 = 6;
+                obj->y--;
+            }
+            break;
+    }
 }

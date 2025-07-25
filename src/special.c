@@ -850,8 +850,179 @@ i16 NOVA_STATUS_BAR(void) {
 }
 
 //7B920
-void DO_REDEYE_FIRE(i16 a1, i16 a2, i16 a3) {
-    //stub
+void DO_REDEYE_FIRE(i16 x, i16 y, i16 a3) {
+    s16 i = 0;
+    obj_t *cur_obj = &level.objects[i];
+    s16 nb_objs = level.nb_objects;
+
+    while (i < nb_objs) {
+        if (cur_obj->type == TYPE_FLASH && !(cur_obj->is_active)) {
+            cur_obj->flags.flip_x = 0;
+            switch (a3) {
+                case 0:
+                    cur_obj->iframes_timer = 256;
+                    cur_obj->cmd_arg_2 = 0;
+                    break;
+                case 1:
+                    cur_obj->iframes_timer = 252;
+                    cur_obj->cmd_arg_2 = -44;
+                    break;
+                case 2:
+                    cur_obj->iframes_timer = 240;
+                    cur_obj->cmd_arg_2 = -87;
+                    break;
+                case 3:
+                    cur_obj->iframes_timer = 221;
+                    cur_obj->cmd_arg_2 = -128;
+                    break;
+                case 4:
+                    cur_obj->iframes_timer = 196;
+                    cur_obj->cmd_arg_2 = -164;
+                    break;
+                case 5:
+                    cur_obj->iframes_timer = 164;
+                    cur_obj->cmd_arg_2 = -196;
+                    break;
+                case 6:
+                    cur_obj->iframes_timer = 128;
+                    cur_obj->cmd_arg_2 = -221;
+                    break;
+                case 7:
+                    cur_obj->iframes_timer = 87;
+                    cur_obj->cmd_arg_2 = -240;
+                    break;
+                case 8:
+                    cur_obj->iframes_timer = 44;
+                    cur_obj->cmd_arg_2 = -252;
+                    break;
+                case 9:
+                    cur_obj->iframes_timer = -252;
+                    cur_obj->cmd_arg_2 = -44;
+                    break;
+                case 10:
+                    cur_obj->iframes_timer = -240;
+                    cur_obj->cmd_arg_2 = -87;
+                    break;
+                case 11:
+                    cur_obj->iframes_timer = -221;
+                    cur_obj->cmd_arg_2 = -128;
+                    break;
+                case 12:
+                    cur_obj->iframes_timer = -196;
+                    cur_obj->cmd_arg_2 = -164;
+                    break;
+                case 13:
+                    cur_obj->iframes_timer = -164;
+                    cur_obj->cmd_arg_2 = -196;
+                    break;
+                case 14:
+                    cur_obj->iframes_timer = -128;
+                    cur_obj->cmd_arg_2 = -221;
+                    break;
+                case 15:
+                    cur_obj->iframes_timer = -87;
+                    cur_obj->cmd_arg_2 = -240;
+                    break;
+                case 16:
+                    cur_obj->iframes_timer = -44;
+                    cur_obj->cmd_arg_2 = -252;
+                    break;
+                case 17:
+                    cur_obj->iframes_timer = 0;
+                    cur_obj->cmd_arg_2 = -256;
+                    break;
+                case 18:
+                    cur_obj->iframes_timer = -256;
+                    cur_obj->cmd_arg_2 = 0;
+                    break;
+                case 19:
+                    cur_obj->iframes_timer = -252;
+                    cur_obj->cmd_arg_2 = 44;
+                    break;
+                case 20:
+                    cur_obj->iframes_timer = -240;
+                    cur_obj->cmd_arg_2 = 87;
+                    break;
+                case 21:
+                    cur_obj->iframes_timer = -221;
+                    cur_obj->cmd_arg_2 = 128;
+                    break;
+                case 22:
+                    cur_obj->iframes_timer = -196;
+                    cur_obj->cmd_arg_2 = 164;
+                    break;
+                case 23:
+                    cur_obj->iframes_timer = -164;
+                    cur_obj->cmd_arg_2 = 196;
+                    break;
+                case 24:
+                    cur_obj->iframes_timer = -128;
+                    cur_obj->cmd_arg_2 = 221;
+                    break;
+                case 25:
+                    cur_obj->iframes_timer = -87;
+                    cur_obj->cmd_arg_2 = 240;
+                    break;
+                case 26:
+                    cur_obj->iframes_timer = -44;
+                    cur_obj->cmd_arg_2 = 252;
+                    break;
+                case 27:
+                    cur_obj->iframes_timer = 252;
+                    cur_obj->cmd_arg_2 = 44;
+                    break;
+                case 28:
+                    cur_obj->iframes_timer = 240;
+                    cur_obj->cmd_arg_2 = 87;
+                    break;
+                case 29:
+                    cur_obj->iframes_timer = 221;
+                    cur_obj->cmd_arg_2 = 128;
+                    break;
+                case 30:
+                    cur_obj->iframes_timer = 196;
+                    cur_obj->cmd_arg_2 = 164;
+                    break;
+                case 31:
+                    cur_obj->iframes_timer = 164;
+                    cur_obj->cmd_arg_2 = 196;
+                    break;
+                case 32:
+                    cur_obj->iframes_timer = 128;
+                    cur_obj->cmd_arg_2 = 221;
+                    break;
+                case 33:
+                    cur_obj->iframes_timer = 87;
+                    cur_obj->cmd_arg_2 = 240;
+                    break;
+                case 34:
+                    cur_obj->iframes_timer = 44;
+                    cur_obj->cmd_arg_2 = 252;
+                    break;
+                case 35:
+                    cur_obj->iframes_timer = 0;
+                    cur_obj->cmd_arg_2 = 256;
+                    break;
+                default:
+                    break;
+            }
+            cur_obj->hit_points = a3 % 36;
+            cur_obj->x = x;
+            cur_obj->y = y;
+            cur_obj->speed_x = 0;
+            cur_obj->speed_y = 0;
+            cur_obj->init_x = cur_obj->iframes_timer;
+            cur_obj->init_y = cur_obj->cmd_arg_2;
+            calc_obj_pos(cur_obj);
+            cur_obj->flags.alive = 1;
+            cur_obj->is_active = 1;
+            add_alwobj(cur_obj);
+            PlaySnd(205, i);
+            break;
+        }
+        cur_obj++;
+        i++;
+    }
 }
 
 //7BC60
@@ -904,13 +1075,45 @@ void DO_FUMEE_CORDE(obj_t* obj) {
 }
 
 //7C10C
-i32 GetY(i16 a1) {
-    return 0; //stub
+i32 GetY(i16 x) {
+    /* 3ED10 80163510 -O2 -msoft-float */
+    s16 unk_1;
+    s32 unk_2;
+    s16 unk_obj_id;
+    s16 unk_3;
+    obj_t* unk_obj;
+
+    if (eau_obj_id == -1)
+        return 0;
+
+    unk_1 = (x + 50) / 101;
+    unk_2 = unk_1 * 101;
+    unk_obj_id = eau_obj_id + unk_1 % 5;
+    unk_3 = 51 - Abs(x - unk_2);
+    unk_obj = &level.objects[unk_obj_id];
+
+    return unk_obj->y - unk_3 * EauDy[(unk_obj->anim_frame + DecEau[unk_obj->anim_index]) % 14] / 50;
 }
 
 //7C1C4
-void allocateSupHelico(obj_t* obj) {
-    //stub
+void allocateSupHelico(obj_t* mus_obj) {
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        obj_t* cur_obj = level.objects + i;
+        if (cur_obj->type == TYPE_133_SUPERHELICO && !cur_obj->is_active) {
+            cur_obj->flags.alive = 1;
+            cur_obj->is_active = 1;
+            add_alwobj(cur_obj);
+            cur_obj->x = mus_obj->x;
+            cur_obj->y = mus_obj->y;
+            set_main_and_sub_etat(cur_obj, 2, 18);
+            cur_obj->screen_x = cur_obj->x - xmap;
+            cur_obj->screen_y = cur_obj->y - ymap;
+            cur_obj->speed_y = -2;
+            cur_obj->speed_x = 1;
+            calc_obj_pos(cur_obj);
+            break;
+        }
+    }
 }
 
 //7C274

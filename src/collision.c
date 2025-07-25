@@ -2078,7 +2078,13 @@ void DO_ROLL_EYES(obj_t* obj) {
 
 //2F978
 void DoKillingEyesPoingCollision(obj_t* obj, i16 a2) {
-    //stub
+    --obj->hit_points;
+    if (obj->hit_points != 0) {
+        set_sub_etat(obj, 5);
+        obj->iframes_timer = 50;
+    } else {
+        set_sub_etat(obj, 6);
+    }
 }
 
 //2F9B8
@@ -2088,27 +2094,207 @@ void YaUnBloc(obj_t* obj) {
 
 //2FBF4
 void DO_BAG1_COMMAND(obj_t* obj) {
-    //stub
+    /* 4C2C8 80170AC8 -O2 */
+    DO_ONE_CMD(obj);
+    if (obj->sub_etat == 4 && obj->anim_frame == 14 &&
+            horloge[obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0xF] == 0 &&
+            obj->screen_x > -160 && obj->screen_x < 250 &&
+            obj->screen_y < SCREEN_HEIGHT - 100
+    ) {
+        obj->y += 86;
+        allocateLandingSmoke(obj);
+        obj->y -= 86;
+    }
 }
 
 //2FC64
 void DoRaymanBag1Collision(obj_t* obj) {
-    //stub
+    if (!RayEvts.squashed && scroll_x == -1 && scroll_y == -1 && ray.main_etat <= 1) {
+        Ray_RayEcrase(); //TODO
+    }
 }
 
 //2FCB0
-void MarCoince(obj_t* obj, i16 a2) {
-    //stub
+i16 MarCoince(obj_t* obj, i16 dir) {
+    /* 4CB88 80171388 -O2 -msoft-float */
+    s32 map_ind;
+    s32 pos_to_check;
+    s16 res = false;
+    s16 x = obj->x + obj->offset_bx - 25;
+    s16 y = obj->y + obj->offset_hy;
+
+    switch (dir)
+    {
+        case 2:
+            pos_to_check = y - (y / 16 * 16);
+            if ((s16) pos_to_check < 3)
+            {
+                map_ind = (x >> 4) + mp.width * (y >> 4);
+                if (block_flags[mp.map[map_ind].tile_type] & 2)
+                    res = true;
+                if (block_flags[mp.map[++map_ind].tile_type] & 2)
+                    res = true;
+                if (block_flags[mp.map[++map_ind].tile_type] & 2)
+                    res = true;
+            }
+            break;
+        case 3:
+            pos_to_check = y - (y / 16 * 16);
+            if ((s16) pos_to_check > 12)
+            {
+                map_ind = (x >> 4) + mp.width * ((y + 16 * 3) >> 4);
+                if (block_flags[mp.map[map_ind].tile_type] & 2)
+                    res = true;
+                if (block_flags[mp.map[++map_ind].tile_type] & 2)
+                    res = true;
+                if (block_flags[mp.map[++map_ind].tile_type] & 2)
+                    res = true;
+            }
+            break;
+        case 0:
+            pos_to_check = x - (x / 16 * 16);
+            if ((s16) pos_to_check < 3)
+            {
+                map_ind = ((x >> 4) + mp.width * ((y + 16) >> 4)) - 1;
+                if (block_flags[mp.map[map_ind].tile_type] & 2)
+                    res = true;
+                if (block_flags[mp.map[map_ind += mp.width].tile_type] & 2)
+                    res = true;
+                if (block_flags[mp.map[map_ind += mp.width].tile_type] & 2)
+                    res = true;
+            }
+            break;
+        case 1:
+            pos_to_check = x - (x / 16 * 16);
+            if ((s16) pos_to_check > 12)
+            {
+                map_ind = ((x >> 4) + mp.width * ((y + 16) >> 4)) + 3;
+                if (block_flags[mp.map[map_ind].tile_type] & 2)
+                    res = true;
+                if (block_flags[mp.map[map_ind += mp.width].tile_type] & 2)
+                    res = true;
+                if (block_flags[mp.map[map_ind += mp.width].tile_type] & 2)
+                    res = true;
+            }
+            break;
+    }
+
+    return res;
 }
 
 //2FFDC
 void DO_MOVE_MARACAS_COMMAND(obj_t* obj) {
-    //stub
+    /* 4CF4C 8017174C -O2 */
+    s16 cen_x;
+    s16 cen_y;
+    s16 speed_x;
+    s16 diff_x;
+    s16 diff_x_inv;
+    s32 diff_x_less;
+
+    if (obj->main_etat == 0 && obj->sub_etat == 0x0C)
+    {
+        cen_x = get_center_x(obj);
+        cen_y = get_center_y(obj);
+        if ((s16) on_block_chdir(obj, cen_x, cen_y) && (s16) test_allowed(obj, cen_x, cen_y))
+            skipToLabel(obj, 99, true);
+
+        obj->flags.flip_x = 0;
+        speed_x = 0;
+        if (obj->cmd == 0x14)
+            obj->speed_y = obj->cmd_arg_2;
+
+        if (ray.cmd_arg_2 == obj->id)
+        {
+            diff_x = (ray.offset_bx + ray.x) - (obj->offset_bx + obj->x);
+            if (diff_x > 0)
+            {
+                if (diff_x >= 11)
+                    speed_x = 1;
+                if (diff_x >= 16)
+                    speed_x += 1;
+                if (diff_x >= 19)
+                    speed_x += 1;
+                diff_x_less = diff_x < 43;
+            }
+            else
+            {
+                diff_x_inv = -1;
+                diff_x_inv = diff_x * diff_x_inv;
+                if (diff_x_inv >= 11)
+                    speed_x = -1;
+                if (diff_x_inv >= 16)
+                    speed_x -= 1;
+                if (diff_x_inv >= 19)
+                    speed_x -= 1;
+                diff_x_less = diff_x_inv < 42;
+            }
+            if (!diff_x_less)
+                speed_x = 0;
+        }
+        obj->speed_x = speed_x;
+        if (obj->speed_y < 0)
+        {
+            if (MarCoince(obj, 2))
+            {
+                obj->speed_y = 0;
+                obj->cmd_arg_1++;
+                if (obj->cmd_arg_1 >= 241)
+                {
+                    obj->y -= 80;
+                    allocateExplosion(obj);
+                    PlaySnd(0x73, obj->id);
+                    obj->x = obj->init_x;
+                    obj->y = obj->init_y;
+                    set_main_and_sub_etat(obj, 0, 4);
+                    obj->speed_x = 0;
+                    obj->speed_y = 0;
+                    DO_NOVA(obj);
+                }
+            }
+            else
+                obj->cmd_arg_1 = 0;
+        }
+        if (obj->speed_x > 0)
+        {
+            if (MarCoince(obj, 1))
+                obj->speed_x = 0;
+        }
+        else if (obj->speed_x < 0)
+        {
+            if (MarCoince(obj, 0))
+                obj->speed_x = 0;
+        }
+    }
 }
 
 //301A4
 void DO_FLASH_COMMAND(obj_t* obj) {
-    //stub
+    /* 4D1F4 801719F4 -O2 -msoft-float */
+    obj->init_x += obj->iframes_timer;
+    while (Abs(obj->init_x) >= 128) {
+        if (obj->iframes_timer > 0) {
+            obj->x++;
+            obj->init_x -= 128;
+        } else {
+            obj->x--;
+            obj->init_x += 128;
+        }
+    }
+
+    obj->init_y = obj->init_y + obj->cmd_arg_2;
+    while (Abs(obj->init_y) >= 128) {
+        if (obj->cmd_arg_2 > 0) {
+            obj->y++;
+            obj->init_y -= 128;
+        } else {
+            obj->y--;
+            obj->init_y += 128;
+        }
+    }
+
+    calc_obj_pos(obj);
+    obj->anim_frame = obj->hit_points - 1;
 }
 
 //30260
