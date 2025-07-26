@@ -279,7 +279,26 @@ void display_flocons_before(void) {
 
 //1A110
 void display_pix_gerbes(void) {
-    //stub
+    /* 17740 8013BF40 -O2 -msoft-float */
+    u8 color;
+    for (i32 i = 0; i < LEN(pix_gerbe); ++i) {
+        if (pix_gerbe[i].is_active) {
+            pix_gerbe_item_t* cur_item = &pix_gerbe[i].items[0];
+            for (i32 j = 0; j < LEN(pix_gerbe[i].items); ++j) {
+                u8 unk_1 = cur_item->unk_1;
+                if (unk_1 > 127 && cur_item->y_pos > 0) {
+                    i16 spd_y = (u8) cur_item->speed_y; /* using abs on android? */
+                    if (spd_y > 127)
+                        color = 88;
+                    else
+                        color = (unk_1 & 127) + ((spd_y >> 5) + 4);
+
+                    fplotNormalETX(draw_buffer, cur_item->x_pos >> 6, cur_item->y_pos >> 6, color);
+                }
+                cur_item++;
+            }
+        }
+    }
 }
 
 //1A1C4

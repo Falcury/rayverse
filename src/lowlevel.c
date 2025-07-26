@@ -224,8 +224,8 @@ void Display_Bloc_Plein_Clippe(void* a1, void* a2, i16 a3, i16 a4) {
 }
 
 //15609
-void fplot_Normal(u8* buffer, i32 a2, i32 a3, u8 a4) {
-    //stub
+void fplot_Normal(u8* buffer, i32 x, i32 y, u8 color) {
+    buffer[y * SCREEN_WIDTH + x] = color;
 }
 
 i32 Bloc_floc_H1 = 0; //15618

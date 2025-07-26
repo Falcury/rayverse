@@ -38,7 +38,7 @@ void Display_Bloc_Plein(void* a1, void* a2);
 void Clip(void);
 void Display_Bloc_Clippe(void* a1, void* a2, i16 a3, i16 a4);
 void Display_Bloc_Plein_Clippe(void* a1, void* a2, i16 a3, i16 a4);
-void fplot_Normal(u8* buffer, i32 a2, i32 a3, u8 a4);
+void fplot_Normal(u8* buffer, i32 x, i32 y, u8 color);
 void flocon_clipping(i32 h1, i32 h2, i32 w1, i32 w2);
 void draw_flocon5_Normal(void);
 void draw_flocon1_Normal(void);
@@ -961,7 +961,7 @@ void DO_MIT_COMMAND(obj_t* obj);
 void DoMitePoingCollision(obj_t* obj, i16 a2);
 void DO_MITE2_COMMAND(obj_t* obj);
 void DoMite2PoingCollision(obj_t* obj, i16 a2);
-void DO_MITE2_ESQUIVE(obj_t* obj);
+void DO_MITE2_ESQUIVE(obj_t* mit2_obj);
 
 // moskito.c
 void getIdealStingCoords(obj_t* obj, i32* a2, i32* a3);
@@ -1495,8 +1495,8 @@ void DO_NOVA(obj_t* obj);
 void DO_NOVA2(obj_t* obj);
 i16 NOVA_STATUS_BAR(void);
 void DO_REDEYE_FIRE(i16 a1, i16 a2, i16 a3);
-void calc_esquive_poing(obj_t* obj, i16* a2, i16* a3, i16* a4);
-void allocate_gerbe(void);
+void calc_esquive_poing(obj_t* mit_obj, i16* out_diff_x, i16* out_diff_y, i16* out_unk);
+i16 allocate_gerbe(void);
 void start_pix_gerbe(i16 a1, i16 a2);
 void do_pix_gerbes(void);
 void START_2_PARTS_CYMBAL_ACTION(obj_t* obj);

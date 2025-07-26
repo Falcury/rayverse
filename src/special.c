@@ -1026,23 +1026,108 @@ void DO_REDEYE_FIRE(i16 x, i16 y, i16 a3) {
 }
 
 //7BC60
-void calc_esquive_poing(obj_t* obj, i16* a2, i16* a3, i16* a4) {
-    //stub
+void calc_esquive_poing(obj_t* mit_obj, i16* out_diff_x, i16* out_diff_y, i16* out_unk) {
+    /* 3C6E4 80160EE4 -O2 -msoft-float */
+    s16 unk_x; s16 unk_y;
+
+    if (!poing_obj->is_active) {
+        unk_x = ray.x + ray.offset_bx;
+        unk_y = ray.y + ((ray.offset_by + ray.offset_hy) >> 1) - 10;
+        poing_obj->speed_x = 0;
+    } else {
+        unk_x = poing_obj->x + poing_obj->offset_bx;
+        unk_y = poing_obj->y + poing_obj->offset_by;
+    }
+
+    *out_diff_x = unk_x - mit_obj->x - mit_obj->offset_bx;
+    *out_diff_y = Abs(mit_obj->y + mit_obj->offset_hy - unk_y);
+    *out_unk = mit_obj->detect_zone * 4;
 }
 
 //7BD04
-void allocate_gerbe(void) {
-    //stub
+i16 allocate_gerbe(void) {
+    /* 3CB5C 8016135C -O2 -msoft-float */
+    s16 i;
+    s16 res = -1;
+
+    for (i = 0; i < (s16) LEN(pix_gerbe); i++) {
+        if (!pix_gerbe[i].is_active) {
+            pix_gerbe[i].is_active = true;
+            res = i;
+            break;
+        }
+    }
+
+    return res;
 }
 
 //7BD40
-void start_pix_gerbe(i16 a1, i16 a2) {
-    //stub
+void start_pix_gerbe(i16 x, i16 y) {
+    /* 3CBE0 801613E0 -O2 -msoft-float */
+    s16 *cur_data;
+    s16 i;
+    s16 spd_x; s16 spd_y;
+    s16 grb = allocate_gerbe();
+
+    if (grb != -1) {
+        cur_data = (s16 *) &pix_gerbe[grb]; /* struct access instead??? */
+        for (i = 0; i < (s16) LEN(pix_gerbe[grb].items) - grb * (s16) LEN(pix_gerbe); i++) {
+            *cur_data++ = x << 6;
+            *cur_data++ = y << 6;
+            spd_y = myRand((i << 2) + 128) - 256;
+            spd_y -= i << 1;
+            spd_x = myRand((i << 2) + 64) - 32;
+            spd_x -= i << 1;
+            *cur_data++ = spd_x;
+            *cur_data++ = spd_y;
+            ((u8 *) cur_data)[0] = myRand(8) + 8; /* y_accel */
+            ((u8 *) cur_data)[1] = 128; /* unk_1 */
+            cur_data++;
+        }
+    }
 }
 
 //7BE44
 void do_pix_gerbes(void) {
-    //stub
+    /* 3CD10 80161510 -O2 -msoft-float */
+    s16 i;
+    s16 new_active;
+    pix_gerbe_item_t* cur_item;
+    s16 j;
+    s16 h_speed = h_scroll_speed * 64;
+    s16 v_speed = v_scroll_speed * 64;
+
+    // added in PC/mobile versions:
+    i32 lim_W1 = Bloc_lim_W1_Aff << 6;
+    i32 lim_W2 = Bloc_lim_W2_Aff << 6;
+    i32 lim_H2 = Bloc_lim_H2_Aff << 6;
+
+    i = 0;
+    while (i < (s16) LEN(pix_gerbe)) {
+        if (pix_gerbe[i].is_active == true) {
+            new_active = false;
+            cur_item = &pix_gerbe[i].items[0];
+            j = 0;
+            while (j < (s16) LEN(pix_gerbe[i].items)) {
+                if (cur_item->unk_1 >= 128) {
+                    cur_item->x_pos += cur_item->speed_x - h_speed;
+                    cur_item->y_pos += cur_item->speed_y - v_speed;
+                    // NOTE: this check was changed in the PC version
+                    if (cur_item->x_pos > lim_W2 || cur_item->x_pos < lim_W1 || cur_item->y_pos > lim_H2) {
+                        cur_item->unk_1 = 0;
+                    } else {
+                        new_active = true;
+                    }
+
+                    cur_item->speed_y += cur_item->y_accel;
+                }
+                cur_item++;
+                j++;
+            }
+            pix_gerbe[i].is_active = new_active;
+        }
+        i++;
+    }
 }
 
 //7BF40

@@ -466,7 +466,7 @@ void InitModeNormalWithFrequency(u8 freq) {
 		drawpluie6NormalETX = draw_pluie6_Normal;
 		drawpluie5NormalETX = draw_pluie5_Normal;
 		drawpluie7NormalETX = draw_pluie7_Normal;
-//		fplotNormalETX = fplot_Normal;
+		fplotNormalETX = fplot_Normal;
     }
 }
 

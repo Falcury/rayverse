@@ -1713,7 +1713,7 @@ void_func_t* drawpluie6NormalETX; //CD0F0
 draw_func_t* DrawSpriteNoClipNormalEtX; //CD0F4
 draw_func_t* DrawSpriteColorNormalEtX; //CD0F8
 i32 BufferNormalDeplt; //CD0FC
-void_func_t* fplotNormalETX; //CD100
+fplot_func_t* fplotNormalETX; //CD100
 void_func_t* drawflocon5NormalETX; //CD104
 void_func_t* drawflocon2NormalETX; //CD108
 draw_func_t* DrawSpriteNormalEtX; //CD10C

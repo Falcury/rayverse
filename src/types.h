@@ -1577,6 +1577,7 @@ enum dos_scancode_enum {
 };
 
 typedef void (draw_func_t)(i32 x, i32 sprite_field_A, i32 y, vec2b_t size, u8* draw_buf, u8* image_data);
+typedef void (fplot_func_t)(u8* buffer, i32 x, i32 y, u8 color);
 typedef i16 (scene_func_t)(u32 a1);
 typedef i32 (calcbloc_func_t)(i32 a1, i32 a2);
 typedef i32 (swap_func_t)(u8* source_buf, u8* dest_buf, i32 width, i32 height);
