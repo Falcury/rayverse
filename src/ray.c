@@ -1043,7 +1043,7 @@ void RAY_RESPOND_TO_DOWN(void) {
 
     switch (ray.main_etat)
     {
-        case 4:
+        case 4: // liane
             if (ray.sub_etat != 11 && ray.sub_etat != 12)
             {
                 ray.speed_y = 1;
@@ -1058,7 +1058,7 @@ void RAY_RESPOND_TO_DOWN(void) {
             else
                 ray.speed_y = 0;
             break;
-        case 0:
+        case 0: // stationary
             /* not a switch? */
             if (
                     ray.sub_etat == 0 || ray.sub_etat == 1 || ray.sub_etat == 2 || ray.sub_etat == 3 ||
@@ -1100,7 +1100,7 @@ void RAY_RESPOND_TO_DOWN(void) {
             }
             RAY_SWIP();
             break;
-        case 1:
+        case 1: // moving
             // NOTE: this is different from the PS1 version
             if (ray.sub_etat == 0 && options_jeu.test_fire1() && !ray_on_poelle) {
                 set_main_and_sub_etat(&ray, 3, 6);
@@ -1119,7 +1119,7 @@ void RAY_RESPOND_TO_DOWN(void) {
             ray.y += 14;
             RAY_TOMBE();
             break;
-        case 6:
+        case 6: // ms
             decalage_en_cours = 0;
             ray.flags.flip_x = 1;
             if (ray.speed_y < 3 && ray.gravity_value_1 == 0) {
@@ -1195,7 +1195,7 @@ void RAY_RESPOND_TO_DIR(i16 flip_x) {
     s16 to_speed;
 
     switch (ray.main_etat) {
-        case 1:
+        case 1: // moving
             // NOTE: this section is substantially different in the PS1 and PC versions.
             ++joy_done;
             if (ray.sub_etat ==  8 || ray.sub_etat == 10) {
@@ -1204,7 +1204,7 @@ void RAY_RESPOND_TO_DIR(i16 flip_x) {
                     v5 = 0;
                 }
                 if (v5) {
-                    set_main_and_sub_etat(&ray, 0, 47);
+                    set_main_and_sub_etat(&ray, 0, 47); // stop crawling
                 }
             } else if (ray.sub_etat == 9 || ray.sub_etat == 11) {
                 i32 v5 = 1;
@@ -1215,29 +1215,43 @@ void RAY_RESPOND_TO_DIR(i16 flip_x) {
                     set_main_and_sub_etat(&ray, 0, 48);
                 }
             } else if (options_jeu.test_fire1() && !ray_on_poelle && downjoy() && ray.sub_etat == 0) {
-                set_main_and_sub_etat(&ray, 3, 6);
+                set_main_and_sub_etat(&ray, 3, 6); // duck
             }
             if (ray.flags.flip_x == flip_x) {
                 if (ray.sub_etat == 9 || ray.sub_etat == 11) {
-                    set_sub_etat(&ray, 10);
+                    set_sub_etat(&ray, 10); // crawl
                 }
             } else if (ray.sub_etat == 8 || ray.sub_etat == 10) {
-                set_main_and_sub_etat(&ray, 0, 50);
+                set_main_and_sub_etat(&ray, 0, 50); // turn around while crouched
             } else if (ray.sub_etat != 11 && ray.sub_etat != 50 && ray.sub_etat != 51 && ray_last_ground_btyp != 1) {
-                set_main_and_sub_etat(&ray, 1, 4);
+                set_main_and_sub_etat(&ray, 1, 4); // turn around slowly (on slippery blocks)
             }
             ray.flags.flip_x = flip_x;
             RAY_SWIP();
             break;
 
-        case 0:
+        case 0: // stationary
             joy_done++;
-            if (
+            // Allow Rayman to turn around while ducked and stationary by pressing the jump button.
+            // NOTE: This first part is added in the PC/mobile versions.
+            if ((ray.sub_etat == 15 || ray.sub_etat == 47 || ray.sub_etat == 48) &&
+                    options_jeu.test_fire1() && !ray_on_poelle && downjoy()
+            ) {
+                if (ray.flags.flip_x == flip_x) {
+                    set_main_and_sub_etat(&ray, 1, 8); // start crawling
+                } else {
+                    ray.flags.flip_x = flip_x;
+                    set_main_and_sub_etat(&ray, 0, 51); // turn around while crouched
+                }
+            }
+            // Start walking immediately from a ducked position
+            else if (
                     ray.sub_etat == 15 &&
                     !downjoy() &&
                     !(block_flags[(u8) calc_typ_trav(&ray, 2)] & 0x10)
                     )
                 set_main_and_sub_etat(&ray, 1, 0);
+            // Start moving
             else if (
                     ray.sub_etat != 11 && ray.sub_etat != 12 && ray.sub_etat != 18 &&
                     ray.sub_etat != 20 && ray.sub_etat != 15 && ray.sub_etat != 47 &&
@@ -1247,20 +1261,18 @@ void RAY_RESPOND_TO_DIR(i16 flip_x) {
             {
                 if (ray.flags.flip_x != flip_x) {
                     if (ray_last_ground_btyp != true)
-                        set_main_and_sub_etat(&ray, 1, 4);
+                        set_main_and_sub_etat(&ray, 1, 4); // turn around slowly (on slippery blocks)
                     else
-                        set_main_and_sub_etat(&ray, 1, 0);
+                        set_main_and_sub_etat(&ray, 1, 0); // walk (turn around instantly)
                     ray.flags.flip_x = flip_x;
-                }
-                else
-                {
-                    set_main_etat(&ray, 1);
+                } else {
+                    set_main_etat(&ray, 1); // walk
                     set_sub_etat(&ray, 0);
                 }
             }
             RAY_SWIP();
             break;
-        case 2:
+        case 2: // in air
             joy_done++;
             if (ray.sub_etat != 15 && ray.nb_cmd == 0)
                 decalage_en_cours = 0;
@@ -1269,7 +1281,7 @@ void RAY_RESPOND_TO_DIR(i16 flip_x) {
                 ray.flags.flip_x = flip_x;
             }
             break;
-        case 4:
+        case 4: // liane
             /* TODO: ctrl flow? */
             joy_done++;
             if ((ray.sub_etat == 2 && upjoy()) || (ray.sub_etat == 3 && downjoy())) {
@@ -1306,12 +1318,12 @@ void RAY_RESPOND_TO_DIR(i16 flip_x) {
                 ray.flags.flip_x = flip_x;
             }
             break;
-        case 5:
+        case 5: // hanging
             joy_done++;
             if (ray.flags.flip_x != flip_x)
                 RAY_TOMBE();
             break;
-        case 6:
+        case 6: // ms
             joy_done++;
             decalage_en_cours = 0;
             ray.flags.flip_x = 1;
@@ -1334,8 +1346,7 @@ void RAY_RESPOND_TO_NOTHING(void) {
     s32 unk_1;
     anim_t *sel_anim;
 
-    switch (ray.main_etat)
-    {
+    switch (ray.main_etat) {
         case 1:
             // NOTE: this additional check in the PS1 version is removed in the PC version:
             // !(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40) &&
@@ -2106,12 +2117,112 @@ void RepousseRay(void) {
 
 //70598
 u8 RayEstIlBloque(void) {
-    return 0; //stub
+    /* 636B4 80187EB4 -O2 -msoft-float */
+    s16 unk_x;
+    s16 unk_h;
+    obj_t *cur_obj;
+    s16 i;
+    s16 ani_x; s16 ani_y; s16 ani_w; s16 ani_h;
+    s16 spr_x; s16 spr_y; s16 spr_w; s16 spr_h;
+    s16 ani_xw;
+    s16 ani_yh;
+    s16 unk_y;
+    u8 res = false;
+
+    if (ray.speed_x != 0)
+    {
+        unk_x = ray_zdc_x + (ray.speed_x > 0 ? ray_zdc_w : 0);
+        unk_h = ray_zdc_h >> 2;
+
+        i = 0;
+        cur_obj = &level.objects[actobj.objects[i]];
+        while (i < actobj.num_active_objects)
+        {
+            if (flags[cur_obj->type] & flags2_4_blocks_ray)
+            {
+                GET_ANIM_POS(cur_obj, &ani_x, &ani_y, &ani_w, &ani_h);
+                ani_x += ani_w >> 3;
+                ani_w -= ani_w >> 2;
+                if (cur_obj->flags.follow_enabled) {
+                    GET_SPRITE_POS(cur_obj, cur_obj->follow_sprite, &spr_x, &spr_y, &spr_w, &spr_h);
+                    ani_y = spr_y + cur_obj->offset_hy + (ray.cmd_arg_2 == cur_obj->id);
+                }
+                else
+                    ani_y = cur_obj->y + cur_obj->offset_hy;
+
+                ani_h = cur_obj->y + cur_obj->offset_by - ani_y;
+
+                if (flags[cur_obj->type] & flags3_0x10) {
+                    ani_x += 6;
+                    ani_w -= 12;
+                    ani_y += 2;
+                }
+                if (cur_obj->type == TYPE_PI) {
+                    ani_x += 4;
+                    ani_w -= 8;
+                }
+
+                ani_xw = ani_x + ani_w;
+                if (
+                        (ray.speed_x <= 0 || unk_x < ani_x - ray.speed_x || unk_x > ani_x) &&
+                        (unk_x < ani_xw + ray.speed_x || unk_x > ani_xw)
+                        )
+                    goto block_30;
+
+                ani_yh = ani_y + ani_h;
+                unk_y = ray_zdc_y;
+                if (
+                        (unk_y < ani_y || unk_y > ani_yh) &&
+                        (unk_y += unk_h, (unk_y < ani_y || unk_y > ani_yh)) &&
+                        (unk_y += unk_h, (unk_y < ani_y || unk_y > ani_yh)) &&
+                        (unk_y += unk_h, (unk_y < ani_y || unk_y > ani_yh)) &&
+                        (unk_y += unk_h, (unk_y < ani_y || unk_y > ani_yh))
+                        )
+                    goto block_30;
+
+                res = true;
+                break;
+            }
+            block_30:
+            i++;
+            cur_obj = &level.objects[actobj.objects[i]];
+        }
+    }
+
+    return res;
 }
 
 //7089C
 void stackRay(void) {
-    //stub
+    /* 63A6C 8018826C -O2 -msoft-float */
+    ray_stack_t *cur;
+    u8 active;
+    obj_t *poing_obj;
+
+    cur = &rayStack[ray_pos_in_stack];
+    cur->x_pos = ray.x;
+    cur->y_pos = ray.y;
+    cur->main_etat = ray.main_etat;
+    cur->sub_etat = ray.sub_etat;
+    cur->anim_index = ray.anim_index;
+    cur->anim_frame = ray.anim_frame;
+    cur->flip_x = ray.flags.flip_x;
+    cur->scale = ray.scale;
+    active = poing.is_active;
+    cur->poing_is_active = active;
+    if (active) {
+        poing_obj = &level.objects[poing_obj_id];
+        cur->poing_x_pos = poing_obj->x;
+        cur->poing_y_pos = poing_obj->y;
+        cur->poing_anim_index = poing_obj->anim_index;
+        cur->poing_anim_frame = poing_obj->anim_frame;
+        cur->poing_flip_x = poing_obj->flags.flip_x;
+    }
+    ray_pos_in_stack++;
+    if (ray_pos_in_stack > LEN(rayStack) - 1) {
+        ray_pos_in_stack = 0;
+        ray_stack_is_full = true;
+    }
 }
 
 //70964
@@ -2502,7 +2613,7 @@ void DO_RAYMAN(void) {
             RAY_FOLLOW(); //TODO
         }
 
-        if (RayEstIlBloque()) { //TODO
+        if (RayEstIlBloque()) {
             if (ray.main_etat == 7) {
                 RAY_FIN_BALANCE(); //TODO
             }
