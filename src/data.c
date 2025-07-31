@@ -1818,7 +1818,7 @@ i32 pixels_enfonce; //CEEF4
 i8 Plan0NumPcx[10]; //CEF47
 status_bar_t status_bar; //CEF52
 active_objects_t actobj; //CEF5C
-
+ray_stack_t rayStack[101]; //CF026
 i16 numero_palette_special; //CF740
 i16 ProchainEclair; //CF742
 i16 joyy0; //CF744
@@ -2255,6 +2255,9 @@ u8* cheat_code_breakout_before_victory; //DF7B0
 u8* cheat_code_level_select; //DF7B4
 i32 freq_from_cheat_code; //DF7B8
 u8* cheat_code_freq100; //DF7BC
+
+i32 CompteurEclair; //DFAE0
+u8* smap; //DFAE4
 
 bnk_header_t bnkHeaderFixe[128]; //DFAF0
 bnk_header_t bnkHeaderWorld[128]; //E02F0

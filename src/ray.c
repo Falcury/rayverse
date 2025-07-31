@@ -2566,9 +2566,9 @@ void DO_RAYMAN(void) {
             }
 
             if (ray.main_etat == 7) {
-                RAY_BALANCE(); //TODO
+                RAY_BALANCE();
             } else if (ray.main_etat == 2) {
-                RAY_IN_THE_AIR(); //TODO
+                RAY_IN_THE_AIR();
             } else if (!options_jeu.test_fire1()) {
                 button_released = 1;
             }

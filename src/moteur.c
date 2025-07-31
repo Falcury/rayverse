@@ -1549,7 +1549,7 @@ void DO_OBJECTS_ANIMS(void) {
 
 //587C8
 void DO_OBJECTS(void) {
-    if (id_Cling_1up == -1 && id_Cling_Pow == -1) {
+    if (id_Cling_1up != -1 || id_Cling_Pow != -1) {
         DO_CLING_ANIMS();
     }
     if (lidol_to_allocate != 0) {
@@ -2426,7 +2426,7 @@ void DO_MOTEUR2(void) {
         }
         switch(ray_mode) {
             case MODE_1_RAYMAN: {
-                DO_RAYMAN(); //TODO
+                DO_RAYMAN();
             } break;
             case MODE_2_RAY_ON_MS: {
                 if (ray.main_etat != 6) {

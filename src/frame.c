@@ -411,6 +411,13 @@ void DISPLAY_FOND_MENU(void) {
 
 //3CF70
 void InitPaletteSpecialPC(void) {
+    CompteurEclair = 0;
+    if ((num_world == 1 && num_level == 9) || (num_world == 2 && num_level == 4) || (num_world == 4 && num_level == 9)) {
+        printf("InitPaletteSpecialPC(): not implemented\n");
+    } else if (num_world == 5 && num_level == 4) {
+        printf("InitPaletteSpecialPC(): not implemented\n");
+    }
+
     //stub
 }
 

@@ -2299,12 +2299,93 @@ void DO_FLASH_COMMAND(obj_t* obj) {
 
 //30260
 void DO_WLKNOT_COMMAND(obj_t* obj) {
-    //stub
+    /* 4D7DC 80171FDC -O2 */
+    s16 bx; s16 by;
+
+    switch (obj->cmd) {
+        case GO_WAIT:
+            SET_X_SPEED(obj);
+            CALC_MOV_ON_BLOC(obj);
+            break;
+        case GO_LEFT:
+        case GO_RIGHT:
+            if (obj->cmd == GO_LEFT)
+                obj->flags.flip_x = false;
+            else
+                obj->flags.flip_x = true;
+            SET_X_SPEED(obj);
+            CALC_MOV_ON_BLOC(obj);
+            break;
+    }
+
+    if (obj->speed_x != 0) {
+        bx = obj->offset_bx;
+        by = obj->offset_by - 8;
+        if ((s16) test_allowed(obj, bx, by) && (s16) on_block_chdir(obj, bx, by)) {
+            if (!(obj->flags.flip_x)) {
+                obj->flags.flip_x = true;
+                skipToLabel(obj, 2, true);
+            } else {
+                obj->flags.flip_x = false;
+                skipToLabel(obj, 1, true);
+            }
+        }
+    }
 }
 
 //30318
-void ACTIVE_L_EAU(obj_t* obj) {
-    //stub
+void ACTIVE_L_EAU(obj_t* eau_obj) {
+    /* 4D908 80172108 -O2 -msoft-float */
+    s16 i;
+    obj_t *cur_obj;
+    s16 nb_objs;
+
+    eau_obj->cmd_arg_1 = 130;
+    eau_obj->y = ymapmax + 230;
+    eau_obj->x = xmap - eau_obj->offset_bx;
+    i = 0;
+    cur_obj = level.objects;
+    nb_objs = level.nb_objects;
+    while (i < nb_objs) {
+        if (cur_obj->type == TYPE_EAU && !cur_obj->is_active) {
+            cur_obj->flags.flip_x = 0;
+            cur_obj->speed_y = 0;
+            cur_obj->speed_x = 0;
+            cur_obj->x = eau_obj->x + 101 * 1;
+            cur_obj->y = eau_obj->y;
+            calc_obj_pos(cur_obj);
+            cur_obj->cmd_arg_1 = 130;
+            cur_obj->flags.alive = 1;
+            cur_obj->is_active = 1;
+            cur_obj->sub_etat = 1;
+            break;
+        }
+        cur_obj++;
+        i++;
+    }
+    cur_obj++;
+    cur_obj->flags.flip_x = 0;
+    cur_obj->speed_y = 0;
+    cur_obj->speed_x = 0;
+    cur_obj->x = eau_obj->x + 101 * 2;
+    cur_obj->y = eau_obj->y;
+    calc_obj_pos(cur_obj);
+    cur_obj->cmd_arg_1 = 130;
+    cur_obj->flags.alive = 1;
+    cur_obj->is_active = 1;
+    cur_obj->sub_etat = 2;
+
+    cur_obj++;
+    cur_obj->flags.flip_x = 0;
+    cur_obj->speed_y = 0;
+    cur_obj->speed_x = 0;
+    cur_obj->x = eau_obj->x + 101 * 3;
+    cur_obj->y = eau_obj->y;
+    calc_obj_pos(cur_obj);
+    cur_obj->cmd_arg_1 = 130;
+    cur_obj->flags.alive = 1;
+    cur_obj->is_active = 1;
+    cur_obj->sub_etat = 3;
 }
 
 //30490

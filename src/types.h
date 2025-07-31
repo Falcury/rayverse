@@ -688,6 +688,23 @@ typedef struct wi_save_zone_t {
     u8 cages : 3;
 } wi_save_zone_t;
 
+typedef struct ray_stack_t {
+    i16 x_pos;
+    i16 y_pos;
+    i16 poing_x_pos;
+    i16 poing_y_pos;
+    u8 main_etat;
+    u8 sub_etat;
+    u8 anim_index;
+    u8 anim_frame;
+    u8 flip_x;
+    u8 poing_anim_index;
+    u8 poing_anim_frame;
+    u8 poing_flip_x;
+    u8 poing_is_active;
+    u8 scale;
+} ray_stack_t;
+
 
 enum game_mode_video_enum {
     MODE_NORMAL = 0,

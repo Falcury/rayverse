@@ -887,8 +887,18 @@ void DO_TEN_COMMAND(obj_t* obj) {
 }
 
 //62854
-void DoGeneBadGuyPoingCollision(obj_t* obj, i16 a2) {
-    //stub
+void DoGeneBadGuyPoingCollision(obj_t* obj, i16 sprite) {
+    if (sprite == 0) {
+        poing.damage = 1;
+        obj_hurt(obj);
+        if (obj->hit_points == 0)
+            skipToLabel(obj, 4, true);
+        else
+            skipToLabel(obj, 3, true);
+    }
+    else {
+        skipToLabel(obj, 2, true);
+    }
 }
 
 //628B8
