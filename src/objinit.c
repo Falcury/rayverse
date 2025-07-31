@@ -490,7 +490,7 @@ void init_struct_level(void) {
     }
     for (i16 i = 0; i < level.nb_objects; ++i) {
         obj_t* obj = level.objects + i;
-        if (bonus_map || (flags[obj->type] & flags1_2_is_collectible) == 0 || bonus_taken(obj->id)) {
+        if (bonus_map || (flags[obj->type] & flags1_2_is_collectible) == 0 || !bonus_taken(obj->id)) {
             if (flags[obj->type] & flags0_1_always) {
                 level_alw.obj_ids[level_alw.nb_objects++] = i;
             } else {

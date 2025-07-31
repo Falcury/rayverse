@@ -59,7 +59,7 @@ void DO_MEDAILLON_TOON_GELE(void) {
     /* 3D050 80161850 -O2 -msoft-float */
     for (i16 i = 0; i < actobj.num_active_objects; ++i) {
         obj_t* obj = &level.objects[actobj.objects[i]];
-        if (obj->type == TYPE_MEDAILLON_TOON) {
+        if (obj->type == TYPE_197_MEDAILLON_TOON) {
             if (!snd_flag_medaillon) {
                 mute_snd_bouclant();
                 snd_flag_medaillon = true;
@@ -97,6 +97,7 @@ void ALLOCATE_MEDAILLON_TOON(void) {
             cur_obj->init_y = cur_obj->y = ymap - cur_obj->offset_by;
             cur_obj->flags.alive = 1;
             cur_obj->is_active = 1;
+            add_alwobj(cur_obj);
             cur_obj->flags.read_commands = 0;
             set_sub_etat(cur_obj, t_world_info[world_index].nb_cages + 32);
             if (t_world_info[world_index].nb_cages == 6)
