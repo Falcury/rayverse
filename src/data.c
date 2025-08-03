@@ -1646,7 +1646,7 @@ rgb_palette_t rvb[3]; //C7F88
 
 i16 notbut[4]; //C97F0
 i16 SNSEQ_list[256]; //C97F8
-u8 grp_stars[120]; //C99F8
+grp_star_t grp_stars[30]; //C99F8
 i16 invpy0[8]; //C9A70
 pix_gerbe_t pix_gerbe[8]; //C9A80 // 2568 == 321*8
 i16 invpx0[8]; //CAE90

@@ -304,8 +304,37 @@ void DISPLAY_PTS_TO_PLAN2(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i1
 }
 
 //198F4
-void DISPLAY_CYMBALE(obj_t* obj) {
-    //stub
+void DISPLAY_CYMBALE(obj_t* obj, u8* draw_buf, u8 a3) {
+    /* 179B4 8013C1B4 -O2 -msoft-float */
+    u16 begin; u16 end; u16 i;
+    sprite_t* sprite;
+    s16 x; s16 y;
+    anim_t* anim = &obj->animations[obj->anim_index];
+    anim_layer_t* layer = &anim->layers[(anim->layers_per_frame & 0x3FFF) * obj->anim_frame];
+
+    if (!a3) {
+        end = 5;
+        begin = 3;
+    } else {
+        end = 2;
+        begin = 0;
+    }
+
+    for (i = begin; i <= end; i++) {
+        sprite = &obj->sprites[layer[i].sprite_index];
+
+        y = layer[i].y + obj->screen_y;
+        if (sprite->id != 0) {
+            x = layer[i].x + obj->screen_x;
+            i32 proj_x = get_proj_x(obj->scale, x);
+            i32 proj_y = get_proj_y(obj->scale, y);
+            i32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
+            i32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
+            vec2b_t proj_size = {(u8)proj_width, (u8)proj_height};
+            u8* image_data = obj->img_buffer + sprite->offset_in_atlas;
+            DrawSpriteNormalEtX(proj_x, sprite->color, proj_y, proj_size, draw_buffer, image_data);
+        }
+    }
 }
 
 //19A2C
@@ -328,7 +357,7 @@ void DISPLAY_ALL_OBJECTS(void) {
             } else {
                 switch(obj->type) {
                     case TYPE_81_CYMBALE: {
-                        DISPLAY_CYMBALE(obj); //TODO
+                        DISPLAY_CYMBALE(obj, draw_buffer, 1);
                     } break;
                     case TYPE_254_SLOPEY_PLAT: {
                         //stub
@@ -353,13 +382,13 @@ void DISPLAY_ALL_OBJECTS(void) {
             if ((gele || (ray.iframes_timer % (2 * display_mode + 2) <= display_mode) || (ray.iframes_timer > 90 && RayEvts.squashed))
                     && ray.flags.alive && ray.is_active) {
                 display2(&ray);
-                DISPLAY_POING(); //TODO
+                DISPLAY_POING();
             }
         } else if (current_display_prio == 2 && nb_cymbal_in_map != 0) {
             for (i32 j = 0; j < nb_cymbal_in_map; ++j) {
                 obj_t* cymbale = level.objects + cymbal_obj_id[j];
                 if (cymbale->is_active) {
-                    DISPLAY_CYMBALE(cymbale);
+                    DISPLAY_CYMBALE(cymbale, draw_buffer, 1);
                 }
             }
         }
@@ -457,8 +486,6 @@ void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, u8 is_
             }
         }
     }
-
-    //stub
 }
 
 //1A3F0
@@ -581,13 +608,56 @@ void CLRSCR(void) {
 }
 
 //1AD38
-void display_etoile(i16 a1, i16 a2) {
-    //stub
+void display_etoile(i16 in_x, i16 in_y) {
+    /* 19A6C 8013E26C -O2 */
+    u8 loc_star_spr[8] = {21, 22, 23, 24, 21, 25, 22, 21};
+
+    grp_star_t* temp = &grp_stars[current_star];
+    grp_star_t* star = temp;
+    star->timer++;
+    if (star->timer > star->length)
+    {
+        u8 rand_res = myRand(7);
+        star->timer = 0;
+        star->length = myRand(5);
+        star->dist = rand_res;
+        star->sprite_table_index = rand_res;
+    }
+    i16 draw_x = star->dist + (in_x - xmap) - 8;
+    i16 draw_y = star->dist + (in_y - ymap);
+    if (draw_x > 0 && SCREEN_WIDTH - draw_x > 0 && draw_y > 0 && SCREEN_HEIGHT - draw_y > 0) {
+        sprite_t* sprite = poing_obj->sprites + loc_star_spr[star->sprite_table_index];
+        vec2b_t proj_size = {(u8)sprite->outer_width, (u8)sprite->outer_height};
+        DrawSpriteNormalEtX(draw_x, sprite->color >> 4, draw_y, proj_size, draw_buffer, poing_obj->img_buffer + sprite->offset_in_atlas);
+    }
+
+    if (current_star < COUNT(grp_stars)) {
+        current_star++;
+    }
 }
 
 //1AE50
 void display_grp_stars(void) {
-    //stub
+    obj_t* grapped;
+    s16 x; s16 y; s16 w; s16 h;
+    s16 cen_x;
+    s16 grapped_x;
+
+    if (ray.main_etat == 7 && ray.flags.alive) {
+        current_star = 0;
+        grapped = &level.objects[id_obj_grapped];
+        GET_SPRITE_POS(&ray, 1, &x, &y, &w, &h);
+
+        cen_x = x + (w >> 1);
+        grapped_x = grapped->offset_bx + grapped->x;
+        Bresenham(
+                display_etoile,
+                cen_x, (s16) (y + (h >> 1) - 6),
+                grapped_x, (s16) (grapped->offset_hy + grapped->y),
+                5,
+                100 // NOTE: 128 in PC version?
+        );
+    }
 }
 
 //1AF1C

@@ -127,7 +127,7 @@ void DISPLAY_FIXE(i32 time);
 void DISPLAY_POINT(i16 x, i16 y);
 void DISPLAY_PTS_TO(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 a5);
 void DISPLAY_PTS_TO_PLAN2(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 percent);
-void DISPLAY_CYMBALE(obj_t* obj);
+void DISPLAY_CYMBALE(obj_t* obj, u8* draw_buf, u8 a3);
 void DISPLAY_ALL_OBJECTS(void);
 void display_flocons_behind(void);
 void display_flocons_before(void);
@@ -138,7 +138,7 @@ void display_deform_text(const char* text, i16 x, i16 y, u8 font_size, i8 color,
 void display_text_sin(const char* text, i16 x, i16 y, u8 font_size, i8 color, u8 a6);
 void display_box_text(display_item_t* box);
 void CLRSCR(void);
-void display_etoile(i16 a1, i16 a2);
+void display_etoile(i16 in_x, i16 in_y);
 void display_grp_stars(void);
 void DISPLAY_TEXT_FEE(void);
 void DISPLAY_SAVE_SPRITES(i16 x, i16 save_index);

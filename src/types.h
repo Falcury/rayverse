@@ -705,6 +705,13 @@ typedef struct ray_stack_t {
     u8 scale;
 } ray_stack_t;
 
+typedef struct grp_star_t {
+    u8 timer;
+    u8 length;
+    u8 dist;
+    u8 sprite_table_index;
+} grp_star_t;
+
 
 enum game_mode_video_enum {
     MODE_NORMAL = 0,
