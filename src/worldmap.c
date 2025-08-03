@@ -1128,7 +1128,67 @@ void INIT_LEVEL_ANIM(void) {
 
 //6B73C
 void DO_LEVEL_ANIM(void) {
-    //stub
+    i16* anim = anim_sequence;
+    u8 prev_cmd;
+    do {
+        prev_cmd = ray.cmd;
+        switch(anim_sequence[ray.cmd]) {
+            case 0: {
+                ray.flags.flip_x = 0;
+                ++ray.cmd;
+            } break;
+            case 1: {
+                ray.flags.flip_x = 1;
+                ++ray.cmd;
+            } break;
+            case 8: {
+                set_main_etat(&ray, anim_sequence[++ray.cmd]);
+                set_sub_etat(&ray, anim_sequence[++ray.cmd]);
+                eta_t* eta = get_eta(&ray);
+                ray.speed_x = ray.flags.flip_x ? eta->speed_x_right : eta->speed_x_left;
+                ++ray.cmd;
+            } break;
+            case 14: {
+                set_main_etat(&ray, 0);
+                set_sub_etat(&ray, 0);
+            } break;
+            case 17: {
+                if (ray.anim_frame == anim_sequence[ray.cmd + 1]) {
+                    ray.cmd += 2;
+                }
+            } break;
+            case 18: {
+                if ((ray.screen_x >= anim_sequence[ray.cmd + 1] && ray.flags.flip_x) ||
+                    (ray.screen_x <= anim_sequence[ray.cmd + 1] && !ray.flags.flip_x)
+                ) {
+                    ray.cmd += 2;
+                }
+            } break;
+            case 19: {
+                if (EOA(&ray) && ray.anim_index == get_eta(&ray)->anim_index) {
+                    ++ray.cmd;
+                }
+            } break;
+            case 20: {
+                ray.speed_x = anim_sequence[++ray.cmd];
+                ++ray.cmd;
+            } break;
+            case 21: {
+                ray.screen_x = anim_sequence[++ray.cmd];
+                ++ray.cmd;
+            } break;
+            default: break;
+        }
+    } while (prev_cmd != ray.cmd);
+
+    u8 horloge_index = ((ray.animations[ray.anim_index].layers_per_frame & 0xC000) >> 14) + 1;
+    i32 dx = instantSpeed(ray.speed_x);
+    if (horloge[horloge_index] == 0) {
+        ray.screen_x += dx;
+    }
+    if (ray.main_etat == 0 && ray.sub_etat == 0) {
+        PROC_EXIT = 1;
+    }
 }
 
 //6BA34

@@ -13,7 +13,7 @@ i16 display_inter_anim(u32 a1) {
     if (anim_func) {
         anim_func();
     }
-    return 0;
+    return PROC_EXIT;
 }
 
 //34174

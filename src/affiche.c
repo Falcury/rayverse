@@ -168,50 +168,41 @@ void display_bar_boss(obj_t* boss_obj) {
             display_sprite(poing_obj, 60,
                            extra_x_offset + Bloc_lim_W1 - 4 + 20 - unk_2 + 1,
                            (Bloc_lim_H2 - 20 - extra_y_offset), disp_mode);
-            i16 display_y = Bloc_lim_H2 - 30 - extra_y_offset;
-            switch (boss_obj->type)
-            {
-                case TYPE_MOSKITO:
-                    display_sprite(poing_obj, 62, 0, display_y, disp_mode);
-                    break;
+
+            u8 sprite = 0;
+            switch (boss_obj->type) {
+                case TYPE_MOSKITO: // TODO: sprite 44 for Bzzit doesn't seem to work?
                 case TYPE_MOSKITO2:
-                    display_sprite(poing_obj, 62, 0, display_y, disp_mode);
+                    sprite = 62;
                     break;
                 case TYPE_BB1:
-                    display_sprite(poing_obj, 106, 0, display_y, disp_mode);
-                    break;
                 case TYPE_BB12:
-                    display_sprite(poing_obj, 106, 0, display_y, disp_mode);
+                    sprite = 106;
                     break;
                 case TYPE_SPACE_MAMA:
-                    display_sprite(poing_obj, 108, 0, display_y, disp_mode);
-                    break;
                 case TYPE_SPACE_MAMA2:
-                    display_sprite(poing_obj, 108, 0, display_y, disp_mode);
+                    sprite = 108;
                     break;
                 case TYPE_MAMA_PIRATE:
-                    display_sprite(poing_obj, 111, 0, display_y, disp_mode);
+                    sprite = 111;
                     break;
                 case TYPE_SCORPION:
-                    display_sprite(poing_obj, 107, 0, display_y, disp_mode);
+                    sprite = 107;
                     break;
                 case TYPE_HYB_BBF2_D:
-                    display_sprite(poing_obj, 110, 0, display_y, disp_mode);
-                    break;
                 case TYPE_HYBRIDE_STOSKO:
-                    display_sprite(poing_obj, 110, 0, display_y, disp_mode);
-                    break;
                 case TYPE_HYBRIDE_MOSAMS:
-                    display_sprite(poing_obj, 110, 0, display_y, disp_mode);
-                    break;
                 case TYPE_DARK:
-                    display_sprite(poing_obj, 110, 0, display_y, disp_mode);
+                    sprite = 110;
                     break;
                 case TYPE_SAXO:
                 case TYPE_SAXO2:
-                    display_sprite(poing_obj, 109, 0, display_y, disp_mode);
+                    sprite = 109;
                     break;
             }
+            i16 display_y = Bloc_lim_H2 - 30 - extra_y_offset;
+            display_sprite(poing_obj, sprite, extra_x_offset + Bloc_lim_W1 - 4, display_y, disp_mode);
+
         }
     }
 }
@@ -582,7 +573,11 @@ void display_box_text(display_item_t* box) {
 
 //1AD00
 void CLRSCR(void) {
-    //stub
+    if (ModeVideoActuel == MODE_X) {
+        display_emptypicture();
+    } else {
+        memset(DrawBufferNormal, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
+    }
 }
 
 //1AD38
