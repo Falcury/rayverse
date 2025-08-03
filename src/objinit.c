@@ -28,8 +28,6 @@ u8 Prio(obj_t* obj) {
         case TYPE_MOVE_OUYE:
         case TYPE_FLAMME2:
         case TYPE_STALAG:
-        case TYPE_CAGE:
-        case TYPE_CAGE2:
         case TYPE_STONECHIP:
         case TYPE_EXPLOSION:
         case TYPE_NOTE0:
@@ -55,6 +53,8 @@ u8 Prio(obj_t* obj) {
         case TYPE_SKO_PINCE:
             res = 2;
             break;
+        case TYPE_CAGE: // Change from PS1 version: TYPE_CAGE and TYPE_CAGE2 are prio 3 instead of 2 (so behind Rayman)
+        case TYPE_CAGE2:
         case TYPE_ONOFF_PLAT:
         case TYPE_CLASH:
         case TYPE_BB1:
