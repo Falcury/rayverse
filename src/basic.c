@@ -132,6 +132,7 @@ i32 vblToEOA(obj_t* obj, u8 a2) {
 
 //1D738
 void GET_ANIM_POS(obj_t* obj, i16* x, i16* y, i16* w, i16* h) {
+    ASSERT(obj->anim_index != 255);
     anim_t* anim = obj->animations + obj->anim_index;
     anim_frame_t* frame = anim->frames + obj->anim_frame;
     *w = frame->width;

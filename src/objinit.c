@@ -316,7 +316,7 @@ void obj_init(obj_t* obj) {
             IsBossThere = false;
             scrollLocked = false;
             obj->timer = 180;
-            saveBossEncounter = -1;
+            saveBossEncounter = 255;
             currentBossAction = 0;
             currentBossActionIsOver = false;
             bossEncounter = 0;
@@ -330,7 +330,7 @@ void obj_init(obj_t* obj) {
             IsBossThere = false;
             scrollLocked = false;
             obj->timer = 100;
-            saveBossEncounter = -1;
+            saveBossEncounter = 255;
             currentBossAction = 0;
             currentBossActionIsOver = false;
             break;
@@ -343,7 +343,7 @@ void obj_init(obj_t* obj) {
             IsBossThere = false;
             scrollLocked = false;
             obj->timer = 100;
-            saveBossEncounter = -1;
+            saveBossEncounter = 255;
             currentBossAction = 0;
             currentBossActionIsOver = false;
             break;

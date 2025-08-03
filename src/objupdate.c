@@ -1194,7 +1194,7 @@ void DO_PHOTOGRAPHE_CMD(obj_t* obj) {
         ProchainEclair = 1;
         numero_palette_special = 0;
         ray.is_active = 1;
-        restore_gendoor_link();
+        restore_gendoor_link(); //TODO
         saveGameState(obj, &save1);
         correct_gendoor_link(1);
     } else if (!RayEvts.tiny && !obj->flags.flag_1 && OBJ_IN_ZONE(obj) && ray.cmd_arg_2 == -1

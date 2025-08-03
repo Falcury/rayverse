@@ -578,6 +578,8 @@ i32 BOX_IN_COLL_ZONES(i16 type, i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
     unk_x = 0;
     res = -1;
 
+    ASSERT(obj->anim_index != 255);
+
     if (obj->zdc != 0)
     {
         nb_zdc = get_nb_zdc(obj);

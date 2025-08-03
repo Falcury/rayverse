@@ -4,7 +4,6 @@
 app_state_t global_app_state;
 game_state_t* global_game;
 
-
 // engine.cpp
 
 ogg_t ogg_cd_track;
@@ -1045,7 +1044,7 @@ u8 dyingSequence[5] = {16, 23, 24, 22, 25}; //96F24
 u8 hitSequence[6] = {16, 17, 15, 26, 11, 5}; //96F29
 u8 arrivalSequence[4] = {13, 26, 14, 3}; //96F2F
 
-///96F33
+//96F33
 u8 firstEncounterSequence[40] = {
         13, 26, 14, 4, 19, 21, 4, 20, 18, 21, 4, 20, 19, 21, 4, 20, 18, 21, 4, 20, 10, 26,
         14, 4, 18, 21, 4, 20, 10, 26, 14, 4, 19, 21, 4, 20, 10, 26, 14, 2
@@ -1057,11 +1056,21 @@ u8 secondEncounterSequence2[21] = {8, 0, 8, 0, 8, 0, 8, 4, 18, 21, 4, 20, 19, 21
 u8 secondEncounterSequence3[19] = {9, 0, 18, 21, 4, 20, 9, 4, 18, 21, 4, 20, 10, 26, 14, 13, 14, 4, 2}; //96F89
 u8 secondEncounterSequence4[21] = {7, 8, 8, 8, 9, 0, 19, 21, 4, 20, 9, 8, 18, 21, 4, 20, 10, 26, 14, 4, 2}; //96F9C
 
-////96FB4
-u8* moskitoActionSequences[8] = {
-        arrivalSequence, secondEncounterSequence1, secondEncounterSequenceSuite, secondEncounterSequence2,
-        secondEncounterSequence3, secondEncounterSequence4, hitSequence, dyingSequence,
+//96FB4
+u8* moskitoActionSequences[10] = {
+        arrivalSequence,                // 0: Bzzit (arrival phase)
+        firstEncounterSequence,         // 1: Bzzit fight
+        arrivalSequence,                // 2: Moskito (arrival phase)
+        secondEncounterSequence1,       // 3: Moskito phase 1
+        secondEncounterSequenceSuite,   // 4
+        secondEncounterSequence2,       // 5: Moskito phase 2
+        secondEncounterSequence3,       // 6: Moskito phase 3
+        secondEncounterSequence4,       // 7: Moskito phase 4
+        hitSequence,                    // 8: animation sequence after each hit
+        dyingSequence,                  // 9: animation sequence when dying
 };
+
+i16 MsAnimIndex; //96FDC
 
 //96FE0
 i16 costab[130] = {
@@ -2127,9 +2136,9 @@ u8 bossReachingAccuracyY; // CFA65
 u8 lidol_to_allocate; // CFA66
 u8 saveCurrentBossAction; //CFA67
 u8 scrollLocked; //CFA68
-i8 saveBossEncounter; //CFA69
+u8 saveBossEncounter; //CFA69
 u8 bossReachingTimer; //CFA6A
-u8 boss_safe_timer; //CFA6B
+u8 bossSafeTimer; //CFA6B
 u8 currentBossActionIsOver; //CFA6C
 i8 laserSourceSprNumInAnim; //CFA6D
 u8 bossEncounter; //CFA6E

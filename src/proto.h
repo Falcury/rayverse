@@ -108,8 +108,8 @@ int main_Ray(int argc, char** argv);
 void PcMain(void);
 
 // action.c
-void setBossReachingSpeeds(obj_t* obj, u8 a2, u8 a3, u8 a4);
-void testActionEnd(obj_t* obj);
+void setBossReachingSpeeds(obj_t* obj, u8 horloge_ind, u8 unk_x, u8 unk_y);
+i16 testActionEnd(obj_t* obj);
 i16 firstFloorBelow(obj_t* obj);
 void adjustBossScrollLocker(void);
 void setBossScrollLimits(obj_t* obj);
@@ -120,7 +120,7 @@ void display_sprite(obj_t* obj, u8 sprite_index, i16 x, i16 y, u8 flipped);
 void display_sprite_NoClip(obj_t* obj, u8 sprite_index, i16 x, i16 y, u8 flipped);
 void DISPLAY_POING(void);
 void DISPLAY_CLING(void);
-void display_bar_boss(obj_t* obj);
+void display_bar_boss(obj_t* boss_obj);
 void DisplayCrackers(void);
 void DisplayProgrammerMessage(void);
 void DISPLAY_FIXE(i32 time);
@@ -964,15 +964,15 @@ void DoMite2PoingCollision(obj_t* obj, i16 a2);
 void DO_MITE2_ESQUIVE(obj_t* mit2_obj);
 
 // moskito.c
-void getIdealStingCoords(obj_t* obj, i32* a2, i32* a3);
-void closeEnoughToSting(obj_t* obj, i16 a2, i16 a3);
-void moskitoCanAttak(obj_t* obj);
-void setMoskitoAtScrollBorder(obj_t* obj, u8 a2);
-void prepareNewMoskitoAttack(obj_t* obj);
-void allocateMoskitoFruit(obj_t* obj);
+void getIdealStingCoords(obj_t* obj, i16* out_x, i16* out_y);
+u8 closeEnoughToSting(obj_t* obj, i16 min_x, i16 min_y);
+u8 moskitoCanAttak(obj_t* obj);
+i16 setMoskitoAtScrollBorder(obj_t* obj, u8 a2);
+void prepareNewMoskitoAttack(obj_t* mst_obj);
+obj_t* allocateMoskitoFruit(obj_t* mst2_obj);
 void moskitoDropFruitOnRay(obj_t* obj);
 void doMoskitoCommand(obj_t* obj);
-void tellNextMoskitoAction(obj_t* obj);
+u8 tellNextMoskitoAction(obj_t* obj);
 void changeMoskitoPhase(obj_t* obj);
 void doMoskitoHit(obj_t* obj, i16 a2);
 void DO_MST_SCROLL_COMMAND(obj_t* obj);

@@ -92,12 +92,128 @@ void DISPLAY_POING(void) {
 
 //19060
 void DISPLAY_CLING(void) {
-    //stub
+    /* 15FB8 8013A7B8 -O2 -msoft-float */
+    obj_t *c_1up;
+    obj_t *c_pow;
+    i32 xmin, xmax, ymin, ymax;
+
+    // NOTE: there are some differences here from the PS1 version
+    i16 extra_y_offset;
+    if (GameModeVideo == MODE_X && P486 == 1) {
+        extra_y_offset = 16;
+    } else {
+        extra_y_offset = 0;
+    };
+
+    if (id_Cling_1up != -1) {
+        c_1up = &level.objects[id_Cling_1up];
+        if (c_1up->timer == 0) {
+            c_1up->screen_x = 61 - c_1up->offset_bx;
+            c_1up->screen_y = extra_y_offset + 5 - c_1up->offset_hy;
+            get_sprite_clipping(&xmin, &xmax, &ymin, &ymax);
+            sprite_clipping(0, 100, 0, 100);
+            display2(c_1up);
+            sprite_clipping(xmin, xmax, ymin, ymax);
+        }
+    }
+    if (id_Cling_Pow != -1) {
+        c_pow = &level.objects[id_Cling_Pow];
+        if (c_pow->timer == 0) {
+            c_pow->screen_x = 66 - c_pow->offset_bx;
+            c_pow->screen_y = extra_y_offset + 14 - c_pow->offset_hy;
+            get_sprite_clipping(&xmin, &xmax, &ymin, &ymax);
+            sprite_clipping(0, 100, 0, 100);
+            display2(c_pow);
+            sprite_clipping(xmin, xmax, ymin, ymax);
+        }
+    }
 }
 
 //191A8
-void display_bar_boss(obj_t* obj) {
-    //stub
+void display_bar_boss(obj_t* boss_obj) {
+    /* 16080 8013A880 -O2 -msoft-float */
+    i16 extra_x_offset, extra_y_offset;
+    if (GameModeVideo == MODE_X) {
+        extra_x_offset = 8;
+        if (P486 == 1) {
+            extra_y_offset = 8;
+        } else {
+            extra_y_offset = 0;
+        }
+    } else {
+        extra_x_offset = 4;
+        extra_y_offset = 0;
+    };
+
+
+    u8 hp;
+    u8 init_hp;
+    s32 unk_1;
+    s32 unk_2;
+    s32 unk_3;
+    s32 disp_mode;
+
+    if (scrollLocked) {
+        hp = boss_obj->hit_points;
+        if (hp != 0) {
+            init_hp = boss_obj->init_hit_points;
+            unk_1 = 6;
+            unk_2 = (29 - init_hp) * unk_1;
+            unk_3 = 20 - unk_2;
+            disp_mode = 1;
+            display_sprite(poing_obj, 61,
+                           extra_x_offset + Bloc_lim_W1 - 4 + unk_3 - (init_hp - hp) * unk_1,
+                           (Bloc_lim_H2 - 19 - extra_y_offset),
+                           disp_mode);
+            display_sprite(poing_obj, 60,
+                           extra_x_offset + Bloc_lim_W1 - 4 + 20 - unk_2 + 1,
+                           (Bloc_lim_H2 - 20 - extra_y_offset), disp_mode);
+            i16 display_y = Bloc_lim_H2 - 30 - extra_y_offset;
+            switch (boss_obj->type)
+            {
+                case TYPE_MOSKITO:
+                    display_sprite(poing_obj, 62, 0, display_y, disp_mode);
+                    break;
+                case TYPE_MOSKITO2:
+                    display_sprite(poing_obj, 62, 0, display_y, disp_mode);
+                    break;
+                case TYPE_BB1:
+                    display_sprite(poing_obj, 106, 0, display_y, disp_mode);
+                    break;
+                case TYPE_BB12:
+                    display_sprite(poing_obj, 106, 0, display_y, disp_mode);
+                    break;
+                case TYPE_SPACE_MAMA:
+                    display_sprite(poing_obj, 108, 0, display_y, disp_mode);
+                    break;
+                case TYPE_SPACE_MAMA2:
+                    display_sprite(poing_obj, 108, 0, display_y, disp_mode);
+                    break;
+                case TYPE_MAMA_PIRATE:
+                    display_sprite(poing_obj, 111, 0, display_y, disp_mode);
+                    break;
+                case TYPE_SCORPION:
+                    display_sprite(poing_obj, 107, 0, display_y, disp_mode);
+                    break;
+                case TYPE_HYB_BBF2_D:
+                    display_sprite(poing_obj, 110, 0, display_y, disp_mode);
+                    break;
+                case TYPE_HYBRIDE_STOSKO:
+                    display_sprite(poing_obj, 110, 0, display_y, disp_mode);
+                    break;
+                case TYPE_HYBRIDE_MOSAMS:
+                    display_sprite(poing_obj, 110, 0, display_y, disp_mode);
+                    break;
+                case TYPE_DARK:
+                    display_sprite(poing_obj, 110, 0, display_y, disp_mode);
+                    break;
+                case TYPE_SAXO:
+                case TYPE_SAXO2:
+                    display_sprite(poing_obj, 109, 0, display_y, disp_mode);
+                    break;
+            }
+        }
+    }
 }
 
 //193A8
@@ -206,8 +322,8 @@ void DISPLAY_ALL_OBJECTS(void) {
     for (i32 current_display_prio = 7; current_display_prio >= 1; --current_display_prio) {
         for (i32 i = 0; i < actobj.num_active_objects; ++i) {
             obj_t* obj = level.objects + actobj.objects[i];
-            if (current_display_prio == 1 && flags[obj->id] & flags0_0x80_boss) {
-                display_bar_boss(obj); //TODO
+            if (current_display_prio == 1 && flags[obj->type] & flags0_0x80_boss) {
+                display_bar_boss(obj);
             }
             if (obj->display_prio != current_display_prio) {
                 continue;
@@ -489,8 +605,10 @@ void DISPLAY_TEXT_FEE(void) {
     s16 obj_x;
     s16 marg_x;
 
-    DISPLAY_BLACKBOX(0, 0, SCREEN_WIDTH, 20, 255, false);
-    DISPLAY_BLACKBOX(0, 190, SCREEN_WIDTH, 50, 255, false);
+    // TODO: fix black bars not working on Betilla levels
+    i16 black_bar_height = ((SCREEN_HEIGHT * 2) / (45 * 2)) * 10 ; // PS1: 50   PC/mobile: 40
+    DISPLAY_BLACKBOX(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 12, 255, false);
+    DISPLAY_BLACKBOX(0, SCREEN_HEIGHT - black_bar_height, SCREEN_WIDTH, black_bar_height, 255, false);
     txt_fee = display_txt_fee;
     if (txt_fee != 255)
     {

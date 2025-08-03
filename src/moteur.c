@@ -497,6 +497,19 @@ void DO_ANIM(obj_t* obj) {
         }
     }
     obj->anim_index = eta->anim_index;
+
+    if (obj->anim_index == 255) {
+        // Added for debugging.
+        // Some invalid ETA exist (e.g. moskito's main_etat 0, sub_etat 21), which have anim_index == 255. These may be
+        // leftovers from removed sub_etats that were present in the PS1 version.
+        // Arriving here is a bug! We'll throw a FatalError now, to avoid out-of-bounds reading elsewhere in the code.
+        char error_msg[512];
+        printf(error_msg, sizeof(error_msg),
+               "DO_ANIM(): invalid anim_index 255; id=%d, type=%d, x=%d, y=%d, main_etat=%d, sub_etat=%d\n",
+               obj->id, obj->type, obj->x, obj->y, obj->main_etat, obj->sub_etat);
+        FatalError(error_msg);
+    }
+
     anim_t* anim = obj->animations + obj->anim_index;
     if ((obj->change_anim_mode == 1 && obj->anim_index != prev_anim_index) || obj->change_anim_mode == 2) {
         if (eta->flags & eta_flags_0x10_anim_reverse) {
