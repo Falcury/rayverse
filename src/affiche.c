@@ -247,16 +247,16 @@ void DISPLAY_FIXE(i32 time) {
                     width = 85;
                 }
                 if (Bloc_lim_H1 - 5 >= height) {
-                    DISPLAY_BLACKBOX(13, 0, width, height, 255, 0);
+                    DISPLAY_BLACKBOX(13, 0, width, height, -1, 0);
                 } else {
-                    DISPLAY_BLACKBOX(13, 0, width, Bloc_lim_H1, 255, 0);
-                    DISPLAY_BLACKBOX(13, Bloc_lim_H1, Bloc_lim_W1 - 15, height + 5 - Bloc_lim_H1, 255, 0);
+                    DISPLAY_BLACKBOX(13, 0, width, Bloc_lim_H1, -1, 0);
+                    DISPLAY_BLACKBOX(13, Bloc_lim_H1, Bloc_lim_W1 - 15, height + 5 - Bloc_lim_H1, -1, 0);
                 }
                 if (Bloc_lim_H1 - 5 >= 23) {
-                    DISPLAY_BLACKBOX(241, 4, 68, 23, 255, 0);
+                    DISPLAY_BLACKBOX(241, 4, 68, 23, -1, 0);
                 } else {
-                    DISPLAY_BLACKBOX(241, 4, 68, Bloc_lim_H1 - 4, 255, 0);
-                    DISPLAY_BLACKBOX(Bloc_lim_W2, Bloc_lim_H1, 312 - Bloc_lim_W2, 28 - Bloc_lim_H1, 255, 0);
+                    DISPLAY_BLACKBOX(241, 4, 68, Bloc_lim_H1 - 4, -1, 0);
+                    DISPLAY_BLACKBOX(Bloc_lim_W2, Bloc_lim_H1, 312 - Bloc_lim_W2, 28 - Bloc_lim_H1, -1, 0);
                 }
             }
             obj_t* obj = level.objects + sbar_obj_id;
@@ -280,7 +280,7 @@ void DISPLAY_FIXE(i32 time) {
                 display_sprite_NoClip(obj, 28 + status_bar.wiz_digits[1], Bloc_lim_W1 + 60, Bloc_lim_H2 - 32, 1);
             }
             if (id_Cling_1up != -1 || id_Cling_Pow != -1) {
-                DISPLAY_CLING(); //TODO
+                DISPLAY_CLING();
             }
         }
     }
@@ -602,8 +602,8 @@ void DISPLAY_TEXT_FEE(void) {
 
     // TODO: fix black bars not working on Betilla levels
     i16 black_bar_height = ((SCREEN_HEIGHT * 2) / (45 * 2)) * 10 ; // PS1: 50   PC/mobile: 40
-    DISPLAY_BLACKBOX(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 12, 255, false);
-    DISPLAY_BLACKBOX(0, SCREEN_HEIGHT - black_bar_height, SCREEN_WIDTH, black_bar_height, 255, false);
+    DISPLAY_BLACKBOX(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 12, -1, false);
+    DISPLAY_BLACKBOX(0, SCREEN_HEIGHT - black_bar_height, SCREEN_WIDTH, black_bar_height, -1, false);
     txt_fee = display_txt_fee;
     if (txt_fee != 255)
     {
@@ -631,7 +631,7 @@ void DISPLAY_TEXT_FEE(void) {
                 else if (cen_x + ttd.width <= obj_x)
                     display_box_text(&ttd);
 
-                DISPLAY_BLACKBOX(obj_x, obj->screen_y + obj->offset_by - 20, 30, 18, 255, 0);
+                DISPLAY_BLACKBOX(obj_x, obj->screen_y + obj->offset_by - 20, 30, 18, -1, 0);
                 display2(obj);
             }
             else
