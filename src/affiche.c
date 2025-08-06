@@ -209,7 +209,8 @@ void display_bar_boss(obj_t* boss_obj) {
 
 //193A8
 void DisplayCrackers(void) {
-    //stub
+    display_text("/limited version/", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0, 0);
+    display_text("/install rayman with cdrom/", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 50, 2, 1);
 }
 
 //193E4
@@ -370,6 +371,16 @@ void DISPLAY_ALL_OBJECTS(void) {
                         sprite_clipping(xmin, Bloc_lim_H2 - 40, ymin, ymax);
                         display2(obj);
                         sprite_clipping(xmin, xmax, ymin, ymax);
+                    } break;
+                    // Added for debugging
+                    case TYPE_141_NEIGE:
+                    case TYPE_158_PALETTE_SWAPPER:
+                    case TYPE_164_GENERATING_DOOR:
+                    case TYPE_181_SCROLL_SAX:
+                    case TYPE_199_BB1_VIT: {
+                        if (is_debug_mode) {
+                            display2(obj);
+                        }
                     } break;
                     default: {
                         display2(obj);

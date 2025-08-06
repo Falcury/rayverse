@@ -3,6 +3,7 @@
 
 app_state_t global_app_state;
 game_state_t* global_game;
+bool is_debug_mode;
 
 // engine.cpp
 

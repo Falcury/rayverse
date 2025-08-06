@@ -102,9 +102,9 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
         }
 
         DRAW_MAP(DrawBufferNormal, &BIG_MAP);
-        display_grp_stars(); //TODO
+        display_grp_stars();
         DISPLAY_ALL_OBJECTS();
-        display_pix_gerbes(); //TODO
+        display_pix_gerbes();
         Display_Sprite_On_Front(plan0_width, plan0_height, Bloc_lim_W1, Bloc_lim_H1, Bloc_lim_W2, Bloc_lim_H2); //TODO
 
         if (MapAvecPluieOuNeige) {
@@ -125,6 +125,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
         // DEBUG: display ray main and sub etat
         static bool display_debug_etat_info;
         if (TOUCHE(SC_F3)) {
+            is_debug_mode = true;
             display_debug_etat_info = true;
         }
         if (display_debug_etat_info) {
@@ -139,7 +140,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
         }
 
         if (JeuCracker) {
-            DisplayCrackers(); //TODO
+            DisplayCrackers();
         }
 
         if (MessageProgram) {

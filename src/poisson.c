@@ -15,12 +15,11 @@ void DoPoissonBleuPoingCollision(obj_t* obj, i16 a2) {
 }
 
 //673B4
-bool can_free_fish(obj_t* piranha) {
-    // stub
+bool can_free_fish(obj_t* fish) {
     bool result = true;
     for (i32 i = 0; i < level.nb_objects; ++i) {
-        obj_t* event = level.objects + i;
-        if (event->type == TYPE_10_FISH && event->init_x == piranha->init_x && !event->is_active && event->timer >= 100) {
+        obj_t* cur_obj = level.objects + i;
+        if (cur_obj->type == TYPE_10_FISH && cur_obj->init_x == fish->init_x && cur_obj->is_active && cur_obj->timer < 100) {
             result = false;
             break;
         }
@@ -30,47 +29,88 @@ bool can_free_fish(obj_t* piranha) {
 
 
 //67410
-void DESACTIVE_FISH_COLLIS(obj_t* obj) {
-    //stub
+void DESACTIVE_FISH_COLLIS(obj_t* fish) {
+    /* 37CB8 8015C4B8 -O2 -msoft-float */
+    u8 index = link_init[fish->id];
+    obj_t* unk_obj = &level.objects[index];
+
+    if (unk_obj->y == fish->y) {
+        unk_obj->y = ymap + SCREEN_HEIGHT;
+        unk_obj->flags.alive = 0;
+        unk_obj->is_active = 0;
+    }
+
+    index = link_init[unk_obj->id];
+    unk_obj = &level.objects[index];
+    if (unk_obj->y == fish->y) {
+        unk_obj->is_active = 0;
+        unk_obj->y = ymap + SCREEN_HEIGHT;
+        unk_obj->flags.alive = 0;
+    }
 }
 
 //674C8
-void DO_PYRANHA(obj_t* obj) {
-    DO_ONE_CMD(obj);
-    bool respawn = false;
-    if (obj->main_etat == 0) {
-        i32 y_offset_by = obj->y + obj->offset_by;
-        if (y_offset_by + 20 < ymap + 200) {
-            ++obj->timer;
-        }
-        if (obj->sub_etat == 3) {
-            obj->speed_y = 0;
-        } else if (obj->sub_etat == 9) {
-            obj->speed_y = 6;
-            if ((obj->y + obj->offset_hy > ymap + 200) || (y_offset_by + 14 > mp.height * 16)) {
-                if (y_offset_by + 14 > mp.height * 16) {
-                    allocate_splash(obj);
-                }
-                obj->y = ymap + 200;
-                obj->is_active = 0;
-                obj->flags.alive = false;
-                obj->timer = 0;
-                respawn = can_free_fish(obj);
-            }
-        } else {
-            if (y_offset_by < ymap) { //?
-                obj->y = ymap + 200;
-                obj->is_active = 0;
-                obj->flags.alive = false;
-                respawn = can_free_fish(obj);
-            }
-        }
+void DO_PYRANHA(obj_t* in_obj) {
+    /* 37DA4 8015C5A4 -O2 -msoft-float */
+    u8 can_free;
+    s32 in_y_pos;
+    s32 in_y;
+    obj_t* cur_obj;
+    s16 i;
+    u8 nb_obj;
 
-        if (obj->timer == 100) {
-            respawn = can_free_fish(obj);
+    DO_ONE_CMD(in_obj);
+    can_free = false;
+    if (in_obj->main_etat == 0) {
+        if (in_obj->y + in_obj->offset_by + 20 < ymap + SCREEN_HEIGHT)
+            in_obj->timer++;
+        if (in_obj->sub_etat == 3)
+            in_obj->speed_y = 0;
+        else if (in_obj->sub_etat == 9) {
+            in_y_pos = in_obj->y;
+            in_y = in_obj->y + in_obj->offset_hy;
+            in_obj->speed_y = 6;
+            if (ymap + SCREEN_HEIGHT < in_y || in_y_pos + in_obj->offset_by + 14 > mp.height * 16) {
+                if (in_y_pos + in_obj->offset_by + 14 > mp.height * 16)
+                    allocate_splash(in_obj);
+                in_obj->timer = 0;
+                in_obj->is_active = 0;
+                in_obj->y = ymap + SCREEN_HEIGHT;
+                in_obj->flags.alive = 0;
+                can_free = can_free_fish(in_obj);
+            }
+        } else if (in_obj->y + in_obj->offset_by < ymap) {
+            in_obj->is_active = 0;
+            in_obj->y = ymap + SCREEN_HEIGHT;
+            in_obj->flags.alive = 0;
+            can_free = can_free_fish(in_obj);
         }
-        if (respawn) {
-            // stub
+    }
+    if (in_obj->timer == 100)
+        can_free = can_free_fish(in_obj);
+    if (can_free) {
+        cur_obj = level.objects;
+        nb_obj = level.nb_objects;
+        for (i = 0; nb_obj > i; i++) {
+            if (cur_obj->type == TYPE_FISH && cur_obj->init_x == in_obj->init_x && !(cur_obj->is_active)) {
+                cur_obj->flags.alive = 1;
+                cur_obj->is_active = 1;
+                cur_obj->y = ymap + SCREEN_HEIGHT;
+                cur_obj->x = in_obj->init_x;
+                if (cur_obj->y + cur_obj->offset_by > ((mp.height - 1) << 4)) {
+                    cur_obj->y = -cur_obj->offset_by + ((mp.height - 1) << 4);
+                    allocate_splash(cur_obj);
+                }
+                cur_obj->main_etat = in_obj->init_main_etat;
+                cur_obj->sub_etat = in_obj->init_sub_etat;
+                cur_obj->hit_points = in_obj->init_hit_points;
+                cur_obj->timer = 0;
+                cur_obj->flags.read_commands = 1;
+                calc_obj_pos(cur_obj);
+                skipToLabel(cur_obj, 1, true);
+                break;
+            }
+            cur_obj++;
         }
     }
 }

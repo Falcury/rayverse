@@ -5,110 +5,124 @@ u8 Prio(obj_t* obj) {
 
     switch (obj->type)
     {
-        case TYPE_EAU:
-        case TYPE_MEDAILLON_TOON:
+        case TYPE_149_CLE_SOL: // Changed from 2 to 1 in the PC version
+        case TYPE_157_EAU:
+        case TYPE_197_MEDAILLON_TOON:
             res = 1;
             break;
-        case TYPE_AUDIOSTART:
-        case TYPE_SPACE_MAMA:
-        case TYPE_BLACK_RAY:
-        case TYPE_SPACE_MAMA2:
-        case TYPE_ANNULE_SORT_DARK:
-        case TYPE_POING_FEE:
-        case TYPE_DUNE:
+        case TYPE_30_AUDIOSTART:
+        case TYPE_98_SPACE_MAMA:
+        case TYPE_204_BLACK_RAY:
+        case TYPE_213_SPACE_MAMA2:
+        case TYPE_236_ANNULE_SORT_DARK:
+        case TYPE_238_POING_FEE:
+        case TYPE_245_DUNE:
+            // NOTE: these below are added in the PC version.
+            // In the PS1 version, they are explicitly not drawn in DISPLAY_ALL_OBJECTS() instead
+            // We're following the PS1 way here, so we can easily choose to toggle displaying them for debugging.
+        /*case TYPE_141_NEIGE:
+        case TYPE_158_PALETTE_SWAPPER:
+        case TYPE_164_GENERATING_DOOR:
+        case TYPE_181_SCROLL_SAX:
+        case TYPE_199_BB1_VIT:*/
             res = 0;
             break;
-        case TYPE_MST_SCROLL:
+        case TYPE_147_MST_SCROLL:
             res = (obj->hit_points == 0) ? 2 : 0;
             break;
-        case TYPE_BOUM:
-        case TYPE_SPLASH:
-        case TYPE_PHOTOGRAPHE:
-        case TYPE_OUYE:
-        case TYPE_MOVE_OUYE:
-        case TYPE_FLAMME2:
-        case TYPE_STALAG:
-        case TYPE_STONECHIP:
-        case TYPE_EXPLOSION:
-        case TYPE_NOTE0:
-        case TYPE_NOTE1:
-        case TYPE_NOTE2:
-        case TYPE_BONNE_NOTE:
-        case TYPE_BNOTE:
-        case TYPE_PI_BOUM:
-        case TYPE_ECLAIR:
-        case TYPE_BLACKTOON1:
-        case TYPE_ETINC:
-        case TYPE_NOVA2:
-        case TYPE_FLASH:
-        case TYPE_CLE_SOL:
-        case TYPE_SCORPION:
-        case TYPE_WIZ:
-        case TYPE_CYMBAL1:
-        case TYPE_RAYON:
-        case TYPE_PIERREACORDE:
-        case TYPE_CFUMEE:
-        case TYPE_STOSKO_PINCE:
-        case TYPE_LAVE:
-        case TYPE_SKO_PINCE:
+        case TYPE_11_BOUM:
+        case TYPE_19_SPLASH:
+        case TYPE_21_PHOTOGRAPHE:
+        case TYPE_41_OUYE:
+        case TYPE_45_MOVE_OUYE:
+        case TYPE_48_FLAMME2:
+        case TYPE_57_STALAG:
+        case TYPE_78_PIRATE_BOMB: // Changed from 3 to 2 in the PC version
+        case TYPE_79_STONECHIP:
+        case TYPE_83_EXPLOSION:
+        case TYPE_90_NOTE0:
+        case TYPE_91_NOTE1:
+        case TYPE_92_NOTE2:
+        case TYPE_93_BONNE_NOTE:
+        case TYPE_94_POING: // Added in PC version
+        case TYPE_102_BNOTE:
+        case TYPE_110_PI_BOUM:
+        case TYPE_121_ECLAIR:
+        case TYPE_135_ETINC:
+        case TYPE_143_NOVA2:
+        case TYPE_146_FLASH:
+        case TYPE_150_SCORPION:
+        case TYPE_161_WIZ:
+        case TYPE_168_CYMBAL1:
+        case TYPE_170_RAYON:
+        case TYPE_220_PIERREACORDE:
+        case TYPE_221_CFUMEE:
+        case TYPE_224_STOSKO_PINCE:
+        case TYPE_234_LAVE:
+        case TYPE_248_SKO_PINCE:
             res = 2;
             break;
-        case TYPE_CAGE: // Change from PS1 version: TYPE_CAGE and TYPE_CAGE2 are prio 3 instead of 2 (so behind Rayman)
-        case TYPE_CAGE2:
-        case TYPE_ONOFF_PLAT:
-        case TYPE_CLASH:
-        case TYPE_BB1:
-        case TYPE_DARD:
-        case TYPE_PIRATE_NGAWE:
-        case TYPE_RING:
-        case TYPE_SAXO:
-        case TYPE_PIRATE_GUETTEUR:
-        case TYPE_PIRATE_BOMB:
-        case TYPE_MARACAS:
-        case TYPE_BBL:
-        case TYPE_TNT_BOMB:
-        case TYPE_SUPERHELICO:
-        case TYPE_ROULETTE:
-        case TYPE_ROULETTE2:
-        case TYPE_ROULETTE3:
-        case TYPE_SAXO2:
-        case TYPE_SAXO3:
-        case TYPE_MAMA_PIRATE:
-        case TYPE_COUTEAU:
-        case TYPE_BB12:
-        case TYPE_BB13:
-        case TYPE_BB14:
-        case TYPE_SMA_WEAPON:
-        case TYPE_BOUT_TOTEM:
-        case TYPE_PIRATE_GUETTEUR2:
-        case TYPE_RIDEAU:
+        case TYPE_123_BLACKTOON1:
+            res = (num_world == 1 && num_level == 14) ? 3 : 2; // Changed from always 2 in the PC version
+            break;
+        case TYPE_28_ONOFF_PLAT:
+        case TYPE_44_CLASH:
+        case TYPE_46_BB1:
+        case TYPE_58_CAGE: // Changed from 2 to 3 in the PC version
+        case TYPE_59_CAGE2: // Changed from 2 to 3 in the PC version
+        case TYPE_66_DARD:
+        case TYPE_72_PIRATE_NGAWE:
+        case TYPE_73_RING:
+        case TYPE_74_SAXO:
+        case TYPE_77_PIRATE_GUETTEUR:
+        case TYPE_86_MARACAS:
+        case TYPE_97_BBL:
+        case TYPE_119_TNT_BOMB:
+        case TYPE_133_SUPERHELICO:
+        case TYPE_138_ROULETTE:
+        case TYPE_154_ROULETTE2:
+        case TYPE_155_ROULETTE3:
+        case TYPE_180_SAXO2:
+        case TYPE_183_SAXO3:
+        case TYPE_187_MAMA_PIRATE:
+        case TYPE_190_COUTEAU:
+        case TYPE_198_BB12:
+        case TYPE_200_BB13:
+        case TYPE_201_BB14:
+        case TYPE_203_SMA_WEAPON:
+        case TYPE_211_BOUT_TOTEM:
+        case TYPE_239_PIRATE_GUETTEUR2:
+        case TYPE_249_RIDEAU:
             res = 3;
             break;
-        case TYPE_PLANCHES:
+        case TYPE_253_PLANCHES:
             res = (bateau_obj_id != -1) ? 7 : 4;
             break;
-        case TYPE_MORNINGSTAR:
-        case TYPE_GENEBADGUY:
-        case TYPE_PI:
-        case TYPE_PI_MUS:
-        case TYPE_WASHING_MACHINE:
-        case TYPE_VAGUE_DEVANT:
+        case TYPE_7_MORNINGSTAR:
+        case TYPE_20_GENEBADGUY:
+        case TYPE_96_TOTEM: // Added in PC version
+        case TYPE_109_PI:
+        case TYPE_111_PI_MUS:
+        case TYPE_112_WASHING_MACHINE:
+        case TYPE_246_CORDE_DARK: // Added in PC version
+        case TYPE_251_VAGUE_DEVANT:
             res = 5;
             break;
-        case TYPE_POWERUP:
-        case TYPE_MUS_WAIT:
-        case TYPE_JAUGEUP:
-        case TYPE_POING_POWERUP:
-        case TYPE_REDUCTEUR:
-        case TYPE_ONEUP:
-        case TYPE_GRAP_BONUS:
-        case TYPE_BATEAU:
+        case TYPE_2_POWERUP:
+        case TYPE_31_ONEUP_ALWAYS: // Added in PC version
+        case TYPE_55_MUS_WAIT:
+        case TYPE_82_JAUGEUP:
+        case TYPE_95_POING_POWERUP:
+        case TYPE_137_REDUCTEUR:
+        case TYPE_142_ONEUP:
+        case TYPE_148_GRAP_BONUS:
+        case TYPE_173_BATEAU:
             res = 6;
             break;
-        case TYPE_NEUTRAL:
-        case TYPE_SIGNPOST:
-        case TYPE_TAMBOUR2:
-        case TYPE_VAGUE_DERRIERE:
+        case TYPE_4_NEUTRAL:
+        case TYPE_42_SIGNPOST:
+        case TYPE_88_TAMBOUR2:
+        case TYPE_252_VAGUE_DERRIERE:
             res = 7;
             break;
         default:
