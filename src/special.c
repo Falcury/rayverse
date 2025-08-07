@@ -650,7 +650,19 @@ void DO_TIR(obj_t* obj) {
 
 //7B060
 void DO_INTERACT_PLAT(obj_t* obj) {
-    //stub
+    if (link_init[obj->id] != obj->id) {
+        obj_t* found_obj = level.objects + link_init[obj->id];
+        found_obj->type = TYPE_24_INTERACTPLT;
+        found_obj->flags.read_commands = 0;
+
+        i16 diff_y = (found_obj->y + found_obj->offset_by) - obj->y - obj->offset_by;
+        if (diff_y < 1) {
+            found_obj->cmd = GO_DOWN;
+        } else {
+            found_obj->cmd = GO_UP;
+        }
+        found_obj->nb_cmd = Abs(diff_y);
+    }
 }
 
 //7B0E0

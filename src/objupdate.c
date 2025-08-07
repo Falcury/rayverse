@@ -841,7 +841,7 @@ void DO_TEN_COMMAND(obj_t* obj) {
                 allocate_badguy(obj, obj->configuration   , 1, -1);
             }
         } else {
-            if (obj->anim_frame > 2) {
+            if (obj->anim_frame < 2) {
                 obj->timer = 0;
             }
         }
@@ -858,7 +858,7 @@ void DO_TEN_COMMAND(obj_t* obj) {
                 if (xspeed == -2) xspeed = 3;
             }
         } else {
-            if (obj->anim_frame > 2) {
+            if (obj->anim_frame < 2) {
                 obj->timer = 0;
             }
         }
@@ -866,7 +866,7 @@ void DO_TEN_COMMAND(obj_t* obj) {
         ++obj->timer;
         if (!(obj->configuration == 0 || obj->timer < 253)) {
             u8 saved_configuration = obj->configuration;
-            //DO_INTERACT_PLAT(obj); // TODO: fix this
+            DO_INTERACT_PLAT(obj); // TODO: fix this
             obj->configuration = saved_configuration;
         }
         obj->speed_x = 0;

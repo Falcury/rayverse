@@ -372,7 +372,9 @@ void DISPLAY_ALL_OBJECTS(void) {
                         display2(obj);
                         sprite_clipping(xmin, xmax, ymin, ymax);
                     } break;
-                    // Added for debugging
+                    // The cases below are added for debugging (these objects are usually not supposed to be drawn).
+                    // In the PS1 version they are also explicitly excluded in DISPLAY_ALL_OBJECTS() but in the
+                    // PC version they are excluded from drawing by assigning display priority 0, set in Prio()
                     case TYPE_141_NEIGE:
                     case TYPE_158_PALETTE_SWAPPER:
                     case TYPE_164_GENERATING_DOOR:
