@@ -138,6 +138,10 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
             DO_FADE_OUT();
             ChangeLevel();
         }
+        //DEBUG: reset all bosses
+        if (TOUCHE(SC_F5)) {
+            memset(&finBosslevel, 0, sizeof(finBosslevel));
+        }
 
         if (JeuCracker) {
             DisplayCrackers();

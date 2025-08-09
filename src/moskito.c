@@ -39,6 +39,19 @@ u8 moskitoCanAttak(obj_t* obj) {
     u8 locked;
     u32 res;
 
+    // This part added in the PC version:
+    if (scrollLocked) {
+        if (scroll_start_y < ymap) {
+            scroll_start_y = ymap;
+        }
+        if (obj->timer != 0) {
+            --obj->timer;
+        }
+        if (obj->scale != 0) {
+            --obj->scale;
+        }
+    }
+
     if (!scrollLocked) {
         locked = false;
         if (
@@ -119,7 +132,7 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
         alternateBossSpeedFactor = 0;
         switch (curAct) {
             default: break;
-            case 3:
+            case 3: // end arrival sequence
                 bossEncounter++;
             case 2:
                 currentBossAction = 0;
@@ -162,30 +175,28 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
 
                 currentBossActionIsOver = false;
                 break;
-            case 25:
+            case 25: // end of dying sequence
                 if (mst_obj->init_hit_points == 5) {
                     ChangeLevel();
                     finBosslevel.bzzit = true;
                 } else {
                     remoteRayXToReach = -32000;
                     finBosslevel.moskito = true;
-                    set_main_and_sub_etat(&ray, 3, 52);
+                    set_main_and_sub_etat(&ray, 3, 7); // NOTE: changed in PC version (is sub etat 52 in PS1 version)
                     mst_obj->nb_cmd = vblToEOA(&ray, 1) + 1;
                     fin_boss = true;
                 }
                 currentBossActionIsOver = false;
                 break;
-            case 22:
+            case 22: // dying sequence: fall on the floor
                 if (mst_obj->init_hit_points == 12) {
                     set_main_and_sub_etat(mst_obj, 0, 19);
                 } else {
                     i = 0;
                     cur_obj = &level.objects[i];
                     nb_obj = level.nb_objects;
-                    while (i < nb_obj)
-                    {
-                        if (cur_obj->type == TYPE_MST_COPAIN)
-                        {
+                    while (i < nb_obj) {
+                        if (cur_obj->type == TYPE_MST_COPAIN) {
                             mst_obj->sprites = cur_obj->sprites;
                             mst_obj->animations = cur_obj->animations;
                             mst_obj->img_buffer = cur_obj->img_buffer;
@@ -208,9 +219,9 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
                 currentBossActionIsOver = false;
                 mst_obj->nb_cmd += 128;
                 break;
-            case 24:
+            case 24: // dying sequence: fall down from above the screen
                 if (mst_obj->init_hit_points == 12)
-                    mst_obj->offset_by += SCREEN_HEIGHT;
+                    mst_obj->offset_by -= 16; // NOTE: changed in PC version
 
                 mst_obj->flags.flip_x = false;
                 bossXToReach =
@@ -219,12 +230,13 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
                 bossYToReach = floorLine - mst_obj->offset_by;
                 set_main_and_sub_etat(mst_obj, 2, 1);
                 skipToLabel(mst_obj, 2, true);
+                mst_obj->gravity_value_2 = 0; // NOTE: added in PC version
                 bossReachingAccuracyX = 0xFF;
                 bossReachingAccuracyY = 0;
                 bossReachingTimer = 1;
                 currentBossActionIsOver = false;
                 break;
-            case 17:
+            case 17: // recover after hit
                 half_wid = SCREEN_WIDTH / 2; /* TODO: ??? */
                 bossXToReach = scroll_start_x - (mst_obj->offset_bx - half_wid);
                 bossYToReach = floorLine - 230;
@@ -236,7 +248,7 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
                 setBossReachingSpeeds(mst_obj, 1, 0xFF, 0xFF);
                 currentBossActionIsOver = false;
                 break;
-            case 16:
+            case 16: // hit
                 set_main_and_sub_etat(mst_obj, 0, 5);
                 skipToLabel(mst_obj, 1, true);
                 currentBossActionIsOver = false;
@@ -246,7 +258,7 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
                 skipToLabel(mst_obj, 1, true);
                 currentBossActionIsOver = false;
                 break;
-            case 26:
+            case 26: // at top of screen (after recovering from hit), turn around
                 /* TODO: temp_s0_2? */
                 temp_s0_2 = mst_obj->main_etat == 0;
                 if (temp_s0_2 && mst_obj->sub_etat == 20)
@@ -272,14 +284,14 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
                     }
                 }
                 break;
-            case 23:
+            case 23: // dying sequence: move up
                 remoteRayXToReach = scroll_start_x - mst_obj->offset_bx + 112;
                 if (ray.x & 1) /* ??? */
                     remoteRayXToReach |= 1;
                 else
                     remoteRayXToReach &= ~1;
                 goto block_52;
-            case 11:
+            case 11: // decide whether to fly up out of the screen after recovering from a hit (?)
                 bossSafeTimer = 0;
                 mst_obj->display_prio = 3;
                 if (mstMustLeaveScreenToProceed == 0)
@@ -290,14 +302,14 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
                 else
                 {
                     mstMustLeaveScreenToProceed = 0;
-                    curAct = 4;
+                    curAct = 4; // fly up
                     goto block_52;
                 }
                 break;
-            case 4:
+            case 4: // fly straight up, out of the screen
             block_52:
                 bossXToReach = mst_obj->x;
-                bossYToReach = scroll_start_y - 128;
+                bossYToReach = Bloc_lim_H1 + scroll_start_y - 128; // NOTE: changed in PC version
                 if (curAct == 4)
                     set_main_and_sub_etat(mst_obj, 0, 8);
                 else
@@ -310,17 +322,17 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
                 skipToLabel(mst_obj, 2, true);
                 currentBossActionIsOver = false;
                 break;
-            case 15:
+            case 15: // end recover after hit (reached top of the screen)
                 set_main_and_sub_etat(mst_obj, 0, 20);
                 skipToLabel(mst_obj, 1, true);
                 currentBossActionIsOver = false;
                 break;
-            case 14:
+            case 14: // sting
                 set_main_and_sub_etat(mst_obj, 0, 15);
                 skipToLabel(mst_obj, 1, true);
                 currentBossActionIsOver = false;
                 break;
-            case 10:
+            case 10: // fly down from the top of the screen toward Rayman (basic flying)
                 calc_obj_dir(mst_obj);
                 setMoskitoAtScrollBorder(mst_obj, mst_obj->flags.flip_x ^ 1);
                 mst_obj->y = scroll_start_y - 128;
@@ -334,7 +346,7 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
                     mst_obj->x += 48;
                     mst_obj->flags.flip_x = true;
                 }
-            case 13:
+            case 13: // basic fly around
                 fistAvoided = false;
                 prev_flip_x = mst_obj->flags.flip_x;
                 calc_obj_dir(mst_obj);
@@ -353,9 +365,9 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
                 skipToLabel(mst_obj, 2, true);
                 currentBossActionIsOver = false;
                 break;
-            case 7:
+            case 7: // fly in carrying small spiky fruit
                 set_main_and_sub_etat(mst_obj, 0, 12);
-            case 8:
+            case 8: // fly in carrying medium spiky fruit
                 if (curAct == 8)
                     set_main_and_sub_etat(mst_obj, 0, 11);
 
@@ -382,7 +394,7 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
                 skipToLabel(mst_obj, 2, true);
                 currentBossActionIsOver = false;
                 break;
-            case 9:
+            case 9: // fly in carrying huge spiky fruit
                 set_main_and_sub_etat(mst_obj, 0, 9);
                 if (setMoskitoAtScrollBorder(mst_obj, 2) > 0)
                 {
@@ -407,8 +419,8 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
                 skipToLabel(mst_obj, 2, true);
                 currentBossActionIsOver = false;
                 break;
-            case 18:
-            case 19:
+            case 18: // prepare to fly in fast from the side (low)
+            case 19: // prepare to fly in fast from the side (high)
                 mst_obj->y = floorLine - 72;
                 if (curAct == 19)
                     mst_obj->y = floorLine - 120;
@@ -435,13 +447,13 @@ void prepareNewMoskitoAttack(obj_t* mst_obj) {
                 skipToLabel(mst_obj, 2, true);
                 currentBossActionIsOver = false;
                 break;
-            case 21:
+            case 21: // wiggle/wait, preparing to fly in fast from the side
                 set_main_and_sub_etat(mst_obj, 0, 14);
                 skipToLabel(mst_obj, 1, true);
                 mst_obj->nb_cmd *= moskitoActionSequences[bossEncounter][currentBossAction++];
                 currentBossActionIsOver = false;
                 break;
-            case 20:
+            case 20: // fly in fast from the side (woosh)
                 if (mst_obj->x + mst_obj->offset_bx > unk_2)
                 {
                     mst_obj->flags.flip_x = false;
@@ -600,8 +612,20 @@ void moskitoDropFruitOnRay(obj_t* obj) {
 //54E1C
 void doMoskitoCommand(obj_t* obj) {
     /* 71030 80195830 -O2 -msoft-float */
-    if (moskitoCanAttak(obj))
-    {
+
+    // Debug cheat: set boss HP
+    if (is_debug_mode) {
+        if (TOUCHE(SC_2)) {
+            obj->hit_points = 2;
+        } else if (TOUCHE(SC_1)) {
+            obj->hit_points = 1;
+        } else if (TOUCHE(SC_0)) {
+            obj->hit_points = obj->init_hit_points;
+        }
+    }
+
+
+    if (moskitoCanAttak(obj)) {
         if (obj->scale != 0) {
             obj->scale--; // Added in PC/mobile versions
         }

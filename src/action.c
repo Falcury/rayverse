@@ -135,8 +135,8 @@ void adjustBossScrollLocker(void) {
 void setBossScrollLimits(obj_t* obj) {
     bossScrollStartX = scroll_start_x;
     bossScrollEndX = scroll_end_x;
-    floorLine = firstFloorBelow(obj); //TODO
+    floorLine = firstFloorBelow(obj);
     bossScrollStartY = Bloc_lim_H1 - Bloc_lim_H2 + floorLine - 16;
     bossScrollEndY = ymapmax;
-    adjustBossScrollLocker(); //TODO
+    adjustBossScrollLocker();
 }
