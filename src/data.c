@@ -4,6 +4,7 @@
 app_state_t global_app_state;
 game_state_t* global_game;
 bool is_debug_mode;
+i16 debug_obj_id = -1;
 
 // engine.cpp
 
@@ -406,7 +407,7 @@ u16 type_zdc[262] = {
 obj_procs_t ObjectsFonctions[262] = {
         {DO_ONE_CMD,                       DoBadGuy1PoingCollision,          DoRaymanCollisionDefault,        DoBadGuy1RaymanZDD,        ObjectUTurnDefault}, // 0: livingstone
         {DO_ONE_CMD,                       DoPlatformPoingCollision,         DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 1: platform
-        {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoPowerupRaymanCollision,  ObjectUTurnDefault}, // 2: energy point
+        {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoPowerupRaymanCollision,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 2: energy point
         {DO_ONE_PINK_CMD,                  DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoLidolPinkRaymanZDD,      ObjectUTurnDefault}, // 3: electoon
         {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 4: scenery
         {TEST_WIZARD,                      DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 5: magician
@@ -1612,6 +1613,8 @@ def_sprite_t Def_Sprite[1200] = {
         {164, 234, 2}, {216, 256, 2}, {239, 173, 2}, {284, 272, 2}, {344, 254, 2}, //1088-1092
         REPEAT_100({0}), {0}, {0}, {0}, {0}, {0}, {0}, {0}, //1093-1199
 };
+
+i32 dword_BD96C; //BD96C
 
 big_map_t BIG_MAP; //C21D8
 u8* Scroll_Masque[20]; //C21F8

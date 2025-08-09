@@ -62,3 +62,4 @@ static inline void fatal_error(void) {
 }
 
 #define ASSERT(expr) do { if(!((expr))) fatal_error(); } while (0)
+#define BREAKPOINT do { int _ = 5; } while (0)

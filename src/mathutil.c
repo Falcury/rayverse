@@ -62,8 +62,8 @@ i32 reflexion(i32 a1, i32 a2) {
 }
 
 //inlined
-i16 ashl16(i16 x, u8 bits) {
-    i16 result = (i16)(x << bits);
+i32 ashl16(i16 x, u8 bits) {
+    i32 result = x << bits;
     return result;
 }
 

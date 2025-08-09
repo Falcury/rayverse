@@ -418,13 +418,45 @@ void TEST_WIZARD(obj_t* obj) {
 }
 
 //61894
-void DO_TARZAN(obj_t* obj) {
-    //stub
+void DO_TARZAN(obj_t* tz_obj) {
+    /* 398E8 8015E0E8 -O2 -msoft-float */
+
+    s16 i;
+    obj_t* cur_obj;
+    s16 nb_objs;
+
+    DO_ONE_CMD(tz_obj);
+    if (tz_obj->main_etat == 0 && tz_obj->sub_etat == 4)
+    {
+        Vignet_To_Display = 1;
+        i = 0;
+        cur_obj = &level.objects[i];
+        nb_objs = level.nb_objects;
+        while (i < nb_objs) {
+            if ((cur_obj->type == TYPE_GRAINE) && !cur_obj->is_active) {
+                cur_obj->flags.alive = 1;
+                cur_obj->is_active = 1;
+                add_alwobj(cur_obj);
+                set_main_and_sub_etat(cur_obj, 2, 2);
+                cur_obj->x = tz_obj->x + tz_obj->offset_bx + cur_obj->offset_bx;
+                cur_obj->y = tz_obj->y + 50;
+                cur_obj->speed_y = -2;
+                cur_obj->speed_x = 1;
+                calc_obj_pos(cur_obj);
+                set_sub_etat(tz_obj, 3);
+                tz_obj->speed_y = -8;
+                break;
+            }
+            cur_obj++;
+            i++;
+        }
+    }
 }
 
 //61968
 void DoTarzanPoingCollision(obj_t* obj, i16 a2) {
-    //stub
+    set_main_and_sub_etat(obj, 0, 1);
+    obj->cmd = GO_LEFT;
 }
 
 //61980
@@ -511,7 +543,10 @@ void DO_TIRE_BOUCHON_COMMAND(obj_t* obj) {
 
 //61C4C
 void DoOneUpPoingCollision(obj_t* obj, i16 a2) {
-    //stub
+    if (RayEvts.grap && ray_mode != MODE_3_MORT_DE_RAYMAN) {
+        PlaySnd(194, obj->id);
+        poing_obj->cmd_arg_2 = obj->id;
+    }
 }
 
 //61C84
@@ -650,7 +685,7 @@ void DoWizRaymanCollision(obj_t* obj) {
         life_becoz_wiz = 1;
         status_bar.num_wiz -= 100;
     }
-    start_pix_gerbe(obj->screen_x + 10, obj->screen_y + 10); //TODO
+    start_pix_gerbe(obj->screen_x + 10, obj->screen_y + 10);
 }
 
 //62024
@@ -684,12 +719,25 @@ void DoGeneratingDoorRaymanCollision(obj_t* obj) {
 
 //620E4
 void DO_REDUCTEUR(obj_t* obj) {
-    //stub
+    if (obj->hit_points < obj->init_hit_points) {
+        --obj->hit_points;
+        if (obj->hit_points == 0) {
+            obj->hit_points = obj->init_hit_points;
+        }
+    }
 }
 
 //62104
 void DoReducteurRaymanCollision(obj_t* obj) {
-    //stub
+    if (reduced_rayman_id != -1) {
+        if (obj->hit_points == obj->init_hit_points) {
+            DO_NOVA(obj);
+            obj->speed_x = 0;
+            obj->speed_y = 0;
+            --obj->hit_points;
+            RAY_DEMIRAY();
+        }
+    }
 }
 
 //62140
@@ -811,12 +859,19 @@ void DoPancarteRaymanCollision(obj_t* obj) {
 
 //625E8
 void DO_MUSICIEN(obj_t* obj) {
-    //stub
+    /* 50AC4 801752C4 -O2 -msoft-float */
+    if (obj->main_etat == 0 && obj->sub_etat == 4 && EOA(obj) && !(finBosslevel.helped_musician)) {
+        finBosslevel.helped_musician = true;
+        allocateSupHelico(&level.objects[Mus_obj_id]);
+        Vignet_To_Display = 1;
+    }
 }
 
 //62644
 void DoMusicienRaymanInZDD(obj_t* obj) {
-    //stub
+    if (obj->sub_etat == 1) {
+        set_sub_etat(obj, 5);
+    }
 }
 
 //62658
@@ -1194,9 +1249,10 @@ void DO_PHOTOGRAPHE_CMD(obj_t* obj) {
         ProchainEclair = 1;
         numero_palette_special = 0;
         ray.is_active = 1;
-        restore_gendoor_link(); //TODO
+        restore_gendoor_link();
         saveGameState(obj, &save1);
         correct_gendoor_link(1);
+        obj->timer = 0;
     } else if (!RayEvts.tiny && !obj->flags.flag_1 && OBJ_IN_ZONE(obj) && ray.cmd_arg_2 == -1
                 && !decalage_en_cours && ray.main_etat == 0 && ray.sub_etat == 0
                 && inter_box(obj->x + 42, obj->y + 48, 5, 15, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h)

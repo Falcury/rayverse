@@ -236,7 +236,7 @@ typedef struct {
 } loadinforay_t;
 
 typedef struct poing_t {
-	u32 y_16; // Fixed-point y pos value?
+	i32 y_16; // Fixed-point y pos value?
 	u16 field_4;
 	u16 speed_x;
 	u16 charge;
@@ -1511,6 +1511,13 @@ enum eta_flags_enum {
 	eta_flags_8_detect_fist = 8,
 	eta_flags_0x10_anim_reverse = 0x10,
 	eta_flags_0x20_detect_ray = 0x20,
+};
+
+enum obj_active_flag_enum {
+    ACTIVE_ALIVE = 0,
+    ACTIVE_DEAD = 1,
+    ACTIVE_REINIT = 2,
+    ACTIVE_SPECIAL = 4,
 };
 
 // reference: http://www.manmrk.net/tutorials/basic/FBASIC/html/GfxScancodes.html

@@ -94,14 +94,14 @@ bool box_inter_h_line(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
 //2B430
 i16 inter_box(i32 x_1, i32 y_1, i32 w_1, i32 h_1, s16 x_2, s16 y_2, i32 w_2, i32 h_2) {
     /* 1B57C 8013FD7C -O2 -msoft-float */
-    s16 unk_1 = x_1 - w_2;
-    s16 unk_2 = y_1 - h_2;
-    s16 unk_3 = w_1 + w_2;
-    s16 unk_4 = h_1 + h_2;
+    s16 comp_x = x_1 - w_2;
+    s16 comp_y = y_1 - h_2;
+    s16 sum_w = w_1 + w_2;
+    s16 sum_h = h_1 + h_2;
     u8 res = false;
 
-    if (x_2 >= unk_1 && y_2 >= unk_2 && (unk_1 + unk_3 >= x_2))
-        res = (unk_2 + unk_4 < y_2) ^ 1;
+    if (x_2 >= comp_x && y_2 >= comp_y && (comp_x + sum_w >= x_2))
+        res = (comp_y + sum_h < y_2) ^ 1;
     return res;
 }
 
@@ -931,6 +931,11 @@ void SET_RAY_DIST(obj_t* obj) {
     ObjType type;
     s16 x; s16 y; s16 w; s16 h;
 
+    // Added for debugging
+    if (is_debug_mode && obj->id == debug_obj_id) {
+        BREAKPOINT;
+    }
+
     type = (ObjType)obj->type;
     if (flags[type] & flags1_8_ray_dist_multispr_cantchange) {
         SET_RAY_DIST_MULTISPR_CANTCHANGE(obj);
@@ -1512,6 +1517,12 @@ void DO_COLLISIONS(void) {
             break;
         }
         obj_t* obj = level.objects + actobj.objects[i];
+
+        // Added for debugging
+        if (obj->id == debug_obj_id) {
+            BREAKPOINT;
+        }
+
         if (get_eta(obj)->flags & 0x20)  {
             if (flags[obj->type] & flags2_0x10_do_not_check_ray_collision) {
                 if (!(ray.main_etat == 3 && ray.sub_etat == 32)) {

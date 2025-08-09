@@ -123,8 +123,40 @@ void DO_SCROLL(i16* h_speed, i16* v_speed) {
 }
 
 //55D78
-void allocateLandingSmoke(obj_t* obj) {
-    //stub
+void allocateLandingSmoke(obj_t* in_obj) {
+    /* 29F3C 8014E73C -O2 -msoft-float */
+    s16 i;
+    s16 j;
+    obj_t* cur_obj;
+    s16 nb_objs;
+
+    for (i = 0; i <= 2; i += 2)
+    {
+        cur_obj = &level.objects[0];
+        nb_objs = level.nb_objects;
+        j = 0;
+        while (j < nb_objs)
+        {
+            if (cur_obj->type == TYPE_208_LANDING_SMOKE && !cur_obj->is_active) {
+                cur_obj->flags.alive = 1;
+                cur_obj->is_active = 1;
+                add_alwobj(cur_obj);
+                cur_obj->active_timer = 0;
+                cur_obj->active_flag = ACTIVE_ALIVE;
+                set_main_and_sub_etat(cur_obj, 0, i != 0);
+                cur_obj->x = in_obj->x + in_obj->offset_bx - cur_obj->offset_bx;
+                cur_obj->y = in_obj->y + in_obj->offset_by - cur_obj->offset_by;
+                if (i != 0)
+                    cur_obj->display_prio = 2;
+                else
+                    cur_obj->display_prio = 7;
+                calc_obj_pos(cur_obj);
+                break;
+            }
+            cur_obj++;
+            j++;
+        }
+    }
 }
 
 //55E60
@@ -2208,6 +2240,8 @@ void INIT_MOTEUR(u8 new_lvl) {
         i16 saved_tings = status_bar.num_wiz;
         restoreGameState(&save1);
         status_bar.num_wiz = saved_tings;
+    } else {
+        actualize_palette(0); // NOTE: Added to prevent wrong palette being used at start of level (is there a bug elsewhere?)
     }
     if (departlevel) {
         nb_wiz_collected = 0;
@@ -2320,7 +2354,59 @@ void INIT_MOTEUR_LEVEL(i16 a1) {
 
 //5A7DC
 void restore_gendoor_link(void) {
-    //stub
+    /* 34E30 80159630 -O2 -msoft-float */ //NB: nonmatching
+    obj_t* temp_v1;
+    obj_t* var_v0_2;
+    s16 var_v0_1;
+    s32 temp_a0_3;
+    s32 var_a0;
+    s16 temp_a0_1;
+    u16 temp_a0_2;
+    s16 var_a1;
+    u32 var_v1;
+    u8 temp_a1;
+    s16 test_1;
+
+    test_1 = level.nb_objects;
+    for (i32 i = 0; i < level.nb_objects; ++i) {
+        obj_t* obj = level.objects + i;
+        if (obj->type == TYPE_164_GENERATING_DOOR)
+        {
+            if (obj->flags.alive) {
+                var_a1 = obj->link;
+                do
+                {
+                    temp_a0_1 = var_a1;
+                    var_a1 = link_init[var_a1];
+                } while (var_a1 != obj->link);
+                link_init[obj->id] = var_a1;
+                link_init[temp_a0_1] = obj->id;
+                obj->link_has_gendoor = 1;
+                level.objects[temp_a0_1].link_has_gendoor = 1;
+                continue;
+            }
+            temp_a0_2 = (u16) obj->id;
+            var_a0 = temp_a0_2 << 0x10;
+            if ((s16) temp_a0_2 != save1.link_init[temp_a0_2])
+            {
+                do
+                {
+                    temp_a0_3 = var_a0 >> 0x10;
+                    temp_a1 = save1.link_init[temp_a0_3];
+                    link_init[temp_a0_3] = temp_a1;
+                    if (temp_a0_3 != temp_a1)
+                    {
+                        level.objects[temp_a0_3].link_has_gendoor = 1;
+                    }
+                    else
+                    {
+                        level.objects[temp_a0_3].link_has_gendoor = 0;
+                    }
+                    var_a0 = temp_a1 << 0x10;
+                } while (obj->id != (s16) temp_a1);
+            }
+        }
+    }
 }
 
 //5A8E4
@@ -2529,7 +2615,48 @@ void RAY_REVERSE_COMMANDS(void) {
 
 //5B154
 void RAY_DEMIRAY(void) {
-    //stub
+    RayEvts.tiny = !RayEvts.tiny;
+    if (RayEvts.tiny) {
+        rms = ray;
+        ray = level.objects[reduced_rayman_id];
+        ray.animations = rms.animations;
+        PlaySnd(206, -1);
+    } else {
+        raytmp = rms;
+        rms = ray;
+        ray = raytmp;
+        PlaySnd(207, -1);
+    }
+    ray.type = TYPE_RAYMAN;
+    ray.screen_x = rms.screen_x;
+    ray.screen_y = rms.screen_y;
+    ray.speed_x = rms.speed_x;
+    ray.speed_y = rms.speed_y;
+    ray.x = rms.x;
+    ray.y = rms.y;
+    ray.offset_bx = rms.offset_bx;
+    ray.offset_by = rms.offset_by;
+    ray.offset_hy = rms.offset_hy;
+    ray.anim_index = rms.anim_index;
+    ray.anim_frame = rms.anim_frame;
+    ray.flags.flip_x = rms.flags.flip_x;
+    ray.cmd_arg_1 = rms.cmd_arg_1;
+    ray.main_etat = rms.main_etat;
+    ray.sub_etat = rms.sub_etat;
+    ray.cmd_arg_2 = rms.cmd_arg_2;
+    ray.flags.alive = 1;
+    ray.is_active = 1;
+    ray.link = rms.link;
+    ray.iframes_timer = rms.iframes_timer;
+    ray.configuration = rms.configuration;
+    ray.timer = rms.timer;
+    ray.hit_points = rms.hit_points;
+    ray.init_hit_points = rms.init_hit_points;
+    ray.hit_sprite = rms.hit_sprite;
+
+    if (block_flags[calc_typ_trav(&ray, 2)] & 0x10) {
+        set_main_and_sub_etat(&ray, 0, 15);
+    }
 }
 
 //5B378

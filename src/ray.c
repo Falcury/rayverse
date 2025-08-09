@@ -2527,7 +2527,7 @@ void DO_RAYMAN(void) {
             RAY_IN_THE_AIR();
         } else if (ray.main_etat == 3) {
             if (ray.sub_etat == 16) {
-                DO_GROWING_PLATFORM(); //TODO
+                DO_GROWING_PLATFORM();
                 if (eau_obj_id != -1) {
                     level.objects[eau_obj_id].iframes_timer = 1;
                 }

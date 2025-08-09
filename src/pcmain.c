@@ -32,7 +32,6 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
     MapTimePause = 0;
     ProchainEclair = 0;
     numero_palette_special = 0;
-    current_pal_id = 0; // added to prevent the wrong palette being loaded at the start of the level
     if (MusicCdActive) {
         TestCdLoop();
     }

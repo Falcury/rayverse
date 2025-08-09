@@ -487,8 +487,8 @@ void restoreGameState(save_state_t* save_state) {
             }
         }
         gerbe = 0;
-        current_pal_id = save_state->current_pal_id + 1; // ?
-        //actualize_palette(save_state->current_pal_id); // stub
+        current_pal_id = save_state->current_pal_id + 1;
+        actualize_palette(save_state->current_pal_id);
 
 
 	}

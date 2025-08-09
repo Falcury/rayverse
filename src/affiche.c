@@ -338,6 +338,21 @@ void DISPLAY_CYMBALE(obj_t* obj, u8* draw_buf, u8 a3) {
     }
 }
 
+// For debugging: display the object ID above each object
+void debug_display_obj_id(obj_t* obj) {
+    char text[16];
+    snprintf(text, sizeof(text), "%d", obj->id);
+//    display_text(text, obj->screen_x + obj->offset_bx, obj->screen_y + obj->offset_hy, 2, 1);
+    i16 spr_x;
+    i16 spr_y;
+    i16 spr_w;
+    i16 spr_h;
+    GET_ANIM_POS(obj, &spr_x, &spr_y, &spr_w, &spr_h);
+    i32 x = spr_x + spr_w / 2;
+    i32 y = spr_y + spr_h / 2;
+    display_text(text, x - xmap, y - ymap - 20, 2, 0);
+}
+
 //19A2C
 void DISPLAY_ALL_OBJECTS(void) {
     for (i32 current_display_prio = 7; current_display_prio >= 1; --current_display_prio) {
@@ -382,10 +397,16 @@ void DISPLAY_ALL_OBJECTS(void) {
                     case TYPE_199_BB1_VIT: {
                         if (is_debug_mode) {
                             display2(obj);
+                            debug_display_obj_id(obj);
                         }
                     } break;
                     default: {
                         display2(obj);
+
+                        // Added for debugging
+                        if (is_debug_mode) {
+                            debug_display_obj_id(obj);
+                        }
                     } break;
                 }
             }

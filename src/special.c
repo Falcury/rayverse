@@ -666,13 +666,83 @@ void DO_INTERACT_PLAT(obj_t* obj) {
 }
 
 //7B0E0
-void oldest_planted(void) {
-    //stub
+obj_t* oldest_planted(void) {
+    /* 39A14 8015E214 -O2 -msoft-float */
+    s16 ng_ids[2];
+    s16 unk_1;
+    u8 cnt_2 = 0;
+    s16 cnt_1 = 0;
+    obj_t* cur_obj = &level.objects[0];
+    s16 nb_objs = level.nb_objects;
+
+    while (cnt_1 < nb_objs) {
+        if (cur_obj->type == TYPE_39_NEN_GRAINE) {
+            ng_ids[cnt_2++] = cur_obj->id;
+            if (!cur_obj->is_active) {
+                cur_obj->iframes_timer = 10;
+            } else {
+                cur_obj->iframes_timer++;
+            }
+
+            if (cnt_2 >= LEN(ng_ids)) {
+                break;
+            }
+        }
+        cur_obj++;
+        cnt_1++;
+    }
+
+    cnt_2 = 0;
+    unk_1 = ng_ids[cnt_2];
+    cur_obj = &level.objects[unk_1];
+    cnt_1 = unk_1;
+    while (cnt_2 < LEN(ng_ids)) {
+        if (level.objects[cnt_1].iframes_timer > level.objects[unk_1].iframes_timer) {
+            unk_1 = cnt_1;
+            cur_obj = &level.objects[unk_1];
+        }
+        cnt_2++;
+        cnt_1 = ng_ids[cnt_2];
+    }
+
+    cur_obj->iframes_timer = 1;
+    return cur_obj;
 }
 
 //7B1A0
 void DO_GROWING_PLATFORM(void) {
-    //stub
+    obj_t* oldest_obj;
+    u8 main_etat; u8 sub_etat;
+
+    if (dword_BD96C != true)
+        dword_BD96C = false;
+
+    if (ray.anim_frame == ray.animations[ray.anim_index].frame_count - 1)
+    {
+        if (dword_BD96C == false)
+        {
+            oldest_obj = oldest_planted();
+            if (oldest_obj->is_active) {
+                DO_NOVA(oldest_obj);
+            } else {
+                add_alwobj(oldest_obj);
+            }
+
+            oldest_obj->flags.alive = 1;
+            oldest_obj->is_active = 1;
+            main_etat = 0;
+            sub_etat = 38;
+            set_main_and_sub_etat(oldest_obj, main_etat, sub_etat);
+            oldest_obj->anim_frame = 0;
+            oldest_obj->anim_index = oldest_obj->eta[main_etat][sub_etat].anim_index;
+            oldest_obj->x = (ray.x + ray.offset_bx) - oldest_obj->offset_bx;
+            oldest_obj->y = (ray.y + ray.offset_by) - oldest_obj->offset_by;
+            calc_obj_pos(oldest_obj);
+            dword_BD96C = true;
+        }
+    }
+    else
+        dword_BD96C = false;
 }
 
 //7B29C
