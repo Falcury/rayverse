@@ -2196,6 +2196,7 @@ i32 SpeedYLine[10]; //CFAC4
 i32 PosXLine[10]; //CFAEC
 i32 PosYLine[320]; //CFB14
 char bonus_time_display_text[20]; //D0014
+obj_t* dword_D0028; //D0028
 
 i16 p1[21000]; //D002C
 u8 byte_DA43C[128*128]; //DA43C

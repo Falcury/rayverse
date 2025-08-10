@@ -403,18 +403,182 @@ void ObjectUTurnDefault(obj_t* obj) {
 
 //61320
 void DO_WIZARD(obj_t* obj) {
-    //stub
+    /* 372E0 8015BAE0 -O2 */
+    switch (obj->sub_etat) {
+        // NOTE: slight changes from PS1 version
+        case 1:
+            if (status_bar.num_wiz >= 10) {
+                obj->link = status_bar.num_wiz;
+                set_sub_etat(obj, 2);
+                set_main_and_sub_etat(&ray, 3, 9);
+            } else {
+                set_sub_etat(obj, 10);
+                obj->flags.flip_x = 0;
+            }
+            break;
+        case 3:
+            set_main_and_sub_etat(&ray, 3, 10);
+            if (horloge[2] == 0 && (obj->link - status_bar.num_wiz < 10))
+                status_bar.num_wiz--;
+            break;
+        case 5:
+            if (ray.main_etat == 3 && ray.sub_etat != 11 && ray.sub_etat != 12) {
+                set_sub_etat(&ray, 11);
+            }
+
+            if (obj->anim_frame >= obj->animations[obj->anim_index].frame_count - 1)
+            {
+                set_sub_etat(obj, 0);
+                fix_numlevel(obj);
+                save_objects_flags();
+                save_save = save1.is_just_saved;
+                ray.flags.flag_1 = 1;
+                pal_id_at_wizard = current_pal_id;
+                DO_FADE_OUT();
+            }
+            break;
+    }
 }
 
 //614B4
 i32 get_next_bonus_level(u8 lev) {
-    return 0;
-    //stub
+    /* 374A8 8015BCA8 -O2 */
+    s16 res = 0;
+
+    switch (num_world) {
+        case 1:
+            switch (lev) {
+                case 2:
+                    res = 21;
+                    break;
+                case 4:
+                    res = 20;
+                    break;
+                case 11:
+                    res = 18;
+                    break;
+                case 12:
+                    res = 19;
+                    break;
+            }
+            break;
+        case 2:
+            switch (lev) {
+                case 4:
+                    res = 17;
+                    break;
+                case 9:
+                    res = 18;
+                    break;
+            }
+            break;
+        case 4:
+            switch (lev) {
+                case 3:
+                    res = 12;
+                    break;
+                case 9:
+                    res = 13;
+                    break;
+            }
+            break;
+        case 5:
+            switch (lev) {
+                case 2:
+                    res = 12;
+                    break;
+            }
+        case 6:
+            break;
+    }
+
+    return res;
 }
 
 //6154C
 void TEST_WIZARD(obj_t* obj) {
-    //stub
+    /* 375BC 8015BDBC -O2 -msoft-float */
+    u8 obj_sub_etat;
+    s16 obj_x; s16 obj_y; s16 obj_w; s16 obj_h;
+    s16 x_diff_1;
+    s16 x_diff_2;
+    s16 x_diff_3;
+    s32 y_diff_1;
+
+    if (RayEvts.tiny || !(ray.flags.flag_1 || ((ray.main_etat == 0 || ray.main_etat == 3) && nb_wiz_collected == 0))) {
+        obj->detect_zone_flag = 0;
+    }
+
+    obj_sub_etat = obj->sub_etat;
+    if (obj_sub_etat == 0) {
+        if (ray.flags.flag_1) {
+            if (status_bar.num_wiz + nb_wiz_collected >= 10) {
+                fixontemp = 300; // NOTE: aaded in PC version
+                set_sub_etat(obj, 11);
+                obj->timer = 200;
+            }
+            else {
+                ray.flags.flag_1 = 0;
+            }
+        } else {
+            if (obj->detect_zone_flag != 0) {
+                if (obj->anim_frame < 20) {
+                    if (status_bar.num_wiz >= 10) {
+                        obj->anim_frame = 20;
+                    } else {
+                        fixontemp = 150; // NOTE: aaded in PC version
+                        set_sub_etat(obj, 10);
+                        obj->flags.flip_x = 0;
+                    }
+                }
+            }
+            // NOTE: small change here in PC version
+            else if (obj->detect_zone_flag == 0 && obj->anim_frame == 19) {
+                obj->anim_frame = 0;
+                ray.flags.flag_1 = 0;
+            }
+        }
+    } else if (!(obj_sub_etat == 0 || obj->detect_zone_flag == 0)) {
+        if (ray.flags.flag_1 && obj_sub_etat == 11) {
+            obj->timer--;
+            if (obj->timer == 0) {
+                ray.flags.flag_1 = 0;
+                set_sub_etat(obj, 1);
+            }
+        } else if (obj->sub_etat == 1) {
+            if ((ray.main_etat == 0 && (ray.sub_etat == 0 || ray.sub_etat == 1 || ray.sub_etat == 2)) ||
+                 ray.main_etat == 1
+            ) {
+                GET_ANIM_POS(obj, &obj_x, &obj_y, &obj_w, &obj_h);
+                x_diff_1 = obj->x + obj->offset_bx - ray.x - ray.offset_bx;
+                x_diff_2 = x_diff_1 - (obj_w >> 1);
+                x_diff_3 = x_diff_1 + (obj_w >> 1);
+                y_diff_1 = (ray.y + ray.offset_by) - obj_y;
+                /* TODO: still not great? */
+                if (y_diff_1 - obj_h >= 0 ? y_diff_1 - obj_h < 9 : obj_h - y_diff_1 < 9) {
+                    if ((Abs(x_diff_2) <= 16 && ray.flags.flip_x) || (Abs(x_diff_3) <= 16 && !(ray.flags.flip_x))) {
+                        if (Abs(x_diff_2) <= 16 && ray.flags.flip_x) {
+                            obj->flags.flip_x = 0;
+                            ray.x = obj->x + obj->offset_bx - ray.offset_bx - (obj_w >> 1) - 12;
+                        } else if (Abs(x_diff_3) <= 16 && !(ray.flags.flip_x)) {
+                            obj->flags.flip_x = 1;
+                            ray.x = obj->x + obj->offset_bx - ray.offset_bx + (obj_w >> 1) + 12;
+                        }
+                        ray.y = ((ray.y + ray.offset_by) >> 4 << 4) - ray.offset_by;
+                        ray.speed_x = 0;
+                        decalage_en_cours = 0;
+                        ray.speed_y = 0;
+                        ray.link = 0;
+                        DO_WIZARD(obj);
+                    }
+                }
+            }
+        } else {
+            DO_WIZARD(obj);
+        }
+    } else if (!(obj_sub_etat == 10 || ray.main_etat == 3 || obj_sub_etat == 1)) {
+        set_sub_etat(obj, 1);
+    }
 }
 
 //61894

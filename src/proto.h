@@ -297,11 +297,11 @@ void DoEffectBloodOut(void);
 // bonus.c
 i16 get_allowed_time(void);
 void calc_left_time(void);
-void get_bonus_map_complete(i16 a1, i16 a2);
-void set_bonus_map_complete(i16 a1, i16 a2);
+u8 get_bonus_map_complete(i16 world, i16 lvl);
+void set_bonus_map_complete(i16 world, i16 lvl);
 void DO_WIZ_AFTER_BONUS_MAP(void);
 void init_bonus_perfect(void);
-void do_perfect_bonus(void);
+i16 do_perfect_bonus(u32 a1);
 void DO_PERFECT_BONUS_MAP(void);
 
 // box.c
@@ -1103,8 +1103,9 @@ void DO_ONE_NGW_RING_COMMAND(obj_t* obj);
 // mathutil.c
 void set2bits(u32 * x, u8 index, u32 value);
 u32 read2bits(u32* x, u8 index, u32* high_bit, u32* low_bit);
-void setbit(u32 x);
-u32 getbit(u32 x);
+void setbit(u8 *buffer, u16 index);
+void clearbit(u8 *buffer, u16 index);
+u8 getbit(u8 *buffer, u16 index);
 i32 reflexion(i32 a1, i32 a2);
 i32 ashl16(i16 x, u8 bits);
 i16 ashr16(i16 x, u8 bits);

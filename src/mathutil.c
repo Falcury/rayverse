@@ -1,4 +1,3 @@
-// TODO: check for intrinsics headers, or maybe do some inline assembly?
 
 u32 popcnt(u32 x) {
 	x -= ((x >> 1) & 0x55555555);
@@ -47,18 +46,23 @@ u32 read2bits(u32* x, u8 index, u32* high_bit, u32* low_bit) {
 }
 
 //5DF58
-void setbit(u32 x) {
-    //stub
+void setbit(u8 *buffer, u16 index) {
+    buffer[index >> 3] |= 1 << (index & 7);
+}
+
+//5DF74
+void clearbit(u8 *buffer, u16 index) {
+    buffer[index >> 3] &= ~(1 << (index & 7));
 }
 
 //5DF98
-u32 getbit(u32 x) {
-    return 0; //stub
+u8 getbit(u8 *buffer, u16 index) {
+    return buffer[index >> 3] & (1 << (index & 7));
 }
 
 //5DFB8
 i32 reflexion(i32 a1, i32 a2) {
-    return 0; //stub
+    return 2 * a1 - a2;
 }
 
 //inlined
