@@ -193,7 +193,7 @@ void rayMayLandOnAnObject(u8* param_1, i16 obj_id) {
                             if (/*var_a1_1 = */ cur_obj->hit_points == 0)
                                 set_sub_etat(cur_obj, 5);
                             else
-                                MARACAS_GO(cur_obj); //TODO
+                                MARACAS_GO(cur_obj);
                         }
                         break;
                     case TYPE_TAMBOUR1:
@@ -220,7 +220,7 @@ void rayMayLandOnAnObject(u8* param_1, i16 obj_id) {
                     case TYPE_CYMBAL2:
                         /* TODO: macroooooooooooooooooo */
                         if (cur_obj->main_etat == 0 && cur_obj->sub_etat == 13)
-                            START_2_PARTS_CYMBAL_ACTION(cur_obj); //TODO
+                            START_2_PARTS_CYMBAL_ACTION(cur_obj);
                         break;
                     case TYPE_ROULETTE:
                         if (cur_obj->main_etat == 0 && cur_obj->sub_etat == 10)

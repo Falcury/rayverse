@@ -380,7 +380,7 @@ typedef struct obj_t {
 	i8 offset_hy;
 	u8 follow_sprite; // the sprite index which uses the obj collision
 	i8 hit_points;
-	u8 init_hit_points;
+	i8 init_hit_points;
 	u8 init_flag; // 78
 	u8 hit_sprite; // 79
 	u8 detect_zone; // 7A

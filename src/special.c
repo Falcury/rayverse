@@ -775,7 +775,36 @@ void BombExplosion(obj_t* obj) {
 
 //7B390
 void MARACAS_GO(obj_t* obj) {
-    //stub
+    /* 3AB5C 8015F35C -O2 */
+    s16 i = 0;
+    obj_t* cur_obj = &level.objects[i];
+    s16 nb_objs = level.nb_objects;
+
+    while (i < nb_objs) {
+        if ((cur_obj->type == TYPE_MARACAS_BAS) && !cur_obj->is_active) {
+            cur_obj->flags.flip_x = obj->flags.flip_x;
+            cur_obj->speed_y = 0;
+            cur_obj->speed_x = 0;
+            cur_obj->x = obj->x;
+            cur_obj->y = obj->y;
+            calc_obj_pos(cur_obj);
+            cur_obj->flags.alive = 1;
+            cur_obj->is_active = 1;
+            add_alwobj(cur_obj);
+            cur_obj->gravity_value_1 = 0;
+            cur_obj->gravity_value_2 = 7;
+            break;
+        }
+        cur_obj++;
+        i++;
+    }
+
+    skipToLabel(obj, 99, true);
+    if (obj->cmd == GO_SPEED) {
+        obj->speed_x = cur_obj->iframes_timer;
+        obj->speed_y = cur_obj->cmd_arg_2;
+    }
+    set_main_and_sub_etat(obj, 0, 12);
 }
 
 //7B470
@@ -1214,7 +1243,18 @@ void do_pix_gerbes(void) {
 
 //7BF40
 void START_2_PARTS_CYMBAL_ACTION(obj_t* obj) {
-    //stub
+    /* 3CE78 80161678 -O2 */
+    obj_t* linkedCymbal;
+
+    skipToLabel(obj, 4, true);
+    obj->link = 1;
+    if (link_init[obj->id] != obj->id) {
+        linkedCymbal = &level.objects[link_init[obj->id]];
+        if (linkedCymbal->type == TYPE_168_CYMBAL1) {
+            skipToLabel(linkedCymbal, 4, true);
+            linkedCymbal->link = 1;
+        }
+    }
 }
 
 //7BFB0

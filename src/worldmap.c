@@ -931,16 +931,16 @@ void INIT_VIGNET(void) {
             }
         } break;
         default: break;
+    }
 
-        for (i32 i = 0; i != 10; i += 2) {
-            text_to_display[i].xpos = SCREEN_WIDTH / 2;
-            text_to_display[i].ypos = ((SCREEN_HEIGHT / 4) * 3) + 23;
-            text_to_display[i].font_size = 2;
+    for (i32 i = 0; i != 10; i += 2) {
+        text_to_display[i].xpos = SCREEN_WIDTH / 2;
+        text_to_display[i].ypos = ((SCREEN_HEIGHT / 4) * 3) + 23;
+        text_to_display[i].font_size = 2;
 
-            text_to_display[i+1].xpos = SCREEN_WIDTH / 2;
-            text_to_display[i+1].ypos = ((SCREEN_HEIGHT / 4) * 3) + 38;
-            text_to_display[i+1].font_size = 2;
-        }
+        text_to_display[i+1].xpos = SCREEN_WIDTH / 2;
+        text_to_display[i+1].ypos = ((SCREEN_HEIGHT / 4) * 3) + 38;
+        text_to_display[i+1].font_size = 2;
     }
 }
 

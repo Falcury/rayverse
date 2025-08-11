@@ -1226,7 +1226,7 @@ void Deter_Option_Caract(char* text, i16 key, i16 offset) {
         i16 len = (i16)strlen(text);
         for (i16 i = 0; i < len; ++i) {
             char c = text[i];
-            if (c == '4') {
+            if (c == '$') {
                 offset = i;
             }
         }
