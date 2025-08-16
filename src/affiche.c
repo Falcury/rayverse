@@ -177,27 +177,27 @@ void display_bar_boss(obj_t* boss_obj) {
                     break;
                 case TYPE_BB1:
                 case TYPE_BB12:
-                    sprite = 106;
+                    sprite = 108;
                     break;
                 case TYPE_SPACE_MAMA:
                 case TYPE_SPACE_MAMA2:
-                    sprite = 108;
+                    sprite = 110;
                     break;
                 case TYPE_MAMA_PIRATE:
-                    sprite = 111;
+                    sprite = 113;
                     break;
                 case TYPE_SCORPION:
-                    sprite = 107;
+                    sprite = 109;
                     break;
                 case TYPE_HYB_BBF2_D:
                 case TYPE_HYBRIDE_STOSKO:
                 case TYPE_HYBRIDE_MOSAMS:
                 case TYPE_DARK:
-                    sprite = 110;
+                    sprite = 112;
                     break;
                 case TYPE_SAXO:
                 case TYPE_SAXO2:
-                    sprite = 109;
+                    sprite = 111;
                     break;
             }
             i16 display_y = Bloc_lim_H2 - 30 - extra_y_offset;

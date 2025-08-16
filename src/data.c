@@ -1533,10 +1533,23 @@ i16 was_in_freeze = 0; //97F76
 u8 flagCDPlay; //97F78
 u8 phaseCd; //97F79
 
-//97F7E
-i16 atak[34] = {
-        1, -1, 0, 0, 1, 1, -3, 60, 0, 2, 2, -2, 0, 0, 1, 3, -4,
-        30, 0, 1, 2, -4, 30, 0, 1, 2, -3, 42, 0, 1, 1, -4, 80, 0
+//97F7C
+sax_note_entry_t atak[7] = {
+        {0, 1, -1, 0, 0},  // 0
+        {1, 1, -3, 60, 0}, // 1
+        {2, 2, -2, 0, 0},  // 2
+        {1, 3, -4, 30, 0}, // 3
+        {1, 2, -4, 30, 0}, // 4
+        {1, 2, -3, 42, 0}, // 5
+        {1, 1, -4, 80, 0}, // 6
+};
+
+//97FC2
+sax_attack_entry_t SerieDatak[4][11] = {
+        {{1, 1, 0}, {3, -1, 0}, {1, 1, 0}, {0, 0, 1}}, // 0
+        {{9, 0, 0}, {1, 0, 0}, {3, -1, 0}, {5, 0, 0}, {0, 0, 1}}, // 1
+        {{2, 1, 0}, {7, 0, 0}, {2, 0, 0}, {8, 0, 0}, {1, -1, 0}, {0, 0, 1}}, // 2
+        {{3, -1, 0}, {4, -1, 0}, {6, 1, 0}, {9, 0, 0}, {2, 0, 0}, {2, 0, 0}, {9, 0, 0}, {0, 0, 0}, {9, 0, 1}}, // 3
 };
 
 //98084
@@ -2179,7 +2192,7 @@ u8 IsBossThere; //CFA8E
 u8 sko_enfonce_enable; //CFA8F
 u8 WaitForAnim; //CFA90
 u8 ecroule_plat_index; //CFA91
-u8 byte_CFA92; //CFA92
+u8 NiveauDansPhase; //CFA92
 u8 FinAnim; //CFA93
 u8 Phase; // (?) CFA94
 u8 WaitForFinAtan; //CFA95
@@ -2431,6 +2444,9 @@ i16 indice_ray_wait; //E5750
 i16 indice_trz_wait; //E5754
 i16 pt_pile_snd; //E5756
 i16 indice_snd_wiz; //E575A
+
+sax_attack_entry_t attaque; //E5764
+sax_data_t Sax; //E5768
 
 i16 IndexSerie; //E577A
 i16 IndexAtak; //E577C

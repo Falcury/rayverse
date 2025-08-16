@@ -712,6 +712,33 @@ typedef struct grp_star_t {
     u8 sprite_table_index;
 } grp_star_t;
 
+typedef struct sax_attack_entry_t {
+    u8 next_note;
+    u8 time;
+    i16 end;
+} sax_attack_entry_t;
+
+typedef struct sax_note_entry_t {
+    u8 type;
+    i16 speed_x;
+    i16 speed_y;
+    i16 initial_iframes;
+    i16 field4_0x8; /* unused */
+} sax_note_entry_t;
+
+typedef struct sax_data_t {
+    i16 x_pos;
+    i16 y_pos;
+    i16 note_box_coll_x;
+    i16 note_box_coll_y;
+    i16 sprite2_x;
+    i16 sprite2_y;
+    u8 coup;
+    u8 saved_hp;
+    u8 field8_0xe;
+    u8 field9_0xf;
+    i16 field10_0x10;
+} sax_data_t;
 
 enum game_mode_video_enum {
     MODE_NORMAL = 0,
