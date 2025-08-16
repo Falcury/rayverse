@@ -329,23 +329,192 @@ void DO_STONEWOMAN_TIR(obj_t* obj) {
 }
 
 //7DD78
-void allocateEclatPS(obj_t* obj) {
-    //stub
+void allocateEclatPS(obj_t* obj, i16 param_2) {
+    /* 3A27C 8015EA7C -O2 -msoft-float */
+    s16 spd_x;
+    s16 i;
+    obj_t* cur_obj;
+    s16 nb_objs;
+
+    switch (param_2) {
+        default: break;
+        case 7:
+            spd_x = -3;
+            break;
+        case 8:
+            spd_x = 2;
+            break;
+        case 9:
+            spd_x = -1;
+            break;
+    }
+    i = 0;
+    cur_obj = &level.objects[i];
+    nb_objs = level.nb_objects;
+    while (i < nb_objs) {
+        if (cur_obj->type == TYPE_PI_BOUM && !cur_obj->is_active) {
+            set_main_and_sub_etat(cur_obj, 2, param_2);
+            cur_obj->speed_x = spd_x;
+            cur_obj->speed_y = -6;
+            cur_obj->x = obj->x;
+            cur_obj->y = obj->y;
+            skipToLabel(cur_obj, 1, true);
+            calc_obj_pos(cur_obj);
+            cur_obj->flags.alive = 1;
+            cur_obj->is_active = 1;
+            add_alwobj(cur_obj);
+            cur_obj->flags.flag_0x40 = 0;
+            cur_obj->gravity_value_1 = 0;
+            cur_obj->gravity_value_2 = 5;
+            break;
+        }
+        cur_obj++;
+        i++;
+    }
 }
 
 //7DE68
 void DO_PI_EXPLOSION(obj_t* obj) {
-    //stub
+    /* 3A3E0 8015EBE0 -O2 -msoft-float */
+    s16 i;
+    obj_t* first_pi_b;
+    s16 nb_objs;
+    obj_t* after_pi_b;
+    s16 j;
+    obj_t* cur_pi_b;
+    s16 pi_x; s16 pi_y; s16 pi_w; s16 pi_h;
+
+    PlaySnd_old(84);
+    i = 0;
+    first_pi_b = &level.objects[i];
+    nb_objs = level.nb_objects;
+    while (i < nb_objs)
+    {
+        if (first_pi_b->type == TYPE_PI_BOUM)
+        {
+            after_pi_b = first_pi_b;
+            do
+            {
+                after_pi_b++;
+            } while (after_pi_b->type == TYPE_PI_BOUM);
+            break;
+        }
+        i++;
+        first_pi_b++;
+    }
+
+    if (first_pi_b->type == TYPE_PI_BOUM)
+    {
+        j = 0;
+        while (j < 5)
+        {
+            cur_pi_b = first_pi_b;
+            if (cur_pi_b <= after_pi_b)
+            {
+                while (cur_pi_b <= after_pi_b) /* almost off-by-one error, if it weren't for the j loop? */
+                {
+                    if (!cur_pi_b->is_active)
+                        break;
+
+                    cur_pi_b++;
+                }
+
+                if (cur_pi_b <= after_pi_b)
+                {
+                    set_main_and_sub_etat(cur_pi_b, 2, j);
+                    cur_pi_b->flags.flip_x = 0;
+                    switch (j)
+                    {
+                        case 0:
+                            cur_pi_b->speed_y = 0;
+                            cur_pi_b->speed_x = 4;
+                            break;
+                        case 1:
+                            cur_pi_b->speed_y = 0;
+                            cur_pi_b->speed_x = -2;
+                            break;
+                        case 2:
+                            cur_pi_b->speed_y = -4;
+                            cur_pi_b->speed_x = -4;
+                            break;
+                        case 3:
+                            cur_pi_b->speed_y = -4;
+                            cur_pi_b->speed_x = 2;
+                            break;
+                        case 4:
+                            cur_pi_b->speed_y = -6;
+                            cur_pi_b->speed_x = -1;
+                            break;
+                        default: break;
+                    }
+                    GET_SPRITE_POS(obj, j, &pi_x, &pi_y, &pi_w, &pi_h);
+                    cur_pi_b->x = pi_x;
+                    cur_pi_b->y = pi_y;
+                    skipToLabel(cur_pi_b, 1, true);
+                    calc_obj_pos(cur_pi_b);
+                    cur_pi_b->flags.alive = 1;
+                    cur_pi_b->is_active = 1;
+                    add_alwobj(cur_pi_b);
+                }
+            }
+            j++;
+        }
+    }
 }
 
 //7E000
 void DoPiMusPoingCollision(obj_t* obj, i16 a2) {
-    //stub
+    if (obj->main_etat == 0 && Mus_obj_id >= 0)
+    {
+        PlaySnd(83, obj->id);
+        obj->hit_points--;
+        switch (obj->hit_points)
+        {
+            case 3:
+                set_sub_etat(obj, 4);
+                allocateEclatPS(obj, 7);
+                set_sub_etat(&level.objects[Mus_obj_id], 6);
+                break;
+            case 2:
+                set_sub_etat(obj, 6);
+                allocateEclatPS(obj, 8);
+                break;
+            case 1:
+                set_sub_etat(obj, 8);
+                allocateEclatPS(obj, 9);
+                break;
+            case 0:
+                if (level.objects[Mus_obj_id].sub_etat == 6)
+                {
+                    PlaySnd(83, obj->id);
+                    set_sub_etat(obj, 9);
+                    level.objects[Mus_obj_id].sub_etat = 3;
+                    level.objects[Mus_obj_id].init_sub_etat = 4;
+                    obj->init_sub_etat = 10;
+                }
+                break;
+        }
+    }
 }
 
 //7E120
 void DoPiPoingCollision(obj_t* obj, i16 a2) {
-    //stub
+    if (obj->main_etat == 0) {
+        obj_hurt(obj);
+        if (obj->hit_points != 0) {
+            set_sub_etat(obj, 1);
+            obj->anim_frame = 0;
+        } else {
+            DO_PI_EXPLOSION(obj);
+            obj->is_active = 0;
+            if (obj->id == ray.cmd_arg_2) {
+                ray.cmd_arg_2 = -1;
+                obj->ray_dist = 1000;
+                set_main_and_sub_etat(&ray, 2, 2);
+            }
+            obj->flags.alive = 0;
+        }
+    }
 }
 
 //7E190

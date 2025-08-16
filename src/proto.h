@@ -1527,7 +1527,7 @@ void DO_STONEMAN1_TIR(obj_t* obj);
 void DO_STONEMAN2_TIR(obj_t* obj);
 void allocateStonewomanStone(obj_t* obj);
 void DO_STONEWOMAN_TIR(obj_t* obj);
-void allocateEclatPS(obj_t* obj);
+void allocateEclatPS(obj_t* obj, i16 param_2);
 void DO_PI_EXPLOSION(obj_t* obj);
 void DoPiMusPoingCollision(obj_t* obj, i16 a2);
 void DoPiPoingCollision(obj_t* obj, i16 a2);
