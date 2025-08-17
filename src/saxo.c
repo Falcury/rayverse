@@ -344,7 +344,7 @@ void BonneNote(obj_t* orig_obj) {
 }
 
 //760CC
-void DO_NOTE_TOUCHEE(obj_t* obj, i16 a2) {
+void DO_NOTE_TOUCHEE(obj_t* obj, i16 sprite) {
     /* 516B4 80175EB4 -O2 -msoft-float */
     switch (obj->type) {
         case TYPE_90_NOTE0:

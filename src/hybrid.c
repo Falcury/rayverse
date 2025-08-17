@@ -20,7 +20,7 @@ void doMOSAMScommand(obj_t* obj) {
 }
 
 //3F4A4
-void DoMOSAMSPoingCollision(obj_t* obj, i16 a2) {
+void DoMOSAMSPoingCollision(obj_t* obj, i16 sprite) {
     //stub
 }
 
@@ -35,7 +35,7 @@ void doSTOSKOcommand(obj_t* obj) {
 }
 
 //3F7EC
-void DoSTOSKOPoingCollision(obj_t* obj, i16 a2) {
+void DoSTOSKOPoingCollision(obj_t* obj, i16 sprite) {
     //stub
 }
 
@@ -45,7 +45,7 @@ void doBBF2command(obj_t* obj) {
 }
 
 //3FD78
-void DO_HYB_BBF2_POING_COLLISION(obj_t* obj, i16 a2) {
+void DO_HYB_BBF2_POING_COLLISION(obj_t* obj, i16 sprite) {
     //stub
 }
 

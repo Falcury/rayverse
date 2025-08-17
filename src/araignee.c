@@ -33,7 +33,7 @@ void DO_SPIDER_PLAFOND(obj_t* obj) {
 }
 
 //1C588
-void DO_SPIDER_PLAFOND_POING_COLLISION(obj_t* obj, i16 a2) {
+void DO_SPIDER_PLAFOND_POING_COLLISION(obj_t* obj, i16 sprite) {
     //stub
 }
 
@@ -93,7 +93,7 @@ void allocateDard(obj_t* obj) {
 }
 
 //1CDB0
-void DoSpiderPoingCollision(obj_t* obj, i16 a2) {
+void DoSpiderPoingCollision(obj_t* obj, i16 sprite) {
     //stub
 }
 

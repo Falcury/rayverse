@@ -618,7 +618,7 @@ void DO_TARZAN(obj_t* tz_obj) {
 }
 
 //61968
-void DoTarzanPoingCollision(obj_t* obj, i16 a2) {
+void DoTarzanPoingCollision(obj_t* obj, i16 sprite) {
     set_main_and_sub_etat(obj, 0, 1);
     obj->cmd = GO_LEFT;
 }
@@ -686,7 +686,7 @@ void DO_PTI_ESQUIVE(obj_t* obj) {
 }
 
 //61BB0
-void DoPrisePoingCollision(obj_t* obj, i16 a2) {
+void DoPrisePoingCollision(obj_t* obj, i16 sprite) {
     //stub
 }
 
@@ -696,7 +696,7 @@ void DO_PETIT_COUTEAU_COMMAND(obj_t* obj) {
 }
 
 //61C20
-void DoPetitCouteauPoingCollision(obj_t* obj, i16 a2) {
+void DoPetitCouteauPoingCollision(obj_t* obj, i16 sprite) {
     //stub
 }
 
@@ -706,7 +706,7 @@ void DO_TIRE_BOUCHON_COMMAND(obj_t* obj) {
 }
 
 //61C4C
-void DoOneUpPoingCollision(obj_t* obj, i16 a2) {
+void DoOneUpPoingCollision(obj_t* obj, i16 sprite) {
     if (RayEvts.grap && ray_mode != MODE_3_MORT_DE_RAYMAN) {
         PlaySnd(194, obj->id);
         poing_obj->cmd_arg_2 = obj->id;
@@ -731,7 +731,7 @@ void DoOneUpRaymanCollision(obj_t* obj) {
 }
 
 //61D10
-void DoMorningStarPoingCollision(obj_t* obj, i16 a2) {
+void DoMorningStarPoingCollision(obj_t* obj, i16 sprite) {
     //stub
 }
 
@@ -1126,7 +1126,7 @@ void DoGeneBadGuyRaymanZDD(obj_t* obj) {
 }
 
 //628C0
-void DoChasseurPoingCollision(obj_t* obj, i16 a2) {
+void DoChasseurPoingCollision(obj_t* obj, i16 sprite) {
     if (get_eta(obj)->flags & 1) {
         obj_hurt(obj);
         if (obj->hit_points != 0) {
@@ -1163,8 +1163,8 @@ void DO_CHASSEUR_COMMAND(obj_t* obj) {
 }
 
 //629D8
-void DoBadGuy23PoingCollision(obj_t* obj, i16 a2) {
-    if (a2 == 255 || (get_eta(obj)->flags & 1)) {
+void DoBadGuy23PoingCollision(obj_t* obj, i16 sprite) {
+    if (sprite == 255 || (get_eta(obj)->flags & 1)) {
         obj_hurt(obj);
         if (obj->hit_points == 0) {
             set_main_and_sub_etat(obj, 0, 3);
@@ -1207,7 +1207,7 @@ void DoBadGuy23RaymanZDD(obj_t* obj) {
 
 
 //62B54
-void DoBadGuy1PoingCollision(obj_t* obj, i16 a2) {
+void DoBadGuy1PoingCollision(obj_t* obj, i16 sprite) {
     obj_hurt(obj);
     if (poing_obj->speed_x > 0) {
         skipToLabel(obj, 3, 1);
@@ -1270,7 +1270,7 @@ void DO_CCL_COMMAND(obj_t* obj) {
 }
 
 //62D68
-void DoCaisseClairePoingCollision(obj_t* obj, i16 a2) {
+void DoCaisseClairePoingCollision(obj_t* obj, i16 sprite) {
     if (!(obj->main_etat == 0 && obj->sub_etat == 2)) {
         set_main_and_sub_etat(obj, 1, 1);
         if (!obj->flags.flip_x) {
@@ -1444,7 +1444,7 @@ void DO_PIRATE_POELLE(obj_t* obj) {
 }
 
 //63610
-void DO_PIRATE_POELLE_POING_COLLISION(obj_t* obj, i16 a2) {
+void DO_PIRATE_POELLE_POING_COLLISION(obj_t* obj, i16 sprite) {
     //stub
 }
 
@@ -1898,8 +1898,8 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
 }
 
 //643BC
-void DoPlatformPoingCollision(obj_t* obj, i16 a2) {
-    if (obj->hit_sprite == a2) {
+void DoPlatformPoingCollision(obj_t* obj, i16 sprite) {
+    if (obj->hit_sprite == sprite) {
         if (poing_obj->speed_x > 0) {
             set_sub_etat(obj, 25);
         } else if (poing_obj->speed_x < 0) {

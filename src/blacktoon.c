@@ -171,7 +171,7 @@ void DO_BLKTOON_COMMAND(obj_t* obj) {
 }
 
 //234FC
-void DoBlackToonPoingCollision(obj_t* obj, i16 a2) {
+void DoBlackToonPoingCollision(obj_t* obj, i16 sprite) {
     obj_hurt(obj);
     set_main_and_sub_etat(obj, 0, 4);
     obj->speed_y = 0;

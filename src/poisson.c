@@ -10,7 +10,7 @@ void DO_POISSON_BLEU_CMD(obj_t* obj) {
 }
 
 //67380
-void DoPoissonBleuPoingCollision(obj_t* obj, i16 a2) {
+void DoPoissonBleuPoingCollision(obj_t* obj, i16 sprite) {
     //stub
 }
 
@@ -116,7 +116,7 @@ void DO_PYRANHA(obj_t* in_obj) {
 }
 
 //676EC
-void DoFishPoingCollision(obj_t* obj, i16 a2) {
+void DoFishPoingCollision(obj_t* obj, i16 sprite) {
     obj_hurt(obj);
     if (obj->hit_points != 0) {
         obj->speed_x = 0;

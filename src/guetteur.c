@@ -30,7 +30,7 @@ void DO_PAR_TIR(obj_t* obj) {
 }
 
 //3E398
-void DO_PAR_POING_COLLISION(obj_t* obj, i16 a2) {
+void DO_PAR_POING_COLLISION(obj_t* obj, i16 sprite) {
     //stub
 }
 

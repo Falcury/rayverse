@@ -37,7 +37,7 @@ void BAT_ray_in_zone(obj_t* obj) {
 }
 
 //20088
-void DO_BAT_POING_COLLISION(obj_t* obj, i16 a2) {
+void DO_BAT_POING_COLLISION(obj_t* obj, i16 sprite) {
     //stub
 }
 

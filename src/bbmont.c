@@ -5,7 +5,7 @@ void BB2_MARCHE(obj_t* obj) {
 }
 
 //200F0
-void DO_TOTEM_TOUCHE(obj_t* obj, i16 a2) {
+void DO_TOTEM_TOUCHE(obj_t* obj, i16 sprite) {
     //stub
 }
 
@@ -100,7 +100,7 @@ void DO_BBMONT_COMMAND(obj_t* obj) {
 }
 
 //22050
-void DO_BBMONT_TOUCHE(obj_t* obj, i16 a2) {
+void DO_BBMONT_TOUCHE(obj_t* obj, i16 sprite) {
     //stub
 }
 

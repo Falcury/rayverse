@@ -759,7 +759,7 @@ void changeMoskitoPhase(obj_t* obj) {
 }
 
 //55144
-void doMoskitoHit(obj_t* obj, i16 a2) {
+void doMoskitoHit(obj_t* obj, i16 sprite) {
     /* 7151C 80195D1C -O2 -msoft-float */
     s32 act_next;
     s32 act_18;

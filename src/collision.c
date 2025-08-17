@@ -1015,7 +1015,7 @@ void DO_POING_COLLISION(void) {
 }
 
 //2D858
-void DoPoingCollisionDefault(obj_t* obj, i16 a2) {
+void DoPoingCollisionDefault(obj_t* obj, i16 sprite) {
     //nullsub
 }
 
@@ -1763,7 +1763,7 @@ void DO_MOVING_PLATFORM_COMMAND(obj_t* obj) {
 }
 
 //2F378
-void DoPTGRAPPINPoingCollision(obj_t* obj, i16 a2) {
+void DoPTGRAPPINPoingCollision(obj_t* obj, i16 sprite) {
     if (RayEvts.grap && ray_mode != MODE_3_MORT_DE_RAYMAN) {
         if (Abs((ray.y + ray.offset_by) - obj->y + obj->offset_by) < 250) {
             SET_RAY_BALANCE();
@@ -2090,7 +2090,7 @@ void DO_ROLL_EYES(obj_t* obj) {
 }
 
 //2F978
-void DoKillingEyesPoingCollision(obj_t* obj, i16 a2) {
+void DoKillingEyesPoingCollision(obj_t* obj, i16 sprite) {
     --obj->hit_points;
     if (obj->hit_points != 0) {
         set_sub_etat(obj, 5);
@@ -2533,7 +2533,7 @@ void DO_FALLING_OBJ_CMD(obj_t* obj) {
 }
 
 //3167C
-void DoFallingObjPoingCollision(obj_t* obj, i16 a2) {
+void DoFallingObjPoingCollision(obj_t* obj, i16 sprite) {
     i32 fall_x_accel = 0;
     switch (obj->type)
     {

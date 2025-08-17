@@ -17,7 +17,7 @@ void DO_CAGE(obj_t* obj) {
 }
 
 //28BA4
-void DoCagePoingCollision(obj_t* obj, i16 a2) {
+void DoCagePoingCollision(obj_t* obj, i16 sprite) {
     obj_hurt(obj);
     if (obj->hit_points != 0) {
         set_sub_etat(obj, 10);

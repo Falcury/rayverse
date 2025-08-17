@@ -567,7 +567,7 @@ typedef struct display_item_t {
 
 typedef struct obj_procs_t {
     void (*command)(obj_t* obj);
-    void (*poing_collision)(obj_t* obj, i16 unk);
+    void (*poing_collision)(obj_t* obj, i16 sprite);
     void (*rayman_collision)(obj_t* obj);
     void (*rayman_in_zone)(obj_t* obj);
     void (*u_turn)(obj_t* obj);

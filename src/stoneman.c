@@ -79,7 +79,7 @@ void DO_STONEDOG_COMMAND(obj_t* obj) {
 }
 
 //7CCF0
-void DoStoneDogPoingCollision(obj_t* obj, i16 a2) {
+void DoStoneDogPoingCollision(obj_t* obj, i16 sprite) {
     obj_hurt(obj);
     if (obj->hit_points != 0) {
         skipToLabel(obj, 5, true);
@@ -274,9 +274,9 @@ void allocateStoneChips(obj_t* obj) {
 }
 
 //7D43C
-void DO_STONE_EXPLOSION(obj_t* obj, i16 a2) {
+void DO_STONE_EXPLOSION(obj_t* obj, i16 sprite) {
     /* 38514 8015CD14 -O2 -msoft-float */
-    if (a2 != -1) {
+    if (sprite != -1) {
         set_sub_etat(obj, 1); // added in PC/mobile versions
     }
     PlaySnd_old(84);
@@ -463,7 +463,7 @@ void DO_PI_EXPLOSION(obj_t* obj) {
 }
 
 //7E000
-void DoPiMusPoingCollision(obj_t* obj, i16 a2) {
+void DoPiMusPoingCollision(obj_t* obj, i16 sprite) {
     if (obj->main_etat == 0 && Mus_obj_id >= 0)
     {
         PlaySnd(83, obj->id);
@@ -498,7 +498,7 @@ void DoPiMusPoingCollision(obj_t* obj, i16 a2) {
 }
 
 //7E120
-void DoPiPoingCollision(obj_t* obj, i16 a2) {
+void DoPiPoingCollision(obj_t* obj, i16 sprite) {
     if (obj->main_etat == 0) {
         obj_hurt(obj);
         if (obj->hit_points != 0) {
@@ -518,12 +518,12 @@ void DoPiPoingCollision(obj_t* obj, i16 a2) {
 }
 
 //7E190
-void DO_PNG_COLL_STONEMAN(obj_t* obj, i16 a2) {
+void DO_PNG_COLL_STONEMAN(obj_t* obj, i16 sprite) {
     //stub
 }
 
 //7E258
-void DO_PNG_COLL_STONEWOMAN(obj_t* obj, i16 a2) {
+void DO_PNG_COLL_STONEWOMAN(obj_t* obj, i16 sprite) {
     //stub
 }
 
