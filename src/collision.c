@@ -2403,7 +2403,107 @@ void ACTIVE_L_EAU(obj_t* eau_obj) {
 
 //30490
 void DO_EAU_QUI_MONTE(obj_t* obj) {
-    //stub
+    s16 temp_v0_3;
+    s16 temp_v0_4;
+    s16 temp_v0_5;
+    s16 temp_v1_1;
+    s16 temp_v1_2;
+    s16 var_v0_2;
+    u16 temp_a0;
+    u16 temp_v1_3;
+    u8 temp_v0_1;
+    u8 temp_v0_6;
+    u8 temp_v0_7;
+    s16 other_1;
+
+    if ((ray.flags.alive) && !(ray.main_etat == 3 && ray.sub_etat == 23)) {
+        switch (num_world)
+        {
+            case 1:
+                if (obj->hit_points != 0) {
+                    if (obj->hit_points == 1) {
+                        obj->hit_points = 0;
+                        ACTIVE_L_EAU(obj);
+                    } else {
+                        obj->hit_points--;
+                    }
+                } else if (obj->cmd_arg_1 > 40 || level.objects[eau_obj_id].iframes_timer == 1) {
+                    if (horloge[2] != 0 && obj->y >= (SCREEN_HEIGHT - 80)) {
+                        obj->speed_y = -1;
+                    } else {
+                        obj->speed_y = 0;
+                    }
+                    if (obj->cmd_arg_1 > 0) {
+                        --obj->cmd_arg_1;
+                    }
+                } else {
+                    obj->speed_y = 0;
+                }
+                break;
+            case 3:
+                if (pierreAcorde_obj_id == -1) {
+                    if (scroll_y != pierreAcorde_obj_id) {
+                        obj->init_y = ymap + (SCREEN_HEIGHT - 80);
+                        if (obj->y - 100 > obj->init_y) {
+                            obj->y -= 3;
+                        }
+                        --obj->y;
+                        if (obj->y > obj->init_y && horloge[2] != 0) {
+                            obj->y -= 1; // NOTE: changed from 2 to 1 in PC version
+                        }
+                        obj->iframes_timer = 1;
+                    } else {
+                        if (obj->iframes_timer == 1) {
+                            obj->init_y = (ray.offset_by + ray.y) - 30;
+                            obj->iframes_timer = 0;
+                        }
+                        if (obj->init_y < obj->y) {
+                            obj->y--;
+                        }
+                    }
+                } else if ((level.objects[pierreAcorde_obj_id].hit_points != 0) && (obj->y < (ymapmax + (SCREEN_HEIGHT - 80)))) {
+                    obj->field_3A += 14;
+                    if (obj->field_3A > 16) {
+                        obj->field_3A -= 2;
+                        ++obj->y;
+                    }
+                }
+                scroll_end_y = obj->y - (Bloc_lim_H2 - 80);
+            case 4:
+            case 5:
+                if (obj->screen_x < -166) {
+                    obj->x += 505;
+                    if (++obj->sub_etat >= 4)
+                        obj->sub_etat = 0;
+                    if (num_level == 8 && num_world == 5) {
+                        var_v0_2 = obj->init_y - 5;
+                        goto block_53;
+                    }
+                } else if (obj->screen_x > 366) {
+                    obj->x -= 505;
+                    if (--obj->sub_etat >= 4)
+                        obj->sub_etat = 3;
+                    if (num_level == 8 && num_world == 5) {
+                        var_v0_2 = obj->init_y + 5;
+                        block_53:
+                        obj->y =
+                        obj->init_y =
+                                var_v0_2;
+                        if (obj->y < (ymapmax + (Bloc_lim_H2 - 80)))
+                        {
+                            obj->y = ymapmax + (Bloc_lim_H2 - 80);
+                        }
+                    }
+                }
+                break;
+        }
+    } else {
+        obj->speed_y = 0;
+        obj->speed_x = 0;
+    }
+    if (obj->y < (ymap + (Bloc_lim_H2 - 80))) {
+        obj->y = ymap + (Bloc_lim_H2 - 80);
+    }
 }
 
 //3076C

@@ -2159,7 +2159,85 @@ void DO_PLACE_RAY(void) {
 
 //59FB8
 void DO_AUTO_SCROLL(void) {
-    //stub
+    /* 340A4 801588A4 -O2 -msoft-float */
+    s16 i;
+    s32 eau_id;
+    obj_t* scr_obj;
+    s16 scr_x;
+    s16 ray_x = ray.x;
+    s16 ray_y = ray.y;
+
+    scroll_x = 0;
+    scroll_y = -1;
+    for (i = 0; i < NumScrollObj; i++) {
+        eau_id = eau_obj_id;
+        scr_obj = &level.objects[scroll_obj_id[i]];
+        if (scr_obj->type != TYPE_64_SCROLL)
+            break;
+
+        switch (scr_obj->hit_points) {
+            case 0:
+                if (scr_obj->x <= ray_x)
+                {
+                    scroll_x++;
+                    scr_obj->x = scr_obj->init_x - 200;
+                }
+                break;
+            case 1:
+                if (scr_obj->x <= ray_x)
+                {
+                    scroll_x--;
+                    scr_obj->x = scr_obj->init_x - 200;
+                }
+                break;
+            case 2:
+                if (scr_obj->y <= ray_y)
+                    scroll_y = -scroll_y;
+                else
+                    scr_obj->y = 10000;
+                break;
+            case 3:
+                if (eau_id == -1 || (level.objects[eau_id].hit_points == 0 && level.objects[eau_id].cmd_arg_1 == 0)) {
+                    if (scr_obj->y <= ray_y)
+                    {
+                        if (__builtin_abs(scroll_y) == 1)
+                            scroll_y = 2;
+                        else
+                            scroll_y = -scroll_y;
+                    }
+                    else
+                        scr_obj->y = 10000;
+
+                    if (eau_id != -1 && scroll_y != 2)
+                        level.objects[eau_id].iframes_timer = 2;
+                }
+                break;
+        }
+    }
+
+    if (scroll_x <= 0)
+        scroll_x--;
+
+    scr_x = scroll_x;
+    if (scr_x > 0)
+        h_scroll_speed = scr_x;
+    else if (scr_x < -1)
+        h_scroll_speed = scr_x + 1;
+
+    if (scroll_y == 1)
+        v_scroll_speed = -1;
+    else
+    {
+        if (scroll_y == 2)
+        {
+            if (horloge[2] != 0)
+                v_scroll_speed = -1;
+            else
+                v_scroll_speed = 0;
+        }
+        if (scroll_y == -2)
+            scroll_y = -1;
+    }
 }
 
 //5A1E0
@@ -2561,7 +2639,7 @@ void DO_MOTEUR2(void) {
         if (ray_mode == MODE_2_RAY_ON_MS) {
             //stub
         }
-        DO_SCROLL(&h_scroll_speed, &v_scroll_speed); //TODO
+        DO_SCROLL(&h_scroll_speed, &v_scroll_speed);
         build_active_table();
         RECALE_ALL_OBJECTS();
         if (ray.cmd_arg_2 != -1) {

@@ -343,7 +343,7 @@ typedef struct obj_t {
 	i16 id;
 	i16 screen_x;
 	i16 screen_y;
-	u16 field_3A;
+	i16 field_3A;
 	i16 init_x;
 	i16 init_y;
 	i16 speed_x;

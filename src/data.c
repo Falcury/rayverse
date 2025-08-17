@@ -1996,7 +1996,7 @@ i16 scroll_end_x; //CF872
 i16 weather_wind; //CF874
 i16 ray_zdc_y; //CF876
 i16 mst_scroll_obj_id; //CF878
-u16 NumScrollObj; //CF87A
+i16 NumScrollObj; //CF87A
 i16 num_level; //CF87C
 i16 sbar_obj_id; //CF87E
 i16 new_level; //CF880
