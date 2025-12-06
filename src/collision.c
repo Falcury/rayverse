@@ -83,11 +83,13 @@ i32 in_coll_sprite_list(obj_t* obj, i16 a2) {
 
 //2B3B8
 bool box_inter_v_line(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
+    print_once("Not implemented: box_inter_v_line");
     return false; //stub
 }
 
 //2B3F4
 bool box_inter_h_line(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
+    print_once("Not implemented: box_inter_h_line");
     return false; //stub
 }
 
@@ -557,6 +559,7 @@ i16 GET_SPRITE_ZDC(obj_t* obj, i16 index, i16 *out_x, i16 *out_y, i16 *out_w, i1
 
 //2C33C
 i32 BOX_HIT_SPECIAL_ZDC(i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
+    print_once("Not implemented: BOX_HIT_SPECIAL_ZDC");
     return -1; //stub
 }
 
@@ -805,7 +808,7 @@ i16 setToleranceDist(i16 x, i16 w, i16 y) {
 
 //2CF14
 void SET_RAY_DIST_SLOPEY_PLAT(obj_t* obj) {
-    //stub
+    print_once("Not implemented: SET_RAY_DIST_SLOPEY_PLAT"); //stub
 }
 
 //2D0D4
@@ -1021,7 +1024,7 @@ void DoPoingCollisionDefault(obj_t* obj, i16 sprite) {
 
 //2D85C
 void COLL_BOX_ALL_SPRITES(i16 a1, i16 a2, i16 a3, i16 a4, obj_t* obj) {
-    //stub
+    print_once("Not implemented: COLL_BOX_ALL_SPRITES"); //stub
 }
 
 //2D914
@@ -1507,7 +1510,7 @@ void unleashMonsterHost(obj_t* obj) {
 
 //2EA2C
 void SHOW_COLLISIONS_ZONES(void) {
-    //stub
+    print_once("Not implemented: SHOW_COLLISIONS_ZONES"); //stub
 }
 
 //2EAE8
@@ -2102,7 +2105,7 @@ void DoKillingEyesPoingCollision(obj_t* obj, i16 sprite) {
 
 //2F9B8
 void YaUnBloc(obj_t* obj) {
-    //stub
+    print_once("Not implemented: YaUnBloc"); //stub
 }
 
 //2FBF4
@@ -2507,43 +2510,253 @@ void DO_EAU_QUI_MONTE(obj_t* obj) {
 }
 
 //3076C
-void allocateOtherPosts(obj_t* obj) {
-    //stub
+void allocateOtherPosts(obj_t* her_bh_obj) {
+    obj_t *cur_obj;
+    s32 unk_1;
+    s16 cur_id = link_init[her_bh_obj->id];
+    u8 her_bh_frames = her_bh_obj->animations[get_eta(her_bh_obj)->anim_index].frame_count;
+    s16 i = 0;
+
+    while (cur_id != her_bh_obj->id) {
+        i++;
+        cur_obj = &level.objects[cur_id];
+        cur_obj->flags.alive = 1;
+        cur_obj->is_active = 1;
+        cur_obj->anim_frame = (her_bh_obj->anim_frame + i) % her_bh_frames;
+        cur_obj->init_x = her_bh_obj->init_x + i * ((her_bh_obj->hit_points - 2) << 5);
+        cur_obj->init_y = her_bh_obj->init_y;
+        unk_1 = i << 8;
+        cur_obj->cmd_arg_1 = her_bh_obj->cmd_arg_1 - unk_1;
+        cur_obj->x = cur_obj->init_x;
+        cur_obj->y = cur_obj->init_y;
+        calc_obj_pos(her_bh_obj);
+        cur_id = link_init[cur_id];
+    }
 }
 
 //3088C
 void doHerseCommand(obj_t* obj) {
-    //stub
+    /* 4EF0C 8017370C -O2 -msoft-float */
+    if ((obj->type == TYPE_178_HERSE_BAS || obj->type == TYPE_HERSE_HAUT) && obj->link == 0) {
+        obj->anim_frame = myRand(obj->animations[obj->anim_index].frame_count - 1);
+        obj->cmd_arg_1 = 0x1000;
+        allocateOtherPosts(obj);
+        obj->link = 1;
+    } else {
+        obj->speed_y = sinYspeed(obj, 24, 40, &obj->cmd_arg_1);
+        obj->speed_x = 0;
+    }
 }
 
 //30908
 void doBlackRaymanCommand(obj_t* obj) {
-    //stub
+    print_once("Not implemented: doBlackRaymanCommand"); //stub
 }
 
 //30BE4
 void doBlKRayRaymanCollision(obj_t* obj) {
-    //stub
+    if (ray_stack_is_full == 1) {
+        ray.hit_points = 0;
+    }
 }
 
 //30BF8
-void DO_POELLE_COMMAND(obj_t* obj) {
-    //stub
+void DO_POELLE_COMMAND(obj_t* po_obj) {
+    /* 4F818 80174018 -O2 -msoft-float */
+    s32 abs_ray_spd_x;
+    s16 po_x; s16 po_y; s16 po_w; s16 po_h;
+    s32 sub_etat;
+
+    po_obj->flags.flip_x = 1;
+    if (ray_on_poelle == true) {
+        po_obj->flags.follow_enabled = 0;
+        if ((ray.speed_x > 0 && ray.flags.flip_x) || (ray.speed_x < 0 && !ray.flags.flip_x)) {
+            abs_ray_spd_x = Abs(ray.speed_x);
+            if (abs_ray_spd_x < 2)
+                po_obj->cmd_arg_1 = ray.speed_x > 0 ? 2 : -2;
+            else if (abs_ray_spd_x >= 7)
+                po_obj->cmd_arg_1 = ray.speed_x > 0 ? 7 : -7;
+            else
+                po_obj->cmd_arg_1 = ray.speed_x;
+        }
+        if (po_obj->iframes_timer == 0)
+        {
+            if (Abs(ray.speed_y) <= 0) /* ray.speed_y == 0 */
+            {
+                if (Abs(ray.speed_x) > 2)
+                    po_obj->anim_frame = 1;
+            }
+            else if (ray.speed_y > 0)
+            {
+                if (ray.speed_x > 0)
+                    po_obj->anim_frame = 0;
+                else if (ray.speed_x < 0)
+                    po_obj->anim_frame = 2;
+                else
+                    po_obj->anim_frame = 1;
+            }
+            else if (ray.speed_y < 0)
+            {
+                if (ray.speed_x > 0)
+                    po_obj->anim_frame = 2;
+                else if (ray.speed_x < 0)
+                    po_obj->anim_frame = 0;
+                else
+                    po_obj->anim_frame = 1;
+            }
+
+            po_obj->iframes_timer = 8;
+        }
+        else
+            po_obj->iframes_timer--;
+
+        GET_SPRITE_POS(po_obj, 0, &po_x, &po_y, &po_w, &po_h);
+        po_y = (po_y + po_obj->offset_hy) - (po_obj->y + po_obj->offset_by);
+        po_obj->x = (ray.offset_bx + ray.x) - po_obj->offset_bx;
+        po_obj->y = (ray.offset_by + ray.y) - po_obj->offset_by - po_y;
+        if ((ray.main_etat == 3 && ((sub_etat = ray.sub_etat, sub_etat == 23) || sub_etat == 22)) || !RAY_DEAD()) {
+            RayEvts = SauveRayEvts;
+            ray_on_poelle = false;
+        }
+    } else {
+        po_obj->flags.follow_enabled = 1;
+        po_obj->iframes_timer = 0;
+        po_obj->anim_frame = 1;
+        if (ray.main_etat == 3 && ray.sub_etat == 22)
+            po_obj->speed_x = po_obj->cmd_arg_1;
+        else if (
+                ray.main_etat == 2 &&
+                ((sub_etat = ray.sub_etat, sub_etat == 1) || sub_etat == 2 || sub_etat == 6)
+                )
+            ray.speed_x = 0;
+        else
+            po_obj->cmd_arg_1 = 0;
+    }
 }
 
 //30EA8
 void DO_CORDE_COMMAND(obj_t* obj) {
-    //stub
+    /* 4FB58 80174358 -O2 -msoft-float */
+    s32 pa_id;
+    s32 bVar2;
+    s16 obj_x_pos;
+    s16 obj_y_pos;
+    s16 ray_x_pos;
+    s16 sVar4;
+    s16 ray_y_pos;
+    u8 obj_y_offs;
+    u8 obj_h;
+    s16 inter;
+    u8 hp;
+
+    pa_id = pierreAcorde_obj_id;
+    if (pa_id != -1)
+    {
+        if (obj->main_etat == 0)
+        {
+            if (obj->x < level.objects[pa_id].x)
+                obj->y = level.objects[pa_id].y + 112;
+            else
+                obj->y = level.objects[pa_id].y + 120;
+        }
+
+        if (ray.main_etat == 2 && ray.sub_etat == 15)
+        {
+            /* TODO: ... */
+            ray_y_pos = obj->y;
+
+            obj_x_pos = obj->x;
+            obj_y_pos = obj->y;
+            bVar2 = ray.x;
+            ray_x_pos = bVar2;
+            ray_y_pos = ray.y;
+            bVar2 = true;
+            switch (obj->sub_etat)
+            {
+                case 16:
+                    obj_y_offs = 48;
+                    obj_h = 24;
+                    break;
+                case 17:
+                    obj_y_offs = 48;
+                    obj_h = 32;
+                    break;
+                case 18:
+                case 19:
+                    obj_y_offs = 56;
+                    obj_h = 40;
+                    break;
+                case 20:
+                    obj_y_offs = 56;
+                    obj_h = 64;
+                    break;
+                default:
+                    bVar2 = false;
+                    break;
+            }
+            if (bVar2 && inter_box(ray_x_pos + 57, ray_y_pos + 26, 46, 4, obj_x_pos + 126, obj_y_pos + obj_y_offs, 4, obj_h)) {
+                if (--obj->hit_points == 0)
+                {
+                    obj->hit_points = obj->init_hit_points;
+                    if (obj->sub_etat < 19)
+                        set_sub_etat(obj, obj->sub_etat + 1);
+                    else
+                        DO_CORDE_CASSE(obj);
+                }
+
+                if (level.objects[pierreAcorde_obj_id].iframes_timer == 0)
+                    DO_FUMEE_CORDE(obj_x_pos + 128, ray_y_pos + 30);
+
+                level.objects[pierreAcorde_obj_id].cmd_arg_1 = 0;
+                return;
+            }
+        }
+        level.objects[pierreAcorde_obj_id].cmd_arg_1++;
+    }
 }
 
 //31060
 void DO_PAC_COMMAND(obj_t* obj) {
-    //stub
+    /* 4FDF4 801745F4 -O2 -msoft-float */
+    if (obj->hit_points == 0) {
+        if (obj->x < (ray.x + 47) && (obj->x + 186) > ray.x) {
+            obj->hit_points = 10;
+            set_main_and_sub_etat(obj, 2, 4);
+        }
+    }
+
+    if (obj->hit_points >= 2) {
+        if (obj->speed_y < 16) {
+            if (horloge[8] == 0)
+                obj->speed_y++;
+        } else if (horloge[8] == 0 && horloge[3] == 0) { // NOTE: changed from the PS1 to the PC version
+            obj->y++;
+        }
+    } else {
+        obj->speed_y = 0;
+    }
+
+    if (obj->cmd_arg_1 >= 2) {
+        obj->iframes_timer = 0;
+    } else {
+        obj->iframes_timer = 1;
+    }
+    obj->cmd_arg_1 = 0;
 }
 
 //310F8
 void DO_CFUMEE_COMMAND(obj_t* obj) {
-    //stub
+    /* 4FEF8 801746F8 -O2 -msoft-float */
+    obj->y = ray.y + -98;
+    if (
+            obj->anim_frame == obj->animations[obj->anim_index].frame_count - 1 &&
+            horloge[obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0xf] == 0 &&
+            level.objects[pierreAcorde_obj_id].iframes_timer == 0
+            )
+    {
+        obj->flags.alive = 0;
+        obj->is_active = 0;
+    }
 }
 
 //31190
@@ -2566,12 +2779,12 @@ void DO_NOVA2_COMMAND(obj_t* obj) {
 
 //31208
 void doShipCommand(obj_t* obj) {
-    //stub
+    print_once("Not implemented: doShipCommand"); //stub
 }
 
 //31400
 void DO_PROP_COMMAND(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_PROP_COMMAND"); //stub
 }
 
 //314A4

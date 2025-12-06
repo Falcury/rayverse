@@ -46,6 +46,8 @@ typedef long long s64;
 #define MAX_3(x, y) if (y > x) x = y;
 #define MIN_2(x, y) if (x > y) x = y;
 #define MIN_3(x, y) if (y < x) x = y;
+#define ABS(x) (x >= 0 ? (x) : -(x))
+#define SGN(x) (x >= 0 ? (x > 0 ? 1 : 0) : -1)
 
 #define pi32 3.14159265358979323846f
 #define two_pi32 (2.f*pi32)
@@ -60,6 +62,8 @@ typedef long long s64;
 static inline void fatal_error(void) {
 	abort();
 }
+
+#define print_once(msg) do { static bool done; if (!done) { puts(msg); done = true; }} while (0)
 
 #define ASSERT(expr) do { if(!((expr))) fatal_error(); } while (0)
 #define BREAKPOINT do { int _ = 5; } while (0)

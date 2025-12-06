@@ -2112,7 +2112,29 @@ void RAY_HURT(void) {
 
 //704B0
 void RepousseRay(void) {
-    //stub
+    /* 6356C 80187D6C -O2 -msoft-float */
+    obj_t *pa_obj = &level.objects[pierreAcorde_obj_id];
+
+    if (pa_obj->is_active) {
+        if ((ray.x > pa_obj->x - 82) && (ray.x < pa_obj->x + 150)) {
+            if (ray.y < pa_obj->y + 96) {
+                ray.y = pa_obj->y + 96;
+                if (ray.main_etat != 2) {
+                    set_main_and_sub_etat(&ray, 2, 1);
+                    ray.speed_y = instantSpeed(pa_obj->speed_y);
+                    jump_time = 0;
+                    helico_time = -1;
+                    ray.gravity_value_1 = 0;
+                    ray.gravity_value_2 = 0;
+                    button_released = 0;
+                } else {
+                    ray.speed_y = pa_obj->speed_y;
+                }
+            }
+        }
+        if (ymap + SCREEN_HEIGHT - 32 < pa_obj->y)
+            pa_obj->flags.alive = 0;
+    }
 }
 
 //70598
@@ -2475,7 +2497,89 @@ void RAY_RESPOND_TO_ALL_DIRS(void) {
 
 //70FF8
 void DO_RAY_ON_MS(void) {
-    //stub
+    /* 339AC 801581AC -O2 -msoft-float */
+    v_scroll_speed = 0;
+    h_scroll_speed = 0;
+    if (!RAY_DEAD())
+        return;
+
+    if (++ray.gravity_value_1 > 3)
+        ray.gravity_value_1 = 0;
+    ray.ray_dist = ((s16) (ray.offset_bx + ray.x) >> 4) + ((s16) (ray.offset_by + ray.y) >> 4) * mp.width;
+    if ((ray.screen_x + ray.offset_bx + 30) < 0 ||
+            (ray.screen_y + ray.offset_by + 20) < 0 ||
+            ray.screen_x > 290 || ray.screen_y > 200
+    ) {
+        ray.hit_points = 0;
+        RAY_HURT();
+    }
+
+    if (ray.iframes_timer == -1 && get_eta(&ray)->flags & 8 && COLL_RAY_PIC()) {
+        RAY_HIT(true, NULL);
+    }
+
+    joy_done = 0;
+    calc_obj_pos(&ray);
+    if (ray.cmd_arg_2 == -1)
+        calc_btyp(&ray);
+
+    if (ray.main_etat != 3 && (ray.main_etat != 6 || ray.sub_etat != 14))
+    {
+        if (
+                options_jeu.test_fire0() &&
+                ray.sub_etat != 4 && ray.sub_etat != 2 && ray.sub_etat != 8 &&
+                ray.sub_etat != 5 && ray.sub_etat != 3
+                )
+            RAY_RESPOND_TO_FIRE0();
+
+        if (options_jeu.test_button3())
+            RAY_RESPOND_TO_BUTTON3();
+        if (options_jeu.test_button4()) // NOTE: this actually only present in the PS1 version
+            RAY_RESPOND_TO_BUTTON4();
+        if (poing.is_charging) {
+            if (ray.sub_etat == 12)
+                RAY_GROW_FIST();
+            if (!options_jeu.test_fire0())
+                RAY_THROW_FIST();
+        }
+        if (rightjoy())
+            RAY_RESPOND_TO_DIR(1);
+        if (leftjoy())
+            RAY_RESPOND_TO_DIR(0);
+        if (downjoy()) {
+            RAY_RESPOND_TO_DOWN();
+            joy_done++;
+        }
+        if (upjoy()) {
+            RAY_RESPOND_TO_UP();
+            joy_done++;
+        }
+        if (joy_done == 0)
+            RAY_RESPOND_TO_NOTHING();
+        if (ray.screen_x < -20 && ray.speed_x < 0)
+            ray.speed_x = 0;
+        if (ray.screen_x > 210 && ray.speed_x > 0)
+            ray.speed_x = 0;
+        if (ray.screen_y < 3 && ray.speed_y < 0)
+            ray.speed_y = 0;
+        if ((ray.screen_y + ray.offset_by >= 231) && ray.speed_y > 0)
+            ray.speed_y = 0;
+    }
+    if (ray.speed_y > 0)
+        move_down_ray();
+    else if (ray.speed_y < 0)
+        move_up_ray();
+    if (ray.speed_x < 0)
+        RAY_TO_THE_LEFT();
+    else if (ray.speed_x > 0)
+        RAY_TO_THE_RIGHT();
+    if (ray.flags.alive)
+        DO_ANIM(&ray);
+
+    if (!new_world && !new_level) { // NOTE: this condition was added in the PC version
+        GET_RAY_ZDC(&ray, &ray_zdc_x, &ray_zdc_y, &ray_zdc_w, &ray_zdc_h);
+        DO_COLLISIONS();
+    }
 }
 
 //7133C

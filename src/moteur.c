@@ -60,17 +60,17 @@ i16 frapsol(i16 a1) {
 
 //55B48
 void DO_SCREEN_TREMBLE(void) {
-    //stub
+    print_once("Not implemented: DO_SCREEN_TREMBLE"); //stub
 }
 
 //55B90
 void DO_SCREEN_TREMBLE3(void) {
-    //stub
+    print_once("Not implemented: DO_SCREEN_TREMBLE3"); //stub
 }
 
 //55BCC
 void DO_SCREEN_TREMBLE2(void) {
-    //stub
+    print_once("Not implemented: DO_SCREEN_TREMBLE2"); //stub
 }
 
 //55C08
@@ -1117,7 +1117,7 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
                 skipToLabel(obj, 3, true);
                 if (ray.main_etat != 2)
                 {
-                    allocateLandingSmoke(obj); //TODO
+                    allocateLandingSmoke(obj);
                     set_main_and_sub_etat(&ray, 0, 0);
                     button_released = 1;
                     ray_jump();
@@ -1655,8 +1655,77 @@ void RECALE_ALL_OBJECTS(void) {
 }
 
 //58AAC
-u8 RayCoince(i16 a1) {
-    return 0; //stub
+u8 RayCoince(i16 dir) {
+    /* 30A64 80155264 -O2 -msoft-float */
+    s16 x_pos;
+    s16 y_pos;
+    s32 pos_to_check;
+    s32 map_ind;
+    u8 res = false;
+
+    if (ray.flags.flip_x)
+        x_pos = ray.x + 70;
+    else
+        x_pos = ray.x + 58;
+    y_pos = ray.y + 32;
+
+    switch (dir)
+    {
+        case 2:
+            pos_to_check = y_pos - (y_pos / 16 * 16);
+            if ((s16) pos_to_check < 3)
+            {
+                map_ind = (x_pos >> 4) + (mp.width * (y_pos >> 4));
+                if (block_flags[mp.map[map_ind].tile_type] >> BLOCK_FULLY_SOLID & 1)
+                    res = true;
+                if (block_flags[mp.map[++map_ind].tile_type] >> BLOCK_FULLY_SOLID & 1)
+                    res = true;
+                if (block_flags[mp.map[++map_ind].tile_type] >> BLOCK_FULLY_SOLID & 1)
+                    res = true;
+            }
+            break;
+        case 3:
+            pos_to_check = y_pos - (y_pos / 16 * 16);
+            if ((s16) pos_to_check > 12)
+            {
+                map_ind = (x_pos >> 4) + (mp.width * ((y_pos + 16 * 4) >> 4));
+                if (block_flags[mp.map[map_ind].tile_type] >> BLOCK_FULLY_SOLID & 1)
+                    res = true;
+                if (block_flags[mp.map[++map_ind].tile_type] >> BLOCK_FULLY_SOLID & 1)
+                    res = true;
+                if (block_flags[mp.map[++map_ind].tile_type] >> BLOCK_FULLY_SOLID & 1)
+                    res = true;
+            }
+            break;
+        case 0:
+            pos_to_check = x_pos - (x_pos / 16 * 16);
+            if ((s16) pos_to_check < 3)
+            {
+                map_ind = ((x_pos >> 4) + (mp.width * ((y_pos + 16) >> 4))) - 1;
+                if (block_flags[mp.map[map_ind].tile_type] >> BLOCK_FULLY_SOLID & 1)
+                    res = true;
+                if (block_flags[mp.map[map_ind += mp.width].tile_type] >> BLOCK_FULLY_SOLID & 1)
+                    res = true;
+                if (block_flags[mp.map[map_ind += mp.width].tile_type] >> BLOCK_FULLY_SOLID & 1)
+                    res = true;
+            }
+            break;
+        case 1:
+            pos_to_check = x_pos - (x_pos / 16 * 16);
+            if ((s16) pos_to_check > 12)
+            {
+                map_ind = ((x_pos >> 4) + (mp.width * ((y_pos + 16) >> 4))) + 3;
+                if (block_flags[mp.map[map_ind].tile_type] >> BLOCK_FULLY_SOLID & 1)
+                    res = true;
+                if (block_flags[mp.map[map_ind += mp.width].tile_type] >> BLOCK_FULLY_SOLID & 1)
+                    res = true;
+                if (block_flags[mp.map[map_ind += mp.width].tile_type] >> BLOCK_FULLY_SOLID & 1)
+                    res = true;
+            }
+            break;
+    }
+
+    return res;
 }
 
 //58DE8
@@ -1880,7 +1949,20 @@ void DO_FIXE(void) {
 
 //595E8
 void deactivate_ship_links(void) {
-    //stub
+    /* 31D3C 8015653C -O2 -msoft-float */
+    obj_t *bateau_obj;
+    u8 linked;
+
+    if (bateau_obj_id != -1) {
+        bateau_obj = &level.objects[bateau_obj_id];
+        if (bateau_obj->link_has_gendoor) {
+            linked = link_init[bateau_obj->id];
+            while (linked != bateau_obj->id) {
+                level.objects[linked].flags.alive = 0;
+                linked = link_init[linked];
+            }
+        }
+    }
 }
 
 //5965C
@@ -2154,7 +2236,7 @@ void STOPPE_RAY_EN_XY(void) {
 
 //59E9C
 void DO_PLACE_RAY(void) {
-    //stub
+    print_once("Not implemented: DO_PLACE_RAY"); //stub
 }
 
 //59FB8
@@ -2200,7 +2282,7 @@ void DO_AUTO_SCROLL(void) {
                 if (eau_id == -1 || (level.objects[eau_id].hit_points == 0 && level.objects[eau_id].cmd_arg_1 == 0)) {
                     if (scr_obj->y <= ray_y)
                     {
-                        if (__builtin_abs(scroll_y) == 1)
+                        if (Abs(scroll_y) == 1)
                             scroll_y = 2;
                         else
                             scroll_y = -scroll_y;
@@ -2336,7 +2418,7 @@ void INIT_MOTEUR(u8 new_lvl) {
     }
     INIT_OBJECTS(new_lvl);
     correct_link();
-    deactivate_ship_links(); //TODO
+    deactivate_ship_links();
     special_flags_init();
     if (num_world_choice == world_5_cave && num_level_choice == 4 && finBosslevel.helped_joe_1) {
         RayEvts.firefly = 1;
@@ -2637,7 +2719,49 @@ void DO_MOTEUR2(void) {
             recale_ray_pos();
         }
         if (ray_mode == MODE_2_RAY_ON_MS) {
-            //stub
+            if (scroll_x != -1)
+            {
+                scroll_x = ray.speed_x;
+                ray.speed_x = h_scroll_speed;
+                if (h_scroll_speed > 0)
+                    RAY_TO_THE_RIGHT();
+                else if (h_scroll_speed < 0)
+                    RAY_TO_THE_LEFT();
+                ray.speed_x = scroll_x;
+            }
+            if (ray.sub_etat != 14)
+            {
+                switch (ray.sub_etat)
+                {
+                    case 0:
+                        if (Abs(ray.speed_x) >= 2 || Abs(h_scroll_speed) >= 2)
+                            set_sub_etat(&ray, 6);
+                        break;
+                    case 1:
+                        if (Abs(ray.speed_x) < 2 && Abs(h_scroll_speed) < 2)
+                            set_sub_etat(&ray, 7);
+                        else
+                        {
+                            if (Abs(h_scroll_speed) >= 5 && (xmap < xmapmax - 100))
+                            {
+                                set_sub_etat(&ray, 2);
+                                start_cd_gros_rayman(); // change_audio_track_moskito_acc();
+                            }
+                        }
+                        break;
+                    case 5:
+                        if (Abs(h_scroll_speed) < 5)
+                        {
+                            set_sub_etat(&ray, 3);
+                            start_cd_gros_rayman(); // change_audio_track_moskito_dec();
+                        }
+                        break;
+                }
+                if (xmap == xmapmax)
+                    scroll_start_x = xmap;
+            }
+            poing_obj->x += h_scroll_speed;
+            poing_obj->y += v_scroll_speed;
         }
         DO_SCROLL(&h_scroll_speed, &v_scroll_speed);
         build_active_table();
@@ -2688,7 +2812,7 @@ void DO_MOTEUR2(void) {
 
 //5B0A4
 void RAY_REVERSE_COMMANDS(void) {
-    //stub
+    print_once("Not implemented: RAY_REVERSE_COMMANDS"); //stub
 }
 
 //5B154
@@ -2739,7 +2863,7 @@ void RAY_DEMIRAY(void) {
 
 //5B378
 void Ray_RayEcrase(void) {
-    //stub
+    print_once("Not implemented: Ray_RayEcrase"); //stub
 }
 
 //5B668

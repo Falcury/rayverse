@@ -470,11 +470,11 @@ void DO_FLASH_COMMAND(obj_t* obj);
 void DO_WLKNOT_COMMAND(obj_t* obj);
 void ACTIVE_L_EAU(obj_t* eau_obj);
 void DO_EAU_QUI_MONTE(obj_t* obj);
-void allocateOtherPosts(obj_t* obj);
+void allocateOtherPosts(obj_t* her_bh_obj);
 void doHerseCommand(obj_t* obj);
 void doBlackRaymanCommand(obj_t* obj);
 void doBlKRayRaymanCollision(obj_t* obj);
-void DO_POELLE_COMMAND(obj_t* obj);
+void DO_POELLE_COMMAND(obj_t* po_obj);
 void DO_CORDE_COMMAND(obj_t* obj);
 void DO_PAC_COMMAND(obj_t* obj);
 void DO_CFUMEE_COMMAND(obj_t* obj);
@@ -492,8 +492,8 @@ void DO_RAY_POS_CMD(obj_t* obj);
 
 // cymbal.c
 void DO_CYMBAL_COMMAND(obj_t* obj);
-void DO_2_PARTS_CYMBAL(obj_t* obj);
-void DO_COLL_RAY_CYMBALE(obj_t* obj);
+void DO_2_PARTS_CYMBAL(obj_t* cym_obj);
+void DO_COLL_RAY_CYMBALE(obj_t* cym_obj);
 
 // dark.c
 void PlaceDarkPhase1et2(obj_t* obj);
@@ -1027,7 +1027,7 @@ void DO_OBJECTS_ANIMS(void);
 void DO_OBJECTS(void);
 void MOVE_OBJECTS(void);
 void RECALE_ALL_OBJECTS(void);
-u8 RayCoince(i16 a1);
+u8 RayCoince(i16 dir);
 void move_up_ray(void);
 void move_down_ray(void);
 void recale_ray_pos(void);
@@ -1504,7 +1504,7 @@ void START_2_PARTS_CYMBAL_ACTION(obj_t* obj);
 void ChangeLevel(void);
 void init_moustique(void);
 void DO_CORDE_CASSE(obj_t* obj);
-void DO_FUMEE_CORDE(obj_t* obj);
+void DO_FUMEE_CORDE(i16 x, i16 y);
 i32 GetY(i16 x);
 void allocateSupHelico(obj_t* mus_obj);
 void allocatePaillette(obj_t* obj);

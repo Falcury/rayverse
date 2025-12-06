@@ -1273,12 +1273,59 @@ void init_moustique(void) {
 
 //7BFF4
 void DO_CORDE_CASSE(obj_t* obj) {
-    //stub
+    /* 3EB50 80163350 -O2 -msoft-float */
+    s16 i;
+    obj_t *cur_obj;
+    u8 nb_objs;
+
+    set_sub_etat(obj, 21);
+    if (level.objects[pierreAcorde_obj_id].hit_points == 10) {
+        level.objects[pierreAcorde_obj_id].hit_points = 5;
+    } else {
+        level.objects[pierreAcorde_obj_id].hit_points = 1;
+        set_main_and_sub_etat(level.objects + pierreAcorde_obj_id, 0, 23);
+    }
+
+    i = 0;
+    cur_obj = &level.objects[i];
+    nb_objs = level.nb_objects;
+    while (i < nb_objs) {
+        if (cur_obj->type == TYPE_222_CORDEBAS && !(cur_obj->is_active)) {
+            cur_obj->x = obj->x;
+            cur_obj->y = obj->y;
+            cur_obj->speed_y = 1;
+            cur_obj->flags.alive = 1;
+            cur_obj->is_active = 1;
+            add_alwobj(cur_obj);
+            cur_obj->gravity_value_2 = 4;
+            break;
+        }
+        cur_obj++;
+        i++;
+    }
 }
 
 //7C0A4
-void DO_FUMEE_CORDE(obj_t* obj) {
-    //stub
+void DO_FUMEE_CORDE(i16 x, i16 y) {
+    /* 3EC84 80163484 -O2 -msoft-float */
+    s16 i = 0;
+    obj_t *cur_obj = &level.objects[i];
+    u8 nb_objs = level.nb_objects;
+
+    while (i < nb_objs)
+    {
+        if (cur_obj->type == TYPE_221_CFUMEE && !(cur_obj->is_active))
+        {
+            cur_obj->x = x - 142;
+            cur_obj->y = y - 128;
+            cur_obj->flags.alive = 1;
+            cur_obj->is_active = 1;
+            add_alwobj(cur_obj);
+            break;
+        }
+        cur_obj++;
+        i++;
+    }
 }
 
 //7C10C
