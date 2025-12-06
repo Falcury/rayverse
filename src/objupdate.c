@@ -320,7 +320,7 @@ u8 handle_17_GO_TEST(obj_t* obj) {
             obj->flags.command_test = OBJ_IN_ZONE(obj);
         } break;
         case 71: {
-            obj->flags.command_test = obj->flags.flag_1;
+            obj->flags.command_test = obj->flags.hurtbyfist;
         } break;
         case 72: {
             obj->flags.command_test = obj->flags.read_commands;
@@ -432,7 +432,7 @@ void DO_WIZARD(obj_t* obj) {
                 fix_numlevel(obj);
                 save_objects_flags();
                 save_save = save1.is_just_saved;
-                ray.flags.flag_1 = 1;
+                ray.flags.hurtbyfist = 1;
                 pal_id_at_wizard = current_pal_id;
                 DO_FADE_OUT();
             }
@@ -505,20 +505,20 @@ void TEST_WIZARD(obj_t* obj) {
     s16 x_diff_3;
     s32 y_diff_1;
 
-    if (RayEvts.tiny || !(ray.flags.flag_1 || ((ray.main_etat == 0 || ray.main_etat == 3) && nb_wiz_collected == 0))) {
+    if (RayEvts.tiny || !(ray.flags.hurtbyfist || ((ray.main_etat == 0 || ray.main_etat == 3) && nb_wiz_collected == 0))) {
         obj->detect_zone_flag = 0;
     }
 
     obj_sub_etat = obj->sub_etat;
     if (obj_sub_etat == 0) {
-        if (ray.flags.flag_1) {
+        if (ray.flags.hurtbyfist) {
             if (status_bar.num_wiz + nb_wiz_collected >= 10) {
                 fixontemp = 300; // NOTE: aaded in PC version
                 set_sub_etat(obj, 11);
                 obj->timer = 200;
             }
             else {
-                ray.flags.flag_1 = 0;
+                ray.flags.hurtbyfist = 0;
             }
         } else {
             if (obj->detect_zone_flag != 0) {
@@ -535,14 +535,14 @@ void TEST_WIZARD(obj_t* obj) {
             // NOTE: small change here in PC version
             else if (obj->detect_zone_flag == 0 && obj->anim_frame == 19) {
                 obj->anim_frame = 0;
-                ray.flags.flag_1 = 0;
+                ray.flags.hurtbyfist = 0;
             }
         }
     } else if (!(obj_sub_etat == 0 || obj->detect_zone_flag == 0)) {
-        if (ray.flags.flag_1 && obj_sub_etat == 11) {
+        if (ray.flags.hurtbyfist && obj_sub_etat == 11) {
             obj->timer--;
             if (obj->timer == 0) {
-                ray.flags.flag_1 = 0;
+                ray.flags.hurtbyfist = 0;
                 set_sub_etat(obj, 1);
             }
         } else if (obj->sub_etat == 1) {
@@ -1417,11 +1417,11 @@ void DO_PHOTOGRAPHE_CMD(obj_t* obj) {
         saveGameState(obj, &save1);
         correct_gendoor_link(1);
         obj->timer = 0;
-    } else if (!RayEvts.tiny && !obj->flags.flag_1 && OBJ_IN_ZONE(obj) && ray.cmd_arg_2 == -1
-                && !decalage_en_cours && ray.main_etat == 0 && ray.sub_etat == 0
-                && inter_box(obj->x + 42, obj->y + 48, 5, 15, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h)
+    } else if (!RayEvts.tiny && !obj->flags.hurtbyfist && OBJ_IN_ZONE(obj) && ray.cmd_arg_2 == -1
+               && !decalage_en_cours && ray.main_etat == 0 && ray.sub_etat == 0
+               && inter_box(obj->x + 42, obj->y + 48, 5, 15, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h)
     ) {
-        obj->flags.flag_1 = 1;
+        obj->flags.hurtbyfist = 1;
         ray.speed_x = 0;
         ray.is_active = 0;
         skipToLabel(obj, 0, 1);

@@ -582,7 +582,7 @@ void INIT_NEW_GAME(void) {
     ray.hit_points = 2;
     fin_du_jeu = 0;
     nb_continue = 9;
-    ray.flags.flag_1 = false;
+    ray.flags.hurtbyfist = false;
     poing.sub_etat = 1;
     departlevel = 1;
     memset(wi_save_zone, 0, sizeof(wi_save_zone));

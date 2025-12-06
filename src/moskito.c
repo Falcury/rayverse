@@ -631,7 +631,7 @@ void doMoskitoCommand(obj_t* obj) {
         }
         if (bossSafeTimer != 0)
             bossSafeTimer--;
-        if (!(obj->flags.flag_1))
+        if (!(obj->flags.hurtbyfist))
         {
             if (obj->cmd == 2)
             {
@@ -687,7 +687,7 @@ void doMoskitoCommand(obj_t* obj) {
         }
         prepareNewMoskitoAttack(obj);
     }
-    obj->flags.flag_1 = 0;
+    obj->flags.hurtbyfist = 0;
     MsAnimIndex = obj->anim_index;
 }
 
@@ -772,7 +772,7 @@ void doMoskitoHit(obj_t* obj, i16 sprite) {
         poing.damage = 1;
         obj_hurt(obj);
         bossSafeTimer = 0xFF;
-        obj->flags.flag_1 = true;
+        obj->flags.hurtbyfist = true;
         changeMoskitoPhase(obj);
         act_next = tellNextMoskitoAction(obj);
         act_18 = 18;

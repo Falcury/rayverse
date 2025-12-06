@@ -1985,7 +1985,7 @@ void INIT_RAY_BEGIN(void) {
     status_bar.max_hitp = 2;
     status_bar.num_wiz = 0;
     fin_continue = 0;
-    ray.flags.flag_1 = false;
+    ray.flags.hurtbyfist = false;
 }
 
 //59948

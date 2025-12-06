@@ -408,7 +408,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             mem_read(&flags_lo, mem, 1);
             mem_read(&flags_hi, mem, 1);
             obj_flags_t flags = {0};
-            flags.flag_1 = flags_lo & 1u;
+            flags.hurtbyfist = flags_lo & 1u;
             flags.command_test = (flags_lo & 2u) != 0;
             flags.alive = (flags_lo & 4u) != 0;
             flags.flip_x = (flags_lo & 8u) != 0;

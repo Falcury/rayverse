@@ -310,7 +310,7 @@ typedef struct pcx_header_t {
 } pcx_header_t;
 
 typedef struct obj_flags_t {
-    u8 flag_1 : 1;          // 1
+    u8 hurtbyfist : 1;      // 1
     u8 command_test : 1;    // 2
     u8 alive : 1;           // 4
     u8 flip_x : 1;          // 8

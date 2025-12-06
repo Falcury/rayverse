@@ -354,7 +354,7 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state) {
 		save_state->save_obj_x_pos = (i16)save_obj->x;
 		save_state->save_obj_y_pos = (i16)save_obj->y;
 		save_state->save_obj_detect_zone_flag = save_obj->detect_zone_flag;
-		save_state->save_obj_flag_1 = save_obj->flags.flag_1;
+		save_state->save_obj_flag_1 = save_obj->flags.hurtbyfist;
 	} else {
 		save_state->save_obj_id = -1;
 	}
@@ -413,7 +413,7 @@ void restoreGameState(save_state_t* save_state) {
             save_obj->x = save_state->save_obj_x_pos;
             save_obj->y = save_state->save_obj_y_pos;
             save_obj->detect_zone_flag = save_state->save_obj_detect_zone_flag;
-            save_obj->flags.flag_1 = save_state->save_obj_flag_1;
+            save_obj->flags.hurtbyfist = save_state->save_obj_flag_1;
         }
         if (save_state == &save1) {
             for (i32 i = 0; i < level.nb_objects; ++i) {

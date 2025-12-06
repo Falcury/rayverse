@@ -1406,7 +1406,7 @@ void SET_DETECT_ZONE_FLAG(obj_t* obj) {
     {
         obj->detect_zone_flag = 0;
         if (obj->type == TYPE_PHOTOGRAPHE)
-            obj->flags.flag_1 = 0;
+            obj->flags.hurtbyfist = 0;
     }
 }
 
