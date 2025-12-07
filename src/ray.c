@@ -2813,7 +2813,7 @@ void sub_71A84(void) {
 
 //71A98
 void sub_71A98(void) {
-    //stub
+    print_once("Not implemented: sub_71A98"); //stub
 }
 
 //71B34

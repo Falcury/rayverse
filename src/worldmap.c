@@ -262,7 +262,7 @@ void DO_STAGE_NAMES(void) {
 
     }
 
-    //stub
+    print_once("Not implemented: DO_STAGE_NAMES"); //stub
 }
 
 //68BC0
@@ -611,7 +611,7 @@ void INIT_NEW_GAME(void) {
 
 //697DC
 void DO_NOT_SAVE_CHOICE(void) {
-    //stub
+    print_once("Not implemented: DO_NOT_SAVE_CHOICE"); //stub
 }
 
 //6980C
@@ -822,7 +822,7 @@ void REALISATION_ACTION(void) {
         case 1: {
             // Copy
             if (!fichier_a_copier) {
-                //stub
+                print_once("Not implemented: REALISATION_ACTION (copy action)"); //stub
             }
         } break;
         case 2: {
@@ -856,37 +856,37 @@ void REALISATION_ACTION(void) {
 
 //6A3A0
 void DISPLAY_SYMBOLE(i16 a1, i16 a2, i16 a3, u8 a4) {
-    //stub
+    print_once("Not implemented: DISPLAY_SYMBOLE"); //stub
 }
 
 //6A3EC
 void INIT_CONTINUE(void) {
-    //stub
+    print_once("Not implemented: INIT_CONTINUE"); //stub
 }
 
 //6A5E8
 void CHEAT_MODE_CONTINUE(void) {
-    //stub
+    print_once("Not implemented: CHEAT_MODE_CONTINUE"); //stub
 }
 
 //6A798
 void MAIN_CONTINUE_PRG(void) {
-    //stub
+    print_once("Not implemented: MAIN_CONTINUE_PRG"); //stub
 }
 
 //6AAA8
 void FIN_CONTINUE_PRG(void) {
-    //stub
+    print_once("Not implemented: FIN_CONTINUE_PRG"); //stub
 }
 
 //6AB24
 void INIT_NO_MORE_CONTINUE(void) {
-    //stub
+    print_once("Not implemented: INIT_NO_MORE_CONTINUE"); //stub
 }
 
 //6AB98
 void MAIN_NO_MORE_CONTINUE_PRG(void) {
-    //stub
+    print_once("Not implemented: MAIN_NO_MORE_CONTINUE_PRG"); //stub
 }
 
 //6ABEC
@@ -946,22 +946,22 @@ void INIT_VIGNET(void) {
 
 //6AF40
 void INIT_CREDITS(void) {
-    //stub
+    print_once("Not implemented: INIT_CREDITS"); //stub
 }
 
 //6B000
 void DO_CREDITS(void) {
-    //stub
+    print_once("Not implemented: DO_CREDITS"); //stub
 }
 
 //6B138
 void INIT_ANIM_VICTOIRE(void) {
-    //stub
+    print_once("Not implemented: INIT_ANIM_VICTOIRE"); //stub
 }
 
 //6B178
 void DO_RAYMAN_WINS(void) {
-    //stub
+    print_once("Not implemented: DO_RAYMAN_WINS"); //stub
 }
 
 //6B1EC

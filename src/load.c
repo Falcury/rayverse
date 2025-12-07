@@ -868,7 +868,7 @@ u8* allocate_PLAN0(mem_t* mem_world, i32 width, i32 height) {
 //47C10
 void PLAN0FND_to_bits_planes(u8* buffer, i16 width, i16 height) {
     // NOTE: this procedure is only used for EGA (X) mode.
-    //stub
+    print_once("Not implemented: PLAN0FND_to_bits_planes"); //stub
 }
 
 //47D3C

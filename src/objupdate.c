@@ -625,7 +625,6 @@ void DoTarzanPoingCollision(obj_t* obj, i16 sprite) {
 
 //61980
 void allocate_badguy(obj_t* tentacle_obj, i16 which_enemy, i16 xspeed, i16 yspeed) {
-    // stub
     for (i32 event_index = 0; event_index < level.nb_objects; ++event_index) {
         obj_t* spawned = level.objects + event_index;
         if (((which_enemy == 1 && spawned->type == TYPE_0_BADGUY1) || (which_enemy == 2 && spawned->type == TYPE_9_BADGUY2))
@@ -687,22 +686,22 @@ void DO_PTI_ESQUIVE(obj_t* obj) {
 
 //61BB0
 void DoPrisePoingCollision(obj_t* obj, i16 sprite) {
-    //stub
+    print_once("Not implemented: DoPrisePoingCollision"); //stub
 }
 
 //61C08
 void DO_PETIT_COUTEAU_COMMAND(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_PETIT_COUTEAU_COMMAND"); //stub
 }
 
 //61C20
 void DoPetitCouteauPoingCollision(obj_t* obj, i16 sprite) {
-    //stub
+    print_once("Not implemented: DoPetitCouteauPoingCollision"); //stub
 }
 
 //61C34
 void DO_TIRE_BOUCHON_COMMAND(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_TIRE_BOUCHON_COMMAND"); //stub
 }
 
 //61C4C
@@ -732,7 +731,7 @@ void DoOneUpRaymanCollision(obj_t* obj) {
 
 //61D10
 void DoMorningStarPoingCollision(obj_t* obj, i16 sprite) {
-    //stub
+    print_once("Not implemented: DoMorningStarPoingCollision"); //stub
 }
 
 //61D54
@@ -1435,22 +1434,22 @@ void DoAudioStartRaymanCollision(obj_t* obj) {
 
 //63244
 void DO_SLOPEY_PLAT_CMD(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_SLOPEY_PLAT_CMD"); //stub
 }
 
 //63340
 void DO_PIRATE_POELLE(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_PIRATE_POELLE"); //stub
 }
 
 //63610
 void DO_PIRATE_POELLE_POING_COLLISION(obj_t* obj, i16 sprite) {
-    //stub
+    print_once("Not implemented: DO_PIRATE_POELLE_POING_COLLISION"); //stub
 }
 
 //6374C
 void PIRATE_POELLE_REACT(obj_t* obj) {
-    //stub
+    print_once("Not implemented: PIRATE_POELLE_REACT"); //stub
 }
 
 //63800

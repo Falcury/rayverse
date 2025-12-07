@@ -134,7 +134,6 @@ void RAY_PREPARE_FIST(void) {
             compteur_attente = 0;
         }
     }
-    //stub
 }
 
 //66BD0

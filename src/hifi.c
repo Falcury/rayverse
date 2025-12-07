@@ -1,12 +1,12 @@
 
 //3E66C
 void sub_3E66C(void) {
-    //stub
+    print_once("Not implemented: sub_3E66C"); //stub
 }
 
 //3E6B0
 void sub_3E6B0(void) {
-    //stub
+    print_once("Not implemented: sub_3E6B0"); //stub
 }
 
 //3E6EC
@@ -17,12 +17,12 @@ void rayman_sound_fatal_error(const char* message) {
 
 //3E710
 void sub_3E710(void) {
-    //stub
+    print_once("Not implemented: sub_3E710"); //stub
 }
 
 //3E780
 void sub_3E780(void) {
-    //stub
+    print_once("Not implemented: sub_3E780"); //stub
 }
 
 //3E820
@@ -206,7 +206,7 @@ void DigiMusicDone(void) {
     for (i32 i = 0; i < COUNT(voice_table); ++i) {
         KeyOff(i, 0, 0, 0, 0);
     }
-    //stub
+    print_once("Not implemented: DigiMusicDone"); //stub
 }
 
 //3ECC4
@@ -231,12 +231,12 @@ void LoadTchatchPerdu(void) {
 
 //3EDF4
 void PlayTchatch(i32 snd, i32 volume) {
-    //stub
+    print_once("Not implemented: PlayTchatch"); //stub
 }
 
 //3EFA4
 void FreeTchatchVignette(void) {
-    //stub
+    print_once("Not implemented: FreeTchatchVignette"); //stub
 }
 
 //3EFD4
@@ -296,7 +296,7 @@ i32 GetDeviceID_Ray(void) {
 
 //3F030
 void FreeDetectDriver(void) {
-    //stub
+    print_once("Not implemented: FreeDetectDriver"); //stub
 }
 
 

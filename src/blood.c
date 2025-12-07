@@ -1,6 +1,6 @@
 
 //23800
 void DoEffectBloodOut(void) {
-    //stub
+    print_once("Not implemented: DoEffectBloodOut"); //stub
 }
 

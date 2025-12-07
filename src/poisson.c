@@ -1,17 +1,17 @@
 
 //67100
 void DO_POISSON_VERT_CMD(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_POISSON_VERT_CMD"); //stub
 }
 
 //671F8
 void DO_POISSON_BLEU_CMD(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_POISSON_BLEU_CMD"); //stub
 }
 
 //67380
 void DoPoissonBleuPoingCollision(obj_t* obj, i16 sprite) {
-    //stub
+    print_once("Not implemented: DoPoissonBleuPoingCollision"); //stub
 }
 
 //673B4
@@ -131,6 +131,6 @@ void DoFishPoingCollision(obj_t* obj, i16 sprite) {
 
 //6773C
 void DoPoissonBleuRaymanZDD(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DoPoissonBleuRaymanZDD"); //stub
 }
 

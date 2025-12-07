@@ -7,57 +7,57 @@
 
 //12783
 void display_emptypicture(void) {
-    //stub
+    print_once("Not implemented: display_emptypicture"); //stub
 }
 
 //127A2
 void display_anypicture(void) {
-    //stub
+    print_once("Not implemented: display_anypicture");
 }
 
 //145F1
 void select_display_buffer(u8* buffer) {
-    //stub
+    print_once("Not implemented: select_display_buffer");
 }
 
 //145FC
 void InitFirstModeVideo(void) {
-    //stub
+    print_once("Not implemented: InitFirstModeVideo");
 }
 
 //1465F
 void InitModeNormal(void) {
-    //stub
+    print_once("Not implemented: InitModeNormal");
 }
 
 //146B8
 void InitModeX(void) {
-    //stub
+    print_once("Not implemented: InitModeX");
 }
 
 //1471D
 void block_clear(u8* source, u8* dest) {
-    //stub
+    print_once("Not implemented: block_clear");
 }
 
 //14765
 void block_copy(u8* source, u8* dest) {
-    //stub
+    print_once("Not implemented: block_copy");
 }
 
 //147E7
 void textmode(void) {
-    //stub
+    print_once("Not implemented: textmode");
 }
 
 //14828
 void draw_sprite_deform(void) {
-    //stub
+    print_once("Not implemented: draw_sprite_deform");
 }
 
 //14AB7
 void DisplayBufferModeNormal(u8* source, u8* dest) {
-    //stub
+    print_once("Not implemented: DisplayBufferModeNormal");
 }
 
 //14AC1
@@ -105,7 +105,7 @@ void DrawFondBoxNormal(u8* buffer /*edi*/, i32 x /*edx*/, i32 y /*ecx*/, i32 hei
     } else {
 
     }
-    //stub
+    print_once("Not implemented: DrawFondBoxNormal"); //stub
 }
 
 //14BBB
@@ -181,12 +181,12 @@ void N_CLRSCR(u8* buffer) {
 
 //14C9C
 void Swap_To_Screen(u8* draw_buf, u8* display_buf, i32 width, i32 height) {
-    //stub
+    print_once("Not implemented: Swap_To_Screen"); //stub
 }
 
 //14CC7
 void clear_borders_Normal(u8* buffer, i32 height, i32 width) {
-    //stub
+    print_once("Not implemented: clear_borders_Normal"); //stub
 }
 
 //14CFA
@@ -200,27 +200,27 @@ void Copy_Plan0Diff_To_Buf(u8* source, u8* dest, i32 width, i32 height, i32 draw
 
 //14E64
 void Display_Bloc(void* a1, void* a2) {
-    //stub
+    print_once("Not implemented: Display_Bloc"); //stub
 }
 
 //15041
 void Display_Bloc_Plein(void* a1, void* a2) {
-    //stub
+    print_once("Not implemented: Display_Bloc_Plein"); //stub
 }
 
 //152DA
 void Clip(void) {
-    //stub
+    print_once("Not implemented: Clip"); //stub
 }
 
 //153C6
 void Display_Bloc_Clippe(void* a1, void* a2, i16 a3, i16 a4) {
-    //stub
+    print_once("Not implemented: Display_Bloc_Clippe"); //stub
 }
 
 //1555E
 void Display_Bloc_Plein_Clippe(void* a1, void* a2, i16 a3, i16 a4) {
-    //stub
+    print_once("Not implemented: Display_Bloc_Plein_Clippe"); //stub
 }
 
 //15609
@@ -243,102 +243,102 @@ void flocon_clipping(i32 h1, i32 h2, i32 w1, i32 w2) {
 
 //15640
 void draw_flocon5_Normal(void) {
-    //stub
+    print_once("Not implemented: draw_flocon5_Normal"); //stub
 }
 
 //15670
 void draw_flocon1_Normal(void) {
-    //stub
+    print_once("Not implemented: draw_flocon1_Normal"); //stub
 }
 
 //156A0
 void draw_flocon2_Normal(void) {
-    //stub
+    print_once("Not implemented: draw_flocon2_Normal"); //stub
 }
 
 //156DC
 void draw_flocon3_Normal(void) {
-    //stub
+    print_once("Not implemented: draw_flocon3_Normal"); //stub
 }
 
 //15725
 void draw_pluie4_Normal(void) {
-    //stub
+    print_once("Not implemented: draw_pluie4_Normal"); //stub
 }
 
 //15755
 void draw_flocon4_Normal(void) {
-    //stub
+    print_once("Not implemented: draw_flocon4_Normal"); //stub
 }
 
 //157A6
 void draw_pluie5_Normal(void) {
-    //stub
+    print_once("Not implemented: draw_pluie5_Normal"); //stub
 }
 
 //157DF
 void draw_flocon7_Normal(void) {
-    //stub
+    print_once("Not implemented: draw_flocon7_Normal"); //stub
 }
 
 //15830
 void draw_pluie6_Normal(void) {
-    //stub
+    print_once("Not implemented: draw_pluie6_Normal"); //stub
 }
 
 //1587D
 void draw_flocon6_Normal(void) {
-    //stub
+    print_once("Not implemented: draw_flocon6_Normal"); //stub
 }
 
 //158F4
 void draw_pluie7_Normal(void) {
-    //stub
+    print_once("Not implemented: draw_pluie7_Normal"); //stub
 }
 
 //1595D
 void get_joy_input2_dos1(u8* source_buf, u8* dest_buf, i32 width, i32 height) {
-    //stub
+    print_once("Not implemented: get_joy_input2_dos1"); //stub
 }
 
 //15A57
 void get_joy_input2_dos2(u8* source_buf, u8* dest_buf, i32 width, i32 height) {
-    //stub
+    print_once("Not implemented: get_joy_input2_dos2"); //stub
 }
 
 //15B55
 void get_joy_input2_windows1(u8* source_buf, u8* dest_buf, i32 width, i32 height) {
-    //stub
+    print_once("Not implemented: get_joy_input2_windows1"); //stub
 }
 
 //15C13
 void get_joy_input2_windows2(u8* source_buf, u8* dest_buf, i32 width, i32 height) {
-    //stub
+    print_once("Not implemented: get_joy_input2_windows2"); //stub
 }
 
 //15CDF
 void dos_game_io_port_something(void) {
-    //stub
+    print_once("Not implemented: dos_game_io_port_something"); //stub
 }
 
 //15D14
 void dos_game_io_port_something2(void) {
-    //stub
+    print_once("Not implemented: dos_game_io_port_something2"); //stub
 }
 
 //15D4A
 void get_joy_input1_dos1(void) {
-    //stub
+    print_once("Not implemented: get_joy_input1_dos1"); //stub
 }
 
 //15F34
 void get_joy_input1_dos2(void) {
-    //stub
+    print_once("Not implemented: get_joy_input1_dos2"); //stub
 }
 
 //1611E
 void DetectCpu(void) {
-    //stub
+    print_once("Not implemented: DetectCpu"); //stub
 }
 
 i32 XMIN = 8; //16184 //TODO: change XMIN to 0?
@@ -496,32 +496,32 @@ bool clip_sprite_on_screen_flipped(i32* x, i32* y, vec2b_t* size, u8** image_dat
 
 //163E6
 void DrawSpriteFlipNoClipX(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
-    //stub
+    print_once("Not implemented: DrawSpriteFlipNoClipX"); //stub
 }
 
 //163F2
 void DrawSpriteX(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
-    //stub
+    print_once("Not implemented: DrawSpriteX"); //stub
 }
 
 //16559
 void DrawSpriteNoClipX(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
-    //stub
+    print_once("Not implemented: DrawSpriteNoClipX"); //stub
 }
 
 //16565
 void DrawSpriteFlipX(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
-    //stub
+    print_once("Not implemented: DrawSpriteFlipX"); //stub
 }
 
 //166DF
 void DrawSpriteColorX(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
-    //stub
+    print_once("Not implemented: DrawSpriteColorX"); //stub
 }
 
 //16876
 void DrawSpriteColorFlipX(i32 x, i32 color, i32 y, vec2b_t size, u8* draw_buf, u8* image_data) {
-    //stub
+    print_once("Not implemented: DrawSpriteColorFlipX"); //stub
 }
 
 //16A18
@@ -753,7 +753,7 @@ void DrawSpriteDiffNormal(i32 x /*eax*/, i32 y /*ebx*/, vec2b_t size /*ecx*/, u8
 
 //16E8A
 void synchro(void) {
-    //stub
+    print_once("Not implemented: synchro"); //stub
 }
 
 //16E9A
@@ -763,22 +763,22 @@ void endsynchro(void) {
 
 //16EAA
 void set_speaker_on(void) {
-    //stub
+    print_once("Not implemented: set_speaker_on"); //stub
 }
 
 //16EEA
 void set_speaker_off(void) {
-    //stub
+    print_once("Not implemented: set_speaker_off"); //stub
 }
 
 //16EFD
 void clock_ticks(void) {
-    //stub
+    print_once("Not implemented: clock_ticks"); //stub
 }
 
 //16F5D
 void wait_until(i32 target /*ebx*/) {
-    //stub
+    print_once("Not implemented: wait_until"); //stub
 }
 
 //16F78

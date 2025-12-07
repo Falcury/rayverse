@@ -36,7 +36,7 @@ void plot2linejumelle(i32 jumelle_x, i32 jumelle_y, i32 plot_x, i32 plot_y, i32 
                 u8* v29 = draw_buf + v27;
                 u8* v30 = effet_buf + v28;
                 if (JumelleZoomActif) {
-                    //stub
+                    print_once("Not implemented: plot2linejumelle (JumelleZoomActif)"); //stub
                 } else {
                     memcpy(v29, v30, v60);
                 }
@@ -381,7 +381,7 @@ void PrepareJumelleZoom(void) {
     if (JumelleEffetAutorise) {
 
     }
-    //stub
+    print_once("Not implemented: PrepareJumelleZoom"); //stub
 }
 
 //43A50

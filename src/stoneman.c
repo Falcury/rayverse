@@ -2,7 +2,7 @@
 
 //7CA90
 void DO_STONEMAN_COMMAND(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_STONEMAN_COMMAND"); //stub
 }
 
 //7CB48
@@ -129,17 +129,17 @@ void DO_STONEBOMB_COMMAND(obj_t* obj) {
 
 //7CDE0
 void IS_STONEWOMAN_WAIT(obj_t* obj) {
-    //stub
+    print_once("Not implemented: IS_STONEWOMAN_WAIT"); //stub
 }
 
 //7CE04
 void DO_STONEWOMAN_COMMAND(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_STONEWOMAN_COMMAND"); //stub
 }
 
 //7D070
 void DO_NOMOVE_STONEWOMAN_COMMAND(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_NOMOVE_STONEWOMAN_COMMAND"); //stub
 }
 
 //7D0F0
@@ -305,27 +305,27 @@ void DO_STONE_EXPLOSION(obj_t* obj, i16 sprite) {
 
 //7D4E4
 void allocateStonemanStone(obj_t* obj) {
-    //stub
+    print_once("Not implemented: allocateStonemanStone"); //stub
 }
 
 //7D83C
 void DO_STONEMAN1_TIR(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_STONEMAN1_TIR"); //stub
 }
 
 //7D908
 void DO_STONEMAN2_TIR(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_STONEMAN2_TIR"); //stub
 }
 
 //7D9C0
 void allocateStonewomanStone(obj_t* obj) {
-    //stub
+    print_once("Not implemented: allocateStonewomanStone"); //stub
 }
 
 //7DC5C
 void DO_STONEWOMAN_TIR(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_STONEWOMAN_TIR"); //stub
 }
 
 //7DD78
@@ -519,20 +519,20 @@ void DoPiPoingCollision(obj_t* obj, i16 sprite) {
 
 //7E190
 void DO_PNG_COLL_STONEMAN(obj_t* obj, i16 sprite) {
-    //stub
+    print_once("Not implemented: DO_PNG_COLL_STONEMAN"); //stub
 }
 
 //7E258
 void DO_PNG_COLL_STONEWOMAN(obj_t* obj, i16 sprite) {
-    //stub
+    print_once("Not implemented: DO_PNG_COLL_STONEWOMAN"); //stub
 }
 
 //7E2FC
 void DoStoneMan1et2RaymanZDD(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DoStoneMan1et2RaymanZDD"); //stub
 }
 
 //7E33C
 void DoStoneDogRaymanZDD(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DoStoneDogRaymanZDD"); //stub
 }

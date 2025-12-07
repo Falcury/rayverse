@@ -2,22 +2,22 @@
 
 //1FA40
 void DO_BAT_FLASH(i16 a1, i16 a2) {
-    //stub
+    print_once("Not implemented: DO_BAT_FLASH"); //stub
 }
 
 //1FBC0
 void DO_BAT_LEFT_FLASH(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_BAT_LEFT_FLASH"); //stub
 }
 
 //1FC18
 void DO_BAT_RIGHT_FLASH(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_BAT_RIGHT_FLASH"); //stub
 }
 
 //1FC70
 void DO_BAT_LEFT_RIGHT_FLASH(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_BAT_LEFT_RIGHT_FLASH"); //stub
 }
 
 //1FD14
@@ -28,17 +28,17 @@ i16 bat_dir(obj_t* obj) {
 
 //1FD9C
 void DO_BAT_COMMAND(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_BAT_COMMAND"); //stub
 }
 
 //20058
 void BAT_ray_in_zone(obj_t* obj) {
-    //stub
+    print_once("Not implemented: BAT_ray_in_zone"); //stub
 }
 
 //20088
 void DO_BAT_POING_COLLISION(obj_t* obj, i16 sprite) {
-    //stub
+    print_once("Not implemented: DO_BAT_POING_COLLISION"); //stub
 }
 
 //2008C

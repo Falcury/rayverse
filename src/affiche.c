@@ -801,41 +801,41 @@ void DISPLAY_SAVE_POING(void) {
 
 //1B4AC
 void DISPLAY_OPTIONS_POING(void) {
-    //stub
+    print_once("Not implemented: DISPLAY_OPTIONS_POING"); //stub
 }
 
 //1B53C
 void DISPLAY_YESNO_POING(void) {
-    //stub
+    print_once("Not implemented: DISPLAY_YESNO_POING"); //stub
 }
 
 //1B56C
 void display_time(i32 a1) {
-    //stub
+    print_once("Not implemented: display_time"); //stub
 }
 
 //1B79C
 void DISPLAY_CONTINUE_SPR(void) {
-    //stub
+    print_once("Not implemented: DISPLAY_CONTINUE_SPR"); //stub
 }
 
 //1B944
 void AFFICHE_SPRITE_DEFORME(void* a1, i32 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7, i16 a8, i16 a9, i16 a10) {
-    //stub
+    print_once("Not implemented: AFFICHE_SPRITE_DEFORME"); //stub
 }
 
 //1BBC4
 void DISPLAY_DEFORMATION(obj_t* obj, i16 a2, i16 a3, i16 a4) {
-    //stub
+    print_once("Not implemented: DISPLAY_DEFORMATION"); //stub
 }
 
 //1BEA8
 void DISPLAY_DEFORM_SPRITE(void* a1, i32 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
-    //stub
+    print_once("Not implemented: DISPLAY_DEFORM_SPRITE"); //stub
 }
 
 //1C030
 void CALCUL_DEFORMATION(i16* a1, i16* a2, i16 a3, i16 a4, i16 a5) {
-    //stub
+    print_once("Not implemented: CALCUL_DEFORMATION"); //stub
 }
 

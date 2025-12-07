@@ -4,17 +4,17 @@
 
 //5C4A0
 void deter_vide_plein_panach(void* a1, i16 a2) {
-    //stub
+    print_once("Not implemented: deter_vide_plein_panach"); //stub
 }
 
 //5C4DC
 void deter_nb_blocks(void* a1, i16 a2, i16 a3, i32* a4, i32* a5) {
-    //stub
+    print_once("Not implemented: deter_nb_blocks"); //stub
 }
 
 //5C564
 void Copy_Blocks(mem_t* buffer, void* a2, i16 a3, i16 a4) {
-    //stub
+    print_once("Not implemented: Copy_Blocks"); //stub
 }
 
 //5C82C
@@ -124,7 +124,7 @@ void set_xymap(void) {
 
 //5CB40
 void set_whmap(i32 a1, i32 a2, void* a3) {
-    //stub
+    print_once("Not implemented: set_whmap"); //stub
 }
 
 //5CD64

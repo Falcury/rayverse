@@ -29,32 +29,32 @@ void get_spi_zdc(obj_t* obj, i16* x, i16* y, i16* w, i16* h) {
 
 //1C160
 void DO_SPIDER_PLAFOND(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_SPIDER_PLAFOND"); //stub
 }
 
 //1C588
 void DO_SPIDER_PLAFOND_POING_COLLISION(obj_t* obj, i16 sprite) {
-    //stub
+    print_once("Not implemented: DO_SPIDER_PLAFOND_POING_COLLISION"); //stub
 }
 
 //1C6A0
 void SPIDER_PLAFOND_REACT(obj_t* obj) {
-    //stub
+    print_once("Not implemented: SPIDER_PLAFOND_REACT"); //stub
 }
 
 //1C75C
 void DO_DARD_PLAFOND_ALWAYS(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_DARD_PLAFOND_ALWAYS"); //stub
 }
 
 //1CAC4
 void DO_SPIDER_COMMAND(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_SPIDER_COMMAND"); //stub
 }
 
 //1CC24
 void DO_SPIDER_TIR(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_SPIDER_TIR"); //stub
 }
 
 //1CC50
@@ -94,11 +94,11 @@ void allocateDard(obj_t* obj) {
 
 //1CDB0
 void DoSpiderPoingCollision(obj_t* obj, i16 sprite) {
-    //stub
+    print_once("Not implemented: DoSpiderPoingCollision"); //stub
 }
 
 //1CE70
 void DoSpiderRaymanZDD(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DoSpiderRaymanZDD"); //stub
 }
 

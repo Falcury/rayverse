@@ -40,7 +40,7 @@ void restore_objects_flags(void) {
 
 //1D204
 void snapToSprite(obj_t* obj1, obj_t* obj2, u8 a3, i16 a4, i16 a5) {
-    //stub
+    print_once("Not implemented: snapToSprite"); //stub
 }
 
 //1D4C4
@@ -57,7 +57,7 @@ obj_t* findfirstObject(i16 obj_type) {
 
 //1D4F4
 void findfirstInactiveObject(i16 a1) {
-    //stub
+    print_once("Not implemented: findfirstInactiveObject"); //stub
 }
 
 //1D528
@@ -147,7 +147,7 @@ void GET_ANIM_POS(obj_t* obj, i16* x, i16* y, i16* w, i16* h) {
 
 //1D7D8
 void add_actobj(i16 a1) {
-    //stub
+    print_once("Not implemented: add_actobj"); //stub
 }
 
 // 1D808
@@ -454,7 +454,7 @@ void GET_RAY_ZDC(obj_t* obj, i16* x, i16* y, i16* w, i16* h) {
 
 //1DEC0
 void GET_BB1_ZDCs(obj_t* obj, i16* a2, i16* a3, i16* a4, i16* a5, i16* a6, i16* a7, i16* a8, i16* a9) {
-    //stub
+    print_once("Not implemented: GET_BB1_ZDCs"); //stub
 }
 
 //1DFB8
@@ -1001,7 +1001,7 @@ void Projectil_to_RM(obj_t* obj, i16* out_spd_x, i16* out_spd_y, i16 new_spd_x, 
 
 //1EE18
 void del_actobj(obj_t* obj) {
-    //stub
+    print_once("Not implemented: del_actobj"); //stub
 }
 
 //1EEB8
@@ -1114,7 +1114,7 @@ i32 deter_num_let(u8 c, const char* next_chars) {
 
 //1F194
 void calc_num_let_spr(u8 a1, u8* a2) {
-    //stub
+    print_once("Not implemented: calc_num_let_spr"); //stub
 }
 
 //1F1B0
@@ -1541,6 +1541,7 @@ void FatalError(char* message) {
 
 //1FA00
 u8 sprite_of_ref(obj_t* obj, u8 a2) {
+    print_once("Not implemented: sprite_of_ref");
     return 0; //stub
 }
 

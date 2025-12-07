@@ -3,11 +3,12 @@
 
 //3B288
 void display_movie_frames(void) {
-    //stub
+    print_once("Not implemented: display_movie_frames"); //stub
 }
 
 //3B314
 i32 playVideo2(const char* path, const char* filename, i32 a3, u8 a4) {
+    print_once("Not implemented: playVideo2");
     playing_intro_video = strcasecmp("intro.dat", filename) == 0;
     if (byte_CFA2A) {
         // stub
@@ -34,87 +35,87 @@ i32 playVideo_alt(const char* path, const char* filename, i32 a2) {
 
 //3B4D0
 void SWAP_BUFFERS(void) {
-    //stub
+    print_once("Not implemented: SWAP_BUFFERS"); //stub
 }
 
 //3B580
 void sub_3B580(void) {
-    //stub
+    print_once("Not implemented: sub_3B580"); //stub
 }
 
 //3B5E8
 void sub_3B5E8(void) {
-    //stub
+    print_once("Not implemented: sub_3B5E8"); //stub
 }
 
 //3B64C
 void calc_gros_type(void) {
-    //stub
+    print_once("Not implemented: calc_gros_type"); //stub
 }
 
 //3B7D4
 void find_in_map(i16 a1, i16 a2) {
-    //stub
+    print_once("Not implemented: find_in_map"); //stub
 }
 
 //3B804
 void init_find_in_map(void) {
-    //stub
+    print_once("Not implemented: init_find_in_map"); //stub
 }
 
 //3B838
 void end_find_in_map(void) {
-    //stub
+    print_once("Not implemented: end_find_in_map"); //stub
 }
 
 //3B844
 void build_map(i16 a1, i16 a2) {
-    //stub
+    print_once("Not implemented: build_map"); //stub
 }
 
 //3B948
 void build_line_map(void* a1, i16 a2, i16 a3, i16 a4) {
-    //stub
+    print_once("Not implemented: build_line_map"); //stub
 }
 
 //3BA64
 void build_column_map(void* a1, i16 a2, i16 a3, i16 a4) {
-    //stub
+    print_once("Not implemented: build_column_map"); //stub
 }
 
 //3BB84
 void update_map(i16 a1, i16 a2, i16 a3, i16 a4) {
-    //stub
+    print_once("Not implemented: update_map"); //stub
 }
 
 //3BE20
 void sub_3BE20(void) {
-    //stub
+    print_once("Not implemented: sub_3BE20"); //stub
 }
 
 //3BEE0
 void sub_3BEE0(i16 a1, i16 a2) {
-    //stub
+    print_once("Not implemented: sub_3BEE0"); //stub
 }
 
 //3C194
 void set_vga_frequency(u8 a1) {
-    //stub
+    print_once("Not implemented: set_vga_frequency"); //stub
 }
 
 //3C2D0
 void GetVideoRegister(void) {
-    //stub
+    print_once("Not implemented: GetVideoRegister"); //stub
 }
 
 //3C34C
 void SetVideoRegister(void) {
-    //stub
+    print_once("Not implemented: SetVideoRegister"); //stub
 }
 
 //3C3BC
 void sub_3C3BC(void) {
-    //stub
+    print_once("Not implemented: sub_3C3BC"); //stub
 }
 
 //3C4FC
@@ -204,7 +205,7 @@ void actualize_palette(u8 new_pal_id) {
 
 //3C770
 void cyclage_palette(i16 a1, i16 a2, i16 a3) {
-    //stub
+    print_once("Not implemented: cyclage_palette"); //stub
 }
 
 //3C8C8
@@ -343,7 +344,7 @@ void SYNCHRO_LOOP(scene_func_t scene_func) {
 
 //3CBE8
 void DISPLAY_ANYSIZE_PICTURE(void* a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
-    //stub
+    print_once("Not implemented: DISPLAY_ANYSIZE_PICTURE"); //stub
 }
 
 //3CCE4
@@ -411,6 +412,7 @@ void DISPLAY_FOND_MENU(void) {
 
 //3CF70
 void InitPaletteSpecialPC(void) {
+    print_once("Not implemented: InitPaletteSpecialPC");
     CompteurEclair = 0;
     if ((num_world == 1 && num_level == 9) || (num_world == 2 && num_level == 4) || (num_world == 4 && num_level == 9)) {
         printf("InitPaletteSpecialPC(): not implemented\n");
@@ -423,17 +425,17 @@ void InitPaletteSpecialPC(void) {
 
 //3D54C
 void DoFadePaletteSpecialPC(i16 a1, i16 a2) {
-    //stub
+    print_once("Not implemented: DoFadePaletteSpecialPC"); //stub
 }
 
 //3D704
 void DoPaletteSpecialPC(void) {
-    //stub
+    print_once("Not implemented: DoPaletteSpecialPC"); //stub
 }
 
 //3D8AC
 void InitModeXWithFrequency(u8 freq) {
-    //stub
+    print_once("Not implemented: InitModeXWithFrequency"); //stub
 }
 
 //3D9D4

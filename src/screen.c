@@ -276,7 +276,7 @@ void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2
 
 //784A8
 void Display_Sprite_On_Front(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2, i16 h2) {
-    //stub
+    print_once("Not implemented: Display_Sprite_On_Front"); //stub
 }
 
 //787E8
@@ -365,11 +365,11 @@ void Calcul_Deplacement_Bande(i16 x, i16 plan_width, i16 plan_height) {
 
 //78C14
 void Init_Effet_Chaleur(i16 width, i16 height, u8* source_buf, u8* dest_buf) {
-    //stub
+    print_once("Not implemented: Init_Effet_Chaleur"); //stub
 }
 
 //78CA8
 void Do_Effet_Chaleur(i16 a1, i16 a2) {
-    //stub
+    print_once("Not implemented: Do_Effet_Chaleur"); //stub
 }
 

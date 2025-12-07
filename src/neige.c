@@ -470,5 +470,5 @@ void DO_SNOW_SEQUENCE(void) {
 
 //5C3DC
 void DoNeigeRaymanCollision(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DoNeigeRaymanCollision"); //stub
 }

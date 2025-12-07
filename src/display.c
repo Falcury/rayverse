@@ -462,52 +462,53 @@ void DISPLAY_GAME_VIGNET(void) {
 
 //355BC
 void DISPLAY_TXT_CREDITS(void) {
-    //stub
+    print_once("Not implemented: DISPLAY_TXT_CREDITS"); //stub
 }
 
 //3561C
 i16 display_credits_prg(u32 a1) {
+    print_once("Not implemented: display_credits_prg");
     return 0; //stub
 }
 
 //35680
 void display_anim_victoire(void) {
-    //stub
+    print_once("Not implemented: display_anim_victoire"); //stub
 }
 
 //356B8
 void DISPLAY_CREDITS(void) {
-    //stub
+    print_once("Not implemented: DISPLAY_CREDITS"); //stub
 }
 
 //3572C
 void DISPLAY_CREDITS_MENU(void) {
-    //stub
+    print_once("Not implemented: DISPLAY_CREDITS_MENU"); //stub
 }
 
 //357E4
 void DISPLAY_PROTOON_BACK(void) {
-    //stub
+    print_once("Not implemented: DISPLAY_PROTOON_BACK"); //stub
 }
 
 //35850
 void DO_ANIM_VICTOIRE(void) {
-    //stub
+    print_once("Not implemented: DO_ANIM_VICTOIRE"); //stub
 }
 
 //35878
 void DO_VICTOIRE(void) {
-    //stub
+    print_once("Not implemented: DO_VICTOIRE"); //stub
 }
 
 //35908
 void InitDemoJeu(void) {
-    //stub
+    print_once("Not implemented: InitDemoJeu"); //stub
 }
 
 //35B78
 void FinDemoJeu(void) {
-    //stub
+    print_once("Not implemented: FinDemoJeu"); //stub
 }
 
 //35C64
@@ -578,27 +579,27 @@ void START_LEVEL_ANIM(void) {
 
 //35DB4
 void PouvoirsParMap(void) {
-    //stub
+    print_once("Not implemented: PouvoirsParMap"); //stub
 }
 
 //35F70
 void sub_35F70(void) {
-    //stub
+    print_once("Not implemented: sub_35F70"); //stub
 }
 
 //3609C
 void sub_3609C(void) {
-    //stub
+    print_once("Not implemented: sub_3609C"); //stub
 }
 
 //36150
 void sub_36150(void) {
-    //stub
+    print_once("Not implemented: sub_36150"); //stub
 }
 
 //3622C
 void FIRST_INIT(void) {
-    init_memory(&temp_mem_buf, TailleMainMemTmp); // NOTE: need to figure out when (if ever) this gets freed?
+    init_memory(&temp_mem_buf, TailleMainMemTmp); // NOTE: gets freed in END_GAME()
     InitTextMode();
     freeze = 0;
     record.is_recording = 0;
@@ -663,7 +664,7 @@ void LoadPlan3InVignet(mem_t* mem, i32 resource_id) {
 
 //364E8
 void DISPLAY_AND_FADE_PLAN3(void) {
-    //stub
+    print_once("Not implemented: DISPLAY_AND_FADE_PLAN3"); //stub
 }
 
 //36554
@@ -721,7 +722,7 @@ void LOAD_CONTINUE_SCREEN(mem_t* mem) {
 
 //36644
 void DISPLAY_FOND_CONTINUE(void) {
-    //stub
+    print_once("Not implemented: DISPLAY_FOND_CONTINUE"); //stub
 }
 
 //36678
@@ -780,7 +781,7 @@ void LOAD_VIGNET_GAME(mem_t* mem) {
 
 //3681C
 void LOAD_CREDITS_VIGNET(i32 a1, i32 a2, i16 a3) {
-    //stub
+    print_once("Not implemented: LOAD_CREDITS_VIGNET"); //stub
 }
 
 //36880
@@ -886,18 +887,18 @@ void test_EXIT(void) {
             PROC_EXIT = 1;
         }
     } else {
-        //stub
+        print_once("Not implemented: test_EXIT"); //stub
     }
 }
 
 //36BF8
 void test_Keyb_on_wldmap(void) {
-    //stub
+    print_once("Not implemented: test_Keyb_on_wldmap"); //stub
 }
 
 //36C44
 void Keyflush(void) {
-    //stub
+    print_once("Not implemented: Keyflush"); //stub
 }
 
 //36C54
@@ -966,7 +967,27 @@ void FIN_DEAD_LOOP(void) {
 
 //36D90
 void END_GAME(void) {
-    //stub
+    //sub_6BB48();
+    InitTextMode();
+    if (record.is_recording) {
+        Reset_Clavier();
+        record.is_finished = 1;
+        do_record(&record); // TODO
+    }
+    if (fin_du_jeu) {
+        block_free(main_mem_level);
+        block_free(main_mem_world);
+        block_free(main_mem_sprite);
+        block_free(main_mem_fix);
+        //free(DrawBufferNormal); // not needed, backed by global_app_state.game.draw_buffer.memory
+        if (FondAutorise != 2) {
+            free(EffetBufferNormal);
+        }
+
+    }
+    free(temp_mem_buf);
+    //sub_6BB48();
+    //exit(0);
 }
 
 //36E1C
@@ -1027,22 +1048,22 @@ void END_WORLD_VIGNET(void) {
 
 //36FAC
 void sub_36FAC(void) {
-    //stub
+    print_once("Not implemented: sub_36FAC"); //stub
 }
 
 //36FBB
 void sub_36FBB(void) {
-    //stub
+    print_once("Not implemented: sub_36FBB"); //stub
 }
 
 //370E8
 void sub_370E8(void) {
-    //stub
+    print_once("Not implemented: sub_370E8"); //stub
 }
 
 //37134
 void sub_37134(void) {
-    //stub
+    print_once("Not implemented: sub_37134"); //stub
 }
 
 //37150
@@ -1057,7 +1078,7 @@ bool ValidButPressed(void) {
     if (nb_fade == 0) {
         result = (joy_buttonA1 == 1 || (input_mode == 1 && (TOUCHE(SC_ENTER) || TOUCHE(SC_SPACE))));
     }
-    return result; //stub
+    return result;
 }
 
 //371A4
@@ -1071,17 +1092,29 @@ bool StartButPressed(void) {
 
 //371D4
 bool PauseButPressed(void) {
-    return false; //stub
+    if (input_mode == 1) {
+        return TOUCHE(SC_NUMLOCK);
+    } else {
+        return 0; //TODO: stub
+    }
 }
 
 //37210
 bool ExitButPressed(void) {
-    return false; //stub
+    if (input_mode == 1) {
+        return TOUCHE(SC_ESCAPE);
+    } else {
+        return 0; //TODO: stub
+    }
 }
 
 //37248
 bool CancelButPressed(void) {
-    return false; //stub
+    if (input_mode == 1) {
+        return TOUCHE(SC_TAB);
+    } else {
+        return 0; //TODO: stub
+    }
 }
 
 //37280

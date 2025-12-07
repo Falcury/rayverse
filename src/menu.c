@@ -97,7 +97,7 @@ void INIT_FND(void) {
 
 //491D4
 void calc_off_fnd(void) {
-    //stub
+    print_once("Not implemented: calc_off_fnd"); //stub
 }
 
 i8 byte_49290[4] = {0, 0, 0, 0}; //49290
@@ -202,7 +202,7 @@ void LOAD_CONFIG(void) {
 
 //49638
 void NewFrequency(u8 a1) {
-    //stub
+    print_once("Not implemented: NewFrequency"); //stub
 }
 
 //49720
@@ -221,12 +221,13 @@ void InitClipping(void) {
 
 //4980C
 bool IsBackgroundOn(void) {
+    print_once("Not implemented: IsBackgroundOn");
     return true; //stub
 }
 
 //498A4
 void init_key2txt(void) {
-    //stub
+    print_once("Not implemented: init_key2txt"); //stub
 }
 
 //49998
@@ -323,7 +324,7 @@ void DO_OPTIONS_IN_GAME(void) {
         new_level = 1;
         GoMenu = 0;
     }
-    //stub
+    print_once("Not implemented: DO_OPTIONS_IN_GAME"); //stub
 }
 
 //49E98
@@ -813,162 +814,162 @@ void END_OPTIONS_SCREEN(void) {
 
 //4B3EC
 void INIT_KEY_SCREEN(void) {
-    //stub
+    print_once("Not implemented: INIT_KEY_SCREEN"); //stub
 }
 
 //4B514
 void INIT_AFFICHE_KEY_SCREEN(void) {
-    //stub
+    print_once("Not implemented: INIT_AFFICHE_KEY_SCREEN"); //stub
 }
 
 //4B8A4
 void AFFICHE_KEY_SCREEN(void) {
-    //stub
+    print_once("Not implemented: AFFICHE_KEY_SCREEN"); //stub
 }
 
 //4BACC
 void DO_COMMANDE_KEY(void) {
-    //stub
+    print_once("Not implemented: DO_COMMANDE_KEY"); //stub
 }
 
 //4BD50
 void END_KEY_SCREEN(void) {
-    //stub
+    print_once("Not implemented: END_KEY_SCREEN"); //stub
 }
 
 //4BDA4
 void INIT_BUTTON_SCREEN(void) {
-    //stub
+    print_once("Not implemented: INIT_BUTTON_SCREEN"); //stub
 }
 
 //4BE04
 void INIT_AFFICHE_BUTTON_SCREEN(void) {
-    //stub
+    print_once("Not implemented: INIT_AFFICHE_BUTTON_SCREEN"); //stub
 }
 
 //4BF60
 void AFFICHE_BUTTON_JOYSTICK(void) {
-    //stub
+    print_once("Not implemented: AFFICHE_BUTTON_JOYSTICK"); //stub
 }
 
 //4C138
 void DO_BUTTON_COMMANDE(void) {
-    //stub
+    print_once("Not implemented: DO_BUTTON_COMMANDE"); //stub
 }
 
 //4C390
 void END_BUTTON_COMMAND(void) {
-    //stub
+    print_once("Not implemented: END_BUTTON_COMMAND"); //stub
 }
 
 //4C3D0
 void INIT_PAD_SCREEN(void) {
-    //stub
+    print_once("Not implemented: INIT_PAD_SCREEN"); //stub
 }
 
 //4C4D0
 void INIT_AFFICHE_PAD_SCREEN(void) {
-    //stub
+    print_once("Not implemented: INIT_AFFICHE_PAD_SCREEN"); //stub
 }
 
 //4C854
 void AFFICHE_PAD_SCREEN(void) {
-    //stub
+    print_once("Not implemented: AFFICHE_PAD_SCREEN"); //stub
 }
 
 //4C9D8
 void DO_COMMANDE_PAD(void) {
-    //stub
+    print_once("Not implemented: DO_COMMANDE_PAD"); //stub
 }
 
 //4CD38
 void END_PAD_SCREEN(void) {
-    //stub
+    print_once("Not implemented: END_PAD_SCREEN"); //stub
 }
 
 //4CD94
 void InitParamGraphicsScreen(void) {
-    //stub
+    print_once("Not implemented: InitParamGraphicsScreen"); //stub
 }
 
 //4D094
 void INIT_GRAPHIC_SCREEN(void) {
-    //stub
+    print_once("Not implemented: INIT_GRAPHIC_SCREEN"); //stub
 }
 
 //4D178
 void INIT_AFFICHE_GRAPHIC_SCREEN(void) {
-    //stub
+    print_once("Not implemented: INIT_AFFICHE_GRAPHIC_SCREEN"); //stub
 }
 
 //4D55C
 void AFFICHE_GRAPHIC_SCREEN(void) {
-    //stub
+    print_once("Not implemented: AFFICHE_GRAPHIC_SCREEN"); //stub
 }
 
 //4DA8C
 void DO_COMMANDE_GRAPHIC(void) {
-    //stub
+    print_once("Not implemented: DO_COMMANDE_GRAPHIC"); //stub
 }
 
 //4DF88
 void END_GRAPHIC_SCREEN(void) {
-    //stub
+    print_once("Not implemented: END_GRAPHIC_SCREEN"); //stub
 }
 
 //4E0A0
 void INIT_VIDEOMODE_SCREEN(void) {
-    //stub
+    print_once("Not implemented: INIT_VIDEOMODE_SCREEN"); //stub
 }
 
 //4E1CC
 void INIT_AFFICHE_VIDEOMODE_SCREEN(void) {
-    //stub
+    print_once("Not implemented: INIT_AFFICHE_VIDEOMODE_SCREEN"); //stub
 }
 
 //4E470
 void AFFICHE_VIDEOMODE_SCREEN(void) {
-    //stub
+    print_once("Not implemented: AFFICHE_VIDEOMODE_SCREEN"); //stub
 }
 
 //4E574
 void DO_COMMANDE_VIDEOMODE(void) {
-    //stub
+    print_once("Not implemented: DO_COMMANDE_VIDEOMODE"); //stub
 }
 
 //4E708
 void END_VIDEOMODE_SCREEN(void) {
-    //stub
+    print_once("Not implemented: END_VIDEOMODE_SCREEN"); //stub
 }
 
 //4E790
 void INIT_CALIBRATE_JOYSTICK(void) {
-    //stub
+    print_once("Not implemented: INIT_CALIBRATE_JOYSTICK"); //stub
 }
 
 //4E804
 void AFFICHE_CALIBRATE_JOYSTICK(void) {
-    //stub
+    print_once("Not implemented: AFFICHE_CALIBRATE_JOYSTICK"); //stub
 }
 
 //4E99C
 void calibrate_joystick_prg(void) {
-    //stub
+    print_once("Not implemented: calibrate_joystick_prg"); //stub
 }
 
 //4E9E8
 void AFFICHE_CENTER_JOYSTICK(void) {
-    //stub
+    print_once("Not implemented: AFFICHE_CENTER_JOYSTICK"); //stub
 }
 
 //4EAE8
 void center_joystick_prg(void) {
-    //stub
+    print_once("Not implemented: center_joystick_prg"); //stub
 }
 
 //4EB28
 void MAIN_CALIBRATE_JOYSTICK(void) {
-    //stub
+    print_once("Not implemented: MAIN_CALIBRATE_JOYSTICK"); //stub
 }
 
 //4F17C
@@ -1026,7 +1027,7 @@ i16 menu_prg(u32 a1) {
 
 //4F2E0
 void DO_INTER_MENU(void) {
-    //stub
+    print_once("Not implemented: DO_INTER_MENU"); //stub
 }
 
 //4F318
@@ -1085,6 +1086,7 @@ void new_key(void) {
 
 //4F50C
 i32 CalcSpeed(void) {
+    print_once("Not implemented: CalcSpeed");
     return 0; //stub
 }
 
@@ -1313,31 +1315,32 @@ u8 confirmation_msg(u8 which_message) {
 
 //4FEF0
 void SYNCHRO_LOOP_PALETTE(void* func) {
-    //stub
+    print_once("Not implemented: SYNCHRO_LOOP_PALETTE"); //stub
 }
 
 //4FF3C
 void apparition_prg(void) {
-    //stub
+    print_once("Not implemented: apparition_prg"); //stub
 }
 
 //500FC
 void fondu_prg(void) {
-    //stub
+    print_once("Not implemented: fondu_prg"); //stub
 }
 
 //501E8
 void change_couleur_prg(void) {
-    //stub
+    print_once("Not implemented: change_couleur_prg"); //stub
 }
 
 //502FC
 void FonduOption(i16 x, i16 y, i16 w, i16 h, u8 a5) {
-    //stub
+    print_once("Not implemented: FonduOption"); //stub
 }
 
 //50A38
 i16 FonduPixel_prg(u32 a1) {
+    print_once("Not implemented: FonduPixel_prg");
     return false; //stub
 }
 

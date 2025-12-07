@@ -103,7 +103,7 @@ u8 TestKeyAction(void) {
 i32 leftjoy(void) {
     i32 result = 0;
     if (Main_Control == 2) {
-        //stub?
+        print_once("Not implemented: leftjoy"); //stub?
     }
     if (input_mode == 1) {
         result |= (TOUCHE(key_left) && !(TOUCHE(key_right)));
@@ -118,7 +118,7 @@ i32 leftjoy(void) {
 i32 rightjoy(void) {
     i32 result = 0;
     if (Main_Control == 2) {
-        //stub?
+        print_once("Not implemented: rightjoy"); //stub?
     }
     if (input_mode == 1) {
         result |= (TOUCHE(key_right) && !(TOUCHE(key_left)));
@@ -133,7 +133,7 @@ i32 rightjoy(void) {
 i32 downjoy(void) {
     i32 result = 0;
     if (Main_Control == 2) {
-        //stub?
+        print_once("Not implemented: downjoy"); //stub?
     }
     if (input_mode == 1) {
         result |= (TOUCHE(key_down) && !(TOUCHE(key_up)));
@@ -148,7 +148,7 @@ i32 downjoy(void) {
 i32 upjoy(void) {
     i32 result = 0;
     if (Main_Control == 2) {
-        //stub?
+        print_once("Not implemented: upjoy"); //stub?
     }
     if (input_mode == 1) {
         result |= (TOUCHE(key_up) && !(TOUCHE(key_down)));
@@ -255,52 +255,52 @@ void readinput(void) {
 
 //4213C
 void readinput_calibrate_joystick(void) {
-    //stub
+    print_once("Not implemented: readinput_calibrate_joystick"); //stub
 }
 
 //42184
 void readinput_center_joystick(void) {
-    //stub
+    print_once("Not implemented: readinput_center_joystick"); //stub
 }
 
 //421C0
 void update_pad_limits(i16* xmax, i16* xmin, i16* ymax, i16* ymin, i16* xcentre, i16* ycentre) {
-    //stub
+    print_once("Not implemented: update_pad_limits"); //stub
 }
 
 //4225C
 void sub_4225C(void) {
-    //stub
+    print_once("Not implemented: sub_4225C"); //stub
 }
 
 //422C8
 void read_record(const char* filename) {
-    //stub
+    print_once("Not implemented: read_record"); //stub
 }
 
 //42328
 void load_record(void) {
-    //stub
+    print_once("Not implemented: load_record"); //stub
 }
 
 //42408
 void sub_42408(u8 a1) {
-    //stub
+    print_once("Not implemented: sub_42408"); //stub
 }
 
 //42490
 void do_record(record_t* rec) {
-    //stub
+    print_once("Not implemented: do_record"); //stub
 }
 
 //4259C
 void keyboard_interrupt_handler(void) {
-    //stub
+    print_once("Not implemented: keyboard_interrupt_handler"); //stub
 }
 
 //425AB
 void sub_425AB(void) {
-    //stub
+    print_once("Not implemented: sub_425AB"); //stub
 }
 
 //4270C
@@ -317,15 +317,16 @@ void RESET_ALL_TOUCHE(void) {
 
 //42734
 void Init_Clavier(void) {
-    //stub
+    print_once("Not implemented: Init_Clavier"); //stub
 }
 
 //42774
 void Reset_Clavier(void) {
-    //stub
+    print_once("Not implemented: Reset_Clavier"); //stub
 }
 
 //42790
 bool JoystickPresent(void) {
+    print_once("Not implemented: JoystickPresent");
     return false; //stub
 }

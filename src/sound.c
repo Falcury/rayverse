@@ -131,10 +131,12 @@ i16 play_digi_snd(snd_t* snd) {
 }
 
 void lock_audio(void) {
+    print_once("Not implemented: lock_audio");
     //stub // TODO: prevent reading after sound banks have been freed (need to acquire a lock!)
 }
 
 void unlock_audio(void) {
+    print_once("Not implemented: unlock_audio");
     //stub // TODO: prevent reading after sound banks have been freed (need to acquire a lock!)
 }
 
@@ -688,22 +690,22 @@ void PlaySnd_old(i16 sound_id) {
 
 //72A1C
 void setvol(i16 obj_id) {
-    //stub
+    print_once("Not implemented: setvol"); //stub
 }
 
 //72E74
 void setpan(i16 obj_id) {
-    //stub
+    print_once("Not implemented: setpan"); //stub
 }
 
 //72F38
 void manage_snd(void) {
-    //stub
+    print_once("Not implemented: manage_snd"); //stub
 }
 
 //730DC
 void mute_snd_bouclant(void) {
-    //stub
+    print_once("Not implemented: mute_snd_bouclant"); //stub
 }
 
 //73138
@@ -711,7 +713,7 @@ void mute_snd(void) {
     for (i32 i = 0; i < COUNT(voice_table); ++i) {
         KeyVol(i, 0, 0);
     }
-    //stub
+    print_once("Not implemented: mute_snd"); //stub
 }
 
 //73164
@@ -790,10 +792,10 @@ void TestCdLoop(void) {
 //73384
 void InitMusic(void) {
     MusicCdActive = 1;
-    //stub
+    print_once("Not implemented: InitMusic"); //stub
 }
 
 //733BC
 void DoneMusic(void) {
-    //stub
+    print_once("Not implemented: DoneMusic"); //stub
 }

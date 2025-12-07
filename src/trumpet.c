@@ -1,17 +1,17 @@
 
 //7E420
 void DO_TRP_COMMAND(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_TRP_COMMAND"); //stub
 }
 
 //7E4C8
 void trompetteWind(obj_t* obj, u8 a2) {
-    //stub
+    print_once("Not implemented: trompetteWind"); //stub
 }
 
 //7E650
 void DO_TRP_ATTAK(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DO_TRP_ATTAK"); //stub
 }
 
 //7E69C
@@ -23,10 +23,10 @@ void trompetteAtter(obj_t* obj) {
 
 //7E6BC
 void DoTrumpetPoingCollision(obj_t* obj, i16 sprite) {
-    //stub
+    print_once("Not implemented: DoTrumpetPoingCollision"); //stub
 }
 
 //7E72C
 void DoTrompetteRaymanZDD(obj_t* obj) {
-    //stub
+    print_once("Not implemented: DoTrompetteRaymanZDD"); //stub
 }

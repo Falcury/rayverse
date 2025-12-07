@@ -222,7 +222,7 @@ void InitMenuPalette(void) {
 //2494C
 void CaptureVideo(u8* source_buf, u8* dest_buf, u8 grayscale) {
     if (ModeVideoActuel == MODE_X) {
-        //stub
+        print_once("Not implemented: CaptureVideo"); //stub
     } else {
         if (grayscale) {
             u8* source_pos = source_buf;
@@ -266,12 +266,12 @@ void DrawBlackBorderBox(i16 x, i16 y, i16 height, i16 width, u8 a5) {
 
 //24BF0
 void InitGauge(void) {
-    //stub
+    print_once("Not implemented: InitGauge"); //stub
 }
 
 //24C54
 void gauge(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
-    //stub
+    print_once("Not implemented: gauge"); //stub
 }
 
 //24DCC

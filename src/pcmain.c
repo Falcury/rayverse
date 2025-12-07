@@ -1,7 +1,7 @@
 
 //16F80
 void InitData(void) {
-    //stub
+    print_once("Not implemented: InitData"); //stub
 }
 
 //17084
@@ -201,22 +201,22 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
 
 //176A8
 void DO_GROS_MOTEUR_X(u8* a1) {
-    //stub
+    print_once("Not implemented: DO_GROS_MOTEUR_X"); //stub
 }
 
 //177E0
 void DO_MAIN_LOOP_PC_X(void) {
-    //stub
+    print_once("Not implemented: DO_MAIN_LOOP_PC_X"); //stub
 }
 
 //17CB8
 void init_arg(i32 argc, char** argv) {
-    //stub
+    print_once("Not implemented: init_arg"); //stub
 }
 
 //17DD8
 void PrintDosInfo(void) {
-    //stub
+    print_once("Not implemented: PrintDosInfo"); //stub
 }
 
 //17F00
@@ -293,7 +293,7 @@ void PcMain(void) {
     DO_GROS_RAYMAN();
     INIT_EXTENSIONS();
     LOAD_CONFIG();
-    //init_cheats(); // stub
+    //init_cheats(); // stub //TODO
 
     NBRE_SAVE = 3;
 

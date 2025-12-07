@@ -384,7 +384,7 @@ void casse_brique_done(obj_t* obj);
 void DISPLAY_FIXE_CB(obj_t* obj);
 void DO_CB_BALL_COMMAND(obj_t* obj);
 void DO_CB_BRIK_COMMAND(obj_t* obj);
-void DO_RAY_CASSE_BRIQUE();
+void DO_RAY_CASSE_BRIQUE(void);
 
 // cage.c
 void DO_CAGE2(obj_t* obj);

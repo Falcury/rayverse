@@ -30,12 +30,6 @@ void SpriteWorldBlocksFree(mem_t* mem) {
 }
 
 
-// sub_1a3f0
-void display_in_game_text(const char* text, int unknown1, int x, int y, int unknown2) {
-    // stub
-}
-
-
 
 // Decodes and verifies xor-encoded data
 u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte) {

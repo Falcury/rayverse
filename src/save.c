@@ -549,7 +549,7 @@ void retrieveWorldInfoAccess(void) {
 
 //743C8
 void file_size(void) {
-    //stub
+    print_once("Not implemented: file_size"); //stub
 }
 
 //74400
@@ -695,6 +695,7 @@ bool LoadInfoGame(u8 which_save) {
 
 //74CC8
 bool SaveOptionsOnDisk(void) {
+    print_once("Not implemented: SaveOptionsOnDisk");
     return 0; //stub
 }
 
