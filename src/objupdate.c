@@ -731,7 +731,12 @@ void DoOneUpRaymanCollision(obj_t* obj) {
 
 //61D10
 void DoMorningStarPoingCollision(obj_t* obj, i16 sprite) {
-    print_once("Not implemented: DoMorningStarPoingCollision"); //stub
+    if (sprite == 4 && obj->sub_etat == 5) {
+        if (poing_obj->speed_x >= 0 && (poing_obj->speed_x > 0 || poing_obj->flags.flip_x))
+            set_sub_etat(obj, 9);
+        else
+            set_sub_etat(obj, 6);
+    }
 }
 
 //61D54
