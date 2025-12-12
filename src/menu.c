@@ -1300,6 +1300,7 @@ u8 confirmation_msg(u8 which_message) {
             rvb[0] = MenuPalette;
             INIT_FADE_IN();
             strncpy(to_display->text, language_txt[131], sizeof(to_display->text)); // /do you really want/to quit the game ?/ /
+            pAFFICHE_SCREEN = DISPLAY_FOND_MENU;
             INIT_TXT_BOX(to_display);
             display_box_msg_commande(to_display, DO_YESNOBIS);
             DO_FADE_OUT();

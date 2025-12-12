@@ -35,6 +35,15 @@ i32 playVideo_alt(const char* path, const char* filename, i32 a2) {
 
 //3B4D0
 void SWAP_BUFFERS(void) {
+    if (ModeVideoActuel == MODE_X) {
+        print_once("Not implemented: SWAP_BUFFERS"); //stub
+    } else {
+        draw_buffer = DrawBufferNormal;
+        display_buffer = DisplayBufferNormal;
+        if (Mode_Pad == 1 && Main_Control) {
+            Swap_And_Test_Joystick(display_buffer, DrawBufferNormal, 320, 200);
+        }
+    }
     print_once("Not implemented: SWAP_BUFFERS"); //stub
 }
 
@@ -99,18 +108,28 @@ void sub_3BEE0(i16 a1, i16 a2) {
 }
 
 //3C194
-void set_vga_frequency(u8 a1) {
-    print_once("Not implemented: set_vga_frequency"); //stub
+void set_vga_frequency(u8 freq) {
+    SetVideoRegister();
+    switch(freq) {
+        case 100:
+        case 80:
+        case 70:
+        case 60:
+        case 50:
+        default: break; //stub
+    }
+    VGA_FREQ = freq;
+    print_once_dos("Not implemented: set_vga_frequency"); //stub
 }
 
 //3C2D0
 void GetVideoRegister(void) {
-    print_once("Not implemented: GetVideoRegister"); //stub
+    print_once_dos("Not implemented: GetVideoRegister"); //stub
 }
 
 //3C34C
 void SetVideoRegister(void) {
-    print_once("Not implemented: SetVideoRegister"); //stub
+    print_once_dos("Not implemented: SetVideoRegister"); //stub
 }
 
 //3C3BC

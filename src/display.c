@@ -893,11 +893,24 @@ void test_EXIT(void) {
 
 //36BF8
 void test_Keyb_on_wldmap(void) {
-    print_once("Not implemented: test_Keyb_on_wldmap"); //stub
+    if (input_mode == 1) {
+        if (TOUCHE(SC_ESCAPE)) {
+            if (nb_fade == 0) {
+                if (confirmation_msg(4)) {
+                    PROC_EXIT = 1;
+                }
+            }
+        }
+    } else {
+        print_once("Not implemented: test_Keyb_on_wldmap"); //stub
+    }
 }
 
 //36C44
 void Keyflush(void) {
+//    while (is_input_char_available()) {
+//        getch_();
+//    }
     print_once("Not implemented: Keyflush"); //stub
 }
 

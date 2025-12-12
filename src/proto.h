@@ -669,7 +669,7 @@ void build_column_map(void* a1, i16 a2, i16 a3, i16 a4);
 void update_map(i16 a1, i16 a2, i16 a3, i16 a4);
 void sub_3BE20(void);
 void sub_3BEE0(i16 a1, i16 a2);
-void set_vga_frequency(u8 a1);
+void set_vga_frequency(u8 freq);
 void GetVideoRegister(void);
 void SetVideoRegister(void);
 void sub_3C3BC(void);

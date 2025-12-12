@@ -47,7 +47,7 @@ void block_copy(u8* source, u8* dest) {
 
 //147E7
 void textmode(void) {
-    print_once("Not implemented: textmode");
+    print_once_dos("Not implemented: textmode");
 }
 
 //14828
@@ -753,7 +753,7 @@ void DrawSpriteDiffNormal(i32 x /*eax*/, i32 y /*ebx*/, vec2b_t size /*ecx*/, u8
 
 //16E8A
 void synchro(void) {
-    print_once("Not implemented: synchro"); //stub
+    print_once_dos("Not implemented: synchro"); //stub
 }
 
 //16E9A
@@ -763,22 +763,22 @@ void endsynchro(void) {
 
 //16EAA
 void set_speaker_on(void) {
-    print_once("Not implemented: set_speaker_on"); //stub
+    print_once_dos("Not implemented: set_speaker_on"); //stub
 }
 
 //16EEA
 void set_speaker_off(void) {
-    print_once("Not implemented: set_speaker_off"); //stub
+    print_once_dos("Not implemented: set_speaker_off"); //stub
 }
 
 //16EFD
 void clock_ticks(void) {
-    print_once("Not implemented: clock_ticks"); //stub
+    print_once_dos("Not implemented: clock_ticks"); //stub
 }
 
 //16F5D
 void wait_until(i32 target /*ebx*/) {
-    print_once("Not implemented: wait_until"); //stub
+    print_once_dos("Not implemented: wait_until"); //stub
 }
 
 //16F78

@@ -2357,13 +2357,13 @@ void ACTIVE_L_EAU(obj_t* eau_obj) {
     s16 nb_objs;
 
     eau_obj->cmd_arg_1 = 130;
-    eau_obj->y = ymapmax + 230;
+    eau_obj->y = ymapmax + (SCREEN_HEIGHT - 10);
     eau_obj->x = xmap - eau_obj->offset_bx;
     i = 0;
     cur_obj = level.objects;
     nb_objs = level.nb_objects;
     while (i < nb_objs) {
-        if (cur_obj->type == TYPE_EAU && !cur_obj->is_active) {
+        if (cur_obj->type == TYPE_157_EAU && !cur_obj->is_active) {
             cur_obj->flags.flip_x = 0;
             cur_obj->speed_y = 0;
             cur_obj->speed_x = 0;
