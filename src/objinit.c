@@ -1000,7 +1000,7 @@ void special_flags_init(void) {
             if (num_world == world_1_jungle) {
                 flags[i] |= flags2_8_can_jump;
             } else {
-                flags[i] &= flags2_8_can_jump;
+                flags[i] &= ~flags2_8_can_jump;
             }
         }
     }
