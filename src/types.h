@@ -1363,6 +1363,12 @@ enum ray_mode_enum {
     MODE_5_CASSE_BRIQUE = 5,
 };
 
+enum change_anim_mode_enum {
+    ANIMMODE_NONE = 0,
+    ANIMMODE_RESET_IF_NEW = 1,
+    ANIMMODE_RESET = 2,
+};
+
 enum sound_enum {
 	sound_0 = 0,
 	sound_1 = 1,

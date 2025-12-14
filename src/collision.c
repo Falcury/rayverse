@@ -1980,7 +1980,7 @@ void DO_ROLL_EYES(obj_t* obj) {
                 }
                 break;
         }
-        obj->change_anim_mode = 0;
+        obj->change_anim_mode = ANIMMODE_NONE;
     }
     diff_x = ray.x - obj->x;
     diff_y = ray.y - obj->y;

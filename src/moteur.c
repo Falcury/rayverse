@@ -543,7 +543,7 @@ void DO_ANIM(obj_t* obj) {
     }
 
     anim_t* anim = obj->animations + obj->anim_index;
-    if ((obj->change_anim_mode == 1 && obj->anim_index != prev_anim_index) || obj->change_anim_mode == 2) {
+    if ((obj->change_anim_mode == ANIMMODE_RESET_IF_NEW && obj->anim_index != prev_anim_index) || obj->change_anim_mode == ANIMMODE_RESET) {
         if (eta->flags & eta_flags_0x10_anim_reverse) {
             obj->anim_frame = anim->frame_count - 1;
         } else {
@@ -576,7 +576,7 @@ void DO_ANIM(obj_t* obj) {
             PlaySnd(eta->sound_index, obj->id);
         }
     }
-    obj->change_anim_mode = 0;
+    obj->change_anim_mode = ANIMMODE_NONE;
     if (obj->flags.follow_enabled) {
         CALC_FOLLOW_SPRITE_SPEED(obj, anim, prev_anim, prev_anim_frame);
     }

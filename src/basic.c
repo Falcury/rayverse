@@ -152,19 +152,19 @@ void add_actobj(i16 a1) {
 
 // 1D808
 void set_sub_etat(obj_t* obj, u8 sub_etat) {
-    obj->change_anim_mode = 1;
+    obj->change_anim_mode = ANIMMODE_RESET_IF_NEW;
     obj->sub_etat = sub_etat;
 }
 
 // 1D810
 void set_main_etat(obj_t* obj, u8 etat) {
-    obj->change_anim_mode = 1;
+    obj->change_anim_mode = ANIMMODE_RESET_IF_NEW;
     obj->main_etat = etat;
 }
 
 // 1D818
 void set_main_and_sub_etat(obj_t* obj, u8 etat, u8 sub_etat) {
-    obj->change_anim_mode = 1;
+    obj->change_anim_mode = ANIMMODE_RESET_IF_NEW;
     obj->main_etat = etat;
     obj->sub_etat = sub_etat;
 }

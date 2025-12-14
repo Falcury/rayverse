@@ -759,7 +759,7 @@ obj_t* allocateExplosion(obj_t* obj) {
             calc_obj_pos(cur_obj);
             cur_obj->anim_index = get_eta(cur_obj)->anim_index;
             cur_obj->anim_frame = 0;
-            cur_obj->change_anim_mode = 2;
+            cur_obj->change_anim_mode = ANIMMODE_RESET;
             return cur_obj;
         }
     }

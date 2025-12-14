@@ -249,7 +249,7 @@ void obj_init(obj_t* obj) {
     obj->x = obj->init_x;
     obj->y = obj->init_y;
     obj->anim_index = obj->eta[obj->main_etat][obj->sub_etat].anim_index;
-    obj->change_anim_mode = 0; //ANIMMODE_NONE;
+    obj->change_anim_mode = ANIMMODE_NONE;
     obj->gravity_value_1 = 0;
     obj->gravity_value_2 = 0;
     obj->detect_zone_flag = 0;

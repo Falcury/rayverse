@@ -116,7 +116,7 @@ u8 handle_11_GO_LABEL(obj_t* obj) {
 
 //60C70
 u8 handle_19_GO_WAITSTATE(obj_t* obj) {
-    obj->change_anim_mode = 1;
+    obj->change_anim_mode = ANIMMODE_RESET_IF_NEW;
     obj->cmd = GO_WAIT;
     obj->nb_cmd = vblToEOA(obj, obj->nb_cmd) - 1;
     return 0;
