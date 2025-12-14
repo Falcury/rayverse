@@ -218,11 +218,19 @@ void process_message(HWND window, MSG message) {
 				} break;
 			}
             break;
-		}
+		} break;
+        case WM_LBUTTONDOWN: {
+            TranslateMessage(&message);
+            DispatchMessageA(&message);
+            global_app_state.was_client_leftclicked = true;
+            global_app_state.click_x = (i16)(message.lParam & 0xFFFF);
+            global_app_state.click_y = (i16)(message.lParam >> 16);
+        } break;
 	}
 }
 
 bool process_input(HWND window) {
+    global_app_state.was_client_leftclicked = false;
 	bool allow_idling = false;
 
 	HWND foreground_window = GetForegroundWindow();

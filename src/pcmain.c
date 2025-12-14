@@ -121,6 +121,11 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
             DISPLAY_FIXE(left_time);
         }
 
+        // debug cheat: full hit points
+        if (TOUCHE(SC_F2)) {
+            status_bar.max_hitp = 4;
+            ray.hit_points = 4;
+        }
         // DEBUG: display ray main and sub etat
         static bool display_debug_etat_info;
         if (TOUCHE(SC_F3)) {
@@ -128,9 +133,27 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
             display_debug_etat_info = true;
         }
         if (display_debug_etat_info) {
+            // display Rayman's main and sub etat at the top of the screen
             char debug_text[64];
             snprintf(debug_text, 64, "%d : %d", ray.main_etat, ray.sub_etat);
             display_text(debug_text, 132, 26, 1, 0);
+
+            // display basic info on the selected object
+            if (debug_obj_id != -1 && debug_obj_id < level.nb_objects) {
+                obj_t* obj = level.objects + debug_obj_id;
+                u8 color = 0;
+                i32 line = 0;
+                snprintf(debug_text, 64, "%d : type %d", obj->id, obj->type);
+                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
+                snprintf(debug_text, 64, "etat %d : %d", obj->main_etat, obj->sub_etat);
+                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
+//                snprintf(debug_text, 64, "hitp %d", obj->hit_points);
+//                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
+//                snprintf(debug_text, 64, "cmd %d", obj->cmd);
+//                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
+//                snprintf(debug_text, 64, "coll %d %d %d %d %d", obj->btypes[0], obj->btypes[1], obj->btypes[2], obj->btypes[3], obj->btypes[4]);
+//                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
+            }
         }
         // DEBUG: skip level
         if (TOUCHE(SC_F4)) {

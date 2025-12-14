@@ -66,6 +66,17 @@ void advance_frame(void) {
 #else
     linux_advance_frame(app_state);
 #endif
+
+    if (global_app_state.was_client_leftclicked) {
+        debug_clicked = true;
+        debug_click_x = ((float)global_app_state.click_x / (float)global_app_state.client_width) * (float)game->draw_buffer.width;
+        debug_click_y = ((float)global_app_state.click_y / (float)global_app_state.client_height) * (float)game->draw_buffer.height;
+        debug_click_obj_dist_sq = 1e9f;
+        printf("debug click: x = %f, y=%f\n", debug_click_x, debug_click_y);
+    } else {
+        debug_clicked = false;
+    }
+
 }
 
 

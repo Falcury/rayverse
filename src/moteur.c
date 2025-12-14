@@ -1475,6 +1475,9 @@ void DO_ONE_OBJECT(obj_t* obj) {
     }
     if (flags[ot] & flags1_0x80_read_cmd) {
         GET_OBJ_CMD(obj);
+//        if (obj->id == debug_obj_id) {
+//            printf("obj %d [%02d]: cmd %d\n", obj->id, obj->cmd_offset, obj->cmd);
+//        }
     } else {
         obj->cmd = GO_NOP;
     }

@@ -350,7 +350,20 @@ void debug_display_obj_id(obj_t* obj) {
     GET_ANIM_POS(obj, &spr_x, &spr_y, &spr_w, &spr_h);
     i32 x = spr_x + spr_w / 2;
     i32 y = spr_y + spr_h / 2;
-    display_text(text, x - xmap, y - ymap - 20, 2, 0);
+    i32 scr_x = x - xmap;
+    i32 scr_y = y - ymap;
+    display_text(text, scr_x, scr_y - 20, 2, obj->id == debug_obj_id ? 1 : 0);
+
+    // mouse click to select debug object
+    if (debug_clicked) {
+        float dx = debug_click_x - (float)scr_x;
+        float dy = debug_click_y - (float)scr_y;
+        float dist_sq = dx*dx + dy*dy;
+        if (dist_sq < debug_click_obj_dist_sq) {
+            debug_click_obj_dist_sq = dist_sq;
+            debug_obj_id = obj->id;
+        }
+    }
 }
 
 //19A2C

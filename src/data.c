@@ -4,6 +4,10 @@
 app_state_t global_app_state;
 game_state_t* global_game;
 bool is_debug_mode;
+bool debug_clicked;
+float debug_click_obj_dist_sq;
+float debug_click_x;
+float debug_click_y;
 i16 debug_obj_id = -1;
 
 // engine.cpp

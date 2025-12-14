@@ -178,13 +178,16 @@ typedef struct app_state_t {
 	i32 client_height;
     float display_scale_factor;
     float display_points_per_pixel;
-	bool running;
-	bool vsync_enabled;
-	i64 target_game_hz;
+    bool running;
+    bool vsync_enabled;
+    i64 target_game_hz;
 	float target_seconds_per_frame;
 	game_state_t game;
 	i64 flip_clock;
 	i64 frame_clock;
+    i16 click_x;
+    i16 click_y;
+    bool was_client_leftclicked;
 } app_state_t;
 
 
