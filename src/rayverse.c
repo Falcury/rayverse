@@ -87,6 +87,7 @@
 #include "cymbal.c"
 #include "dark.c"
 #include "display.c"
+#include "cheat.c"
 #include "effect.c"
 #include "fee.c"
 #include "frame.c"

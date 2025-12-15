@@ -316,7 +316,7 @@ void PcMain(void) {
     DO_GROS_RAYMAN();
     INIT_EXTENSIONS();
     LOAD_CONFIG();
-    //init_cheats(); // stub //TODO
+    PC_init_cheats();
 
     NBRE_SAVE = 3;
 

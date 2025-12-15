@@ -947,6 +947,82 @@ u8 dark_attaque = 0; //9637D
 u8 type_dark_attaque = 0; //9637E
 u8 ButtonReleasedSav3 = 0; //96380
 
+//96384
+u8 cheat_codes[327] = {
+#define _(x) x^0x96
+        _(SC_BACKSPACE), _(SC_L), _(SC_Q), _(SC_Y), _(SC_Q), _(SC_R), _(SC_B), _(SC_C), _(SC_TAB),
+        _(SC_BACKSPACE), _(SC_L), _(SC_A), _(SC_Y), _(SC_A), _(SC_R), _(SC_B), _(SC_C), _(SC_TAB), // [TAB]cbrayal[BACKSPACE] (enter breakout before defeating Mr Dark)
+
+        _(SC_BACKSPACE), _(SC_L), _(SC_E), _(SC_V), _(SC_E), _(SC_L), _(SC_Q), _(SC_TAB),
+        _(SC_BACKSPACE), _(SC_L), _(SC_E), _(SC_V), _(SC_E), _(SC_L), _(SC_A), _(SC_TAB), // [TAB]alevel[BACKSPACE] (level select)
+
+        _(SC_S), _(SC_N), _(SC_E), _(SC_L),
+        _(SC_S), _(SC_N), _(SC_E), _(SC_L), // lens (lens effect)
+
+        _(SC_0), _(SC_1), _(SC_A), _(SC_E), _(SC_R), _(SC_F),
+        _(SC_0), _(SC_1), _(SC_Q), _(SC_E), _(SC_R), _(SC_F), // freq10 (100 Hz refresh rate)
+
+        _(SC_0), _(SC_8), _(SC_A), _(SC_E), _(SC_R), _(SC_F),
+        _(SC_0), _(SC_8), _(SC_Q), _(SC_E), _(SC_R), _(SC_F), // freq80 (80 Hz refresh rate)
+
+        _(SC_BACKSPACE), _(SC_Y), _(SC_Q), _(SC_R), _(SC_E), _(SC_V), _(SC_O), _(0xb1), _(SC_TAB),
+        _(SC_BACKSPACE), _(SC_Y), _(SC_A), _(SC_R), _(SC_E), _(SC_V), _(SC_O), _(0xb1), _(SC_TAB), // [TAB];overay[BACKSPACE] (toggle free movement)
+
+        _(SC_Y), _(SC_Q), _(SC_R), _(SC_B), _(SC_C),
+        _(SC_Y), _(SC_A), _(SC_R), _(SC_B), _(SC_C), // cbray (enter breakout minigame after defeating Mr Dark)
+
+        _(SC_D), _(SC_L), _(SC_R), _(SC_O), _(SC_Z), _(SC_L), _(SC_Q),
+        _(SC_D), _(SC_L), _(SC_R), _(SC_O), _(SC_W), _(SC_L), _(SC_A), // alworld (unlock all levels)
+
+        _(SC_S), _(SC_E), _(SC_V), _(SC_I), _(SC_L), _(SC_Y), _(SC_Q), _(SC_R),
+        _(SC_S), _(SC_E), _(SC_V), _(SC_I), _(SC_L), _(SC_Y), _(SC_A), _(SC_R), // raylives (99 lives)
+
+        _(SC_R), _(SC_E), _(SC_Z), _(SC_O), _(SC_P),
+        _(SC_R), _(SC_E), _(SC_W), _(SC_O), _(SC_P), // power (all powers)
+
+        _(SC_T), _(SC_N), _(SC_I), _(SC_O), _(SC_P), _(SC_Y), _(SC_Q), _(SC_R),
+        _(SC_T), _(SC_N), _(SC_I), _(SC_O), _(SC_P), _(SC_Y), _(SC_A), _(SC_R), // raypoint (full health)
+
+        _(SC_T), _(SC_S), _(SC_I), _(SC_F), _(SC_D), _(SC_L), _(SC_O), _(SC_G),
+        _(SC_T), _(SC_S), _(SC_I), _(SC_F), _(SC_D), _(SC_L), _(SC_O), _(SC_G), //goldfist (all fist powerups)
+
+        _(SC_W), _(SC_I), _(SC_Z), _(SC_Y), _(SC_Q), _(SC_R),
+        _(SC_Z), _(SC_I), _(SC_W), _(SC_Y), _(SC_A), _(SC_R), //raywiz (10 tings)
+
+        _(SC_P), _(SC_Q), _(0xb1), _(SC_N), _(SC_I), _(SC_Z),
+        _(SC_P), _(SC_A), _(SC_M), _(SC_N), _(SC_I), _(SC_W), //winmap (skip level)
+
+        _(SC_R), _(SC_E), _(SC_I), _(SC_V), _(SC_I), _(SC_L), _(SC_O), _(SC_TAB),
+        _(SC_R), _(SC_E), _(SC_I), _(SC_V), _(SC_I), _(SC_L), _(SC_O), _(SC_TAB), //[TAB]olivier (enter breakout after defeating Mr Dark)
+
+        _(SC_S), _(SC_I), _(SC_O), _(SC_C), _(SC_N), _(SC_Q), _(SC_R), _(SC_F), _(SC_TAB),
+        _(SC_S), _(SC_I), _(SC_O), _(SC_C), _(SC_N), _(SC_A), _(SC_R), _(SC_F), _(SC_TAB), //[TAB]francois (unlock all levels)
+
+        _(SC_D), _(SC_N), _(SC_Q), _(SC_R), _(SC_T), _(SC_R), _(SC_E), _(SC_B), _(SC_TAB),
+        _(SC_D), _(SC_N), _(SC_A), _(SC_R), _(SC_T), _(SC_R), _(SC_E), _(SC_B), _(SC_TAB), //[TAB]bertrand (99 lives)
+
+        _(SC_T), _(SC_I), _(SC_O), _(SC_N), _(SC_E), _(SC_B), _(SC_TAB),
+        _(SC_T), _(SC_I), _(SC_O), _(SC_N), _(SC_E), _(SC_B), _(SC_TAB), //[TAB]benoit (all powers)
+
+        _(SC_T), _(SC_S), _(SC_I), _(SC_R), _(SC_H), _(SC_C), _(SC_TAB),
+        _(SC_T), _(SC_S), _(SC_I), _(SC_R), _(SC_H), _(SC_C), _(SC_TAB), //[TAB]christ (full health)
+
+        _(SC_E), _(SC_N), _(SC_I), _(SC_O), _(SC_T), _(SC_N), _(SC_Q), _(SC_TAB),
+        _(SC_E), _(SC_N), _(SC_I), _(SC_O), _(SC_T), _(SC_N), _(SC_A), _(SC_TAB), //[TAB]antoine (all fist powerups)
+
+        _(SC_O), _(SC_J), _(SC_O), _(SC_J), _(SC_TAB),
+        _(SC_O), _(SC_J), _(SC_O), _(SC_J), _(SC_TAB), //[TAB]jojo (10 tings)
+
+        _(SC_L), _(SC_I), _(SC_R), _(SC_Y), _(SC_C), _(SC_TAB),
+        _(SC_L), _(SC_I), _(SC_R), _(SC_Y), _(SC_C), _(SC_TAB), // [TAB]cyril (skip level)
+
+        _(0xb1), _(SC_Q), _(SC_R), _(SC_G), _(SC_O), _(SC_R), _(SC_P), _(SC_TAB),
+        _(SC_M), _(SC_A), _(SC_R), _(SC_G), _(SC_O), _(SC_R), _(SC_P), _(SC_TAB), // [TAB]program (hidden message)
+
+        0, 0, 1,
+#undef _
+};
+
 u8 effect_choice; //964C9
 u8 byte_964CA; //964CA
 u8 effect_speed; //964CC

@@ -603,6 +603,12 @@ bool CancelButPressed(void);
 bool SelectButPressed(void);
 void ToDoAtExit(void);
 
+// cheat.c
+void PC_clear_text_input_buffer(void);
+void PC_init_cheats(void);
+void PC_do_cheats_in_world_map(void);
+void PC_do_cheats(void);
+
 // effect.c
 void sub_37B90(void);
 void sub_37C00(void);
