@@ -240,14 +240,14 @@ void FatalError(char* message);
 u8 sprite_of_ref(obj_t* obj, u8 a2);
 
 // bat.c
-void DO_BAT_FLASH(i16 a1, i16 a2);
+void DO_BAT_FLASH(i16 in_x, i16 in_y);
 void DO_BAT_LEFT_FLASH(obj_t* obj);
 void DO_BAT_RIGHT_FLASH(obj_t* obj);
 void DO_BAT_LEFT_RIGHT_FLASH(obj_t* obj);
 i16 bat_dir(obj_t* obj);
 void DO_BAT_COMMAND(obj_t* obj);
 void BAT_ray_in_zone(obj_t* obj);
-void DO_BAT_POING_COLLISION(obj_t* obj, i16 sprite);
+void DO_BAT_POING_COLLISION(obj_t* bat_obj, i16 sprite);
 i32 bat_get_eject_sens(obj_t* obj);
 
 // bbmont.c
