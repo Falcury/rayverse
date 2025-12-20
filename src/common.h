@@ -66,9 +66,9 @@ static inline void fatal_error(void) {
 #define print_once(msg) do { static bool done; if (!done) { puts(msg); done = true; }} while (0)
 
 #ifdef NOTIFY_UNIMPLEMENTED_DOS_FUNCS
-#define print_once_dos print_once
+#define print_once_dos(msg) print_once(msg)
 #else
-#define print_once_dos
+#define print_once_dos(msg)
 #endif
 
 #define ASSERT(expr) do { if(!((expr))) fatal_error(); } while (0)

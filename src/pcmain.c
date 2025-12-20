@@ -153,6 +153,8 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
 //                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
 //                snprintf(debug_text, 64, "coll %d %d %d %d %d", obj->btypes[0], obj->btypes[1], obj->btypes[2], obj->btypes[3], obj->btypes[4]);
 //                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
+                snprintf(debug_text, 64, "x %d y %d", obj->x, obj->y);
+                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
             }
         }
         // DEBUG: skip level

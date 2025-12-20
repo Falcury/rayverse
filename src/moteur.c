@@ -1431,7 +1431,7 @@ void MOVE_OBJECT(obj_t* obj) {
                 i32 x1 = obj->x + obj->offset_bx;
                 i32 x2 = x1 + dx;
                 i32 y = obj->y + obj->offset_by - 8;
-                if ((!(block_flags[BTYP(x1, y) >> 4] & 0x10) && (block_flags[BTYP(x2, y) >> 4] & 0x10)) ||
+                if ((!(block_flags[BTYP(x1 >> 4, y >> 4)] & 0x10) && (block_flags[BTYP(x2 >> 4, y >> 4)] & 0x10)) ||
                         x2 < 0 || (x2 > xmapmax + SCREEN_WIDTH - 16)) {
                     dx = -dx;
                     obj->speed_x = -obj->speed_x;
@@ -1607,6 +1607,9 @@ void DO_OBJECTS(void) {
     for (i32 i = 0; i < actobj.num_active_objects; ++i) {
         obj_t* obj = level.objects + actobj.objects[i];
         ot = obj->type;
+        if (debug_obj_id == obj->id/* && obj->x <= -58*/) {
+            BREAKPOINT; // added for debugging
+        }
         if ((flags[ot] & flags3_8_switch_off) ||
             (ot == TYPE_161_WIZ && obj->sub_etat == 23) ||
             (ot == TYPE_83_EXPLOSION && obj->sub_etat == 1) ||
@@ -1627,6 +1630,9 @@ void DO_OBJECTS(void) {
 void MOVE_OBJECTS(void) {
     for (i32 i = 0; i < actobj.num_active_objects; ++i) {
         obj_t* obj = level.objects + actobj.objects[i];
+        if (debug_obj_id == obj->id/* && obj->x <= -58*/) {
+            BREAKPOINT; // added for debugging
+        }
         MOVE_OBJECT(obj);
     }
 }
