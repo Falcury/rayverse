@@ -663,7 +663,6 @@ void doMoskitoCommand(obj_t* obj) {
                                 )
                         {
                             fistAvoided = true;
-                            poing_obj = &level.objects[poing_obj_id];
                             if (
                                     obj->y + (obj->offset_by + obj->offset_hy) / 2 >
                                     poing_obj->y + (poing_obj->offset_by + poing_obj->offset_hy) / 2

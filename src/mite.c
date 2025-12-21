@@ -422,7 +422,6 @@ void DO_MIT_COMMAND(obj_t* obj) {
                 }
                 else if (poing.is_active || poing.is_charging)
                 {
-                    poing_obj = &level.objects[poing_obj_id];
                     mite_esquive_poing(obj, &esquive_x);
                     /* TODO: ??? readable ??? */
                     if (

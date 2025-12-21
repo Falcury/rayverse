@@ -2219,7 +2219,6 @@ void stackRay(void) {
     /* 63A6C 8018826C -O2 -msoft-float */
     ray_stack_t *cur;
     u8 active;
-    obj_t *poing_obj;
 
     cur = &rayStack[ray_pos_in_stack];
     cur->x_pos = ray.x;
@@ -2233,7 +2232,6 @@ void stackRay(void) {
     active = poing.is_active;
     cur->poing_is_active = active;
     if (active) {
-        poing_obj = &level.objects[poing_obj_id];
         cur->poing_x_pos = poing_obj->x;
         cur->poing_y_pos = poing_obj->y;
         cur->poing_anim_index = poing_obj->anim_index;

@@ -743,6 +743,18 @@ typedef struct sax_data_t {
     i16 field10_0x10;
 } sax_data_t;
 
+typedef struct bb_data_t {
+    s16 speed_x;
+    s16 field1_0x2;
+    u8 field2_0x4;
+    u8 saved_main_etat;
+    u8 saved_sub_etat;
+    s16 saved_cmd;
+    s16 sprite6_x;
+    s16 sprite6_y;
+    u8 field8_0xe;
+} bb_data_t;
+
 enum game_mode_video_enum {
     MODE_NORMAL = 0,
     MODE_X = 1,

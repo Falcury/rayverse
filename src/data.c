@@ -871,10 +871,10 @@ u8 Main_Control = 0; //95EB2
 i16 During_The_Menu = 1; //95EB4
 u8 OptionMusicCdActive = 1; //95EB6
 u8 text_input_buffer[9]; //95EB7
-u8 byte_95EC0; //95EC0
-u8 byte_95EC1; //95EC1
+u8 byte_95EC0 = 0; //95EC0
+u8 byte_95EC1 = 0; //95EC1
 
-i16 niveau; //95EC4
+i16 niveau = 0; //95EC4
 
 //95EC6
 i16 SerieAtakBB[85] = {
@@ -892,15 +892,15 @@ rgb_t PalPlasma[16] = {
         {45, 15, 48}, {40, 15, 51}, {35, 12, 53}, {35, 10, 56},
         {32, 7, 58}, {30, 5, 61}, {27, 5, 61}, {32, 7, 63},
 };
-i16 word_95FA0; //95FA0
-i16 word_95FA2; //95FA2
-i16 word_95FA4; //95FA4
-i16 word_95FA6; //95FA6
-i16 word_95FA8; //95FA8
-i16 word_95FAA; //95FAA
-i16 word_95FAC; //95FAC
-i16 word_95FAE; //95FAE
-i16 word_95FB0; //95FB0
+i16 word_95FA0 = 0; //95FA0
+i16 word_95FA2 = 0; //95FA2
+i16 word_95FA4 = 0; //95FA4
+i16 word_95FA6 = 0; //95FA6
+i16 word_95FA8 = 0; //95FA8
+i16 word_95FAA = 0; //95FAA
+i16 word_95FAC = 0; //95FAC
+i16 word_95FAE = 0; //95FAE
+i16 word_95FB0 = 0; //95FB0
 
 //95FB2
 rgb_t PalFire[16] = {
@@ -2285,7 +2285,15 @@ u8 nb_fix_eta; //CFA9A
 u8 nb_loaded_eta; //CFA9B
 u8 position_ray; //CFA9C
 i32 CompteurTrameAudio; //CFAA0
-
+bb_data_t bb1; //CFAA4
+i16 IndAtak; //CFAB4
+i16 YaDesChiens; //CFAB6
+i16 horlogeDog; //CFAB8
+i16 PierreDoitExploser; //CFABA
+i16 NextAtak; //CFABC
+i16 IndSerie; //CFABE
+i16 RMrepere; //CFAC0
+i16 PosPierre; //CFAC2
 i32 SpeedYLine[10]; //CFAC4
 i32 PosXLine[10]; //CFAEC
 i32 PosYLine[320]; //CFB14

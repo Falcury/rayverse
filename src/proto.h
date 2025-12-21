@@ -253,12 +253,12 @@ i32 bat_get_eject_sens(obj_t* obj);
 // bbmont.c
 void BB2_MARCHE(obj_t* obj);
 void DO_TOTEM_TOUCHE(obj_t* obj, i16 sprite);
-void DO_TOTEM_COMMAND(obj_t* obj);
+void DO_TOTEM_COMMAND(obj_t* tot_obj);
 void DO_TOTBT_REBOND(obj_t* obj);
 void DO_PI_EXPLOSION2(obj_t* obj);
 void DO_BBL_REBOND(obj_t* obj);
-void allocateDog(obj_t* obj);
-void allocateTir(obj_t* obj, i16 a2);
+void allocateDog(obj_t* bb1_obj);
+void allocateTir(obj_t* bb1_obj, i16 param_2);
 void CreateFirstBBL(void);
 void INIT_BBMONT(obj_t* obj);
 void DO_BBL_COMMAND(obj_t* obj);

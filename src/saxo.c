@@ -310,7 +310,7 @@ void BonneNote(obj_t* orig_obj) {
                     cur_obj->cmd_arg_1 = 2;
                 } else {
                     speed_x = 4;
-                    if (level.objects[poing_obj_id].speed_x < 0)
+                    if (poing_obj->speed_x < 0)
                         speed_x = -4;
                     cur_obj->speed_x = speed_x;
                     if (speed_x < 0)
@@ -356,7 +356,7 @@ void DO_NOTE_TOUCHEE(obj_t* obj, i16 sprite) {
             DO_EXPLOSE_NOTE1(obj);
             break;
         case TYPE_93_BONNE_NOTE:
-            obj->speed_x += level.objects[poing_obj_id].speed_x;
+            obj->speed_x += poing_obj->speed_x;
             obj->speed_y = -1;
             obj->gravity_value_2 = 255;
             obj->cmd_arg_1 = 1;
