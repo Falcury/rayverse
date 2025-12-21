@@ -129,8 +129,9 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
         // DEBUG: display ray main and sub etat
         static bool display_debug_etat_info;
         if (TOUCHE(SC_F3)) {
-            is_debug_mode = true;
-            display_debug_etat_info = true;
+            Touche_Enfoncee[SC_F3] = false;
+            is_debug_mode = !is_debug_mode;
+            display_debug_etat_info = is_debug_mode;
         }
         if (display_debug_etat_info) {
             // display Rayman's main and sub etat at the top of the screen
@@ -162,9 +163,20 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
             DO_FADE_OUT();
             ChangeLevel();
         }
-        //DEBUG: reset all bosses
+        // DEBUG: reset all bosses
         if (TOUCHE(SC_F5)) {
             memset(&finBosslevel, 0, sizeof(finBosslevel));
+        }
+        // DEBUG: freeze screen
+        if (TOUCHE(SC_F8)) {
+            Touche_Enfoncee[SC_F8] = false;
+            for (;;) {
+                advance_frame();
+                if (TOUCHE(SC_F8)) {
+                    Touche_Enfoncee[SC_F8] = false;
+                    break;
+                }
+            }
         }
 
         if (JeuCracker) {
