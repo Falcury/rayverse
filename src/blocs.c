@@ -460,7 +460,7 @@ void CALC_MOV_ON_BLOC(obj_t* obj) {
     /*var_s2_1 = saved_reg_s2;*/
     temp_a0 = obj->type * 4;
     if ((flags[obj->type] & flags2_1_check_tile_type) || obj->type == TYPE_23_RAYMAN) {
-        if (((flags[obj->type] & flags1_0x10_move_x) & 1) && obj->type != TYPE_23_RAYMAN) {
+        if ((flags[obj->type] & flags1_0x10_move_x) && obj->type != TYPE_23_RAYMAN) {
             speed_x = instantSpeed(obj->speed_x);
         } else {
             speed_x = obj->speed_x;
