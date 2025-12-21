@@ -1540,8 +1540,12 @@ void FatalError(char* message) {
 }
 
 //1FA00
-u8 sprite_of_ref(obj_t* obj, u8 a2) {
-    print_once("Not implemented: sprite_of_ref");
-    return 0; //stub
+u8 sprite_of_ref(obj_t* obj, u8 ref) {
+    for (i32 i = 0; i < obj->nb_sprites; ++i) {
+        if (obj->sprites[i].id == ref) {
+            return i;
+        }
+    }
+    return 0;
 }
 

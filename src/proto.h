@@ -237,7 +237,7 @@ void Change_Wait_Anim(void);
 void add_alwobj(obj_t* obj);
 void del_alwobj(i16 obj_index);
 void FatalError(char* message);
-u8 sprite_of_ref(obj_t* obj, u8 a2);
+u8 sprite_of_ref(obj_t* obj, u8 ref);
 
 // bat.c
 void DO_BAT_FLASH(i16 in_x, i16 in_y);

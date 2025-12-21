@@ -9,6 +9,7 @@ float debug_click_obj_dist_sq;
 float debug_click_x;
 float debug_click_y;
 i16 debug_obj_id = -1;
+i32 debug_obj_xmin = -32000;
 
 // engine.cpp
 

@@ -1607,7 +1607,7 @@ void DO_OBJECTS(void) {
     for (i32 i = 0; i < actobj.num_active_objects; ++i) {
         obj_t* obj = level.objects + actobj.objects[i];
         ot = obj->type;
-        if (debug_obj_id == obj->id/* && obj->x <= -58*/) {
+        if (debug_obj_id == obj->id && obj->x <= debug_obj_xmin) {
             BREAKPOINT; // added for debugging
         }
         if ((flags[ot] & flags3_8_switch_off) ||
@@ -1630,7 +1630,7 @@ void DO_OBJECTS(void) {
 void MOVE_OBJECTS(void) {
     for (i32 i = 0; i < actobj.num_active_objects; ++i) {
         obj_t* obj = level.objects + actobj.objects[i];
-        if (debug_obj_id == obj->id/* && obj->x <= -58*/) {
+        if (debug_obj_id == obj->id && obj->x <= debug_obj_xmin) {
             BREAKPOINT; // added for debugging
         }
         MOVE_OBJECT(obj);

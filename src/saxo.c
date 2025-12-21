@@ -36,6 +36,7 @@ void INIT_SAXO(obj_t* sax_obj) {
     sax_obj->flags.alive = 1;
     if (sax_obj->type == TYPE_74_SAXO) {
         sax_obj->hit_points = Sax.saved_hp;
+        setBossScrollLimits(sax_obj); // added in PC version
     }
     Sax.coup = 0;
     SaxMarche = 0;

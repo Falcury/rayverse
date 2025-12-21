@@ -171,9 +171,9 @@ void display_bar_boss(obj_t* boss_obj) {
 
             u8 sprite = 0;
             switch (boss_obj->type) {
-                case TYPE_MOSKITO: // TODO: sprite 44 for Bzzit doesn't seem to work?
+                case TYPE_MOSKITO:
                 case TYPE_MOSKITO2:
-                    sprite = 62;
+                    sprite = 44;
                     break;
                 case TYPE_BB1:
                 case TYPE_BB12:
@@ -201,6 +201,7 @@ void display_bar_boss(obj_t* boss_obj) {
                     break;
             }
             i16 display_y = Bloc_lim_H2 - 30 - extra_y_offset;
+            sprite = sprite_of_ref(poing_obj, sprite);
             display_sprite(poing_obj, sprite, extra_x_offset + Bloc_lim_W1 - 4, display_y, disp_mode);
 
         }
@@ -371,7 +372,10 @@ void DISPLAY_ALL_OBJECTS(void) {
     for (i32 current_display_prio = 7; current_display_prio >= 1; --current_display_prio) {
         for (i32 i = 0; i < actobj.num_active_objects; ++i) {
             obj_t* obj = level.objects + actobj.objects[i];
-            if (current_display_prio == 1 && flags[obj->type] & flags0_0x80_boss) {
+            if (obj->id == debug_obj_id) {
+                BREAKPOINT;
+            }
+            if (current_display_prio == 1 && (flags[obj->type] & flags0_0x80_boss)) {
                 display_bar_boss(obj);
             }
             if (obj->display_prio != current_display_prio) {
