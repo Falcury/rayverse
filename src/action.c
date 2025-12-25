@@ -1,53 +1,67 @@
 
 //18890
-void setBossReachingSpeeds(obj_t* obj, u8 horloge_ind, u8 unk_x, u8 unk_y) {
-    /* 66BE8 8018B3E8 -O2 -msoft-float */
-    s16 diff_x_1;
-    s16 diff_y_1;
-    s32 diff_x_abs;
-    s32 diff_y_abs;
-    s32 unk_1;
-    s16 unk_2;
-    s32 unk_3;
-    s32 unk_4;
-    s32 unk_5;
+void setBossReachingSpeeds(obj_t* obj, u8 timer, u8 accuracyX, u8 accuracyY) {
+    s16 xDiff;
+    s16 yDiff;
+    s32 xDist;
+    s32 yDist;
+    s32 speed;
+    s16 maxDist;
+    s32 dir;
+    s32 newSpeedX;
+    s32 newSpeedY;
 
-    if ((bossXToReach != -32000) && (bossYToReach != -32000))
-    {
-        unk_1 = obj->eta[obj->main_etat][obj->sub_etat].speed_x_right * (bossSpeedFactor + alternateBossSpeedFactor);
-        if (unk_1 < 0)
-            unk_1 += 0x3FFF;
-        unk_1 = unk_1 >> 0xE;
-        diff_x_1 = (bossXToReach - obj->x) * 16;
-        diff_y_1 = (bossYToReach - obj->y) * 16;
-        if (!(diff_x_1 == 0 && diff_y_1 == 0) && unk_1 != 0)
-        {
-            diff_x_abs = Abs(diff_x_1);
-            diff_y_abs = Abs(diff_y_1);
-            unk_2 = MAX(diff_x_abs, diff_y_abs);
-            unk_1 = MIN(unk_2, unk_1);
-            unk_3 = ashl32(unk_2, 4) / unk_1;
-            unk_4 = ashl32(diff_x_1, 4) / unk_3;
-            unk_5 = ashl32(diff_y_1, 4) / unk_3;
-            if (horloge[horloge_ind] == 0)
-            {
-                obj->speed_x = (obj->speed_x * (0xFF - unk_x) + (unk_4 * unk_x)) / 255;
-                if (obj->main_etat == 2)
-                {
-                    if (unk_1 >= diff_y_1)
-                        unk_y = 0xFF;
+    // Check if x and y targets have been set
+    if (bossXToReach != OBJ_INVALID_XY && bossYToReach != OBJ_INVALID_XY) {
+        // Get speed as fixed-point Q14
+        speed = OBJ_STATE(obj).speed_x_right * (bossSpeedFactor + alternateBossSpeedFactor);
+
+        // Convert to integer, while truncating to 0
+        if (speed < 0) {
+            speed += 0x3FFF;
+        }
+        speed = speed >> 0xE;
+        
+        // Get x and y differences as fixed-point Q4
+        xDiff = (bossXToReach - obj->x) * 16;
+        yDiff = (bossYToReach - obj->y) * 16;
+        
+        if (!(xDiff == 0 && yDiff == 0) && speed != 0) {
+            // Get the distance to reach
+            xDist = Abs(xDiff);
+            yDist = Abs(yDiff);
+            maxDist = MAX(xDist, yDist);
+
+            // Make sure speed isn't greater than the distance to move
+            speed = MIN(maxDist, speed);
+
+            // Get the direction as an integer
+            dir = ashl32(maxDist, 4) / speed;
+
+            // Get the new speed for x and y as integers
+            newSpeedX = ashl32(xDiff, 4) / dir;
+            newSpeedY = ashl32(yDiff, 4) / dir;
+
+            // Check the frame timer and change to new speed, using lerp based on accuracy value (0-255)
+            if (horloge[timer] == 0) {
+                obj->speed_x = LERP(obj->speed_x, newSpeedX, accuracyX, U8_MAX) / U8_MAX;
+
+                // If the object is in the air then optionally force full accuracy
+                if (obj->main_etat == OBJ_MAIN_ETAT_IN_AIR && speed >= yDiff) {
+	                accuracyY = U8_MAX;
                 }
-                obj->speed_y = (obj->speed_y * (0xFF - unk_y) + (unk_5 * unk_y)) / 255;
+
+                obj->speed_y = LERP(obj->speed_y, newSpeedY, accuracyY, U8_MAX) / U8_MAX;
             }
         }
-        else
-        {
+        // If no movement to perform then reset speed
+        else {
             obj->speed_x = 0;
             obj->speed_y = 0;
         }
     }
-    else
-    {
+    // If no x and y targets then reset speed
+    else {
         obj->speed_x = 0;
         obj->speed_y = 0;
     }

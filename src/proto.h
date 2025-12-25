@@ -108,7 +108,7 @@ int main_Ray(int argc, char** argv);
 void PcMain(void);
 
 // action.c
-void setBossReachingSpeeds(obj_t* obj, u8 horloge_ind, u8 unk_x, u8 unk_y);
+void setBossReachingSpeeds(obj_t* obj, u8 timer, u8 accuracyX, u8 accuracyY);
 i16 testActionEnd(obj_t* obj);
 i16 firstFloorBelow(obj_t* obj);
 void adjustBossScrollLocker(void);

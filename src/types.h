@@ -397,6 +397,10 @@ typedef struct obj_t {
 	u8 field_83;
 } obj_t;
 
+#define OBJ_INVALID_XY -32000
+#define OBJ_MAIN_ETAT_IN_AIR 2
+#define OBJ_STATE(obj) obj->eta[obj->main_etat][obj->sub_etat]
+
 typedef struct zdc_t {
     i16 x_pos;
     i16 y_pos;

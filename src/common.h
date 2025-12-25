@@ -34,6 +34,8 @@ typedef long long i64;
 typedef long long s64;
 #endif
 
+#define U8_MAX 0xFF
+
 #define COUNT(array) (sizeof(array) / sizeof((array)[0]))
 #define LEN COUNT
 #ifndef MIN
@@ -48,6 +50,8 @@ typedef long long s64;
 #define MIN_3(x, y) if (y < x) x = y;
 #define ABS(x) (x >= 0 ? (x) : -(x))
 #define SGN(x) (x >= 0 ? (x > 0 ? 1 : 0) : -1)
+
+#define LERP(a, b, f, m) ((a) * ((m) - (f)) + ((b) * (f)))
 
 #define pi32 3.14159265358979323846f
 #define two_pi32 (2.f*pi32)
