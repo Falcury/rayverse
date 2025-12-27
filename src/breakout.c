@@ -47,7 +47,7 @@ void exit_casse_brique2(void) {
 }
 
 //26AD0
-i32 get_speed_ball(void) {
+s32 get_speed_ball(void) {
     print_once("Not implemented: get_speed_ball");
     return 0; //stub
 }
@@ -78,12 +78,12 @@ void invert_speed_ball_y(obj_t* obj) {
 }
 
 //26CE4
-void set_ball_pos(obj_t* obj, i16 a2, i16 a3) {
+void set_ball_pos(obj_t* obj, s16 a2, s16 a3) {
     print_once("Not implemented: set_ball_pos"); //stub
 }
 
 //26D0C
-void angle_direction(i16 a1, i16 a2) {
+void angle_direction(s16 a1, s16 a2) {
     print_once("Not implemented: angle_direction"); //stub
 }
 
@@ -103,7 +103,7 @@ void do_bonus(void) {
 }
 
 //26F2C
-void get_brik_info(obj_t* obj, i16 a2, i16* a3, i16* a4, u8* a5) {
+void get_brik_info(obj_t* obj, s16 a2, s16* a3, s16* a4, u8* a5) {
     print_once("Not implemented: get_brik_info"); //stub
 }
 
@@ -118,7 +118,7 @@ void AllocateCasseBriqueBoum(obj_t* obj) {
 }
 
 //271F8
-void AllocateBonus(obj_t* obj, i16 a2, u8 a3, u8 a4) {
+void AllocateBonus(obj_t* obj, s16 a2, u8 a3, u8 a4) {
     print_once("Not implemented: AllocateBonus"); //stub
 }
 
@@ -163,7 +163,7 @@ void casse_brique_start(obj_t* obj) {
 }
 
 //28170
-void ray_face_brik(i16 a1) {
+void ray_face_brik(s16 a1) {
     print_once("Not implemented: ray_face_brik"); //stub
 }
 

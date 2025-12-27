@@ -1,15 +1,15 @@
 
 
-i64 performance_counter_frequency;
-i32 monitor_refresh_hz;
+s64 performance_counter_frequency;
+s32 monitor_refresh_hz;
 
-i64 get_clock(void) {
+s64 get_clock(void) {
 	LARGE_INTEGER result;
 	QueryPerformanceCounter(&result);
 	return result.QuadPart;
 }
 
-float get_seconds_elapsed(i64 start, i64 end) {
+float get_seconds_elapsed(s64 start, s64 end) {
 	return (float)(end - start) / (float)performance_counter_frequency;
 }
 
@@ -22,8 +22,8 @@ void toggle_fullscreen(HWND window) {
 	LONG style = GetWindowLong(window, GWL_STYLE);
 	if (style & WS_OVERLAPPEDWINDOW) {
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
-		i32 screen_width = GetSystemMetrics(SM_CXSCREEN);
-		i32 screen_height = GetSystemMetrics(SM_CYSCREEN);
+		s32 screen_width = GetSystemMetrics(SM_CXSCREEN);
+		s32 screen_height = GetSystemMetrics(SM_CYSCREEN);
 		if (GetWindowPlacement(window, &window_position)) {
 			SetWindowLong(window, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW);
 			// See: https://stackoverflow.com/questions/23145217/flickering-when-borderless-window-and-desktop-dimensions-are-the-same
@@ -189,11 +189,11 @@ void process_message(HWND window, MSG message) {
 //			if (vk_code == VK_SPACE) {
 //				hid_code = KEY_Space; // NOTE: for some reason, Space is missing from the table in keycode_windows_to_hid()
 //			}
-			bool32 alt_down = message.lParam & (1 << 29);
-			bool32 is_down = ((message.lParam & (1 << 31)) == 0);
-			bool32 was_down = ((message.lParam & (1 << 30)) != 0);
+			bool alt_down = ((message.lParam & (1 << 29)) != 0);
+			bool is_down = ((message.lParam & (1 << 31)) == 0);
+			bool was_down = ((message.lParam & (1 << 30)) != 0);
 			int repeat_count = message.lParam & 0xFFFF;
-			i16 ctrl_state = GetKeyState(VK_CONTROL);
+			s16 ctrl_state = GetKeyState(VK_CONTROL);
 			bool32 ctrl_down = (ctrl_state < 0); // 'down' determined by high order bit == sign bit
 			if (was_down && is_down) break; // uninteresting: repeated key
 
@@ -223,8 +223,8 @@ void process_message(HWND window, MSG message) {
             TranslateMessage(&message);
             DispatchMessageA(&message);
             global_app_state.was_client_leftclicked = true;
-            global_app_state.click_x = (i16)(message.lParam & 0xFFFF);
-            global_app_state.click_y = (i16)(message.lParam >> 16);
+            global_app_state.click_x = (s16)(message.lParam & 0xFFFF);
+            global_app_state.click_y = (s16)(message.lParam >> 16);
         } break;
 	}
 }
@@ -317,10 +317,10 @@ int main(int argc, char** argv) {
 	performance_counter_frequency = perf_counter_frequency_result.QuadPart;
 	// Make Sleep() more granular
 	UINT desired_scheduler_granularity_ms = 1;
-	bool32 sleep_is_granular = (timeBeginPeriod(desired_scheduler_granularity_ms) == TIMERR_NOERROR);
+	bool sleep_is_granular = (timeBeginPeriod(desired_scheduler_granularity_ms) == TIMERR_NOERROR);
 
 	HDC monitor_refresh_dc = GetDC(app_state->win32.window);
-	i32 refresh_rate = GetDeviceCaps(monitor_refresh_dc, VREFRESH);
+	s32 refresh_rate = GetDeviceCaps(monitor_refresh_dc, VREFRESH);
 	ReleaseDC(app_state->win32.window, monitor_refresh_dc);
 
 	if (refresh_rate > 1) {
@@ -336,14 +336,14 @@ int main(int argc, char** argv) {
 	// Initialize DirectSound.
 	win32_sound_output_t* sound_output = &app_state->win32.sound_output;
 	sound_output->samples_per_second = 44100;
-	sound_output->bytes_per_sample = sizeof(i16) * 2;
+	sound_output->bytes_per_sample = sizeof(s16) * 2;
 	sound_output->secondary_buffer_size = sound_output->samples_per_second * sound_output->bytes_per_sample; // 1 second
 	sound_output->safety_bytes = (u32)((float)(sound_output->samples_per_second * sound_output->bytes_per_sample) * app_state->target_seconds_per_frame * 0.3333f);
 	win32_init_dsound(app_state->win32.window, sound_output);
 	win32_clear_sound_buffer(sound_output);
 	VFUNC(sound_output->secondary_buffer, Play) (SELF(sound_output->secondary_buffer) 0, 0, DSBPLAY_LOOPING);
 
-	game_init_sound(&app_state->game.sound_buffer, (i32)sound_output->samples_per_second);
+	game_init_sound(&app_state->game.sound_buffer, (s32)sound_output->samples_per_second);
 
 	if (!app_state->game.initialized) {
 		game_init(&app_state->game);
@@ -369,8 +369,8 @@ void win32_prepare_frame(app_state_t* app_state) {
 }
 
 void win32_end_frame(app_state_t* app_state) {
-	i64 frames_elapsed = 0;
-	i64 clocks_per_tick = performance_counter_frequency / app_state->target_game_hz;
+	s64 frames_elapsed = 0;
+	s64 clocks_per_tick = performance_counter_frequency / app_state->target_game_hz;
 	while (frames_elapsed < 1) {
 		frames_elapsed = ((get_clock() / clocks_per_tick) - (app_state->frame_clock / clocks_per_tick));
 		Sleep(1);

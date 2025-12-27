@@ -4,12 +4,12 @@ void display2(obj_t* obj) {
     anim_t* anim = obj->animations + obj->anim_index;
     u16 layers_per_frame = anim->layers_per_frame & 0x3FFF;
     anim_layer_t* layer = anim->layers + (obj->anim_frame * layers_per_frame);
-    for (i32 layer_index = 0; layer_index < layers_per_frame; ++layer_index) {
-        i32 proj_y = get_proj_y(obj->scale, layer->y + obj->screen_y);
+    for (s32 layer_index = 0; layer_index < layers_per_frame; ++layer_index) {
+        s32 proj_y = get_proj_y(obj->scale, layer->y + obj->screen_y);
         if (layer->sprite_index != 0) {
             sprite_t* sprite = obj->sprites + layer->sprite_index;
             if (sprite->id != 0) {
-                i32 x;
+                s32 x;
                 if (obj->flags.flip_x) {
                     if (obj->scale == 256 && layer_index == 5 && obj->anim_index >= 14 && obj->anim_index <= 16) {
                         x = -16;
@@ -28,9 +28,9 @@ void display2(obj_t* obj) {
                     draw_func = DrawSpriteNormalEtX;
                 }
 
-                i32 proj_x = get_proj_x(obj->scale, x);
-                i32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
-                i32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
+                s32 proj_x = get_proj_x(obj->scale, x);
+                s32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
+                s32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
                 vec2b_t proj_size = {(u8)proj_width, (u8)proj_height};
                 u8 sprite_field_A = sprite->color >> 4;
 
@@ -48,7 +48,7 @@ void display2(obj_t* obj) {
 
 
 //18EB0
-void display_sprite(obj_t* obj, u8 sprite_index, i16 x, i16 y, u8 flipped) {
+void display_sprite(obj_t* obj, u8 sprite_index, s16 x, s16 y, u8 flipped) {
     sprite_t* sprite = obj->sprites + sprite_index;
     draw_func_t* draw_func;
     if (((sprite->flags & 4) != 0) == flipped) {
@@ -56,17 +56,17 @@ void display_sprite(obj_t* obj, u8 sprite_index, i16 x, i16 y, u8 flipped) {
     } else {
         draw_func = DrawSpriteNormalEtX;
     }
-    i32 proj_x = get_proj_x(obj->scale, x);
-    i32 proj_y = get_proj_y(obj->scale, y);
-    i32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
-    i32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
+    s32 proj_x = get_proj_x(obj->scale, x);
+    s32 proj_y = get_proj_y(obj->scale, y);
+    s32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
+    s32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
     vec2b_t proj_size = {(u8)proj_width, (u8)proj_height};
     u8* image_data = obj->img_buffer + sprite->offset_in_atlas;
     draw_func(proj_x, sprite->color, proj_y, proj_size, draw_buffer, image_data);
 }
 
 //18F7C
-void display_sprite_NoClip(obj_t* obj, u8 sprite_index, i16 x, i16 y, u8 flipped) {
+void display_sprite_NoClip(obj_t* obj, u8 sprite_index, s16 x, s16 y, u8 flipped) {
     sprite_t* sprite = obj->sprites + sprite_index;
     draw_func_t* draw_func;
     if (((sprite->flags & 4) != 0) == flipped) {
@@ -74,10 +74,10 @@ void display_sprite_NoClip(obj_t* obj, u8 sprite_index, i16 x, i16 y, u8 flipped
     } else {
         draw_func = DrawSpriteNoClipNormalEtX;
     }
-    i32 proj_x = get_proj_x(obj->scale, x);
-    i32 proj_y = get_proj_y(obj->scale, y);
-    i32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
-    i32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
+    s32 proj_x = get_proj_x(obj->scale, x);
+    s32 proj_y = get_proj_y(obj->scale, y);
+    s32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
+    s32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
     vec2b_t proj_size = {(u8)proj_width, (u8)proj_height};
     u8* image_data = obj->img_buffer + sprite->offset_in_atlas;
     draw_func(proj_x, sprite->color, proj_y, proj_size, draw_buffer, image_data);
@@ -95,10 +95,10 @@ void DISPLAY_CLING(void) {
     /* 15FB8 8013A7B8 -O2 -msoft-float */
     obj_t *c_1up;
     obj_t *c_pow;
-    i32 xmin, xmax, ymin, ymax;
+    s32 xmin, xmax, ymin, ymax;
 
     // NOTE: there are some differences here from the PS1 version
-    i16 extra_y_offset;
+    s16 extra_y_offset;
     if (GameModeVideo == MODE_X && P486 == 1) {
         extra_y_offset = 16;
     } else {
@@ -132,7 +132,7 @@ void DISPLAY_CLING(void) {
 //191A8
 void display_bar_boss(obj_t* boss_obj) {
     /* 16080 8013A880 -O2 -msoft-float */
-    i16 extra_x_offset, extra_y_offset;
+    s16 extra_x_offset, extra_y_offset;
     if (GameModeVideo == MODE_X) {
         extra_x_offset = 8;
         if (P486 == 1) {
@@ -200,7 +200,7 @@ void display_bar_boss(obj_t* boss_obj) {
                     sprite = 111;
                     break;
             }
-            i16 display_y = Bloc_lim_H2 - 30 - extra_y_offset;
+            s16 display_y = Bloc_lim_H2 - 30 - extra_y_offset;
             sprite = sprite_of_ref(poing_obj, sprite);
             display_sprite(poing_obj, sprite, extra_x_offset + Bloc_lim_W1 - 4, display_y, disp_mode);
 
@@ -221,7 +221,7 @@ void DisplayProgrammerMessage(void) {
 }
 
 //19420
-void DISPLAY_FIXE(i32 time) {
+void DISPLAY_FIXE(s32 time) {
     if (ray_mode == MODE_5_CASSE_BRIQUE) {
         if (cb_ball_obj_id != -1) {
             DISPLAY_FIXE_CB(level.objects + cb_ball_obj_id);
@@ -241,8 +241,8 @@ void DISPLAY_FIXE(i32 time) {
             --fixontemp;
         }
         if (fixon || fixontemp != 0 || time == 0) {
-            i16 height = 35;
-            i16 width = 77;
+            s16 height = 35;
+            s16 width = 77;
             if (GameModeVideo == MODE_NORMAL && (Bloc_lim_W1 > 16 || Bloc_lim_H1 > 5)) {
                 if (id_Cling_Old) {
                     height = 45;
@@ -263,7 +263,7 @@ void DISPLAY_FIXE(i32 time) {
             }
             obj_t* obj = level.objects + sbar_obj_id;
             if (time == -2) {
-                i32 draw_y = (GameModeVideo == MODE_NORMAL && P486 == 1) ? 16 : 0;
+                s32 draw_y = (GameModeVideo == MODE_NORMAL && P486 == 1) ? 16 : 0;
                 display_sprite_NoClip(obj, 27, 16, draw_y + 5, 1);
                 display_sprite_NoClip(obj, 56, 244, draw_y + 5, 1);
                 display_sprite_NoClip(obj, 28 + status_bar.lives_digits[0], 55, draw_y + 5, 1);
@@ -289,17 +289,17 @@ void DISPLAY_FIXE(i32 time) {
 }
 
 //19864
-void DISPLAY_POINT(i16 x, i16 y) {
+void DISPLAY_POINT(s16 x, s16 y) {
     DrawWldPointPlan2Normal(PLAN2BIT, x, y - 2);
 }
 
 //1987C
-void DISPLAY_PTS_TO(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 a5) {
+void DISPLAY_PTS_TO(s16 origin_x, s16 origin_y, s16 dest_x, s16 dest_y, s16 a5) {
     //stub
 }
 
 //198C4
-void DISPLAY_PTS_TO_PLAN2(i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 percent) {
+void DISPLAY_PTS_TO_PLAN2(s16 origin_x, s16 origin_y, s16 dest_x, s16 dest_y, s16 percent) {
     //TODO: figure out why too many points are being drawn
     percent = MIN(100, percent); // this fixes the too many points issue but is not present in the original code.
     Bresenham(DISPLAY_POINT, origin_x + 8, origin_y, dest_x + 8, dest_y, 7, percent);
@@ -328,10 +328,10 @@ void DISPLAY_CYMBALE(obj_t* obj, u8* draw_buf, u8 a3) {
         y = layer[i].y + obj->screen_y;
         if (sprite->id != 0) {
             x = layer[i].x + obj->screen_x;
-            i32 proj_x = get_proj_x(obj->scale, x);
-            i32 proj_y = get_proj_y(obj->scale, y);
-            i32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
-            i32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
+            s32 proj_x = get_proj_x(obj->scale, x);
+            s32 proj_y = get_proj_y(obj->scale, y);
+            s32 proj_height = get_proj_dist(obj->scale, sprite->outer_height);
+            s32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
             vec2b_t proj_size = {(u8)proj_width, (u8)proj_height};
             u8* image_data = obj->img_buffer + sprite->offset_in_atlas;
             DrawSpriteNormalEtX(proj_x, sprite->color, proj_y, proj_size, draw_buffer, image_data);
@@ -344,15 +344,15 @@ void debug_display_obj_id(obj_t* obj) {
     char text[16];
     snprintf(text, sizeof(text), "%d", obj->id);
 //    display_text(text, obj->screen_x + obj->offset_bx, obj->screen_y + obj->offset_hy, 2, 1);
-    i16 spr_x;
-    i16 spr_y;
-    i16 spr_w;
-    i16 spr_h;
+    s16 spr_x;
+    s16 spr_y;
+    s16 spr_w;
+    s16 spr_h;
     GET_ANIM_POS(obj, &spr_x, &spr_y, &spr_w, &spr_h);
-    i32 x = spr_x + spr_w / 2;
-    i32 y = spr_y + spr_h / 2;
-    i32 scr_x = x - xmap;
-    i32 scr_y = y - ymap;
+    s32 x = spr_x + spr_w / 2;
+    s32 y = spr_y + spr_h / 2;
+    s32 scr_x = x - xmap;
+    s32 scr_y = y - ymap;
     display_text(text, scr_x, scr_y - 20, 2, obj->id == debug_obj_id ? 1 : 0);
 
     // mouse click to select debug object
@@ -369,8 +369,8 @@ void debug_display_obj_id(obj_t* obj) {
 
 //19A2C
 void DISPLAY_ALL_OBJECTS(void) {
-    for (i32 current_display_prio = 7; current_display_prio >= 1; --current_display_prio) {
-        for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+    for (s32 current_display_prio = 7; current_display_prio >= 1; --current_display_prio) {
+        for (s32 i = 0; i < actobj.num_active_objects; ++i) {
             obj_t* obj = level.objects + actobj.objects[i];
             if (obj->id == debug_obj_id) {
                 BREAKPOINT;
@@ -398,7 +398,7 @@ void DISPLAY_ALL_OBJECTS(void) {
                     case TYPE_252_VAGUE_DERRIERE:
                     case TYPE_251_VAGUE_DEVANT:
                     case TYPE_173_BATEAU: {
-                        i32 xmin, xmax, ymin, ymax;
+                        s32 xmin, xmax, ymin, ymax;
                         get_sprite_clipping(&xmin, &xmax, &ymin, &ymax);
                         sprite_clipping(xmin, Bloc_lim_H2 - 40, ymin, ymax);
                         display2(obj);
@@ -436,7 +436,7 @@ void DISPLAY_ALL_OBJECTS(void) {
                 DISPLAY_POING();
             }
         } else if (current_display_prio == 2 && nb_cymbal_in_map != 0) {
-            for (i32 j = 0; j < nb_cymbal_in_map; ++j) {
+            for (s32 j = 0; j < nb_cymbal_in_map; ++j) {
                 obj_t* cymbale = level.objects + cymbal_obj_id[j];
                 if (cymbale->is_active) {
                     DISPLAY_CYMBALE(cymbale, draw_buffer, 1);
@@ -445,7 +445,7 @@ void DISPLAY_ALL_OBJECTS(void) {
         }
     }
 
-    for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+    for (s32 i = 0; i < actobj.num_active_objects; ++i) {
         obj_t* obj = level.objects + actobj.objects[i];
         if (obj->display_prio == 0 && obj->type == TYPE_245_DUNE) {
             display2(obj);
@@ -468,13 +468,13 @@ void display_flocons_before(void) {
 void display_pix_gerbes(void) {
     /* 17740 8013BF40 -O2 -msoft-float */
     u8 color;
-    for (i32 i = 0; i < LEN(pix_gerbe); ++i) {
+    for (s32 i = 0; i < LEN(pix_gerbe); ++i) {
         if (pix_gerbe[i].is_active) {
             pix_gerbe_item_t* cur_item = &pix_gerbe[i].items[0];
-            for (i32 j = 0; j < LEN(pix_gerbe[i].items); ++j) {
+            for (s32 j = 0; j < LEN(pix_gerbe[i].items); ++j) {
                 u8 unk_1 = cur_item->unk_1;
                 if (unk_1 > 127 && cur_item->y_pos > 0) {
-                    i16 spd_y = (u8) cur_item->speed_y; /* using abs on android? */
+                    s16 spd_y = (u8) cur_item->speed_y; /* using abs on android? */
                     if (spd_y > 127)
                         color = 88;
                     else
@@ -489,11 +489,11 @@ void display_pix_gerbes(void) {
 }
 
 //1A1C4
-void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, u8 is_fond) {
-    i32 clip_height = height;
-    i32 clip_width = width;
-    i32 clip_x = x;
-    i32 clip_y = y;
+void DISPLAY_BLACKBOX(s16 x, s16 y, s16 width, s16 height, s16 font_size, u8 is_fond) {
+    s32 clip_height = height;
+    s32 clip_width = width;
+    s32 clip_x = x;
+    s32 clip_y = y;
     if (x < 0) {
         clip_x = 0;
         clip_width = x + width;
@@ -540,11 +540,11 @@ void DISPLAY_BLACKBOX(i16 x, i16 y, i16 width, i16 height, i16 font_size, u8 is_
 }
 
 //1A3F0
-void display_text(const char* text, i16 x, i16 y, u8 font_size, i8 color) {
-    i32 line_height = 0;
-    i16 char_spacing = 0;
-    i16 space_width = 0;
-    i32 num_let = 0;
+void display_text(const char* text, s16 x, s16 y, u8 font_size, s8 color) {
+    s32 line_height = 0;
+    s16 char_spacing = 0;
+    s16 space_width = 0;
+    s32 num_let = 0;
 
     if (font_size == 2) {
         line_height = 15;
@@ -560,12 +560,12 @@ void display_text(const char* text, i16 x, i16 y, u8 font_size, i8 color) {
         space_width = 12;
     }
 
-    i32 current_x = x;
+    s32 current_x = x;
 
     sprite_t* sprite = NULL;
 
     if (text) {
-        for (i32 i = 0; i < strlen(text); ++i) {
+        for (s32 i = 0; i < strlen(text); ++i) {
             const char* pos = text + i;
             char c = *pos;
             if (c == '/') {
@@ -581,7 +581,7 @@ void display_text(const char* text, i16 x, i16 y, u8 font_size, i8 color) {
                 num_let = deter_num_let(c, pos + 1);
             }
             if (num_let != 0) {
-                i32 let_width = calc_let_Width(font_size, num_let);
+                s32 let_width = calc_let_Width(font_size, num_let);
                 if (num_let < 1000) {
                     if (font_size <= 1) {
                         if (font_size == 1) {
@@ -616,22 +616,22 @@ void display_text(const char* text, i16 x, i16 y, u8 font_size, i8 color) {
 }
 
 //1A68C
-void display_deform_text(const char* text, i16 x, i16 y, u8 font_size, i8 color, i16 rotation, i16 enx, i16 eny) {
+void display_deform_text(const char* text, s16 x, s16 y, u8 font_size, s8 color, s16 rotation, s16 enx, s16 eny) {
     display_text(text, x, y, font_size, color); // TODO: implement deform effect
     //stub
 }
 
 //1A8DC
-void display_text_sin(const char* text, i16 x, i16 y, u8 font_size, i8 color, u8 a6) {
+void display_text_sin(const char* text, s16 x, s16 y, u8 font_size, s8 color, u8 a6) {
     //stub
 }
 
 //1ABE0
 void display_box_text(display_item_t* box) {
-    i16 blackbox_x = (i16)(box->centered_x_pos - 3);
-    i16 blackbox_y = (i16)(box->centered_y_pos - 3);
-    i16 blackbox_width = (i16)(box->width + 6);
-    i16 blackbox_height = (i16)(box->height + 6);
+    s16 blackbox_x = (s16)(box->centered_x_pos - 3);
+    s16 blackbox_y = (s16)(box->centered_y_pos - 3);
+    s16 blackbox_width = (s16)(box->width + 6);
+    s16 blackbox_height = (s16)(box->height + 6);
     if (box->field_D5) {
         DISPLAY_BLACKBOX(blackbox_x, blackbox_y, blackbox_width, blackbox_height, -1, box->is_fond);
         if (box->is_fond == 1) {
@@ -659,7 +659,7 @@ void CLRSCR(void) {
 }
 
 //1AD38
-void display_etoile(i16 in_x, i16 in_y) {
+void display_etoile(s16 in_x, s16 in_y) {
     /* 19A6C 8013E26C -O2 */
     u8 loc_star_spr[8] = {21, 22, 23, 24, 21, 25, 22, 21};
 
@@ -674,8 +674,8 @@ void display_etoile(i16 in_x, i16 in_y) {
         star->dist = rand_res;
         star->sprite_table_index = rand_res;
     }
-    i16 draw_x = star->dist + (in_x - xmap) - 8;
-    i16 draw_y = star->dist + (in_y - ymap);
+    s16 draw_x = star->dist + (in_x - xmap) - 8;
+    s16 draw_y = star->dist + (in_y - ymap);
     if (draw_x > 0 && SCREEN_WIDTH - draw_x > 0 && draw_y > 0 && SCREEN_HEIGHT - draw_y > 0) {
         sprite_t* sprite = poing_obj->sprites + loc_star_spr[star->sprite_table_index];
         vec2b_t proj_size = {(u8)sprite->outer_width, (u8)sprite->outer_height};
@@ -722,7 +722,7 @@ void DISPLAY_TEXT_FEE(void) {
     s16 marg_x;
 
     // TODO: fix black bars not working on Betilla levels
-    i16 black_bar_height = ((SCREEN_HEIGHT * 2) / (45 * 2)) * 10 ; // PS1: 50   PC/mobile: 40
+    s16 black_bar_height = ((SCREEN_HEIGHT * 2) / (45 * 2)) * 10 ; // PS1: 50   PC/mobile: 40
     DISPLAY_BLACKBOX(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 12, -1, false);
     DISPLAY_BLACKBOX(0, SCREEN_HEIGHT - black_bar_height, SCREEN_WIDTH, black_bar_height, -1, false);
     txt_fee = display_txt_fee;
@@ -734,7 +734,7 @@ void DISPLAY_TEXT_FEE(void) {
         {
             if (obj->flags.alive)
             {
-                i16 y_fee = (SCREEN_HEIGHT < 240) ? SCREEN_HEIGHT - 10 : SCREEN_HEIGHT - 20; // added to account for PC/PS1 difference
+                s16 y_fee = (SCREEN_HEIGHT < 240) ? SCREEN_HEIGHT - 10 : SCREEN_HEIGHT - 20; // added to account for PC/PS1 difference
                 obj->screen_y = y_fee - obj->offset_by;
                 cen_x = ttd.centered_x_pos;
                 obj_x = obj->offset_bx + obj->screen_x;
@@ -769,10 +769,10 @@ void DISPLAY_TEXT_FEE(void) {
 }
 
 //1B0E0
-void DISPLAY_SAVE_SPRITES(i16 x, i16 save_index) {
-    i16 y = save_index * (ecarty + 23) + debut_options - 23;
+void DISPLAY_SAVE_SPRITES(s16 x, s16 save_index) {
+    s16 y = save_index * (ecarty + 23) + debut_options - 23;
     loadinforay_t* loadinfo = LoadInfoRay + save_index;
-    i32 sprite_index = 27;
+    s32 sprite_index = 27;
     display_sprite(&div_obj, 27, x, y, 1);
     x += div_obj.sprites[sprite_index].outer_width;
 
@@ -827,7 +827,7 @@ void DISPLAY_YESNO_POING(void) {
 }
 
 //1B56C
-void display_time(i32 a1) {
+void display_time(s32 a1) {
     print_once("Not implemented: display_time"); //stub
 }
 
@@ -837,22 +837,22 @@ void DISPLAY_CONTINUE_SPR(void) {
 }
 
 //1B944
-void AFFICHE_SPRITE_DEFORME(void* a1, i32 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7, i16 a8, i16 a9, i16 a10) {
+void AFFICHE_SPRITE_DEFORME(void* a1, s32 a2, s16 a3, s16 a4, s16 a5, s16 a6, s16 a7, s16 a8, s16 a9, s16 a10) {
     print_once("Not implemented: AFFICHE_SPRITE_DEFORME"); //stub
 }
 
 //1BBC4
-void DISPLAY_DEFORMATION(obj_t* obj, i16 a2, i16 a3, i16 a4) {
+void DISPLAY_DEFORMATION(obj_t* obj, s16 a2, s16 a3, s16 a4) {
     print_once("Not implemented: DISPLAY_DEFORMATION"); //stub
 }
 
 //1BEA8
-void DISPLAY_DEFORM_SPRITE(void* a1, i32 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
+void DISPLAY_DEFORM_SPRITE(void* a1, s32 a2, s16 a3, s16 a4, s16 a5, s16 a6, s16 a7) {
     print_once("Not implemented: DISPLAY_DEFORM_SPRITE"); //stub
 }
 
 //1C030
-void CALCUL_DEFORMATION(i16* a1, i16* a2, i16 a3, i16 a4, i16 a5) {
+void CALCUL_DEFORMATION(s16* a1, s16* a2, s16 a3, s16 a4, s16 a5) {
     print_once("Not implemented: CALCUL_DEFORMATION"); //stub
 }
 

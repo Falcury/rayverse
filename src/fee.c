@@ -1,7 +1,7 @@
 
 //39210
 void INIT_TXT_FEE(void) {
-    for (i32 i = 0; i <= 9; ++i) {
+    for (s32 i = 0; i <= 9; ++i) {
         if (text_to_display[i].text[0] != '\0') {
             text_to_display[i].xpos = 150;
             text_to_display[i].ypos = 188;
@@ -23,7 +23,7 @@ void INIT_TXT_FEE(void) {
 //392AC
 void allocate_poing_or_free(void) {
     obj_t* obj = NULL;
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj = level.objects + i;
         if (obj->type == TYPE_238_POING_FEE && !obj->flags.alive) {
             break;
@@ -128,7 +128,7 @@ void init_fee(void) {
 }
 
 //39BD0
-void wait_for_dialogue_fee(obj_t* obj, i16 time) {
+void wait_for_dialogue_fee(obj_t* obj, s16 time) {
     /* 4DFD0 801727D0 -O2 -msoft-float */
     if (obj->timer < time) {
         obj->timer++;
@@ -294,7 +294,7 @@ void DO_FEE(obj_t* obj) {
             png_or_fee->flags.alive = 1;
             png_or_fee->flags.flip_x = 1;
             png_or_fee->x = xmap - png_or_fee->offset_bx;
-            i16 y_fee = (SCREEN_HEIGHT < 240) ? SCREEN_HEIGHT - 10 : SCREEN_HEIGHT - 20; // added to account for PC/PS1 difference
+            s16 y_fee = (SCREEN_HEIGHT < 240) ? SCREEN_HEIGHT - 10 : SCREEN_HEIGHT - 20; // added to account for PC/PS1 difference
             y = ymap - (png_or_fee->offset_by - y_fee);
             png_or_fee->y = y;
             png_or_fee->screen_x = -png_or_fee->offset_bx;

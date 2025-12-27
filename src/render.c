@@ -19,8 +19,8 @@ void render_weird_gradient(surface_t* surface, int x_offset, int y_offset) {
 void render_clear(surface_t* surface, rgb_t color) {
 	// TODO: make pixel format agnostic?
 	u32 pixel = (color.b << 0 | color.g << 8 | color.r << 16 | 0xFF << 24);
-	i32 pixel_count = surface->memory_size / surface->bytes_per_pixel;
-	for (i32 i = 0; i < pixel_count; ++i) {
+	s32 pixel_count = surface->memory_size / surface->bytes_per_pixel;
+	for (s32 i = 0; i < pixel_count; ++i) {
 		((u32*)surface->memory)[i] = pixel;
 	}
 }
@@ -48,15 +48,15 @@ void surface_blit_palettized_image(image_t* source, rgb_palette_t* palette, rect
 
 	// TODO: clip rects
 
-	i32 source_max_y = source_rect->y + source_rect->h;
-	i32 source_max_x = source_rect->x + source_rect->w;
+	s32 source_max_y = source_rect->y + source_rect->h;
+	s32 source_max_x = source_rect->x + source_rect->w;
 	u8* source_row = source->memory + source_rect->y * source->width + source_rect->x;
 	u8* target_row = target->memory + target_rect->y * target->pitch + target_rect->x * target->bytes_per_pixel;
-	for (i32 source_y = source_rect->y; source_y < source_max_y; ++source_y) {
+	for (s32 source_y = source_rect->y; source_y < source_max_y; ++source_y) {
 		
 		u8* source_pixel = source_row;
 		u32* target_pixel = (u32*) target_row;
-		for (i32 source_x = source_rect->x; source_x < source_max_x; ++source_x) {
+		for (s32 source_x = source_rect->x; source_x < source_max_x; ++source_x) {
 
 			rgb_t color = palette->colors[*source_pixel];
 			*target_pixel = (color.b << 0 | color.g << 8 | color.r << 16 | 0xFF << 24);

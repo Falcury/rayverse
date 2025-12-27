@@ -1,6 +1,6 @@
 
 //1C0C0
-void get_spi_zdc(obj_t* obj, i16* x, i16* y, i16* w, i16* h) {
+void get_spi_zdc(obj_t* obj, s16* x, s16* y, s16* w, s16* h) {
     /* 537C0 80177FC0 -O2 -msoft-float */
     u8 eta_flags = obj->eta[obj->main_etat][obj->sub_etat].flags;
 
@@ -33,7 +33,7 @@ void DO_SPIDER_PLAFOND(obj_t* obj) {
 }
 
 //1C588
-void DO_SPIDER_PLAFOND_POING_COLLISION(obj_t* obj, i16 sprite) {
+void DO_SPIDER_PLAFOND_POING_COLLISION(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DO_SPIDER_PLAFOND_POING_COLLISION"); //stub
 }
 
@@ -60,7 +60,7 @@ void DO_SPIDER_TIR(obj_t* obj) {
 //1CC50
 void allocateDard(obj_t* obj) {
     /* 395B0 8015DDB0 -O2 -msoft-float */
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* cur_obj = level.objects + i;
         if (cur_obj->type == TYPE_66_DARD && !cur_obj->is_active) {
             cur_obj->flags.flip_x = obj->flags.flip_x;
@@ -71,7 +71,7 @@ void allocateDard(obj_t* obj) {
                 cur_obj->speed_x = 3;
             }
 
-            i16 spi_x; s16 spi_y; s16 spi_w; s16 spi_h;
+            s16 spi_x; s16 spi_y; s16 spi_w; s16 spi_h;
             GET_SPRITE_POS(obj, 3, &spi_x, &spi_y, &spi_w, &spi_h);
             cur_obj->x = spi_x + (spi_w >> 1) - cur_obj->offset_bx;
             cur_obj->y = spi_y + (spi_h >> 1) - cur_obj->offset_by;
@@ -93,7 +93,7 @@ void allocateDard(obj_t* obj) {
 }
 
 //1CDB0
-void DoSpiderPoingCollision(obj_t* obj, i16 sprite) {
+void DoSpiderPoingCollision(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DoSpiderPoingCollision"); //stub
 }
 

@@ -504,7 +504,7 @@ void fix_numlevel(obj_t* obj) {
 
 //7AD20
 void allocate_splash(obj_t* obj) {
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* cur_obj = level.objects + i;
         if (cur_obj->type == TYPE_19_SPLASH && !cur_obj->is_active) {
             cur_obj->flags.alive = 1;
@@ -516,8 +516,8 @@ void allocate_splash(obj_t* obj) {
             if (obj->btypes[0] == BTYP_WATER) {
                 cur_obj->y = obj->offset_by + obj->y - cur_obj->offset_by;
             } else {
-                i16 offset_by;
-                i16 height;
+                s16 offset_by;
+                s16 height;
                 if (!(block_flags[obj->btypes[0]] & 2)) {
                     offset_by = cur_obj->offset_by;
                     height = (*(u16 *) &mp.height - 1) * 16;
@@ -655,7 +655,7 @@ void DO_INTERACT_PLAT(obj_t* obj) {
         found_obj->type = TYPE_24_INTERACTPLT;
         found_obj->flags.read_commands = 0;
 
-        i16 diff_y = (found_obj->y + found_obj->offset_by) - obj->y - obj->offset_by;
+        s16 diff_y = (found_obj->y + found_obj->offset_by) - obj->y - obj->offset_by;
         if (diff_y < 1) {
             found_obj->cmd = GO_DOWN;
         } else {
@@ -747,7 +747,7 @@ void DO_GROWING_PLATFORM(void) {
 
 //7B29C
 obj_t* allocateExplosion(obj_t* obj) {
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* cur_obj = level.objects + i;
         if (cur_obj->type == TYPE_83_EXPLOSION && !cur_obj->is_active) {
             set_main_and_sub_etat(cur_obj, 0, 0);
@@ -808,7 +808,7 @@ void MARACAS_GO(obj_t* obj) {
 }
 
 //7B470
-i16 ANGLE_RAYMAN(obj_t* obj) {
+s16 ANGLE_RAYMAN(obj_t* obj) {
     /* 3AC88 8015F488 -O2 -msoft-float */
     s16 x;
     s16 y;
@@ -864,7 +864,7 @@ i16 ANGLE_RAYMAN(obj_t* obj) {
 
 //7B56C
 obj_t* allocateNOVA(void) {
-    for (i32 i = 0; i < level_alw.nb_objects; ++i) {
+    for (s32 i = 0; i < level_alw.nb_objects; ++i) {
         obj_t* obj = level.objects + level_alw.obj_ids[i];
         if (obj->type == TYPE_143_NOVA2 && !obj->is_active) {
             set_main_and_sub_etat(obj, 5, 20);
@@ -884,8 +884,8 @@ void DO_NOVA(obj_t* obj) {
     if (nova) {
         nova->x = obj->x;
         nova->y = obj->y;
-        i16 nova_x, nova_y, nova_w, nova_h;
-        i16 obj_x, obj_y, obj_w, obj_h;
+        s16 nova_x, nova_y, nova_w, nova_h;
+        s16 obj_x, obj_y, obj_w, obj_h;
         GET_ANIM_POS(nova, &nova_x, &nova_y, &nova_w, &nova_h);
         GET_ANIM_POS(obj, &obj_x, &obj_y, &obj_w, &obj_h);
         nova->is_active = 1;
@@ -946,7 +946,7 @@ void DO_NOVA2(obj_t* obj) {
 }
 
 //7B838
-i16 NOVA_STATUS_BAR(void) {
+s16 NOVA_STATUS_BAR(void) {
     obj_t* obj = allocateNOVA();
     if (!obj) {
         return -1;
@@ -961,7 +961,7 @@ i16 NOVA_STATUS_BAR(void) {
 }
 
 //7B920
-void DO_REDEYE_FIRE(i16 x, i16 y, i16 a3) {
+void DO_REDEYE_FIRE(s16 x, s16 y, s16 a3) {
     s16 i = 0;
     obj_t *cur_obj = &level.objects[i];
     s16 nb_objs = level.nb_objects;
@@ -1137,7 +1137,7 @@ void DO_REDEYE_FIRE(i16 x, i16 y, i16 a3) {
 }
 
 //7BC60
-void calc_esquive_poing(obj_t* mit_obj, i16* out_diff_x, i16* out_diff_y, i16* out_unk) {
+void calc_esquive_poing(obj_t* mit_obj, s16* out_diff_x, s16* out_diff_y, s16* out_unk) {
     /* 3C6E4 80160EE4 -O2 -msoft-float */
     s16 unk_x; s16 unk_y;
 
@@ -1156,7 +1156,7 @@ void calc_esquive_poing(obj_t* mit_obj, i16* out_diff_x, i16* out_diff_y, i16* o
 }
 
 //7BD04
-i16 allocate_gerbe(void) {
+s16 allocate_gerbe(void) {
     /* 3CB5C 8016135C -O2 -msoft-float */
     s16 i;
     s16 res = -1;
@@ -1173,7 +1173,7 @@ i16 allocate_gerbe(void) {
 }
 
 //7BD40
-void start_pix_gerbe(i16 x, i16 y) {
+void start_pix_gerbe(s16 x, s16 y) {
     /* 3CBE0 801613E0 -O2 -msoft-float */
     s16 *cur_data;
     s16 i;
@@ -1209,9 +1209,9 @@ void do_pix_gerbes(void) {
     s16 v_speed = v_scroll_speed * 64;
 
     // added in PC/mobile versions:
-    i32 lim_W1 = Bloc_lim_W1_Aff << 6;
-    i32 lim_W2 = Bloc_lim_W2_Aff << 6;
-    i32 lim_H2 = Bloc_lim_H2_Aff << 6;
+    s32 lim_W1 = Bloc_lim_W1_Aff << 6;
+    s32 lim_W2 = Bloc_lim_W2_Aff << 6;
+    s32 lim_H2 = Bloc_lim_H2_Aff << 6;
 
     i = 0;
     while (i < (s16) LEN(pix_gerbe)) {
@@ -1306,7 +1306,7 @@ void DO_CORDE_CASSE(obj_t* obj) {
 }
 
 //7C0A4
-void DO_FUMEE_CORDE(i16 x, i16 y) {
+void DO_FUMEE_CORDE(s16 x, s16 y) {
     /* 3EC84 80163484 -O2 -msoft-float */
     s16 i = 0;
     obj_t *cur_obj = &level.objects[i];
@@ -1329,7 +1329,7 @@ void DO_FUMEE_CORDE(i16 x, i16 y) {
 }
 
 //7C10C
-i32 GetY(i16 x) {
+s32 GetY(s16 x) {
     /* 3ED10 80163510 -O2 -msoft-float */
     s16 unk_1;
     s32 unk_2;
@@ -1351,7 +1351,7 @@ i32 GetY(i16 x) {
 
 //7C1C4
 void allocateSupHelico(obj_t* mus_obj) {
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* cur_obj = level.objects + i;
         if (cur_obj->type == TYPE_133_SUPERHELICO && !cur_obj->is_active) {
             cur_obj->flags.alive = 1;
@@ -1373,7 +1373,7 @@ void allocateSupHelico(obj_t* mus_obj) {
 //7C274
 void allocatePaillette(obj_t* obj) {
     obj_t* pailette_obj = NULL;
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* cur_obj = level.objects + i;
         if (cur_obj->type == TYPE_75_PAILLETTE && !cur_obj->is_active) {
             pailette_obj = cur_obj;

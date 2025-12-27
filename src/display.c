@@ -1,6 +1,6 @@
 
 //34108
-i16 display_inter_anim(u32 a1) {
+s16 display_inter_anim(u32 a1) {
     horloges(1);
     CLRSCR();
     readinput();
@@ -27,7 +27,7 @@ void DO_CONTINUE(void) {
 }
 
 //34240
-i16 saisie_nom_prg(u32 a1) {
+s16 saisie_nom_prg(u32 a1) {
     readinput();
     button_released = ButtonReleasedSav3;
     SAISIE_NOM();
@@ -61,7 +61,7 @@ i16 saisie_nom_prg(u32 a1) {
 }
 
 //34334
-i16 selection_save_option_prg(u32 a1) {
+s16 selection_save_option_prg(u32 a1) {
     readinput();
     DoCdRap();
     button_released = ButtonReleasedSav1;
@@ -145,8 +145,8 @@ void AFFICHE_ECRAN_SAVE(void) {
     DISPLAY_FOND3();
     display_text(language_txt[96], 160, debut_titre, 1, 0); // /choose a game/
 
-    i16 start_xpos;
-    i16 erase_xpos;
+    s16 start_xpos;
+    s16 erase_xpos;
     if (language == 1) {
         start_xpos = 255;
         erase_xpos = 145;
@@ -179,12 +179,12 @@ void AFFICHE_ECRAN_SAVE(void) {
     INIT_TXT_BOX(menu_to_display);
     display_box_text_plasma(menu_to_display, 1);
 
-    for (i32 save_index = 0; save_index < NBRE_SAVE; ++save_index) {
+    for (s32 save_index = 0; save_index < NBRE_SAVE; ++save_index) {
         if (save_ray[save_index][0] == '\0') {
             let_shadow = 1;
             display_text(language_txt[155], basex, debut_options + (ecarty + 23) * save_index, 1, 2);
         } else {
-            for (i32 cur_x = 1; cur_x <= strlen(save_ray[save_index]); ++cur_x) {
+            for (s32 cur_x = 1; cur_x <= strlen(save_ray[save_index]); ++cur_x) {
                 if (positionx == cur_x && positiony == save_index + 1 && clignotement) {
                     u32 len = strlen(save_ray[save_index]);
                     char temp[4] = {0};
@@ -228,12 +228,12 @@ void AFFICHE_ECRAN_SAVE(void) {
 }
 
 //34A80
-i16 select_level_prg(u32 a1) {
+s16 select_level_prg(u32 a1) {
     return 0; //stub
 }
 
 //34BB4
-i16 SELECT_LEVEL(i16 original_level_choice) {
+s16 SELECT_LEVEL(s16 original_level_choice) {
     // This seems to be a level selection screen.
     level_select = original_level_choice;
     inter_select = 0;
@@ -275,9 +275,9 @@ void DISPLAY_STAGE_NAMES(void) {
 }
 
 //35028
-i16 WORLD_CHOICE(u32 a1) {
+s16 WORLD_CHOICE(u32 a1) {
     //map_screen_check_cheats();
-    i32 next_clock_target = 0;
+    s32 next_clock_target = 0;
     if (need_timer) {
         next_clock_target = word_CF7EE + a1;
     }
@@ -293,7 +293,7 @@ i16 WORLD_CHOICE(u32 a1) {
     display2(&ray);
     DISPLAY_PLAT_WAY();
 
-    i32 v0 = 3 * RayonJumelle + 3;
+    s32 v0 = 3 * RayonJumelle + 3;
     if (v0 >= 0) {
         v0 = 3 * RayonJumelle;
     }
@@ -308,7 +308,7 @@ i16 WORLD_CHOICE(u32 a1) {
         PlaySnd_old(77);
     }
 
-    i16 result = new_world;
+    s16 result = new_world;
     if (new_world || PROC_EXIT || get_casse_brique_active()) {
         result = 1;
     }
@@ -390,14 +390,14 @@ void DO_WORLD_MAP(void) {
 //35370
 void DISPLAY_TXT_VIGNET(void) {
     /* 9A14 8012E214 -O2 -msoft-float */
-    for (i32 i = new_txt_fee; text_to_display[i].text[0] != '\0' && (i <= new_txt_fee + 1); i++) {
+    for (s32 i = new_txt_fee; text_to_display[i].text[0] != '\0' && (i <= new_txt_fee + 1); i++) {
         display_box_text(&text_to_display[i]);
     }
 
 }
 
 //353C8
-i16 display_vignet_prg(u32 a1) {
+s16 display_vignet_prg(u32 a1) {
     readinput();
     DISPLAY_FOND3();
     DISPLAY_TXT_VIGNET();
@@ -426,7 +426,7 @@ void DISPLAY_GAME_VIGNET(void) {
     numero_palette_special = 0;
     DO_FADE_OUT();
 
-    i32 xmin, xmax, ymin, ymax;
+    s32 xmin, xmax, ymin, ymax;
     get_sprite_clipping(&xmin, &xmax, &ymin, &ymax);
     sprite_clipping(0, SCREEN_HEIGHT, 0, SCREEN_WIDTH);
     display_Vignet = 0;
@@ -466,7 +466,7 @@ void DISPLAY_TXT_CREDITS(void) {
 }
 
 //3561C
-i16 display_credits_prg(u32 a1) {
+s16 display_credits_prg(u32 a1) {
     print_once("Not implemented: display_credits_prg");
     return 0; //stub
 }
@@ -512,7 +512,7 @@ void FinDemoJeu(void) {
 }
 
 //35C64
-i16 loader_anim_prg(u32 a1) {
+s16 loader_anim_prg(u32 a1) {
     readinput();
     if (ValidButPressed() || StartButPressed()) {
         PROC_EXIT = 1;
@@ -639,21 +639,21 @@ void init_divers_level_PC(u8* a1) {
 }
 
 //3631C
-void file_level(i32 level_id, char* filename) {
+void file_level(s32 level_id, char* filename) {
     snprintf(filename, 20, "RAY%d.LEV", level_id);
 }
 
 //36394
-void world_level(i32 world_id, char* filename) {
+void world_level(s32 world_id, char* filename) {
     snprintf(filename, 20, "RAY%d.WLD", world_id);
 }
 
 //3640C
-void LoadPlan3InVignet(mem_t* mem, i32 resource_id) {
+void LoadPlan3InVignet(mem_t* mem, s32 resource_id) {
     // The original code calls LoadPlan2InVignet() after saving the plan2 related stuff into temporary variables.
     // This seems unnecessary though, so I simplified it a bit.
-    i16 width = 0;
-    i16 height = 0;
+    s16 width = 0;
+    s16 height = 0;
     image_t image = LoadPcxInVignet(mem, resource_id, &width, &height, &current_rvb);
     //LoadPcxPaletteInVignet(resource_id, &current_rvb); // we already loaded the palette in LoadPcxInVignet(), so we can skip this
     rvb_plan3 = current_rvb;
@@ -668,7 +668,7 @@ void DISPLAY_AND_FADE_PLAN3(void) {
 }
 
 //36554
-void LOAD_VIGNET_PC(mem_t* mem, i16 world) {
+void LOAD_VIGNET_PC(mem_t* mem, s16 world) {
     if (get_casse_brique_active()) {
         LoadPlan3InVignet(mem, 64);
     } else {
@@ -726,10 +726,10 @@ void DISPLAY_FOND_CONTINUE(void) {
 }
 
 //36678
-void SwapPlan2PlanVignInVignet(mem_t* mem, i32 resource_id, i16 vig_index) {
+void SwapPlan2PlanVignInVignet(mem_t* mem, s32 resource_id, s16 vig_index) {
     u8* saved_plan2bit = PLAN2BIT;
-    i32 saved_plan2bit_length = plan2bit_length;
-    i32 saved_plan2bit_nb_bytes = plan2bit_nb_bytes;
+    s32 saved_plan2bit_length = plan2bit_length;
+    s32 saved_plan2bit_nb_bytes = plan2bit_nb_bytes;
     rgb_palette_t saved_palette = rvb_pres;
     LoadPlan2InVignet(mem, resource_id);
     PLANVIGBIT[vig_index] = PLAN2BIT;
@@ -744,7 +744,7 @@ void SwapPlan2PlanVignInVignet(mem_t* mem, i32 resource_id, i16 vig_index) {
 
 //36788
 void LOAD_VIGNET_GAME(mem_t* mem) {
-    i16 vignet = -1;
+    s16 vignet = -1;
     switch(num_world) {
         case 1: {
             if (num_level == 9) {
@@ -780,7 +780,7 @@ void LOAD_VIGNET_GAME(mem_t* mem) {
 }
 
 //3681C
-void LOAD_CREDITS_VIGNET(i32 a1, i32 a2, i16 a3) {
+void LOAD_CREDITS_VIGNET(s32 a1, s32 a2, s16 a3) {
     print_once("Not implemented: LOAD_CREDITS_VIGNET"); //stub
 }
 
@@ -835,8 +835,8 @@ void DEPART_LEVEL(void) {
     if (!fin_du_jeu) {
 
         if (byte_CFA2A) {
-            i16 text_x = 160;
-            i16 text_y = 190;
+            s16 text_x = 160;
+            s16 text_y = 190;
             if (get_casse_brique_active()) {
                 text_x = 240;
                 text_y = 160;
@@ -876,7 +876,7 @@ void REMOVE_FICHIER(void) {
 }
 
 //36BBC
-i32 TestSave(void) {
+s32 TestSave(void) {
     return 3;
 }
 
@@ -916,16 +916,16 @@ void Keyflush(void) {
 
 //36C54
 void LOAD_GENERAL_SCREEN(void) {
-    i16 width = 0;
-    i16 height = 0;
+    s16 width = 0;
+    s16 height = 0;
     LoadPcxOptions(EffetBufferNormal, 13, &width, &height, &rvb_plan3);
     //LoadPcxPaletteInVignet(13, &rvb_plan3); // opening twice no longer needed (we saved the palette in LoadPcxOptions)
 }
 
 //36C88
 void LOAD_OPTIONS_SCREEN(void) {
-    i16 width = 0;
-    i16 height = 0;
+    s16 width = 0;
+    s16 height = 0;
     LoadPcxOptions(EffetBufferNormal, 12, &width, &height, &rvb_plan3);
     //LoadPcxPaletteInVignet(12, &rvb_plan3);
 }
@@ -1011,8 +1011,8 @@ void INIT_EXTENSIONS(void) {
 //36E20
 void DISPLAY_LOADING(void) {
     DISPLAY_FOND3();
-    i16 text_x = 160;
-    i16 text_y = 190;
+    s16 text_x = 160;
+    s16 text_y = 190;
     if (get_casse_brique_active()) {
         text_x = 240;
         text_y = 160;

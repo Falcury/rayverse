@@ -18,7 +18,7 @@ bool EOA(obj_t* obj) {
 
 //1D0EC
 void save_objects_flags(void) {
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* obj = level.objects + i;
         set2bits((u32*) &saveobj[i >> 4], i & 0xF, 2 * (obj->is_active & 1) + obj->flags.alive);
     }
@@ -26,7 +26,7 @@ void save_objects_flags(void) {
 
 //1D15C
 void restore_objects_flags(void) {
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* obj = level.objects + i;
         if (obj->type != TYPE_58_CAGE) {
             u32 high_bit = 0;
@@ -39,14 +39,14 @@ void restore_objects_flags(void) {
 }
 
 //1D204
-void snapToSprite(obj_t* obj1, obj_t* obj2, u8 a3, i16 a4, i16 a5) {
+void snapToSprite(obj_t* obj1, obj_t* obj2, u8 a3, s16 a4, s16 a5) {
     print_once("Not implemented: snapToSprite"); //stub
 }
 
 //1D4C4
-obj_t* findfirstObject(i16 obj_type) {
+obj_t* findfirstObject(s16 obj_type) {
     obj_t* obj = level.objects;
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         if (obj->type == obj_type) {
             break;
         }
@@ -56,12 +56,12 @@ obj_t* findfirstObject(i16 obj_type) {
 }
 
 //1D4F4
-void findfirstInactiveObject(i16 a1) {
+void findfirstInactiveObject(s16 a1) {
     print_once("Not implemented: findfirstInactiveObject"); //stub
 }
 
 //1D528
-i32 sinYspeed(obj_t* obj, i16 a2, i16 a3, i16* a4) {
+s32 sinYspeed(obj_t* obj, s16 a2, s16 a3, s16* a4) {
     /* 225B8 80146DB8 -O2 -msoft-float */
     s16 unk_1 = (*a4 + a2) & 0xFFF;
     s16 diff_y = obj->y - obj->init_y;
@@ -72,38 +72,38 @@ i32 sinYspeed(obj_t* obj, i16 a2, i16 a3, i16* a4) {
 }
 
 //1D560
-void set_proj_center(i16 x, i16 y) {
+void set_proj_center(s16 x, s16 y) {
     PROJ_CENTER_X = x;
     PROJ_CENTER_Y = y;
 }
 
 //1D570
-i32 get_proj_dist(i16 scale, i16 outer_dim) {
+s32 get_proj_dist(s16 scale, s16 outer_dim) {
     //NOTE: needs checking
     if (zoom_mode == 0) {
         return outer_dim;
     } else {
-        i32 temp = ((256*256) / (scale + 256)) * (outer_dim);
+        s32 temp = ((256 * 256) / (scale + 256)) * (outer_dim);
         return (temp / 256);
     }
 }
 
 //1D5B0
-i32 get_proj_dist2(i16 scale, i16 a2) {
+s32 get_proj_dist2(s16 scale, s16 a2) {
     return (a2 * ((256*256) / (scale + 256))) >> 8;
 }
 
 //1D5D8
-i32 get_proj_x(i16 scale, i16 a2) {
+s32 get_proj_x(s16 scale, s16 a2) {
     //NOTE: needs checking
-    i32 temp = ((256*256) / (scale + 256)) * (a2 - PROJ_CENTER_X);
+    s32 temp = ((256 * 256) / (scale + 256)) * (a2 - PROJ_CENTER_X);
     return ((temp / 256) + PROJ_CENTER_X);
 }
 
 //1D614
-i32 get_proj_y(i16 scale, i16 a2) {
+s32 get_proj_y(s16 scale, s16 a2) {
     //NOTE: needs checking
-    i32 temp = ((256*256) / (scale + 256)) * (a2 - PROJ_CENTER_Y);
+    s32 temp = ((256 * 256) / (scale + 256)) * (a2 - PROJ_CENTER_Y);
     return ((temp / 256) + PROJ_CENTER_Y);
 }
 
@@ -113,25 +113,25 @@ void set_zoom_mode(u8 mode) {
 }
 
 //1D658
-i32 inverse_proj_x(i16 scale, i16 a2) {
+s32 inverse_proj_x(s16 scale, s16 a2) {
     return PROJ_CENTER_X + ((a2 - PROJ_CENTER_X) << 8) / ((256*256) / (scale + 256));
 }
 
 //1D690
-i32 inverse_proj_y(i16 scale, i16 a2) {
+s32 inverse_proj_y(s16 scale, s16 a2) {
     return PROJ_CENTER_Y + ((a2 - PROJ_CENTER_Y) << 8) / ((256*256) / (scale + 256));
 }
 
 //1D6C8
-i32 vblToEOA(obj_t* obj, u8 a2) {
+s32 vblToEOA(obj_t* obj, u8 a2) {
     eta_t* eta = get_eta(obj);
-    i32 anim_speed = eta->anim_speed & 15;
-    i32 result = obj->animations[eta->anim_index].frame_count * anim_speed * a2 - horloge[anim_speed] + 1;
+    s32 anim_speed = eta->anim_speed & 15;
+    s32 result = obj->animations[eta->anim_index].frame_count * anim_speed * a2 - horloge[anim_speed] + 1;
     return (result <= 0) ? 1 : result;
 }
 
 //1D738
-void GET_ANIM_POS(obj_t* obj, i16* x, i16* y, i16* w, i16* h) {
+void GET_ANIM_POS(obj_t* obj, s16* x, s16* y, s16* w, s16* h) {
     ASSERT(obj->anim_index != 255);
     anim_t* anim = obj->animations + obj->anim_index;
     anim_frame_t* frame = anim->frames + obj->anim_frame;
@@ -146,7 +146,7 @@ void GET_ANIM_POS(obj_t* obj, i16* x, i16* y, i16* w, i16* h) {
 }
 
 //1D7D8
-void add_actobj(i16 a1) {
+void add_actobj(s16 a1) {
     print_once("Not implemented: add_actobj"); //stub
 }
 
@@ -170,7 +170,7 @@ void set_main_and_sub_etat(obj_t* obj, u8 etat, u8 sub_etat) {
 }
 
 //1D824
-i16 get_center_x(obj_t* obj) {
+s16 get_center_x(obj_t* obj) {
     /* 22C84 80147484 -O2 -msoft-float */
     s16 res;
 
@@ -247,7 +247,7 @@ i16 get_center_x(obj_t* obj) {
 }
 
 //1D954
-i16 get_center_y(obj_t* obj) {
+s16 get_center_y(obj_t* obj) {
     /* 22DEC 801475EC -O2 -msoft-float */
     s16 res;
 
@@ -334,12 +334,12 @@ i16 get_center_y(obj_t* obj) {
 }
 
 //1DAC8
-u8 on_block_chdir(obj_t* obj, i16 center_x, i16 center_y) {
+u8 on_block_chdir(obj_t* obj, s16 center_x, s16 center_y) {
     return (block_flags[BTYP((obj->x + center_x) >> 4, (obj->y + center_y) >> 4)] & 0x20) != 0;
 }
 
 //1DB04
-void CALC_FOLLOW_SPRITE_SPEED(obj_t* obj, anim_t* anim_1, anim_t* anim_2, i16 anim_frame_2) {
+void CALC_FOLLOW_SPRITE_SPEED(obj_t* obj, anim_t* anim_1, anim_t* anim_2, s16 anim_frame_2) {
     u8 width_1;
     s32 unk_1;
     s32 x_1;
@@ -364,7 +364,7 @@ void CALC_FOLLOW_SPRITE_SPEED(obj_t* obj, anim_t* anim_1, anim_t* anim_2, i16 an
 }
 
 //1DBB4
-u8 GET_SPRITE_POS(obj_t* obj, i16 index, i16* x, i16* y, i16* w, i16* h) {
+u8 GET_SPRITE_POS(obj_t* obj, s16 index, s16* x, s16* y, s16* w, s16* h) {
     /* 230E0 801478E0 -O2 -msoft-float */
     anim_t *anim;
     anim_layer_t *layer;
@@ -394,7 +394,7 @@ u8 GET_SPRITE_POS(obj_t* obj, i16 index, i16* x, i16* y, i16* w, i16* h) {
 }
 
 //1DCFC
-void GET_RAY_ZDC(obj_t* obj, i16* x, i16* y, i16* w, i16* h) {
+void GET_RAY_ZDC(obj_t* obj, s16* x, s16* y, s16* w, s16* h) {
     /* 23204 80147A04 -O2 -msoft-float */
     u8 main_etat = obj->main_etat;
     s32 frame;
@@ -453,7 +453,7 @@ void GET_RAY_ZDC(obj_t* obj, i16* x, i16* y, i16* w, i16* h) {
 }
 
 //1DEC0
-void GET_BB1_ZDCs(obj_t* obj, i16* a2, i16* a3, i16* a4, i16* a5, i16* a6, i16* a7, i16* a8, i16* a9) {
+void GET_BB1_ZDCs(obj_t* obj, s16* a2, s16* a3, s16* a4, s16* a5, s16* a6, s16* a7, s16* a8, s16* a9) {
     print_once("Not implemented: GET_BB1_ZDCs"); //stub
 }
 
@@ -706,7 +706,7 @@ void makeUturn(obj_t* obj) {
 }
 
 //1E588
-u8 BTYP(i32 tile_x, i32 tile_y) {
+u8 BTYP(s32 tile_x, s32 tile_y) {
     if (tile_x >= 0 && tile_x <= (mp.width - 1) && tile_y >= 0 && tile_y <= (mp.height - 1)) {
         return mp.map[tile_y * mp.width + tile_x].tile_type;
     } else {
@@ -716,19 +716,19 @@ u8 BTYP(i32 tile_x, i32 tile_y) {
 
 //1E608
 void calc_btyp_square(obj_t* obj) {
-    i16 x_offset;
+    s16 x_offset;
     if (obj->type == TYPE_23_RAYMAN) {
         x_offset = RayEvts.tiny ? 4 : 8;
     } else {
         x_offset = 16;
     }
 
-    i16 x = obj->x + obj->offset_bx;
-    i16 y = obj->y + obj->offset_by;
-    i16 tile_x = ashr16(x, 4);
-    i16 tile_y = ashr16(y, 4);
-    i16 tile_x_left = ashr16(x - x_offset, 4);
-    i16 tile_x_right = ashr16(x + x_offset, 4);
+    s16 x = obj->x + obj->offset_bx;
+    s16 y = obj->y + obj->offset_by;
+    s16 tile_x = ashr16(x, 4);
+    s16 tile_y = ashr16(y, 4);
+    s16 tile_x_left = ashr16(x - x_offset, 4);
+    s16 tile_x_right = ashr16(x + x_offset, 4);
 
     obj->btypes[3] = BTYP(tile_x, tile_y - 1); // up
     obj->btypes[1] = BTYP(tile_x_left, tile_y); // left
@@ -879,7 +879,7 @@ void init_obj_in_the_air(obj_t* obj) {
 }
 
 //1EAB4
-void make_my_fruit_go_down(obj_t* obj, i16 x_accel) {
+void make_my_fruit_go_down(obj_t* obj, s16 x_accel) {
     /* 243C4 80148BC4 -O2 -msoft-float */
     if (obj->main_etat == 2 && Abs(obj->speed_x) < 32)
         obj->speed_x += x_accel;
@@ -926,7 +926,7 @@ void obj_hurt(obj_t* target) {
 }
 
 //1EBA0
-void Projectil_to_RM(obj_t* obj, i16* out_spd_x, i16* out_spd_y, i16 new_spd_x, i16 new_spd_y) {
+void Projectil_to_RM(obj_t* obj, s16* out_spd_x, s16* out_spd_y, s16 new_spd_x, s16 new_spd_y) {
     /* 249D0 801491D0 -O2 -msoft-float */
     s16 diff_x; s16 diff_y;
     s16 diff_x_abs; s16 diff_y_abs;
@@ -1005,7 +1005,7 @@ void del_actobj(obj_t* obj) {
 }
 
 //1EEB8
-i32 calc_let_Width(u8 font_size, i32 num_let) {
+s32 calc_let_Width(u8 font_size, s32 num_let) {
     obj_t* obj = NULL;
     sprite_t* sprite;
     if (num_let > 1000) {
@@ -1034,7 +1034,7 @@ i32 calc_let_Width(u8 font_size, i32 num_let) {
 }
 
 //1EF1C
-i32 calc_let_Width2(u8 font_size, i32 num_let) {
+s32 calc_let_Width2(u8 font_size, s32 num_let) {
     obj_t* obj = NULL;
     sprite_t* sprite;
     if (num_let > 1000) {
@@ -1053,7 +1053,7 @@ i32 calc_let_Width2(u8 font_size, i32 num_let) {
         }
     }
     if (sprite) {
-        i32 width = (sprite->sprite_pos & 0xF) + sprite->inner_width;
+        s32 width = (sprite->sprite_pos & 0xF) + sprite->inner_width;
         return width;
     } else {
         return 0;
@@ -1062,7 +1062,7 @@ i32 calc_let_Width2(u8 font_size, i32 num_let) {
 
 //1EF80
 void INIT_TEXT_TO_DISPLAY(void) {
-    for (i32 i = 0; i < COUNT(text_to_display); ++i) {
+    for (s32 i = 0; i < COUNT(text_to_display); ++i) {
         text_to_display[i].text[0] = '\0';
         text_to_display[i].is_fond = 0;
         text_to_display[i].field_D5 = 0;
@@ -1070,7 +1070,7 @@ void INIT_TEXT_TO_DISPLAY(void) {
 }
 
 //1EFB4
-i32 deter_num_let(u8 c, const char* next_chars) {
+s32 deter_num_let(u8 c, const char* next_chars) {
     if (c == ']') {
         char next_text[4] = {0};
         strncpy(next_text, next_chars, 3);
@@ -1118,8 +1118,8 @@ void calc_num_let_spr(u8 a1, u8* a2) {
 }
 
 //1F1B0
-i16 calc_largmax_text(const char* text, i16 char_index, i16 space_width, i16 char_spacing, u8 font_size) {
-    i16 width = 0;
+s16 calc_largmax_text(const char* text, s16 char_index, s16 space_width, s16 char_spacing, u8 font_size) {
+    s16 width = 0;
     for (;;) {
         ++char_index;
         char c = text[char_index];
@@ -1129,7 +1129,7 @@ i16 calc_largmax_text(const char* text, i16 char_index, i16 space_width, i16 cha
         if (c == ' ') {
             width += space_width;
         } else {
-            i32 num_let = deter_num_let(c, text + char_index + 1);
+            s32 num_let = deter_num_let(c, text + char_index + 1);
             if (num_let != 0) {
                 width += calc_let_Width2(font_size, num_let) - char_spacing;
                 if (num_let >= 1000) {
@@ -1145,16 +1145,16 @@ i16 calc_largmax_text(const char* text, i16 char_index, i16 space_width, i16 cha
 void INIT_TXT_BOX(display_item_t* box) {
     char text[200];
     u8 font_size = box->font_size;
-    i32 total_width = 0;
-    i32 max_width = 0;
-    i32 line_height = 0;
-    i32 num_lines = 0;
-    i32 max_chars = 0;
-    i32 total_chars = 0;
-    i32 is_slash = 0;
-    i32 char_spacing = 0;
-    i32 space_width = 0;
-    i32 num_let = 0;
+    s32 total_width = 0;
+    s32 max_width = 0;
+    s32 line_height = 0;
+    s32 num_lines = 0;
+    s32 max_chars = 0;
+    s32 total_chars = 0;
+    s32 is_slash = 0;
+    s32 char_spacing = 0;
+    s32 space_width = 0;
+    s32 num_let = 0;
 
     if (font_size == 2) {
         line_height = 15;
@@ -1171,7 +1171,7 @@ void INIT_TXT_BOX(display_item_t* box) {
     }
     memcpy(text, box->text, sizeof(text));
     if (text[0] != '\0') {
-        for (i32 i = 0; i < sizeof(text); ++i) {
+        for (s32 i = 0; i < sizeof(text); ++i) {
             char c = text[i];
             if (c == '\0') {
                 break;
@@ -1221,10 +1221,10 @@ void INIT_TXT_BOX(display_item_t* box) {
 }
 
 //1F4A0
-void Deter_Option_Caract(char* text, i16 key, i16 offset) {
+void Deter_Option_Caract(char* text, s16 key, s16 offset) {
     if (offset == 255) {
-        i16 len = (i16)strlen(text);
-        for (i16 i = 0; i < len; ++i) {
+        s16 len = (s16)strlen(text);
+        for (s16 i = 0; i < len; ++i) {
             char c = text[i];
             if (c == '$') {
                 offset = i;
@@ -1251,15 +1251,15 @@ void Deter_Option_Caract(char* text, i16 key, i16 offset) {
 }
 
 //1F50C
-void SwapAB(i16* a, i16* b) {
-    i16 temp = *a;
+void SwapAB(s16* a, s16* b) {
+    s16 temp = *a;
     *a= *b;
     *b = temp;
 }
 
 // Taken from the PS1 decomp for now (reconstructing this doesn't look fun)
 //1F520
-void Bresenham(void (*func)(i16, i16), i16 origin_x, i16 origin_y, i16 dest_x, i16 dest_y, i16 param_6, i16 percent)
+void Bresenham(void (*func)(s16, s16), s16 origin_x, s16 origin_y, s16 dest_x, s16 dest_y, s16 param_6, s16 percent)
 {
     s16 sp10;
     s16 sp12;
@@ -1500,8 +1500,8 @@ void Change_Wait_Anim(void) {
 //1F8E8
 void add_alwobj(obj_t* obj) {
     // Added check to prevent duplicate entries
-    i32 found_index = -1;
-    for (i32 i = 0; i < level_obj.nb_objects; ++i) {
+    s32 found_index = -1;
+    for (s32 i = 0; i < level_obj.nb_objects; ++i) {
         if (level_obj.obj_ids[i] == obj->id) {
             found_index = i;
             break;
@@ -1515,9 +1515,9 @@ void add_alwobj(obj_t* obj) {
 }
 
 //1F918
-void del_alwobj(i16 obj_index) {
-    i32 found_index = -1;
-    for (i32 i = 0; i < level_obj.nb_objects; ++i) {
+void del_alwobj(s16 obj_index) {
+    s32 found_index = -1;
+    for (s32 i = 0; i < level_obj.nb_objects; ++i) {
         if (level_obj.obj_ids[i] == obj_index) {
             found_index = i;
             break;
@@ -1541,7 +1541,7 @@ void FatalError(char* message) {
 
 //1FA00
 u8 sprite_of_ref(obj_t* obj, u8 ref) {
-    for (i32 i = 0; i < obj->nb_sprites; ++i) {
+    for (s32 i = 0; i < obj->nb_sprites; ++i) {
         if (obj->sprites[i].id == ref) {
             return i;
         }

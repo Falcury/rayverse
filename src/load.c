@@ -7,7 +7,7 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
     } else {
         PLAN1_BUFFER = 0;
     }
-    for (i32 i = 0; i < 10; ++i) {
+    for (s32 i = 0; i < 10; ++i) {
         Plan0NumPcx[i] = -1;
     }
 
@@ -36,13 +36,13 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
         mem_read(&VideoBiosCheckSum, mem, 1);
 
         mem_read(Plan0NumPcx, mem, plan0_num_pcx_count);
-        for (i32 i = 0; i < plan0_num_pcx_count; ++i) {
+        for (s32 i = 0; i < plan0_num_pcx_count; ++i) {
             Plan0NumPcx[i] ^= 0x15;
         }
 
         // Sprites block
         mem_read(&nb_des, mem, 2);
-        for (i32 des_index = nb_fix_des; des_index < nb_des + nb_fix_des; ++des_index) {
+        for (s32 des_index = nb_fix_des; des_index < nb_des + nb_fix_des; ++des_index) {
 
             obj_t* cur_wldobj = wldobj + des_index;
 
@@ -57,7 +57,7 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
                 u8 img_buffer_checksum;
                 mem_read(&img_buffer_checksum, mem, 1);
 
-                for (i32 i = 0; i < cur_wldobj->x; ++i) {
+                for (s32 i = 0; i < cur_wldobj->x; ++i) {
                     img_buffer_checksum -= cur_wldobj->img_buffer[i];
                     cur_wldobj->img_buffer[i] ^= 0x8F;
                 }
@@ -73,11 +73,11 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
                 mem_read(&cur_wldobj->anim_count, mem, 1);
                 if (cur_wldobj->anim_count != 0) {
                     cur_wldobj->animations = (anim_t*)block_malloc(mem_world, cur_wldobj->anim_count * sizeof(anim_t));
-                    for (i32 anim_index = 0; anim_index < cur_wldobj->anim_count; ++anim_index) {
+                    for (s32 anim_index = 0; anim_index < cur_wldobj->anim_count; ++anim_index) {
                         anim_t* anim = cur_wldobj->animations + anim_index;
                         mem_read(&anim->layers_per_frame, mem, 2);
                         mem_read(&anim->frame_count, mem, 2);
-                        i32 frames_ptr = 0;
+                        s32 frames_ptr = 0;
                         mem_read(&frames_ptr, mem, 4); // ptr field, but might be -1
                         u16 layer_table_size;
                         mem_read(&layer_table_size, mem, 2);
@@ -100,12 +100,12 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
                 mem_read(&cur_wldobj->anim_count, mem, 1);
                 if (cur_wldobj->anim_count != 0) {
                     cur_wldobj->animations = NULL;
-                    for (i32 anim_index = 0; anim_index < cur_wldobj->anim_count; ++anim_index) {
+                    for (s32 anim_index = 0; anim_index < cur_wldobj->anim_count; ++anim_index) {
                         u16 layers_per_frame = 0;
                         mem_read(&layers_per_frame, mem, 2);
                         u16 frame_count = 0;
                         mem_read(&frame_count, mem, 2);
-                        i32 frames_ptr = 0;
+                        s32 frames_ptr = 0;
                         mem_read(&frames_ptr, mem, 4); // ptr field, but might be -1
                         u16 layer_table_size;
                         mem_read(&layer_table_size, mem, 2);
@@ -121,11 +121,11 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
 
         // ETA block
         mem_read(&nb_loaded_eta, mem, 1);
-        for (i32 i = nb_fix_eta; i < nb_loaded_eta + nb_fix_eta; ++i) {
+        for (s32 i = nb_fix_eta; i < nb_loaded_eta + nb_fix_eta; ++i) {
             u8 num_eta_groups = 0;
             mem_read(&num_eta_groups, mem, 1);
             loaded_eta[i] = (eta_t**)block_malloc(mem_world, num_eta_groups * sizeof(eta_t*));
-            for (i32 j = 0; j < num_eta_groups; ++j) {
+            for (s32 j = 0; j < num_eta_groups; ++j) {
                 u8 num_eta_entries = 0;
                 mem_read(&num_eta_entries, mem, 1);
                 loaded_eta[i][j] = (eta_t*)block_malloc(mem_world, num_eta_entries * sizeof(eta_t));
@@ -157,7 +157,7 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
 }
 
 //45688
-void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
+void load_level(mem_t* mem_level, s32 world_id, const char* filename) {
 
     // NOTE: function signature changed: world_id and filename parameters added to allow more flexibility.
 
@@ -172,17 +172,17 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
     mem_t* mem = read_entire_file(full_filename, true);
     if (mem) {
         // Header
-        i32 event_block_offset;
-        i32 texture_block_offset;
+        s32 event_block_offset;
+        s32 texture_block_offset;
         mem_read(&event_block_offset, mem, 4);
         mem_read(&texture_block_offset, mem, 4);
         mem_read(&mp.width, mem, 2);
         mem_read(&mp.height, mem, 2);
         mem_read(rvb, mem, sizeof(rvb));
         // Convert 6-bit colors into 8-bit colors by multiplying by 4
-        for (i32 i = 0; i < COUNT(rvb); ++i) {
+        for (s32 i = 0; i < COUNT(rvb); ++i) {
             u8* colors = (u8*)&rvb[i].colors;
-            for (i32 j = 0; j < 256*3; ++j) {
+            for (s32 j = 0; j < 256 * 3; ++j) {
                 colors[j] <<= 2;
             }
         }
@@ -196,7 +196,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
 
         u8 background_image_static;
         u8 background_image_scrolling;
-        i32 ScrollDiffSprites_value = 0;
+        s32 ScrollDiffSprites_value = 0;
         mem_read(&background_image_static, mem, 1);
         mem_read(&background_image_scrolling, mem, 1);
         mem_read(&ScrollDiffSprites_value, mem, 4);
@@ -232,7 +232,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
 
             mem_read(&x_texture_checksum, mem, 1);
             u8* pos = (u8*) gros_patai_block;
-            for (i32 i = 0; i < x_texture_count * sizeof(x_texture_t); ++i) {
+            for (s32 i = 0; i < x_texture_count * sizeof(x_texture_t); ++i) {
                 x_texture_checksum -= *pos;
                 *pos ^= 0x7D;
                 ++pos;
@@ -253,7 +253,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             u8 x_unk_table_checksum;
             mem_read(&x_unk_table_checksum, mem, 1);
             pos = blocks_code;
-            for (i32 i = 0; i < x_unk_table_size; ++i) {
+            for (s32 i = 0; i < x_unk_table_size; ++i) {
                 x_unk_table_checksum -= *pos;
                 *pos ^= 0xF3;
                 ++pos;
@@ -268,8 +268,8 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             // so we're using an offset instead (need to keep this in mind when we want to use it)
             // Also we need to check for the value -1
 #if 0
-            for (i32 i = 0; i < 1200; ++i) {
-                i32 value = block_add[i];
+            for (s32 i = 0; i < 1200; ++i) {
+                s32 value = block_add[i];
                 if (value == -1) {
                     block_add[i] = 0;
                 } else {
@@ -296,7 +296,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             mem_read(MAP_BLOCKS, mem, texture_data_size);
             mem_read(&texture_data_checksum, mem, 1);
             u8* pos = MAP_BLOCKS;
-            for (i32 i = 0; i < texture_data_size; ++i) {
+            for (s32 i = 0; i < texture_data_size; ++i) {
                 texture_data_checksum -= *pos;
                 *pos ^= 0xFF;
                 ++pos;
@@ -313,26 +313,26 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
         // Events
         mem_read(&level.nb_objects, mem, 2);
         level.objects = (obj_t*)block_malloc(mem_level, sizeof(obj_t) * level.nb_objects);
-        level_obj.obj_ids = (i16*)block_malloc(mem_level, 2 * level.nb_objects);
-        level_alw.obj_ids = (i16*)block_malloc(mem_level, 2 * level.nb_objects);
+        level_obj.obj_ids = (s16*)block_malloc(mem_level, 2 * level.nb_objects);
+        level_alw.obj_ids = (s16*)block_malloc(mem_level, 2 * level.nb_objects);
         memset(level.objects, 0, sizeof(obj_t) * level.nb_objects);
 
-        link_init = (i16*)block_malloc(mem_level, 2 * level.nb_objects);
+        link_init = (s16*)block_malloc(mem_level, 2 * level.nb_objects);
         mem_read(link_init, mem, 2 * level.nb_objects);
         detect_and_remove_invalid_link_cycles(); // NOTE: added as a precaution
 
         // We can't directly read the obj_t because the pointer size is not 4 bytes on all systems.
         // So we read everything field by field
         // TODO: make it work on big-endian systems
-        i32 cursor = mem->cursor;
-        for (i32 i = 0; i < level.nb_objects; ++i) {
+        s32 cursor = mem->cursor;
+        for (s32 i = 0; i < level.nb_objects; ++i) {
             obj_t* obj = level.objects + i;
 
             // The wldobj index is stored only in the lower 2 bytes of the pointer values for sprites, animations, img_buffer and eta
-            i16 sprites_value;
-            i16 animations_value;
-            i16 img_buffer_value;
-            i16 eta_value;
+            s16 sprites_value;
+            s16 animations_value;
+            s16 img_buffer_value;
+            s16 eta_value;
             mem_read(&sprites_value, mem, 2);
             mem->cursor += 2;
             mem_read(&animations_value, mem, 2);
@@ -428,7 +428,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             obj->eta = loaded_eta[eta_value];
         }
 
-        for (i32 i = 0; i < level.nb_objects; ++i) {
+        for (s32 i = 0; i < level.nb_objects; ++i) {
             obj_t* obj = level.objects + i;
 
             u16 cmd_count = 0;
@@ -444,7 +444,7 @@ void load_level(mem_t* mem_level, i32 world_id, const char* filename) {
             }
 
             if (cmd_label_count > 0) {
-                obj->cmd_labels = (i16*)block_malloc(mem_level, 2 * cmd_label_count);
+                obj->cmd_labels = (s16*)block_malloc(mem_level, 2 * cmd_label_count);
                 mem_read(obj->cmd_labels, mem, 2 * cmd_label_count);
             } else {
                 obj->cmd_labels = NULL;
@@ -467,7 +467,7 @@ void load_big_ray(mem_t* buffer) {
         obj_t* sprite_group = wldobj + nb_des;
         u32 sprite_group_size = 0;
         fread(&sprite_group_size, 4, 1, fp);
-        sprite_group->x = (i32)sprite_group_size; // why is this saved in the xpos field??
+        sprite_group->x = (s32)sprite_group_size; // why is this saved in the xpos field??
         u8* image_atlas = block_malloc(buffer, sprite_group_size);
         fread(image_atlas, sprite_group_size, 1, fp);
         for (u32 i = 0; i < sprite_group_size; ++i) {
@@ -483,11 +483,11 @@ void load_big_ray(mem_t* buffer) {
 
         fread(&sprite_group->anim_count, 1, 1, fp);
         sprite_group->animations = (anim_t*)block_malloc(buffer, sprite_group->anim_count * sizeof(anim_t));
-        for (i32 i = 0; i < sprite_group->anim_count; ++i) {
+        for (s32 i = 0; i < sprite_group->anim_count; ++i) {
             anim_t* anim_desc = sprite_group->animations + i;
             fread(&anim_desc->layers_per_frame, 2, 1, fp);
             fread(&anim_desc->frame_count, 2, 1, fp);
-            i32 field_4 = 0;
+            s32 field_4 = 0;
             fread(&field_4, 4, 1, fp); // ptr field, but might be -1
 //			anim_desc->anim_layers_or_frames = (u8*)field_4;
             u16 layer_table_size = 0;
@@ -502,11 +502,11 @@ void load_big_ray(mem_t* buffer) {
         fread(&nb_loaded_eta, 1, 1, fp);
         ASSERT(nb_loaded_eta < COUNT(loaded_eta));
         ASSERT(sizeof(eta_t) == 8);
-        for (i32 i = 0; i < nb_loaded_eta; ++i) {
+        for (s32 i = 0; i < nb_loaded_eta; ++i) {
             u8 num_eta_groups = 0;
             fread(&num_eta_groups, 1, 1, fp);
             loaded_eta[i] = (eta_t**) block_malloc(buffer, num_eta_groups * sizeof(eta_t*));
-            for (i32 j = 0; j < num_eta_groups; ++j) {
+            for (s32 j = 0; j < num_eta_groups; ++j) {
                 u8 num_eta_entries = 0;
                 fread(&num_eta_entries, 1, 1, fp);
                 loaded_eta[i][j] = (eta_t*) block_malloc(buffer, num_eta_entries * sizeof(eta_t));
@@ -535,11 +535,11 @@ void LOAD_ALL_FIX(void) {
     if (mem) {
         mem_read(&nb_loaded_eta, mem, 1);
         nb_fix_eta = nb_loaded_eta;
-        for (i32 i = 0; i < nb_loaded_eta; ++i) {
+        for (s32 i = 0; i < nb_loaded_eta; ++i) {
             u8 num_eta_groups = 0;
             mem_read(&num_eta_groups, mem, 1);
             loaded_eta[i] = (eta_t**)block_malloc(main_mem_fix, num_eta_groups * sizeof(eta_t*));
-            for (i32 j = 0; j < num_eta_groups; ++j) {
+            for (s32 j = 0; j < num_eta_groups; ++j) {
                 u8 num_eta_entries = 0;
                 mem_read(&num_eta_entries, mem, 1);
                 loaded_eta[i][j] = (eta_t*)block_malloc(main_mem_fix, num_eta_entries * sizeof(eta_t));
@@ -549,12 +549,12 @@ void LOAD_ALL_FIX(void) {
 
         mem_read(&nb_des, mem, 2);
         nb_fix_des = nb_des;
-        i32 des_index = 1; // apparently 0 gets skipped?
+        s32 des_index = 1; // apparently 0 gets skipped?
         for (; des_index < nb_des; ++des_index) {
 
             obj_t* obj = wldobj + des_index;
 
-            i32 which_eta = 0;
+            s32 which_eta = 0;
             mem_read(&which_eta, mem, 4);
             if (which_eta == -1) {
                 obj->eta = NULL;
@@ -567,9 +567,9 @@ void LOAD_ALL_FIX(void) {
 
             u32 sprite_group_size = 0;
             mem_read(&sprite_group_size, mem, 4);
-            obj->x = (i32)sprite_group_size; // why is this saved in the xpos field??
+            obj->x = (s32)sprite_group_size; // why is this saved in the xpos field??
             u8* image_atlas = block_malloc(main_mem_sprite, sprite_group_size);
-            i32 saved_cursor = mem->cursor; // in the original, this is a call to ftell()
+            s32 saved_cursor = mem->cursor; // in the original, this is a call to ftell()
             mem_read(image_atlas, mem, sprite_group_size);
 
             u8 checksum_byte = 0;
@@ -595,11 +595,11 @@ void LOAD_ALL_FIX(void) {
             mem_read(&obj->anim_count, mem, 1);
             if (obj->anim_count > 0) {
                 obj->animations = (anim_t*)block_malloc(main_mem_fix, obj->anim_count * sizeof(anim_t));
-                for (i32 i = 0; i < obj->anim_count; ++i) {
+                for (s32 i = 0; i < obj->anim_count; ++i) {
                     anim_t* anim_desc = obj->animations + i;
                     mem_read(&anim_desc->layers_per_frame, mem, 2);
                     mem_read(&anim_desc->frame_count, mem, 2);
-                    i32 frames_ptr = 0;
+                    s32 frames_ptr = 0;
                     mem_read(&frames_ptr, mem, 4); // ptr field, but might be -1
                     u16 layer_table_size = 0;
                     mem_read(&layer_table_size, mem, 2);
@@ -636,7 +636,7 @@ void LOAD_ALL_FIX(void) {
 
         mem_read(&des_index, mem, 4);
         obj = wldobj + des_index;
-        for (i32 i = 0; i < 25; ++i) {
+        for (s32 i = 0; i < 25; ++i) {
             obj_t* m = mapobj + i;
             m->sprites = obj->sprites;
             m->animations = obj->animations;
@@ -658,7 +658,7 @@ void LOAD_ALL_FIX(void) {
 }
 
 //46D68
-image_t LoadPcxInVignet(mem_t* buffer, i32 resource_id, i16* width, i16* height, rgb_palette_t* pal_to_save) {
+image_t LoadPcxInVignet(mem_t* buffer, s32 resource_id, s16* width, s16* height, rgb_palette_t* pal_to_save) {
     ASSERT(sizeof(pcx_header_t) == 128);
     FILE* fp = open_data_file("VIGNET.DAT", true);
     image_t image = {0};
@@ -670,7 +670,7 @@ image_t LoadPcxInVignet(mem_t* buffer, i32 resource_id, i16* width, i16* height,
         fread(pcx_buf, info->size, 1, fp);
         u8* p = (u8*)pcx_buf;
         u8 checksum = info->checksum_byte;
-        for (i32 i = 0; i < info->size; ++i) {
+        for (s32 i = 0; i < info->size; ++i) {
             u8 b = *p;
             checksum -= b;
             b ^= info->xor_byte;
@@ -689,14 +689,14 @@ image_t LoadPcxInVignet(mem_t* buffer, i32 resource_id, i16* width, i16* height,
         pcx_header_t* header = (pcx_header_t*)pcx_buf;
         image.width = header->max_x - header->min_x + 1;
         image.height = header->max_y - header->min_y + 1;
-        if (width) *width = (i16)image.width;
-        if (height) *height = (i16)image.height;
+        if (width) *width = (s16)image.width;
+        if (height) *height = (s16)image.height;
 
         if (header->bits_per_bitplane != 8 || header->n_color_planes != 1 /*|| header->palette_mode != 1*/) {
             // unsupported file structure
             fatal_error();
         } else {
-            i32 decompressed_byte_count = image.width * image.height;
+            s32 decompressed_byte_count = image.width * image.height;
             if (buffer) {
                 // Allocate image memory using a memory pool (will be deallocated on block_free())
                 image.memory = (u8*)block_malloc(buffer, decompressed_byte_count);
@@ -709,12 +709,12 @@ image_t LoadPcxInVignet(mem_t* buffer, i32 resource_id, i16* width, i16* height,
             // run-length decoding
             u8* pos = pcx_buf + 128;
             u8* end = pcx_buf + info->size;
-            i32 i = 0;
+            s32 i = 0;
             while (i < decompressed_byte_count && pos < end) {
                 u8 b = *pos;
                 if (b >= 0xC0) {
                     // upper two bits are set -> remaining bits interpreted as run length (0-63)
-                    i32 run_length = b & 0x3F;
+                    s32 run_length = b & 0x3F;
                     ++pos;
                     if (i + run_length <= decompressed_byte_count && pos < end) {
                         b = *pos;
@@ -738,7 +738,7 @@ image_t LoadPcxInVignet(mem_t* buffer, i32 resource_id, i16* width, i16* height,
             // NOTE: This code is not in the original - I added it to avoid a redundant call to LoadPcxPaletteInVignet
             // in case you want to use the palette (otherwise you will need to read the file twice...)
             if (pal_to_save) {
-                i32 pal_offset = info->size - 768;
+                s32 pal_offset = info->size - 768;
                 image.pal = pal_to_save;
                 image.pal_needs_free = false;
                 memcpy(pal_to_save, pcx_buf + pal_offset, sizeof(rgb_palette_t));
@@ -755,7 +755,7 @@ image_t LoadPcxInVignet(mem_t* buffer, i32 resource_id, i16* width, i16* height,
 }
 
 //47280
-void LoadPcxPaletteInVignet(i32 resource_id, rgb_palette_t* palette) {
+void LoadPcxPaletteInVignet(s32 resource_id, rgb_palette_t* palette) {
     ASSERT(sizeof(pcx_header_t) == 128);
     ASSERT(palette);
     FILE* fp = open_data_file("VIGNET.DAT", true);
@@ -767,7 +767,7 @@ void LoadPcxPaletteInVignet(i32 resource_id, rgb_palette_t* palette) {
         fread(pcx_buf, info->size, 1, fp);
         u8* p = (u8*)pcx_buf;
         u8 checksum = info->checksum_byte;
-        for (i32 i = 0; i < info->size; ++i) {
+        for (s32 i = 0; i < info->size; ++i) {
             u8 b = *p;
             checksum -= b;
             b ^= info->xor_byte;
@@ -786,7 +786,7 @@ void LoadPcxPaletteInVignet(i32 resource_id, rgb_palette_t* palette) {
             // NOTE: This code is not in the original - I added it to avoid a redundant call to LoadPcxPaletteInVignet
             // in case you want to use the palette (otherwise you will need to read the file twice...)
 
-            i32 pal_offset = info->size - 768;
+            s32 pal_offset = info->size - 768;
             memcpy(palette, pcx_buf + pal_offset, sizeof(rgb_palette_t));
 
         }
@@ -797,7 +797,7 @@ void LoadPcxPaletteInVignet(i32 resource_id, rgb_palette_t* palette) {
 }
 
 //473D0
-void LoadPlan0InVignet(i32 resource_id) {
+void LoadPlan0InVignet(s32 resource_id) {
     if (FondAutorise != 0) {
         if (FondAutorise == 2) {
             // In low memory mode the background gets read into DrawBufferNormal / EffetBufferNormal as scratch space.
@@ -806,8 +806,8 @@ void LoadPlan0InVignet(i32 resource_id) {
         }
         ASSERT(FondAutorise == 1);
         stop_cd();
-        i16 width = 0;
-        i16 height = 0;
+        s16 width = 0;
+        s16 height = 0;
         image_t image = LoadPcxInVignet(NULL, resource_id, &width, &height, NULL /* the palette is not used */);
         ASSERT(image.is_valid);
 
@@ -820,7 +820,7 @@ void LoadPlan0InVignet(i32 resource_id) {
             // (Maybe for the differential scrolling? Need to check later.)
             u8* source_row = image.memory;
             u8* dest_row = dest_buffer;
-            for (i32 y = 0; y < height; ++y) {
+            for (s32 y = 0; y < height; ++y) {
                 memcpy(dest_row, source_row, width);
                 memcpy(dest_row + width, source_row, width); // draw the image twice next to each other
                 source_row += width;
@@ -848,7 +848,7 @@ void LoadPlan0InVignet(i32 resource_id) {
 }
 
 //47BB0
-u8* allocate_PLAN0(mem_t* mem_world, i32 width, i32 height) {
+u8* allocate_PLAN0(mem_t* mem_world, s32 width, s32 height) {
     u8* buffer1;
     u8* buffer2;
     if (FondAutorise == 2) {
@@ -866,16 +866,16 @@ u8* allocate_PLAN0(mem_t* mem_world, i32 width, i32 height) {
 }
 
 //47C10
-void PLAN0FND_to_bits_planes(u8* buffer, i16 width, i16 height) {
+void PLAN0FND_to_bits_planes(u8* buffer, s16 width, s16 height) {
     // NOTE: this procedure is only used for EGA (X) mode.
     print_once("Not implemented: PLAN0FND_to_bits_planes"); //stub
 }
 
 //47D3C
-void LoadPlan2InVignet(mem_t* buffer, i32 resource_id) {
+void LoadPlan2InVignet(mem_t* buffer, s32 resource_id) {
     stop_cd();
-    i16 width = 0;
-    i16 height = 0;
+    s16 width = 0;
+    s16 height = 0;
     image_t image = LoadPcxInVignet(buffer, resource_id, &width, &height, &current_rvb);
     PLAN2 = image.memory;
     //LoadPcxPaletteInVignet(resource_id, &current_rvb); // we already loaded the palette in LoadPcxInVignet(), so we can skip this
@@ -918,13 +918,13 @@ char* GetStringTxt(char* txt, char* out_buf) {
 char* language_buffer;
 
 //47E10
-void LoadLanguageTxt(mem_t* mem, i32 language_index) {
+void LoadLanguageTxt(mem_t* mem, s32 language_index) {
     mem_t* lng_file = read_entire_file("RAY.LNG", true);
     if (lng_file) {
         archive_header_t* lng_archive_header = &language_infos[language_index]; // is language_index used here?
         language_buffer = (char*) block_malloc(mem, lng_archive_header->size);
         lng_file->cursor = lng_archive_header->offset;
-        i32 bytes_read = mem_read(language_buffer, lng_file, lng_archive_header->size);
+        s32 bytes_read = mem_read(language_buffer, lng_file, lng_archive_header->size);
         if (bytes_read != lng_archive_header->size) {
             // error
             exit(1);
@@ -944,7 +944,7 @@ void LoadLanguageTxt(mem_t* mem, i32 language_index) {
 
         char* txt = language_buffer;
         char* next_txt = txt;
-        for (i32 i = 0; next_txt != NULL; ++i) {
+        for (s32 i = 0; next_txt != NULL; ++i) {
             char temp_buffer[400];
             next_txt = GetStringTxt(txt, temp_buffer);
             if (next_txt != NULL) {
@@ -965,7 +965,7 @@ void LoadLanguageTxt(mem_t* mem, i32 language_index) {
 }
 
 //48038
-void LoadPcxOptions(u8* buffer, i32 resource_id, i16* width, i16* height, rgb_palette_t* pal_to_save) {
+void LoadPcxOptions(u8* buffer, s32 resource_id, s16* width, s16* height, rgb_palette_t* pal_to_save) {
     ASSERT(sizeof(pcx_header_t) == 128);
     FILE* fp = open_data_file("VIGNET.DAT", true);
     image_t image = {0};
@@ -977,7 +977,7 @@ void LoadPcxOptions(u8* buffer, i32 resource_id, i16* width, i16* height, rgb_pa
         fread(pcx_buf, info->size, 1, fp);
         u8* p = (u8*)pcx_buf;
         u8 checksum = info->checksum_byte;
-        for (i32 i = 0; i < info->size; ++i) {
+        for (s32 i = 0; i < info->size; ++i) {
             u8 b = *p;
             checksum -= b;
             b ^= info->xor_byte;
@@ -996,23 +996,23 @@ void LoadPcxOptions(u8* buffer, i32 resource_id, i16* width, i16* height, rgb_pa
         pcx_header_t* header = (pcx_header_t*)pcx_buf;
         image.width = header->max_x - header->min_x + 1;
         image.height = header->max_y - header->min_y + 1;
-        if (width) *width = (i16)image.width;
-        if (height) *height = (i16)image.height;
+        if (width) *width = (s16)image.width;
+        if (height) *height = (s16)image.height;
 
         if (header->bits_per_bitplane != 8 || header->n_color_planes != 1 /*|| header->palette_mode != 1*/) {
             // unsupported file structure
             fatal_error();
         } else {
-            i32 decompressed_byte_count = image.width * image.height;
+            s32 decompressed_byte_count = image.width * image.height;
             // run-length decoding
             u8* pos = pcx_buf + 128;
             u8* end = pcx_buf + info->size;
-            i32 i = 0;
+            s32 i = 0;
             while (i < decompressed_byte_count && pos < end) {
                 u8 b = *pos;
                 if (b >= 0xC0) {
                     // upper two bits are set -> remaining bits interpreted as run length (0-63)
-                    i32 run_length = b & 0x3F;
+                    s32 run_length = b & 0x3F;
                     ++pos;
                     if (i + run_length <= decompressed_byte_count && pos < end) {
                         b = *pos;
@@ -1036,7 +1036,7 @@ void LoadPcxOptions(u8* buffer, i32 resource_id, i16* width, i16* height, rgb_pa
             // NOTE: This code is not in the original - I added it to avoid a redundant call to LoadPcxPaletteInVignet
             // in case you want to use the palette (otherwise you will need to read the file twice...)
             if (pal_to_save) {
-                i32 pal_offset = info->size - 768;
+                s32 pal_offset = info->size - 768;
                 image.pal = pal_to_save;
                 image.pal_needs_free = false;
                 memcpy(pal_to_save, pcx_buf + pal_offset, sizeof(rgb_palette_t));

@@ -7,7 +7,7 @@ void display_movie_frames(void) {
 }
 
 //3B314
-i32 playVideo2(const char* path, const char* filename, i32 a3, u8 a4) {
+s32 playVideo2(const char* path, const char* filename, s32 a3, u8 a4) {
     print_once("Not implemented: playVideo2");
     playing_intro_video = strcasecmp("intro.dat", filename) == 0;
     if (byte_CFA2A) {
@@ -24,12 +24,12 @@ i32 playVideo2(const char* path, const char* filename, i32 a3, u8 a4) {
 }
 
 //3B4A8
-i32 playVideo(const char* path, const char* filename, i32 a2) {
+s32 playVideo(const char* path, const char* filename, s32 a2) {
     return playVideo2(path, filename, a2, 0);
 }
 
 //3B4B8
-i32 playVideo_alt(const char* path, const char* filename, i32 a2) {
+s32 playVideo_alt(const char* path, const char* filename, s32 a2) {
     return playVideo2(path, filename, a2, 1);
 }
 
@@ -63,7 +63,7 @@ void calc_gros_type(void) {
 }
 
 //3B7D4
-void find_in_map(i16 a1, i16 a2) {
+void find_in_map(s16 a1, s16 a2) {
     print_once("Not implemented: find_in_map"); //stub
 }
 
@@ -78,22 +78,22 @@ void end_find_in_map(void) {
 }
 
 //3B844
-void build_map(i16 a1, i16 a2) {
+void build_map(s16 a1, s16 a2) {
     print_once("Not implemented: build_map"); //stub
 }
 
 //3B948
-void build_line_map(void* a1, i16 a2, i16 a3, i16 a4) {
+void build_line_map(void* a1, s16 a2, s16 a3, s16 a4) {
     print_once("Not implemented: build_line_map"); //stub
 }
 
 //3BA64
-void build_column_map(void* a1, i16 a2, i16 a3, i16 a4) {
+void build_column_map(void* a1, s16 a2, s16 a3, s16 a4) {
     print_once("Not implemented: build_column_map"); //stub
 }
 
 //3BB84
-void update_map(i16 a1, i16 a2, i16 a3, i16 a4) {
+void update_map(s16 a1, s16 a2, s16 a3, s16 a4) {
     print_once("Not implemented: update_map"); //stub
 }
 
@@ -103,7 +103,7 @@ void sub_3BE20(void) {
 }
 
 //3BEE0
-void sub_3BEE0(i16 a1, i16 a2) {
+void sub_3BEE0(s16 a1, s16 a2) {
     print_once("Not implemented: sub_3BEE0"); //stub
 }
 
@@ -145,7 +145,7 @@ void clear_palette(rgb_palette_t* palette) {
 
 //3C520
 void set_fade_palette(rgb_palette_t* palette) {
-    for (i32 i = 0; i < 256*3; ++i) {
+    for (s32 i = 0; i < 256 * 3; ++i) {
         u8 c1 = ((u8*)(palette))[i];
         u32 temp = c1 << 6;
         rvb_fade[i] = temp;
@@ -153,7 +153,7 @@ void set_fade_palette(rgb_palette_t* palette) {
 }
 
 //3C54C
-void start_fade_in(i16 speed) {
+void start_fade_in(s16 speed) {
     // apply palette par_0?
     nb_fade = 1 << (6 - speed);
     fade = 1; // fade in
@@ -163,7 +163,7 @@ void start_fade_in(i16 speed) {
 }
 
 //3C5A4
-void start_fade_out(i16 speed) {
+void start_fade_out(s16 speed) {
     nb_fade = 1 << (6 - speed);
     fade = 2; // fade out
     fade_speed = speed;
@@ -174,13 +174,13 @@ void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal) {
     if (nb_fade > 0) {
         --nb_fade;
         if (fade == 1) {
-            for (i32 i = 0; i < 256*3; ++i) {
+            for (s32 i = 0; i < 256 * 3; ++i) {
                 u8 c1 = ((u8*)(source_pal->colors))[i];
                 u32 temp = c1 << fade_speed;
                 rvb_fade[i] += temp;
             }
         } else if (fade == 2) {
-            for (i32 i = 0; i < 256*3; ++i) {
+            for (s32 i = 0; i < 256 * 3; ++i) {
                 if (rvb_fade[i] > 0) {
                     u8 c1 = ((u8*)(source_pal->colors))[i];
                     u32 temp = c1 << fade_speed;
@@ -188,7 +188,7 @@ void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal) {
                 }
             }
         }
-        for (i32 i = 0; i < 256*3; ++i) {
+        for (s32 i = 0; i < 256 * 3; ++i) {
             u16 temp = rvb_fade[i] >> 6;
             ((u8*)(dest_pal->colors))[i] = (u8)temp;
         }
@@ -200,10 +200,10 @@ void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal) {
 }
 
 //3C6BC
-void fade_out(i16 speed, rgb_palette_t* palette) {
+void fade_out(s16 speed, rgb_palette_t* palette) {
     start_fade_out(speed);
     u16 steps = nb_fade;
-    for (i32 i = 0; i < steps; ++i) {
+    for (s32 i = 0; i < steps; ++i) {
         advance_frame();
         do_fade(palette, &current_rvb);
     }
@@ -223,7 +223,7 @@ void actualize_palette(u8 new_pal_id) {
 }
 
 //3C770
-void cyclage_palette(i16 a1, i16 a2, i16 a3) {
+void cyclage_palette(s16 a1, s16 a2, s16 a3) {
     print_once("Not implemented: cyclage_palette"); //stub
 }
 
@@ -231,14 +231,14 @@ void cyclage_palette(i16 a1, i16 a2, i16 a3) {
 void DO_SWAP_PALETTE(void) {
     if (last_plan1_palette != 0) {
         if (fade & 0x40) {
-            for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+            for (s32 i = 0; i < actobj.num_active_objects; ++i) {
                 obj_t* obj = level.objects + actobj.objects[i];
                 if (obj->type == TYPE_158_PALETTE_SWAPPER) {
                     u8 pal_a = 0;
                     u8 pal_b = 0;
                     u8 new_pal = current_pal_id;
-                    i16 ray_pos;
-                    i16 obj_pos;
+                    s16 ray_pos;
+                    s16 obj_pos;
                     switch(obj->sub_etat) {
                         default: break;
                         case 0:
@@ -352,7 +352,7 @@ void EFFACE_VIDEO(void) {
 
 //3CB54
 void SYNCHRO_LOOP(scene_func_t scene_func) {
-    i16 scene_ended = 0;
+    s16 scene_ended = 0;
     do {
         advance_frame();
         DO_FADE();
@@ -362,7 +362,7 @@ void SYNCHRO_LOOP(scene_func_t scene_func) {
 }
 
 //3CBE8
-void DISPLAY_ANYSIZE_PICTURE(void* a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
+void DISPLAY_ANYSIZE_PICTURE(void* a1, s16 a2, s16 a3, s16 a4, s16 a5, s16 a6, s16 a7) {
     print_once("Not implemented: DISPLAY_ANYSIZE_PICTURE"); //stub
 }
 
@@ -405,20 +405,20 @@ void DISPLAY_FOND3(void) {
 
 //3CE20
 void DISPLAY_FOND_MENU(void) {
-    i32 v1 = 320 - Bloc_lim_W2 + Bloc_lim_W1;
+    s32 v1 = 320 - Bloc_lim_W2 + Bloc_lim_W1;
     if (OptionGame) {
         if (prev_Bloc_lim_W1 != Bloc_lim_W1) {
             if (prev_Bloc_lim_W1 < Bloc_lim_W1) {
-                ClearBorder((i16)Bloc_lim_H1, (i16)Bloc_lim_H2, (i16)Bloc_lim_W1, (i16)Bloc_lim_W2);
+                ClearBorder((s16)Bloc_lim_H1, (s16)Bloc_lim_H2, (s16)Bloc_lim_W1, (s16)Bloc_lim_W2);
             }
             Bloc_lim_W1 = prev_Bloc_lim_W1;
         }
         memset(draw_buffer, 0, Bloc_lim_H1 * 320);
-        i32 buffer_offset = Bloc_lim_H1 * 320 + Bloc_lim_W1;
-        for (i32 y = Bloc_lim_H1; y < Bloc_lim_H2; ++y) {
+        s32 buffer_offset = Bloc_lim_H1 * 320 + Bloc_lim_W1;
+        for (s32 y = Bloc_lim_H1; y < Bloc_lim_H2; ++y) {
             u8* dest_pos = draw_buffer + buffer_offset;
             u8* source_pos = EffetBufferNormal + buffer_offset;
-            for (i32 x = Bloc_lim_W1; x < Bloc_lim_W2; ++x) {
+            for (s32 x = Bloc_lim_W1; x < Bloc_lim_W2; ++x) {
                 *dest_pos++ = *source_pos++;
             }
             buffer_offset += 320;
@@ -443,7 +443,7 @@ void InitPaletteSpecialPC(void) {
 }
 
 //3D54C
-void DoFadePaletteSpecialPC(i16 a1, i16 a2) {
+void DoFadePaletteSpecialPC(s16 a1, s16 a2) {
     print_once("Not implemented: DoFadePaletteSpecialPC"); //stub
 }
 
@@ -499,8 +499,8 @@ void InitModeNormalWithFrequency(u8 freq) {
 }
 
 //3DB24
-void WaitNSynchro(i32 n_frames) {
-    for (i32 i = 0; i < n_frames; ++i) {
+void WaitNSynchro(s32 n_frames) {
+    for (s32 i = 0; i < n_frames; ++i) {
         advance_frame();
     }
 }

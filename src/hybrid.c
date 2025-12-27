@@ -20,7 +20,7 @@ void doMOSAMScommand(obj_t* obj) {
 }
 
 //3F4A4
-void DoMOSAMSPoingCollision(obj_t* obj, i16 sprite) {
+void DoMOSAMSPoingCollision(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DoMOSAMSPoingCollision"); //stub
 }
 
@@ -35,7 +35,7 @@ void doSTOSKOcommand(obj_t* obj) {
 }
 
 //3F7EC
-void DoSTOSKOPoingCollision(obj_t* obj, i16 sprite) {
+void DoSTOSKOPoingCollision(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DoSTOSKOPoingCollision"); //stub
 }
 
@@ -45,7 +45,7 @@ void doBBF2command(obj_t* obj) {
 }
 
 //3FD78
-void DO_HYB_BBF2_POING_COLLISION(obj_t* obj, i16 sprite) {
+void DO_HYB_BBF2_POING_COLLISION(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DO_HYB_BBF2_POING_COLLISION"); //stub
 }
 
@@ -105,7 +105,7 @@ void DoFlammeRaymanCollision(obj_t* obj) {
 }
 
 //413B4
-void AllocateFlammes(i16 a1) {
+void AllocateFlammes(s16 a1) {
     print_once("Not implemented: AllocateFlammes"); //stub
 }
 

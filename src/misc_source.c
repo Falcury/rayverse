@@ -45,14 +45,14 @@ u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte) {
 
 
 //inlined
-void SetPalette(rgb_palette_t* palette, u8 first_color, i32 num_colors) {
+void SetPalette(rgb_palette_t* palette, u8 first_color, s32 num_colors) {
     memcpy(global_game->draw_palette.colors + first_color, palette->colors + first_color, num_colors * sizeof(rgb_t));
 }
 
 
 
 //38400
-i16 dummy_scene_func(u32 par_0) {
+s16 dummy_scene_func(u32 par_0) {
     return 1;
 }
 
@@ -95,7 +95,7 @@ image_t load_vignet_pcx(u32 resource_id) {
         fread(pcx_buf, info->size, 1, fp);
         u8* p = (u8*)pcx_buf;
         u8 checksum = info->checksum_byte;
-        for (i32 i = 0; i < info->size; ++i) {
+        for (s32 i = 0; i < info->size; ++i) {
             u8 b = *p;
             checksum -= b;
             b ^= info->xor_byte;
@@ -112,8 +112,8 @@ image_t load_vignet_pcx(u32 resource_id) {
         }
 
         pcx_header_t* header = (pcx_header_t*)pcx_buf;
-        i32 width = header->max_x - header->min_x + 1;
-        i32 height = header->max_y - header->min_y + 1;
+        s32 width = header->max_x - header->min_x + 1;
+        s32 height = header->max_y - header->min_y + 1;
         image.width = width;
         image.height = height;
 
@@ -126,13 +126,13 @@ image_t load_vignet_pcx(u32 resource_id) {
             // run-length decoding
             u8* pos = pcx_buf + 128;
             u8* end = pcx_buf + info->size;
-            i32 i = 0;
-            i32 decompressed_byte_count = width * height;
+            s32 i = 0;
+            s32 decompressed_byte_count = width * height;
             while (i < decompressed_byte_count && pos < end) {
                 u8 b = *pos;
                 if (b >= 0xC0) {
                     // upper two bits are set -> remaining bits interpreted as run length (0-63)
-                    i32 run_length = b & 0x3F;
+                    s32 run_length = b & 0x3F;
                     ++pos;
                     if (i + run_length <= decompressed_byte_count && pos < end) {
                         b = *pos;
@@ -153,7 +153,7 @@ image_t load_vignet_pcx(u32 resource_id) {
                 fatal_error();
             }
             // Save the image palette at the end of the file
-            i32 pal_offset = info->size - 768;
+            s32 pal_offset = info->size - 768;
             image.pal = (rgb_palette_t*)malloc(sizeof(rgb_palette_t));
             image.pal_needs_free = true;
             memcpy(image.pal, pcx_buf + pal_offset, sizeof(rgb_palette_t));
@@ -171,11 +171,11 @@ image_t load_vignet_pcx(u32 resource_id) {
 
 void detect_and_remove_invalid_link_cycles(void) {
     u8* visited = (u8*)malloc(level.nb_objects);
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         memset(visited, 0, level.nb_objects);
         obj_t* obj = level.objects + i;
-        i16 initial_link = obj->id;
-        i16 current_link = link_init[initial_link];
+        s16 initial_link = obj->id;
+        s16 current_link = link_init[initial_link];
         bool loop_invalid = false;
         while (current_link != initial_link) {
             // We expect a closed loop of links, returning to the original object id.

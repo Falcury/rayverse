@@ -1,13 +1,13 @@
 
 //23A00
-i16 get_allowed_time(void) {
+s16 get_allowed_time(void) {
     return allowed_time[32 * (num_world - 1) + (num_level - 1)];
 }
 
 //23A28
 void calc_left_time(void) {
     if (bonus_map) {
-        i16 allowed_time_in_seconds = allowed_time[32 * (num_world - 1) + (num_level - 1)];
+        s16 allowed_time_in_seconds = allowed_time[32 * (num_world - 1) + (num_level - 1)];
         if (map_time == 1) {
             if (allowed_time_in_seconds == -2) {
                 left_time = -2;
@@ -32,13 +32,13 @@ void calc_left_time(void) {
 }
 
 //23AF8
-u8 get_bonus_map_complete(i16 world, i16 lvl) {
+u8 get_bonus_map_complete(s16 world, s16 lvl) {
     /* 35FB4 8015A7B4 -O2 */
     return getbit(bonus_perfect, (s16) (lvl - 1 + ((world - 1) << 5)));
 }
 
 //23B10
-void set_bonus_map_complete(i16 world, i16 lvl) {
+void set_bonus_map_complete(s16 world, s16 lvl) {
     /* 35FEC 8015A7EC -O2 */
     setbit(bonus_perfect, (s16) (lvl - 1 + ((world - 1) << 5)));
 }
@@ -60,20 +60,20 @@ void DO_WIZ_AFTER_BONUS_MAP(void) {
 
 //23B8C
 void init_bonus_perfect(void) {
-    for (i32 i = 0; i < 24; ++i) {
+    for (s32 i = 0; i < 24; ++i) {
         bonus_perfect[i] = 0;
     }
 }
 
 //23BA0
-i16 do_perfect_bonus(u32 a1) {
+s16 do_perfect_bonus(u32 a1) {
     horloges(1);
     readinput();
 
     if (loop_time == 0) {
         INIT_FADE_IN();
-        i32 minutes = allowed_time[(s16) (((num_world-1) * 32) + (num_level-1))] - ((left_time / 60) + 1);
-        i32 seconds = (map_time - 120) % 60;
+        s32 minutes = allowed_time[(s16) (((num_world - 1) * 32) + (num_level - 1))] - ((left_time / 60) + 1);
+        s32 seconds = (map_time - 120) % 60;
         snprintf(bonus_time_display_text, 20, "/%2d : %02d/", minutes, seconds);
     }
 
@@ -127,7 +127,7 @@ i16 do_perfect_bonus(u32 a1) {
 
 //23DF0
 void DO_PERFECT_BONUS_MAP(void) {
-    i16 saved_loop_time = loop_time;
+    s16 saved_loop_time = loop_time;
     bool is_mode_x = false;
     if (loop_time < 0) {
         ++loop_time;

@@ -11,7 +11,7 @@ void PC_init_cheats(void) {
 #if 0
     // debug: decode cheat code table (see data.c)
     u8 decoded_cheat_codes[327];
-    for (i32 i = 0; i < sizeof(cheat_codes); ++i) {
+    for (s32 i = 0; i < sizeof(cheat_codes); ++i) {
         decoded_cheat_codes[i] = cheat_codes[i] ^ 0x96;
     }
 
@@ -19,14 +19,14 @@ void PC_init_cheats(void) {
                     SC_P, SC_Q, SC_R, SC_S, SC_T, SC_U, SC_V, SC_W, SC_X, SC_Y, SC_Z};
     u8 numbers[] = {SC_0, SC_1, SC_2, SC_3, SC_4, SC_5, SC_6, SC_7, SC_8, SC_9};
 
-    i32 num_lines = (327 / 10) + 1;
-    for (i32 line = 0; line < num_lines; ++line) {
-        i32 i = line * 10;
-        i32 line_len = (327 - i >= 10) ? 10 : 327 - i;
-        for (i32 j = 0; j < line_len; ++j) {
+    s32 num_lines = (327 / 10) + 1;
+    for (s32 line = 0; line < num_lines; ++line) {
+        s32 i = line * 10;
+        s32 line_len = (327 - i >= 10) ? 10 : 327 - i;
+        for (s32 j = 0; j < line_len; ++j) {
             u8 c = decoded_cheat_codes[i+j];
             bool printed = false;
-            for (i32 k = 0; k < COUNT(letters); ++k) {
+            for (s32 k = 0; k < COUNT(letters); ++k) {
                 if (c == letters[k]) {
                     printf("_(SC_%c), ", 'A'+k);
                     printed = true;
@@ -34,7 +34,7 @@ void PC_init_cheats(void) {
                 }
             }
             if (!printed) {
-                for (i32 k = 0; k < COUNT(numbers); ++k) {
+                for (s32 k = 0; k < COUNT(numbers); ++k) {
                     if (c == numbers[k]) {
                         printf("_(SC_%c), ", '0'+k);
                         printed = true;
@@ -161,7 +161,7 @@ void PC_do_cheats_in_world_map(void) {
 
     if (memcmp(text_input_buffer, cheat_code_unlock_all_levels, 7) == 0 || memcmp(text_input_buffer, cheat_code_unlock_all_levels_alt, 9) == 0) {
         ALL_WORLD = 0;
-        for (i32 i = 0; i < COUNT(t_world_info); ++i) {
+        for (s32 i = 0; i < COUNT(t_world_info); ++i) {
             world_info_t* wi = t_world_info + i;
             if ((wi->state & 1) == 0 && wi->world != world_6_cake) {
                 wi->state |= 4;
@@ -171,7 +171,7 @@ void PC_do_cheats_in_world_map(void) {
         // This cheat will normally not unlock Mr Dark's Dare.
         // However, there's an exception: if you are standing on Crystal Palace, Mr Dark's Dare *WILL* unlock!
         if (num_world_choice == 14) {
-            for (i32 i = 0; i < COUNT(t_world_info); ++i) {
+            for (s32 i = 0; i < COUNT(t_world_info); ++i) {
                 world_info_t* wi = t_world_info + i;
                 if ((wi->state & 1) == 0) {
                     wi->state |= 4;

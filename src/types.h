@@ -22,7 +22,7 @@ typedef struct rgb_palette_t {
 typedef struct mem_t {
 	size_t len;
 	size_t capacity;
-	i32 cursor;
+	s32 cursor;
 	u8 data[1]; // allowed to extend beyond end of struct
 } mem_t;
 
@@ -33,60 +33,60 @@ typedef struct image_t {
 	u8* memory;
 	u32 memory_size;
 	rgb_palette_t* pal;
-	i32 width;
-	i32 height;
+	s32 width;
+	s32 height;
 	bool pal_needs_free;
 	bool is_valid;
 } image_t;
 
 typedef struct rect_t {
-	i32 x;
-	i32 y;
-	i32 w;
-	i32 h;
+	s32 x;
+	s32 y;
+	s32 w;
+	s32 h;
 } rect_t;
 
 typedef struct game_sound_buffer_t {
-	i32 samples_per_second;
+	s32 samples_per_second;
 	u32 sample_count;
-	i16* samples;
+	s16* samples;
 } game_sound_buffer_t;
 
 
 typedef struct voice_t {
-    i16 obj;
-    i16 vol;
-    i16 pan;
-    i16 snd;
-    i16 field_8;
-    i16 field_A;
+    s16 obj;
+    s16 vol;
+    s16 pan;
+    s16 snd;
+    s16 field_8;
+    s16 field_A;
 } voice_t;
 
 typedef struct snd_t {
     u8* data;
-    i32 offset;
-    i32 size;
-    i32 sample_count;
-    i32 bnk_field_C;
+    s32 offset;
+    s32 size;
+    s32 sample_count;
+    s32 bnk_field_C;
     float position;
     float volume;
-    i32 sample_rate;
+    s32 sample_rate;
     u8 bytes_per_sample;
     u8 is_playing;
 } snd_t;
 
 typedef struct pile_snd_t {
-    i16 obj; // field_0
-    i16 snd; // field_2
-    i16 prog; // field_4
-    i16 tone; // field_6
-    i16 note; // field_8
-    i16 vol; // field_A
-    i16 field_C; // field_C
-    i16 pan; // field_E
-    i32 end_time; // field_10
-    i16 field_14; // field_14
-    i16 field_16; // padding?
+    s16 obj; // field_0
+    s16 snd; // field_2
+    s16 prog; // field_4
+    s16 tone; // field_6
+    s16 note; // field_8
+    s16 vol; // field_A
+    s16 field_C; // field_C
+    s16 pan; // field_E
+    s32 end_time; // field_10
+    s16 field_14; // field_14
+    s16 field_16; // padding?
 } pile_snd_t;
 
 
@@ -117,8 +117,8 @@ typedef struct sdl_sound_output_t {
     u32 bytes_per_sample;
     u32 secondary_buffer_size;
     u8* secondary_buffer; // TODO: fix this instead of keep using SDL_QueueAudio()
-    i64 running_sample_index_for_writing;
-    i64 running_sample_index_for_reading;
+    s64 running_sample_index_for_writing;
+    s64 running_sample_index_for_reading;
     u32 safety_bytes;
     SDL_AudioDeviceID audio_device;
 } sdl_sound_output_t;
@@ -156,12 +156,12 @@ typedef struct opengl_state_t {
 typedef struct surface_t {
 	u8* memory;
 	u32 memory_size;
-	i32 bytes_per_pixel;
-	i32 width;
-	i32 height;
-	i32 width_pow2; // for compatibility with old graphics cards that only support power-of-2 size textures
-	i32 height_pow2;
-	i32 pitch;
+	s32 bytes_per_pixel;
+	s32 width;
+	s32 height;
+	s32 width_pow2; // for compatibility with old graphics cards that only support power-of-2 size textures
+	s32 height_pow2;
+	s32 pitch;
 } surface_t;
 
 typedef struct app_state_t {
@@ -174,19 +174,19 @@ typedef struct app_state_t {
 	surface_t offscreen_surface;
 	surface_t game_surface;
 	surface_t* active_surface;
-	i32 client_width;
-	i32 client_height;
+	s32 client_width;
+	s32 client_height;
     float display_scale_factor;
     float display_points_per_pixel;
     bool running;
     bool vsync_enabled;
-    i64 target_game_hz;
+    s64 target_game_hz;
 	float target_seconds_per_frame;
 	game_state_t game;
-	i64 flip_clock;
-	i64 frame_clock;
-    i16 click_x;
-    i16 click_y;
+	s64 flip_clock;
+	s64 frame_clock;
+    s16 click_x;
+    s16 click_y;
     bool was_client_leftclicked;
 } app_state_t;
 
@@ -194,8 +194,8 @@ typedef struct app_state_t {
 #pragma pack(push,1)
 
 typedef struct eta_t {
-	i8 speed_x_right;
-	i8 speed_x_left;
+	s8 speed_x_right;
+	s8 speed_x_left;
 	u8 anim_index;
 	u8 next_etat;
 	u8 next_subetat;
@@ -205,8 +205,8 @@ typedef struct eta_t {
 } eta_t;
 
 typedef struct world_info_t {
-	i16 xpos;
-	i16 ypos;
+	s16 xpos;
+	s16 ypos;
 	u8 index_up;
 	u8 index_down;
 	u8 index_left;
@@ -215,7 +215,7 @@ typedef struct world_info_t {
 	u8 nb_cages;
 	u8 world;
 	u8 level;
-	i8 color;
+	s8 color;
 	u8 field_D;
 	u8 field_E;
 	u8 field_F;
@@ -223,7 +223,7 @@ typedef struct world_info_t {
 } world_info_t;
 
 typedef struct status_bar_t {
-	i16 lives;
+	s16 lives;
 	u8 lives_digits[2];
 	u8 hp_sprites[2];
 	u8 num_wiz;
@@ -239,7 +239,7 @@ typedef struct {
 } loadinforay_t;
 
 typedef struct poing_t {
-	i32 y_16; // Fixed-point y pos value?
+	s32 y_16; // Fixed-point y pos value?
 	u16 field_4;
 	u16 speed_x;
 	u16 charge;
@@ -325,8 +325,8 @@ typedef struct obj_flags_t {
 } obj_flags_t;
 
 typedef struct cmd_context_t {
-    i16 cmd_offset;
-    i16 count;
+    s16 cmd_offset;
+    s16 count;
 } cmd_context_t;
 
 typedef struct obj_t {
@@ -335,32 +335,32 @@ typedef struct obj_t {
 	u8* img_buffer; // ImageBufferPointer
 	eta_t** eta;
 	u8* cmds;
-	i16* cmd_labels;
+	s16* cmd_labels;
 	cmd_context_t cmd_contexts[1];
 	u32 field_1C; // 0x1C
 	u32 link_has_gendoor; // 0x20 - ?
-	i32 is_active; // 24
-	i32 x; // 28
-	i32 y; // 2C
-	i32 active_flag; // 30
-	i16 id;
-	i16 screen_x;
-	i16 screen_y;
-	i16 field_3A;
-	i16 init_x;
-	i16 init_y;
-	i16 speed_x;
-	i16 speed_y;
-	i16 nb_sprites;
-	i16 cmd_offset;
-	i16 nb_cmd;
-	i16 cmd_arg_2; // action (?) // command_par2? follow_id? // field_4A
-	i16 follow_y;
-	i16 follow_x;
-	i16 cmd_arg_1;
-	i16 link; // 52
-	i16 ray_dist; //54 // tile index?
-	i16 iframes_timer; // timer (?)
+	s32 is_active; // 24
+	s32 x; // 28
+	s32 y; // 2C
+	s32 active_flag; // 30
+	s16 id;
+	s16 screen_x;
+	s16 screen_y;
+	s16 field_3A;
+	s16 init_x;
+	s16 init_y;
+	s16 speed_x;
+	s16 speed_y;
+	s16 nb_sprites;
+	s16 cmd_offset;
+	s16 nb_cmd;
+	s16 cmd_arg_2; // action (?) // command_par2? follow_id? // field_4A
+	s16 follow_y;
+	s16 follow_x;
+	s16 cmd_arg_1;
+	s16 link; // 52
+	s16 ray_dist; //54 // tile index?
+	s16 iframes_timer; // timer (?)
 	u16 test_block_index;
 	u16 scale; // 5A
 	u16 zdc; // ?
@@ -380,15 +380,15 @@ typedef struct obj_t {
 	u8 gravity_value_1; // 71
 	u8 gravity_value_2; // 72
 	u8 change_anim_mode; // etat updated (?) // 73
-	i8 offset_hy;
+	s8 offset_hy;
 	u8 follow_sprite; // the sprite index which uses the obj collision
-	i8 hit_points;
-	i8 init_hit_points;
+	s8 hit_points;
+	s8 init_hit_points;
 	u8 init_flag; // 78
 	u8 hit_sprite; // 79
 	u8 detect_zone; // 7A
 	u8 detect_zone_flag; // 7B
-	i8 cmd_context_depth; // 7C
+	s8 cmd_context_depth; // 7C
 	u8 configuration; // 7D
 	u8 display_prio; // layer the obj sprites get drawn to, between 1 and 7; 0 means it doesn't get drawn
 	u8 timer; // 7F
@@ -402,8 +402,8 @@ typedef struct obj_t {
 #define OBJ_STATE(obj) obj->eta[obj->main_etat][obj->sub_etat]
 
 typedef struct zdc_t {
-    i16 x_pos;
-    i16 y_pos;
+    s16 x_pos;
+    s16 y_pos;
     u8 width;
     u8 height;
     u8 flags;
@@ -412,17 +412,17 @@ typedef struct zdc_t {
 
 typedef struct level_t {
 	obj_t* objects;
-	i16 nb_objects;
+	s16 nb_objects;
 } level_t;
 
 typedef struct level_obj_t {
-    i16* obj_ids;
-    i16 nb_objects;
+    s16* obj_ids;
+    s16 nb_objects;
 } level_obj_t;
 
 typedef struct active_objects_t {
-    i16 objects[100];
-    i16 num_active_objects;
+    s16 objects[100];
+    s16 num_active_objects;
 } active_objects_t;
 
 typedef struct map_tile_t {
@@ -434,18 +434,18 @@ typedef struct map_tile_t {
 } map_tile_t;
 
 typedef struct map_data_t {
-	i16 width;
-	i16 height;
-	i32 length;
+	s16 width;
+	s16 height;
+	s32 length;
 	map_tile_t* map;
 } map_data_t;
 
 typedef struct display_map_t {
-    i16 x;
-    i16 y;
+    s16 x;
+    s16 y;
     u8 width_in_tiles;
     u8 height_in_tiles;
-    i16 tile_index;
+    s16 tile_index;
 } display_map_t;
 
 typedef struct big_map_t {
@@ -454,31 +454,31 @@ typedef struct big_map_t {
     display_map_t* display_map; // field_8
     u8* map_blocks; // field_C
     u32 field_10;
-    i16 field_14;
-    i16 width;
-    i16 height;
-    i16 field_1A;
-    i16 field_1C;
+    s16 field_14;
+    s16 width;
+    s16 height;
+    s16 field_1A;
+    s16 field_1C;
 } big_map_t;
 
 typedef struct options_t {
-	i16 music_enabled;
-	i16 sound_volume;
-	i16 SizeScreen;
-	i16 Frequence;
-	i16 fixon;
-	i16 BackgroundOn;
-	i16 ScrollDiffOn;
-	i16 field_E; //unused?
-	i16 field_10; //unused?
-	i16 field_12; //unused?
+	s16 music_enabled;
+	s16 sound_volume;
+	s16 SizeScreen;
+	s16 Frequence;
+	s16 fixon;
+	s16 BackgroundOn;
+	s16 ScrollDiffOn;
+	s16 field_E; //unused?
+	s16 field_10; //unused?
+	s16 field_12; //unused?
 } options_t;
 
 typedef struct options_jeu_t {
-	i32 (*test_fire1)(void);
-    i32 (*test_fire0)(void);
-    i32 (*test_button4)(void);
-    i32 (*test_button3)(void);
+	s32 (*test_fire1)(void);
+    s32 (*test_fire0)(void);
+    s32 (*test_button4)(void);
+    s32 (*test_button3)(void);
 	u16 jump;
 	u16 fist;
 	u16 field_14;
@@ -489,10 +489,10 @@ typedef struct options_jeu_t {
 } options_jeu_t;
 
 typedef struct record_t {
-	i32 current_offset;
-	i32 repeat_length;
-	i32 repeat_index;
-	i32 length;
+	s32 current_offset;
+	s32 repeat_length;
+	s32 repeat_index;
+	s32 length;
 	u8* data;
 	u8 is_recording;
 	u8 is_playing;
@@ -501,19 +501,19 @@ typedef struct record_t {
 
 typedef struct save_state_t {
 	u32 triggered_objects[8]; // 0
-	i16 nb_floc[8]; // 0x20
-	i16 vent_x; // 0x30
-	i16 vent_y; // 0x32
-	i16 x_map; // 0x34
-	i16 y_map; // 0x36
-	i16 ray_x_pos; //0x38
-	i16 ray_y_pos; //0x3A
-	i16 ray_screen_x; //0x3C
-	i16 ray_screen_y; //0x3E
+	s16 nb_floc[8]; // 0x20
+	s16 vent_x; // 0x30
+	s16 vent_y; // 0x32
+	s16 x_map; // 0x34
+	s16 y_map; // 0x36
+	s16 ray_x_pos; //0x38
+	s16 ray_y_pos; //0x3A
+	s16 ray_screen_x; //0x3C
+	s16 ray_screen_y; //0x3E
 	u16 ray_flip_x; //0x40
-	i16 save_obj_id; //0x42
-	i16 save_obj_x_pos; //0x44
-	i16 save_obj_y_pos; //0x46
+	s16 save_obj_id; //0x42
+	s16 save_obj_x_pos; //0x44
+	s16 save_obj_y_pos; //0x46
 	u16 link_init[256]; //0x48
 	u8 save_obj_detect_zone_flag; //0x248
 	u8 save_obj_flag_1;
@@ -544,8 +544,8 @@ typedef struct sound_table_entry_t {
 
 
 typedef struct archive_header_t {
-	i32 offset;
-	i32 size;
+	s32 offset;
+	s32 size;
 	u8 xor_byte;
 	u8 checksum_byte;
 } archive_header_t;
@@ -559,22 +559,22 @@ typedef struct event_cmd_t {
 
 typedef struct display_item_t {
     char text[200];
-    i16 centered_x_pos;
-    i16 centered_y_pos;
-    i16 width;
-    i16 height;
-    i16 xpos;
-    i16 ypos;
+    s16 centered_x_pos;
+    s16 centered_y_pos;
+    s16 width;
+    s16 height;
+    s16 xpos;
+    s16 ypos;
     u8 font_size;
     u8 field_D5;
     u8 is_fond;
-    i8 color;
+    s8 color;
 } display_item_t;
 
 
 typedef struct obj_procs_t {
     void (*command)(obj_t* obj);
-    void (*poing_collision)(obj_t* obj, i16 sprite);
+    void (*poing_collision)(obj_t* obj, s16 sprite);
     void (*rayman_collision)(obj_t* obj);
     void (*rayman_in_zone)(obj_t* obj);
     void (*u_turn)(obj_t* obj);
@@ -587,39 +587,39 @@ typedef struct cptr_t {
 } cptr_t;
 
 typedef struct vitraux_info_t {
-    i16 field_0;
-    i16 field_2;
+    s16 field_0;
+    s16 field_2;
     u8 field_4;
     u8 field_5;
     u8 field_6;
     u8 field_7;
-    i16 field_8;
+    s16 field_8;
 } vitraux_info_t;
 
 typedef struct bnk_header_t {
-    i32 offset;
-    i32 size;
-    i32 field_8;
-    i32 field_C;
+    s32 offset;
+    s32 size;
+    s32 field_8;
+    s32 field_C;
 } bnk_header_t;
 
 typedef struct bande_t {
-    i16 length;
-    i16 offset;
-    i16 field_4;
-    i16 field_6;
+    s16 length;
+    s16 offset;
+    s16 field_4;
+    s16 field_6;
     u8 field_8;
     u8 field_9;
     //u8 field_A_align;
     //u8 field_B_align;
     u8* source_buffer_pos;
     u8* draw_buffer_pos;
-    i16 field_14;
-    //i16 field_16_align;
+    s16 field_14;
+    //s16 field_16_align;
 } bande_t;
 
 typedef struct def_bande_t {
-    i16 length;
+    s16 length;
     u8 field_2;
     //u8 field_3_align;
     u8 field_4;
@@ -629,32 +629,32 @@ typedef struct def_bande_t {
 } def_bande_t;
 
 typedef struct def_sprite_t {
-    i16 x;
-    i16 y;
-    i16 bande_index;
-    //i16 field_6_align;
+    s16 x;
+    s16 y;
+    s16 bande_index;
+    //s16 field_6_align;
 } def_sprite_t;
 
 typedef struct flocon_t {
-    i16 field_0;
-    i16 field_2;
-    i16 field_4;
+    s16 field_0;
+    s16 field_2;
+    s16 field_4;
     u8 field_6;
     u8 field_7;
 } flocon_t;
 
 typedef struct pix_gerbe_item_t {
-    i16 x_pos;
-    i16 y_pos;
-    i16 speed_x;
-    i16 speed_y;
+    s16 x_pos;
+    s16 y_pos;
+    s16 speed_x;
+    s16 speed_y;
     u8 y_accel;
     u8 unk_1;
 } pix_gerbe_item_t;
 
 typedef struct pix_gerbe_t {
     pix_gerbe_item_t items[64];
-    i16 is_active;
+    s16 is_active;
 } pix_gerbe_t;
 
 typedef struct rayevts_t {
@@ -696,10 +696,10 @@ typedef struct wi_save_zone_t {
 } wi_save_zone_t;
 
 typedef struct ray_stack_t {
-    i16 x_pos;
-    i16 y_pos;
-    i16 poing_x_pos;
-    i16 poing_y_pos;
+    s16 x_pos;
+    s16 y_pos;
+    s16 poing_x_pos;
+    s16 poing_y_pos;
     u8 main_etat;
     u8 sub_etat;
     u8 anim_index;
@@ -722,29 +722,29 @@ typedef struct grp_star_t {
 typedef struct sax_attack_entry_t {
     u8 next_note;
     u8 time;
-    i16 end;
+    s16 end;
 } sax_attack_entry_t;
 
 typedef struct sax_note_entry_t {
     u8 type;
-    i16 speed_x;
-    i16 speed_y;
-    i16 initial_iframes;
-    i16 field4_0x8; /* unused */
+    s16 speed_x;
+    s16 speed_y;
+    s16 initial_iframes;
+    s16 field4_0x8; /* unused */
 } sax_note_entry_t;
 
 typedef struct sax_data_t {
-    i16 x_pos;
-    i16 y_pos;
-    i16 note_box_coll_x;
-    i16 note_box_coll_y;
-    i16 sprite2_x;
-    i16 sprite2_y;
+    s16 x_pos;
+    s16 y_pos;
+    s16 note_box_coll_x;
+    s16 note_box_coll_y;
+    s16 sprite2_x;
+    s16 sprite2_y;
     u8 coup;
     u8 saved_hp;
     u8 field8_0xe;
     u8 field9_0xf;
-    i16 field10_0x10;
+    s16 field10_0x10;
 } sax_data_t;
 
 typedef struct bb_data_t {
@@ -1659,10 +1659,10 @@ enum dos_scancode_enum {
 	SC_F12          = 0x58,
 };
 
-typedef void (draw_func_t)(i32 x, i32 sprite_field_A, i32 y, vec2b_t size, u8* draw_buf, u8* image_data);
-typedef void (fplot_func_t)(u8* buffer, i32 x, i32 y, u8 color);
-typedef i16 (scene_func_t)(u32 a1);
-typedef i32 (calcbloc_func_t)(i32 a1, i32 a2);
-typedef i32 (swap_func_t)(u8* source_buf, u8* dest_buf, i32 width, i32 height);
+typedef void (draw_func_t)(s32 x, s32 sprite_field_A, s32 y, vec2b_t size, u8* draw_buf, u8* image_data);
+typedef void (fplot_func_t)(u8* buffer, s32 x, s32 y, u8 color);
+typedef s16 (scene_func_t)(u32 a1);
+typedef s32 (calcbloc_func_t)(s32 a1, s32 a2);
+typedef s32 (swap_func_t)(u8* source_buf, u8* dest_buf, s32 width, s32 height);
 typedef void (void_func_t)(void);
 

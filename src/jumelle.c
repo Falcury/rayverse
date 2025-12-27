@@ -1,12 +1,12 @@
 
 //42930
-void plot2linejumelle(i32 jumelle_x, i32 jumelle_y, i32 plot_x, i32 plot_y, i32 circle2_offset, u8* effet_buf, u8* draw_buf) {
-    i32 v55 = SCREEN_WIDTH * JumelleYMin + JumelleXMin;
-    i32 v56 = jumelle_x - 112;
-    i32 v7 = jumelle_x - plot_x - circle2_offset;
-    i32 v53 = jumelle_y - 64;
+void plot2linejumelle(s32 jumelle_x, s32 jumelle_y, s32 plot_x, s32 plot_y, s32 circle2_offset, u8* effet_buf, u8* draw_buf) {
+    s32 v55 = SCREEN_WIDTH * JumelleYMin + JumelleXMin;
+    s32 v56 = jumelle_x - 112;
+    s32 v7 = jumelle_x - plot_x - circle2_offset;
+    s32 v53 = jumelle_y - 64;
     if (plot_x <= circle2_offset) {
-        i32 v60 = 2 * plot_x;
+        s32 v60 = 2 * plot_x;
         if (v7 < 0) {
             v60 += v7;
             v7 = 0;
@@ -14,9 +14,9 @@ void plot2linejumelle(i32 jumelle_x, i32 jumelle_y, i32 plot_x, i32 plot_y, i32 
         if (v7 + v60 >= SCREEN_WIDTH) {
             v60 = SCREEN_WIDTH - v7 - 1;
         }
-        i32 v25 = circle2_offset + jumelle_x - plot_x;
-        i32 v59 = 2 * plot_x;
-        i32 v57 = v25;
+        s32 v25 = circle2_offset + jumelle_x - plot_x;
+        s32 v59 = 2 * plot_x;
+        s32 v57 = v25;
         if (v25 < 0) {
             v59 += v25;
             v57 = 0;
@@ -26,13 +26,13 @@ void plot2linejumelle(i32 jumelle_x, i32 jumelle_y, i32 plot_x, i32 plot_y, i32 
         }
 
         // Draw top segments
-        i32 v26 = jumelle_y - plot_y;
-        i32 v54 = v26;
+        s32 v26 = jumelle_y - plot_y;
+        s32 v54 = v26;
         if (jumelle_y - plot_y >= 0 && v26 < SCREEN_HEIGHT) {
             // Top segment of left circle
             if (v60 > 0) {
-                i32 v27 = SCREEN_WIDTH * v26 + v7;
-                i32 v28 = v27 - v55;
+                s32 v27 = SCREEN_WIDTH * v26 + v7;
+                s32 v28 = v27 - v55;
                 u8* v29 = draw_buf + v27;
                 u8* v30 = effet_buf + v28;
                 if (JumelleZoomActif) {
@@ -55,8 +55,8 @@ void plot2linejumelle(i32 jumelle_x, i32 jumelle_y, i32 plot_x, i32 plot_y, i32 
         }
 
         // Draw bottom segments
-        i32 v8 = plot_y + jumelle_y;
-        i32 v52 = v8;
+        s32 v8 = plot_y + jumelle_y;
+        s32 v52 = v8;
         if (v8 >= 0 && v8 < SCREEN_HEIGHT) {
             // Bottom segment of left circle
             if (v60 > 0) {
@@ -81,7 +81,7 @@ void plot2linejumelle(i32 jumelle_x, i32 jumelle_y, i32 plot_x, i32 plot_y, i32 
         }
     } else {
         // Draw middle part of both circles
-        i32 v58 = 2 * (plot_x + circle2_offset);
+        s32 v58 = 2 * (plot_x + circle2_offset);
         if (v7 < 0) {
             v58 += v7;
             v7 = 0;
@@ -90,7 +90,7 @@ void plot2linejumelle(i32 jumelle_x, i32 jumelle_y, i32 plot_x, i32 plot_y, i32 
             v58 = SCREEN_WIDTH - v7 - 1;
         }
         if (v58 > 0) {
-            i32 v9 = jumelle_y - plot_y;
+            s32 v9 = jumelle_y - plot_y;
             if (v9 >= 0 && v9 < SCREEN_HEIGHT) {
                 u8* v10 = draw_buf + SCREEN_WIDTH * v9 + v7;
                 u8* v11 = effet_buf + SCREEN_WIDTH * v9 + v7 - v55;
@@ -101,7 +101,7 @@ void plot2linejumelle(i32 jumelle_x, i32 jumelle_y, i32 plot_x, i32 plot_y, i32 
                 }
             }
 
-            i32 v16 = jumelle_y + plot_y;
+            s32 v16 = jumelle_y + plot_y;
             if (v16 >= 0 && v16 < SCREEN_HEIGHT) {
                 u8* v10 = draw_buf + SCREEN_WIDTH * v16 + v7;
                 u8* v11 = effet_buf + SCREEN_WIDTH * v16 + v7 - v55;
@@ -119,15 +119,15 @@ void plot2linejumelle(i32 jumelle_x, i32 jumelle_y, i32 plot_x, i32 plot_y, i32 
 bool skip_jumelle = false;
 
 //42E1C
-void DisplayJumellesNormal(i32 x, i32 y, i32 rayon, i32 a4, u8* effet_buf, u8* draw_buf) {
+void DisplayJumellesNormal(s32 x, s32 y, s32 rayon, s32 a4, u8* effet_buf, u8* draw_buf) {
     // NOTE: this is debug code!
     if (skip_jumelle) {
 #if 1
-        for (i32 i = 0; i < HauteurJumelle; ++i) {
+        for (s32 i = 0; i < HauteurJumelle; ++i) {
             if (JumelleYMin + i >= 0 && JumelleYMin + i < 200) {
-                i32 width = LargeurJumelle;
-                i32 draw_x = JumelleXMin;
-                i32 source_x = 0;
+                s32 width = LargeurJumelle;
+                s32 draw_x = JumelleXMin;
+                s32 source_x = 0;
                 if (JumelleXMin < 0) {
                     source_x = -JumelleXMin;
                     width += JumelleXMin;
@@ -147,9 +147,9 @@ void DisplayJumellesNormal(i32 x, i32 y, i32 rayon, i32 a4, u8* effet_buf, u8* d
 #endif
     }
 
-    i32 v6 = 0;
-    i32 v7 = 0;
-    i32 v8 = rayon;
+    s32 v6 = 0;
+    s32 v7 = 0;
+    s32 v8 = rayon;
     while (v8 >= v7) {
         plot2linejumelle(x, y, v7, v8, a4, effet_buf, draw_buf);
         plot2linejumelle(x, y, v8, v7, a4, effet_buf, draw_buf);
@@ -167,21 +167,21 @@ void DisplayJumellesNormal(i32 x, i32 y, i32 rayon, i32 a4, u8* effet_buf, u8* d
 
 //42EC4
 void InitMatriceJumelle(void) {
-    DistPointX = (i32*)calloc(161, sizeof(i32));
-    DistPointY = (i32*)calloc(65, sizeof(i32));
-    ExpPoint = (i32*)calloc(5120, sizeof(i32));
-    JumelleZoomDef = (i32*)calloc(29025, sizeof(i32));
+    DistPointX = (s32*)calloc(161, sizeof(s32));
+    DistPointY = (s32*)calloc(65, sizeof(s32));
+    ExpPoint = (s32*)calloc(5120, sizeof(s32));
+    JumelleZoomDef = (s32*)calloc(29025, sizeof(s32));
     if (JumelleEffetAutorise) {
         if (DistPointX && DistPointY && ExpPoint && JumelleZoomDef) {
-            for (i32 y = 0; y < 65; ++y) {
+            for (s32 y = 0; y < 65; ++y) {
                 DistPointY[y] = y * y;
             }
             // NOTE: the for loop for X is inside the Y loop in the original (probably a bug?)
-            for (i32 x = 0; x < 161; ++x) {
+            for (s32 x = 0; x < 161; ++x) {
                 DistPointX[x] = x * x;
             }
-            for (i32 i = 0; i < 5120; ++i) {
-                ExpPoint[i] = (i32)(expf((float)(-i) / 1024.0f ) * 65536.0f);
+            for (s32 i = 0; i < 5120; ++i) {
+                ExpPoint[i] = (s32)(expf((float)(-i) / 1024.0f ) * 65536.0f);
             }
         } else {
             if (DistPointX) {
@@ -228,7 +228,7 @@ void DefaultJumelleVariable(void) {
 }
 
 //430FC
-void ChangeDeltaSizeJumelle(i32 delta_size) {
+void ChangeDeltaSizeJumelle(s32 delta_size) {
     RayonJumelle = MAX(30, MIN(69, RayonJumelle + delta_size));
     ChangeJumelleVariable();
     if (JumelleZoomActif) {
@@ -238,9 +238,9 @@ void ChangeDeltaSizeJumelle(i32 delta_size) {
 
 //4314C
 void CalculVitesseJumelle(void) {
-    i32 delta_x = PositionJumelleDemandeX - JumellePosX;
-    i32 delta_y = PositionJumelleDemandeY - JumellePosY;
-    i32 dist = Abs(delta_y) + Abs(delta_x);
+    s32 delta_x = PositionJumelleDemandeX - JumellePosX;
+    s32 delta_y = PositionJumelleDemandeY - JumellePosY;
+    s32 dist = Abs(delta_y) + Abs(delta_x);
     if (dist > 0) {
         delta_x = ashl16(delta_x, 6) / dist;
         delta_y = ashl16(delta_y, 6) / dist;
@@ -250,7 +250,7 @@ void CalculVitesseJumelle(void) {
 }
 
 //43230
-void ChangeDeltaPosXJumelleWithoutLimit(i32 delta_pos_x) {
+void ChangeDeltaPosXJumelleWithoutLimit(s32 delta_pos_x) {
     delta_pos_x = MAX(-16, MIN(16, delta_pos_x));
 
     if (ModeAutoJumelle & 1) {
@@ -267,7 +267,7 @@ void ChangeDeltaPosXJumelleWithoutLimit(i32 delta_pos_x) {
 }
 
 //43300
-void ChangeDeltaPosYJumelleWithoutLimit(i32 delta_pos_y) {
+void ChangeDeltaPosYJumelleWithoutLimit(s32 delta_pos_y) {
     delta_pos_y = MAX(-16, MIN(16, delta_pos_y));
 
     if (ModeAutoJumelle & 1) {
@@ -284,7 +284,7 @@ void ChangeDeltaPosYJumelleWithoutLimit(i32 delta_pos_y) {
 }
 
 //433D0
-i32 ChangeDeltaPosXJumelleWithLimit(i32 delta_pos_x) {
+s32 ChangeDeltaPosXJumelleWithLimit(s32 delta_pos_x) {
     delta_pos_x = MAX(-16, MIN(16, delta_pos_x));
 
     bool changed = false;
@@ -311,7 +311,7 @@ i32 ChangeDeltaPosXJumelleWithLimit(i32 delta_pos_x) {
 }
 
 //43520
-i32 ChangeDeltaPosYJumelleWithLimit(i32 delta_pos_y) {
+s32 ChangeDeltaPosYJumelleWithLimit(s32 delta_pos_y) {
     delta_pos_y = MAX(-16, MIN(16, delta_pos_y));
 
     bool changed = false;
@@ -341,14 +341,14 @@ i32 ChangeDeltaPosYJumelleWithLimit(i32 delta_pos_y) {
 void ChangeJumelleVariable(void) {
     LargeurJumelle = (7 * RayonJumelle) / 2;
     HauteurJumelle = 2 * RayonJumelle;
-    i32 half_width = LargeurJumelle / 2;
-    i32 half_height = ((2 * RayonJumelle) / 2);
+    s32 half_width = LargeurJumelle / 2;
+    s32 half_height = ((2 * RayonJumelle) / 2);
     JumelleXMin = JumellePosX - half_width;
     JumelleYMin = JumellePosY - half_height;
-    scroll_start_x = (i16)(half_width + 2);
-    scroll_start_y = (i16)(half_height + 2);
-    scroll_end_x = (i16)(WidthNworld - half_width - 4);
-    scroll_end_y = (i16)(HeightNworld - half_height - 4);
+    scroll_start_x = (s16)(half_width + 2);
+    scroll_start_y = (s16)(half_height + 2);
+    scroll_end_x = (s16)(WidthNworld - half_width - 4);
+    scroll_end_y = (s16)(HeightNworld - half_height - 4);
 
 //    scroll_start_x = (half_width + 2);
 //    scroll_start_y = (half_height + 2);
@@ -357,7 +357,7 @@ void ChangeJumelleVariable(void) {
 }
 
 //43730
-void ChangeDeltaZoomAmpJumelle(i32 a1) {
+void ChangeDeltaZoomAmpJumelle(s32 a1) {
     if ((JumAmpDefPlus + JumAmpDefMul * -RayonJumelle == JumelleZoomAmp &&
         (!(ModeAutoJumelle & 2) || JumelleZoomAmp == ModeAutoJumelleZoomAmp)) || !JumelleEffetAutorise
     ) {
@@ -389,12 +389,12 @@ void RecaleRayPosInJumelle(void) {
     // NOTE: in the PS1 version this is identical to recale_ray_pos()
     //recale_ray_pos(); return;
     if (scroll_y == -1) {
-        i32 v13 = ((3 * HauteurJumelle) >> 2) - ray.offset_by;
+        s32 v13 = ((3 * HauteurJumelle) >> 2) - ray.offset_by;
         if (v_scroll_speed != 255 || decalage_en_cours != 0) {
-            i32 v14 = ray.screen_y - v13;
+            s32 v14 = ray.screen_y - v13;
             v_scroll_speed = ashr16(v14, 2);
             if (Abs(ray.speed_y) <= Abs(v_scroll_speed)) {
-                i32 v16 = MAX(3, Abs(ray.speed_y));
+                s32 v16 = MAX(3, Abs(ray.speed_y));
                 if (v_scroll_speed <= 0) {
                     if (v_scroll_speed != 0) {
                         v_scroll_speed = MAX(v_scroll_speed, -v16);
@@ -415,27 +415,27 @@ void RecaleRayPosInJumelle(void) {
     }
 
     if (scroll_x == -1) {
-        i32 v2 = 3 * LargeurJumelle + 7;
+        s32 v2 = 3 * LargeurJumelle + 7;
         if (3 * LargeurJumelle >= 0) {
             v2 = 3 * LargeurJumelle;
         }
-        i32 min_x = (v2 >> 3) - ray.offset_bx;
+        s32 min_x = (v2 >> 3) - ray.offset_bx;
 
-        i32 v4 = 5 * LargeurJumelle + 7;
+        s32 v4 = 5 * LargeurJumelle + 7;
         if (5 * LargeurJumelle >= 0) {
             v4 = 5 * LargeurJumelle;
         }
-        i32 max_x = (v4 >> 3) - ray.offset_bx;
+        s32 max_x = (v4 >> 3) - ray.offset_bx;
 
         if (decalage_en_cours > 0 || ray.speed_x > 0) {
-            i16 unk_x_3 = ashr16(ray.screen_x - min_x, 2);
+            s16 unk_x_3 = ashr16(ray.screen_x - min_x, 2);
             if (unk_x_3 > dhspeed) {
                 dhspeed++;
             } else if (unk_x_3 < dhspeed) {
                 dhspeed--;
             }
         } else if (decalage_en_cours < 0 || ray.speed_x < 0) {
-            i16 unk_x_3 = ashr16(ray.screen_x - max_x, 2);
+            s16 unk_x_3 = ashr16(ray.screen_x - max_x, 2);
             if (unk_x_3 > dhspeed) {
                 dhspeed++;
             } else if (unk_x_3 < dhspeed) {
@@ -443,14 +443,14 @@ void RecaleRayPosInJumelle(void) {
             }
         } else {
             if (ray.flags.flip_x) {
-                i16 unk_x_3 = ashr16(ray.screen_x - min_x, 2);
+                s16 unk_x_3 = ashr16(ray.screen_x - min_x, 2);
                 if (unk_x_3 > dhspeed) {
                     dhspeed++;
                 } else if (unk_x_3 < dhspeed) {
                     dhspeed--;
                 }
             } else {
-                i16 unk_x_3 = ashr16(ray.screen_x - max_x, 2);
+                s16 unk_x_3 = ashr16(ray.screen_x - max_x, 2);
                 if (unk_x_3 > dhspeed) {
                     dhspeed++;
                 } else if (unk_x_3 < dhspeed) {
@@ -473,22 +473,22 @@ void RecaleRayPosInJumelle(void) {
 
 //43DBC
 void DisplayJumellesFondNormal(void) {
-    i32 width = LargeurJumelle + 2;
-    i32 height = HauteurJumelle + 2;
+    s32 width = LargeurJumelle + 2;
+    s32 height = HauteurJumelle + 2;
     sprite_clipping(0, width, 0, height);
 //    DisplayAnyPictureNormal(PLAN2BIT, EffetBufferNormal, xmap - LargeurJumelle/2, ymap - HauteurJumelle/2, 0, 0, WidthNworld, 320, 200);
     DisplayAnyPictureNormal(PLAN2BIT, EffetBufferNormal, xmap - LargeurJumelle/2, ymap - HauteurJumelle/2, 0, 0, WidthNworld, width, height);
 }
 
 //43E3C
-void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
+void DoScrollInWorldMap(s16 h_speed, s16 v_speed) {
     bool need_scroll_xmap = true;
     bool need_scroll_ymap = true;
-    i32 delta_pos_x = 0;
-    i32 delta_pos_y = 0;
+    s32 delta_pos_x = 0;
+    s32 delta_pos_y = 0;
     if (ChangeJumelleSizeOK != 4) {
         if (ray.speed_x != 0 || ray.speed_y != 0) {
-            i32 ray_x = ray.offset_bx + ray.x;
+            s32 ray_x = ray.offset_bx + ray.x;
             if (ray_x > scroll_start_x && ray_x < scroll_end_x) {
                 delta_pos_x = 16 * (ray.offset_bx + ray.screen_x - LargeurJumelle / 2);
                 if (ChangeDeltaPosXJumelleWithLimit(delta_pos_x)) {
@@ -499,7 +499,7 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
                 ChangeDeltaPosXJumelleWithoutLimit(delta_pos_x);
             }
 
-            i32 ray_y = ray.offset_by + ray.y;
+            s32 ray_y = ray.offset_by + ray.y;
             if (ray_y > scroll_start_y && ray_y < scroll_end_y) {
                 delta_pos_y = 16 * (ray.screen_y + ray.offset_by - ((3 * HauteurJumelle) >> 2));
                 if (ChangeDeltaPosYJumelleWithLimit(delta_pos_y)) {
@@ -525,14 +525,14 @@ void DoScrollInWorldMap(i16 h_speed, i16 v_speed) {
             ymap += MAX(-1, MIN(1, v_speed));
         }
 
-        i16 scroll_limit_x = scroll_start_x;
+        s16 scroll_limit_x = scroll_start_x;
         if (xmap < scroll_start_x || (scroll_limit_x = scroll_end_x, xmap > scroll_end_x)) {
             xmap = scroll_limit_x;
             dhspeed = 0;
             h_speed = 0;
         }
 
-        i16 scroll_limit_y = scroll_start_y;
+        s16 scroll_limit_y = scroll_start_y;
         if (ymap < scroll_start_y || (scroll_limit_y = scroll_end_y, ymap > scroll_end_y)) {
             ymap = scroll_limit_y;
             dvspeed = 0;

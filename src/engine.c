@@ -7,7 +7,7 @@ void win32_print_current_directory() {
 }
 */
 
-image_t create_palettized_image(i32 width, i32 height) {
+image_t create_palettized_image(s32 width, s32 height) {
 	image_t result = {0};
 	memset(&result, 0, sizeof(result));
 	result.width = width;
@@ -30,10 +30,10 @@ void destroy_image(image_t* image) {
 	}
 }
 
-void game_init_sound(game_sound_buffer_t* sound, i32 samples_per_second) {
+void game_init_sound(game_sound_buffer_t* sound, s32 samples_per_second) {
 	// Prepare a sound buffer for the game code to write into.
 	sound->samples_per_second = samples_per_second;
-	sound->samples = (i16*)calloc(1, sound->samples_per_second * 2 * sizeof(i16));
+	sound->samples = (s16*)calloc(1, sound->samples_per_second * 2 * sizeof(s16));
 }
 
 void game_init(game_state_t* game) {

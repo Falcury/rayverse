@@ -4,7 +4,7 @@ u8 bonus_completed_data[24];
 
 // sub_742E0
 void set_medaillion_saved_data(void) {
-	for (i32 i = 0; i < 24; ++i) {
+	for (s32 i = 0; i < 24; ++i) {
 		world_info_t* medaillion = t_world_info + i;
 		u8 unlocked_bit = medaillion->state & 1;
 		u8 status_flag_4_bit = (medaillion->state & 4) >> 2;
@@ -21,9 +21,9 @@ u8 bit_reverse_u8(u8 b) {
 
 
 
-i32 sav_read_byte(mem_t* mem, u8* checksum) {
-	i32 byte = 0;
-	i32 bytes_read = mem_read(&byte, mem, 1);
+s32 sav_read_byte(mem_t* mem, u8* checksum) {
+	s32 byte = 0;
+	s32 bytes_read = mem_read(&byte, mem, 1);
 	if (bytes_read <= 0) byte = -1;
 	if (byte != -1) {
 		*checksum -= byte;
@@ -47,7 +47,7 @@ mem_t* sav_xor_stream(mem_t* source, u8* checksum_result) {
 	mem_write(&decompressed_size, dest, 4);
 
 	u8 compr_incremental_xor = 0x57;
-	while (source->cursor < (i32)source->len) {
+	while (source->cursor < (s32)source->len) {
 		u8 byte = 0;
 		mem_read(&byte, source, 1);
 
@@ -64,8 +64,8 @@ mem_t* sav_xor_stream(mem_t* source, u8* checksum_result) {
 
 mem_t* decompress_sav(mem_t* compressed) {
 	u8 compr_big_window[256 * 8];
-	for (i32 i = 0; i < 256; ++i) {
-		for (i32 j = 0; j < 8; ++j) {
+	for (s32 i = 0; i < 256; ++i) {
+		for (s32 j = 0; j < 8; ++j) {
 			compr_big_window[i * 8 + j] = (u8)i;
 		}
 	}
@@ -97,7 +97,7 @@ mem_t* decompress_sav(mem_t* compressed) {
 			mem_write(compr_window, decompressed, bytes_to_write);
 		}
 
-		if (compressed->cursor >= (i32)compressed->len) {
+		if (compressed->cursor >= (s32)compressed->len) {
 			finished = true;
 		} else {
 			u8 big_window_index = 0;
@@ -105,7 +105,7 @@ mem_t* decompress_sav(mem_t* compressed) {
 			mem_read(&window_update_bit_array, compressed, 1);
 
 			u8* big_window_pos = compr_big_window + (big_window_index * 8);
-			for (i32 i = 0; i < 8; ++i) {
+			for (s32 i = 0; i < 8; ++i) {
 				if (window_update_bit_array & 1) {
 					mem_read(&big_window_pos[i], compressed, 1);
 				}
@@ -128,8 +128,8 @@ u8 sav_write_byte(mem_t* mem, u8 byte) {
 
 mem_t* compress_sav(mem_t* raw) {
 	u8 compr_big_window[256 * 8];
-	for (i32 i = 0; i < 256; ++i) {
-		for (i32 j = 0; j < 8; ++j) {
+	for (s32 i = 0; i < 256; ++i) {
+		for (s32 j = 0; j < 8; ++j) {
 			compr_big_window[i * 8 + j] = (u8)i;
 		}
 	}
@@ -145,20 +145,20 @@ mem_t* compress_sav(mem_t* raw) {
 	mem_write(&raw->len, compressed, 4); // decompressed size
 	bool finished = false;
 	while (!finished) {
-		i32 bytes_to_compress = 0;
-		i32 i;
+		s32 bytes_to_compress = 0;
+		s32 i;
 		for (i = 0; i < 8; ++i) {
-			if (raw->cursor >= (i32)raw->len) break;
+			if (raw->cursor >= (s32)raw->len) break;
 			++bytes_to_compress;
 			u8 byte = (u8)mem_read_byte(raw);
 			compr_window[i] = byte;
 		}
 		if (bytes_to_compress > 0) {
-			i32 max_occurrences_in_big_window = -1;
-			i32 best_big_window_index = 0;
+			s32 max_occurrences_in_big_window = -1;
+			s32 best_big_window_index = 0;
 			for (i = 0; i < 256; ++i) {
-				i32 occurrences = 0;
-				for (i32 j = 0; j < bytes_to_compress; ++j) {
+				s32 occurrences = 0;
+				for (s32 j = 0; j < bytes_to_compress; ++j) {
 					if (compr_big_window[i * 8 + j] == compr_window[j]) {
 						++occurrences;
 					}
@@ -320,7 +320,7 @@ void reset_items_and_bosses(void) {
 	memset(bonus_completed_data, 0, 24);
     memset(&finBosslevel, 0, sizeof(finBosslevel));
 
-	for (i32 i = 0; i < 24; ++i) {
+	for (s32 i = 0; i < 24; ++i) {
 		wi_save_zone[i] &= ~(7 << 2);
 	}
 
@@ -341,8 +341,8 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state) {
 	save_state->status_bar_tings = status_bar.num_wiz;
 	save_state->x_map = xmap;
 	save_state->y_map = ymap;
-	save_state->ray_x_pos = (i16)ray.x;
-	save_state->ray_y_pos = (i16)ray.y;
+	save_state->ray_x_pos = (s16)ray.x;
+	save_state->ray_y_pos = (s16)ray.y;
 	save_state->ray_screen_x = ray.screen_x;
 	save_state->ray_screen_y = ray.screen_y;
 	save_state->ray_flip_x = ray.flags.flip_x;
@@ -351,28 +351,28 @@ void saveGameState(obj_t* save_obj, save_state_t* save_state) {
 	save_state->rayevts_poing = RayEvts.poing;
 	if (save_obj) {
 		save_state->save_obj_id = save_obj->id;
-		save_state->save_obj_x_pos = (i16)save_obj->x;
-		save_state->save_obj_y_pos = (i16)save_obj->y;
+		save_state->save_obj_x_pos = (s16)save_obj->x;
+		save_state->save_obj_y_pos = (s16)save_obj->y;
 		save_state->save_obj_detect_zone_flag = save_obj->detect_zone_flag;
 		save_state->save_obj_flag_1 = save_obj->flags.hurtbyfist;
 	} else {
 		save_state->save_obj_id = -1;
 	}
 	memcpy(save_state->link_init, link_init, level.nb_objects * sizeof(u16));
-	for (i32 i = 0; i < 5; ++i) {
+	for (s32 i = 0; i < 5; ++i) {
 		save_state->ray_coll_btype[i] = ray.btypes[i];
 	}
 	save_state->ray_anim_index = ray.anim_index;
 	save_state->ray_anim_frame = ray.anim_frame;
 	save_state->ray_main_etat = ray.main_etat;
 	save_state->ray_sub_etat = ray.sub_etat;
-	for (i32 i = 0; i < 8; ++i) {
+	for (s32 i = 0; i < 8; ++i) {
 		save_state->nb_floc[i] = nb_floc[i];
 	}
 	save_state->vent_x = VENT_X;
 	save_state->vent_y = VENT_Y;
 	save_state->poing_sub_etat = poing.sub_etat;
-	for (i32 obj_id = 0; obj_id < level.nb_objects; ++obj_id) {
+	for (s32 obj_id = 0; obj_id < level.nb_objects; ++obj_id) {
 		obj_t* obj = level.objects + obj_id;
 		if (obj->type == TYPE_141_NEIGE || obj->type == TYPE_164_GENERATING_DOOR || obj->type == TYPE_179_HERSE_BAS_NEXT || obj->type == TYPE_242_HERSE_HAUT_NEXT) {
 			u32 bit = 1 << (obj_id & 0x1F);
@@ -416,12 +416,12 @@ void restoreGameState(save_state_t* save_state) {
             save_obj->flags.hurtbyfist = save_state->save_obj_flag_1;
         }
         if (save_state == &save1) {
-            for (i32 i = 0; i < level.nb_objects; ++i) {
+            for (s32 i = 0; i < level.nb_objects; ++i) {
                 link_init[i] = save_state->link_init[i];
                 level.objects[i].link_has_gendoor = (link_init[i] != i);
             }
         }
-        for (i32 i = 0; i < 5; ++i) {
+        for (s32 i = 0; i < 5; ++i) {
             ray.btypes[i] = save_state->ray_coll_btype[i];
         }
         ray.anim_index = save_state->ray_anim_index;
@@ -443,7 +443,7 @@ void restoreGameState(save_state_t* save_state) {
         dead_time = save_state->dead_time;
         decalage_en_cours = 0;
         ray_wind_force = 0;
-        for (i32 i = 0; i < 8; ++i) {
+        for (s32 i = 0; i < 8; ++i) {
             nb_floc[i] = save_state->nb_floc[i];
         }
         VENT_X = save_state->vent_x;
@@ -453,7 +453,7 @@ void restoreGameState(save_state_t* save_state) {
         ray.is_active = 1;
         VENT_Y = save_state->vent_y;
         ray.flags.alive = true;
-        for (i32 obj_id = 0; obj_id < level.nb_objects; ++obj_id) {
+        for (s32 obj_id = 0; obj_id < level.nb_objects; ++obj_id) {
             obj_t* obj = level.objects + obj_id;
             u16 type = obj->type;
             if (type == TYPE_3_LIDOLPINK
@@ -495,15 +495,15 @@ void restoreGameState(save_state_t* save_state) {
 }
 
 //741C8
-i32 get_offset_in_safe_zone(i16 obj_id) {
-    i32 offset = 0;
+s32 get_offset_in_safe_zone(s16 obj_id) {
+    s32 offset = 0;
     if (num_world > 1) {
-        for (i32 w = 1; w < num_world; ++w) {
+        for (s32 w = 1; w < num_world; ++w) {
             offset += 32 * nb_levels_in_world[w];
         }
     }
     if (num_level > 1) {
-        for (i32 l = 1; l < num_level; ++l) {
+        for (s32 l = 1; l < num_level; ++l) {
             offset += 32;
         }
     }
@@ -517,19 +517,19 @@ void reset_save_zone_level(void) {
 }
 
 //74270
-void take_bonus(i16 obj_id) {
+void take_bonus(s16 obj_id) {
     save_zone[get_offset_in_safe_zone(obj_id)] |= (0x80 >> (obj_id & 7));
 }
 
 //742A8
-u8 bonus_taken(i16 obj_id) {
+u8 bonus_taken(s16 obj_id) {
     u8 result = save_zone[get_offset_in_safe_zone(obj_id)] & (0x80 >> (obj_id & 7));
     return result;
 }
 
 //742E0
 void storeWorldInfoAcces(void) {
-    for (i32 i = 0; i < COUNT(t_world_info); ++i) {
+    for (s32 i = 0; i < COUNT(t_world_info); ++i) {
         world_info_t* world_info = t_world_info + i;
         wi_save_zone[i] = (wi_save_zone[i] & ~1) | (world_info->state & 1); // unlocked bit
         wi_save_zone[i] = (wi_save_zone[i] & ~2) | ((world_info->state & 4) >> 1); // unknown flag
@@ -539,7 +539,7 @@ void storeWorldInfoAcces(void) {
 
 //7435C
 void retrieveWorldInfoAccess(void) {
-    for (i32 i = 0; i < COUNT(t_world_info); ++i) {
+    for (s32 i = 0; i < COUNT(t_world_info); ++i) {
         world_info_t* world_info = t_world_info + i;
         world_info->state = (world_info->state & ~1) | (wi_save_zone[i] & 1); // unlocked bit
         world_info->state = (world_info->state & ~4) | (((u8)(wi_save_zone[i] << 6) >> 7) * 4); // unknown flag
@@ -669,8 +669,8 @@ bool LoadInfoGame(u8 which_save) {
 
             loadinforay_t* info = LoadInfoRay + (which_save - 1);
             info->continues = nb_continue;
-            i32 cages = 0;
-            for (i32 i = 0; i < 24; ++i) {
+            s32 cages = 0;
+            for (s32 i = 0; i < 24; ++i) {
                 u8 w = wi_save_zone[i];
                 cages += (w >> 2) & 7;
             }
@@ -728,11 +728,11 @@ bool LoadOptionsOnDisk(void) {
         mem_read(&ypadmin, mem, 2);
         mem_read(&xpadcentre, mem, 2);
         mem_read(&ypadcentre, mem, 2);
-        for (i32 i = 0; i < 4; ++i) {
+        for (s32 i = 0; i < 4; ++i) {
             notbut[i] = 0;
             mem_read(notbut + i, mem, 1);
         }
-        for (i32 i = 0; i < 7; ++i) {
+        for (s32 i = 0; i < 7; ++i) {
             mem_read(tab_key[i], mem, 1);
         }
         mem_read(&GameModeVideo, mem, 1);

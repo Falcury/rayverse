@@ -122,9 +122,9 @@ static void win32_fill_sound_buffer(win32_sound_output_t* sound, DWORD byte_to_l
 		// TODO: assert that region1_size/region2_size is valid
 		DWORD region1_sample_count = region1_size / sound->bytes_per_sample;
 
-		i16* source_sample = source_buffer->samples;
+		s16* source_sample = source_buffer->samples;
 		// region 1
-		i16* dest_sample = (i16*) region1;
+		s16* dest_sample = (s16*) region1;
 		for (DWORD sample_index = 0; sample_index < region1_sample_count; ++sample_index) {
 			*dest_sample++ = *source_sample++;//left
 			*dest_sample++ = *source_sample++;//right
@@ -133,7 +133,7 @@ static void win32_fill_sound_buffer(win32_sound_output_t* sound, DWORD byte_to_l
 
 		// region 2
 		DWORD region2_sample_count = region2_size / sound->bytes_per_sample;
-		dest_sample = (i16*) region2;
+		dest_sample = (s16*) region2;
 		for (DWORD sample_index = 0; sample_index < region2_sample_count; ++sample_index) {
 			*dest_sample++ = *source_sample++;//left
 			*dest_sample++ = *source_sample++;//right
@@ -144,7 +144,7 @@ static void win32_fill_sound_buffer(win32_sound_output_t* sound, DWORD byte_to_l
 	}
 }
 
-static void win32_produce_sound_for_frame(app_state_t* app_state, win32_sound_output_t* sound, game_sound_buffer_t* game_sound_buffer, i64 flip_clock) {
+static void win32_produce_sound_for_frame(app_state_t* app_state, win32_sound_output_t* sound, game_sound_buffer_t* game_sound_buffer, s64 flip_clock) {
 	float from_begin_to_audio_seconds = get_seconds_elapsed(flip_clock, get_clock());
 //	printf("from_begin_to_audio_seconds = %g\n", from_begin_to_audio_seconds);
 
@@ -192,7 +192,7 @@ static void win32_produce_sound_for_frame(app_state_t* app_state, win32_sound_ou
 		                        (float)sound->samples_per_second;
 
 		// TODO: this doesn't seem to be right. How to detect that the latency is 'low enough'?
-		bool32 audio_card_is_low_latency = (audio_latency_bytes + sound->safety_bytes < expected_sound_bytes_per_frame);
+		bool audio_card_is_low_latency = (audio_latency_bytes + sound->safety_bytes < expected_sound_bytes_per_frame);
 
 		DWORD target_cursor;
 		if (audio_card_is_low_latency) {

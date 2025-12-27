@@ -1,7 +1,7 @@
 
 
 //1FA40
-void DO_BAT_FLASH(i16 in_x, i16 in_y) {
+void DO_BAT_FLASH(s16 in_x, s16 in_y) {
     /* 71680 80195E80 -O2 -msoft-float */
     s16 fire_par_3;
     s16 unk_1;
@@ -107,7 +107,7 @@ void DO_BAT_LEFT_RIGHT_FLASH(obj_t* obj) {
 }
 
 //1FD14
-i16 bat_dir(obj_t* obj) {
+s16 bat_dir(obj_t* obj) {
     /* 71A5C 8019625C -O2 -msoft-float */
     return (ray.x + ray.offset_bx - obj->x - obj->offset_bx) > 0;
 }
@@ -273,7 +273,7 @@ void BAT_ray_in_zone(obj_t* obj) {
 }
 
 //20088
-void DO_BAT_POING_COLLISION(obj_t* bat_obj, i16 sprite) {
+void DO_BAT_POING_COLLISION(obj_t* bat_obj, s16 sprite) {
     /* 7226C 80196A6C -O2 -msoft-float */
     // NOTE: this function is empty in the PC version
     /*s16 poing_x; s16 poing_y;
@@ -294,7 +294,7 @@ void DO_BAT_POING_COLLISION(obj_t* bat_obj, i16 sprite) {
 }
 
 //2008C
-i32 bat_get_eject_sens(obj_t* obj) {
+s32 bat_get_eject_sens(obj_t* obj) {
     /* 72344 80196B44 -O2 -msoft-float */
     ray.iframes_timer = 40;
     return bat_dir(obj) ? 1 : -1;

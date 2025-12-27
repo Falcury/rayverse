@@ -143,7 +143,7 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
             if (debug_obj_id != -1 && debug_obj_id < level.nb_objects) {
                 obj_t* obj = level.objects + debug_obj_id;
                 u8 color = 0;
-                i32 line = 0;
+                s32 line = 0;
                 snprintf(debug_text, 64, "%d : type %d", obj->id, obj->type);
                 display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
                 snprintf(debug_text, 64, "etat %d : %d", obj->main_etat, obj->sub_etat);
@@ -247,7 +247,7 @@ void DO_MAIN_LOOP_PC_X(void) {
 }
 
 //17CB8
-void init_arg(i32 argc, char** argv) {
+void init_arg(s32 argc, char** argv) {
     print_once("Not implemented: init_arg"); //stub
 }
 

@@ -20,25 +20,25 @@ void check_couteaux(void) {
 }
 
 //64568
-i8 find_couteau(obj_t* obj) {
+s8 find_couteau(obj_t* obj) {
     print_once("Not implemented: find_couteau");
     return -1; //stub
 }
 
 //64574
-i32 x_pos(u8 a1, u8 a2) {
+s32 x_pos(u8 a1, u8 a2) {
     print_once("Not implemented: x_pos");
     return 0; //stub
 }
 
 //645CC
-i32 y_pos(i16 a1, i16 a2) {
+s32 y_pos(s16 a1, s16 a2) {
     print_once("Not implemented: y_pos");
     return 0; //stub
 }
 
 //645E0
-i32 y_floor(i16 a1, i16 a2) {
+s32 y_floor(s16 a1, s16 a2) {
     print_once("Not implemented: y_floor");
     return 0; //stub
 }
@@ -54,7 +54,7 @@ void init_lance_couteau(u8 a1) {
 }
 
 //64A80
-void couteau_frame(i16 a1, i16 a2) {
+void couteau_frame(s16 a1, s16 a2) {
     print_once("Not implemented: couteau_frame"); //stub
 }
 
@@ -64,7 +64,7 @@ void update_couteau(obj_t* obj) {
 }
 
 //64B70
-void get_cou_zdc(obj_t* obj, i16 *x, i16 *y, i16 *w, i16 *h) {
+void get_cou_zdc(obj_t* obj, s16 *x, s16 *y, s16 *w, s16 *h) {
     /* 268E0 8014B0E0 -O2 -msoft-float */
     s16 spr_x; s16 spr_y; s16 spr_w; s16 spr_h;
     u8 sub_etat;
@@ -166,7 +166,7 @@ void pma_attaque_suivante(void) {
 }
 
 //64FF8
-i16 convertspeed(i16 x) {
+s16 convertspeed(s16 x) {
     return ashl16(x, 4);
 }
 
@@ -216,12 +216,12 @@ void PMA_SORT_DU_CANON(obj_t* obj) {
 }
 
 //66244
-void DO_PMA_POING_COLLISION(obj_t* obj, i16 sprite) {
+void DO_PMA_POING_COLLISION(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DO_PMA_POING_COLLISION"); //stub
 }
 
 //6628C
-i32 pma_get_eject_sens(obj_t* obj) {
+s32 pma_get_eject_sens(obj_t* obj) {
     /* 29118 8014D918 -O2 -msoft-float */
     ray.iframes_timer = 40;
     return -1;

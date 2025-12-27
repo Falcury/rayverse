@@ -18,7 +18,7 @@ u32 clz(u32 x) {
 }
 
 u32 ctz(u32 x) {
-	return popcnt((x & -((i32)x)) - 1);
+	return popcnt((x & -((s32)x)) - 1);
 }
 
 bool is_power_of_2(u32 x) {
@@ -61,36 +61,36 @@ u8 getbit(u8 *buffer, u16 index) {
 }
 
 //5DFB8
-i32 reflexion(i32 a1, i32 a2) {
+s32 reflexion(s32 a1, s32 a2) {
     return 2 * a1 - a2;
 }
 
 //inlined
-i32 ashl16(i16 x, u8 bits) {
-    i32 result = x << bits;
+s32 ashl16(s16 x, u8 bits) {
+    s32 result = x << bits;
     return result;
 }
 
 //inlined
-i16 ashr16(i16 x, u8 bits) {
-    i16 result;
+s16 ashr16(s16 x, u8 bits) {
+    s16 result;
     if (x < 0) {
-        result = (i16)-((-x) >> bits);
+        result = (s16)-((-x) >> bits);
     } else {
-        result = (i16)(x >> bits);
+        result = (s16)(x >> bits);
     }
     return result;
 }
 
 //inlined
-i32 ashl32(i32 x, u8 bits) {
-    i32 result = x << bits;
+s32 ashl32(s32 x, u8 bits) {
+    s32 result = x << bits;
     return result;
 }
 
 //inlined
-i32 ashr32(i32 x, u8 bits) {
-    i32 result;
+s32 ashr32(s32 x, u8 bits) {
+    s32 result;
     if (x < 0) {
         result = -((-x) >> bits);
     } else {
@@ -100,38 +100,38 @@ i32 ashr32(i32 x, u8 bits) {
 }
 
 //inlined
-i32 Abs(i32 x) {
+s32 Abs(s32 x) {
     return abs(x);
 }
 
 //inlined
-i32 mini(i32 a, i32 b) {
+s32 mini(s32 a, s32 b) {
     return ((a) < (b) ? (a) : (b));
 }
 
 //inlined
-i32 maxi(i32 a, i32 b) {
+s32 maxi(s32 a, s32 b) {
     return (a) > (b) ? (a) : (b);
 }
 
 //inlined
-i32 sgn(i32 x) {
+s32 sgn(s32 x) {
     return (x < 0) ? -1 : (x > 0);
 }
 
 //5DFC0
-i32 cosinus(i32 x) {
-    i32 result;
+s32 cosinus(s32 x) {
+    s32 result;
     x += 128;
     x &= (512-1);
     if (x >= 256) {
-        i32 index = x - 384;
+        s32 index = x - 384;
         if (index < 0) {
             index = -index;
         }
         result = -costab[index];
     } else {
-        i32 index = x - 128;
+        s32 index = x - 128;
         if (index < 0) {
             index = -index;
         }
@@ -142,17 +142,17 @@ i32 cosinus(i32 x) {
 }
 
 //5E000
-i32 sinus(i32 x) {
-    i32 result;
+s32 sinus(s32 x) {
+    s32 result;
     x &= (512-1);
     if (x >= 256) {
-        i32 index = x - 384;
+        s32 index = x - 384;
         if (index < 0) {
             index = -index;
         }
         result = -costab[index];
     } else {
-        i32 index = x - 128;
+        s32 index = x - 128;
         if (index < 0) {
             index = -index;
         }
@@ -163,33 +163,33 @@ i32 sinus(i32 x) {
 }
 
 //5E03C
-void sinus_cosinus(i32 x, i16 *cosinus_result, i16 *sinus_result) {
-    i32 result;
+void sinus_cosinus(s32 x, s16 *cosinus_result, s16 *sinus_result) {
+    s32 result;
     x &= (512-1);
     if (x >= 256) {
-        i32 index = x - 384;
+        s32 index = x - 384;
         if (index < 0) {
             index = -index;
-            *cosinus_result = (i16)-costab[128 - index];
+            *cosinus_result = (s16)-costab[128 - index];
         } else {
-            *cosinus_result = (i16)costab[128 - index];
+            *cosinus_result = (s16)costab[128 - index];
         }
-        *sinus_result = (i16)-costab[index];
+        *sinus_result = (s16)-costab[index];
     } else {
-        i32 index = x - 128;
+        s32 index = x - 128;
         if (index < 0) {
             index = -index;
-            *cosinus_result = (i16)costab[128 - index];
+            *cosinus_result = (s16)costab[128 - index];
         } else {
-            *cosinus_result = (i16)-costab[128 - index];
+            *cosinus_result = (s16)-costab[128 - index];
         }
         *sinus_result = costab[index];
     }
 }
 
 //5E0F0
-i32 abs_sinus(i32 x) {
-    i32 t = (u8)x - 128;
+s32 abs_sinus(s32 x) {
+    s32 t = (u8)x - 128;
     if (t < 0) {
         t = -t;
     }
@@ -197,8 +197,8 @@ i32 abs_sinus(i32 x) {
 }
 
 //5E10C
-i32 abs_cosinus(i32 x) {
-    i32 t = (u8)(x + 128) - 128;
+s32 abs_cosinus(s32 x) {
+    s32 t = (u8)(x + 128) - 128;
     if (t < 0) {
         t = -t;
     }
@@ -206,8 +206,8 @@ i32 abs_cosinus(i32 x) {
 }
 
 //5E12C
-void abs_sinus_cosinus(i32 x, i16 *sinus_result, i16 *cosinus_result) {
-    i32 t = (u8)x - 128;
+void abs_sinus_cosinus(s32 x, s16 *sinus_result, s16 *cosinus_result) {
+    s32 t = (u8)x - 128;
     if (t < 0) {
         t = -t;
     }

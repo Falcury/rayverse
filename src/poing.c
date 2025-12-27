@@ -153,8 +153,8 @@ void fin_poing_follow(u8 a1) {
         poing_obj->cmd_arg_2 = -1;
         if (a1 || !(poing_obj->flags.alive)) {
             unk_obj->x = ray.x + ray.offset_bx - unk_obj->offset_bx;
-            i32 ray_y = ray_zdc_y + (ray_zdc_h >> 1);
-            i32 unk_y = ((unk_obj->offset_by + unk_obj->offset_hy) >> 1) + 5;
+            s32 ray_y = ray_zdc_y + (ray_zdc_h >> 1);
+            s32 unk_y = ((unk_obj->offset_by + unk_obj->offset_hy) >> 1) + 5;
             unk_obj->y = ray_y - unk_y;
         } else {
             unk_obj->x = unk_obj->init_x;
@@ -292,12 +292,12 @@ void DO_POING(obj_t* obj) {
 
 //66FF8
 void allocatePoingBoum(void) {
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* obj = level.objects + i;
         if (obj->type == TYPE_11_BOUM && !obj->is_active) {
             add_alwobj(obj);
-            i16 poing_x, poing_y, poing_w, poing_h;
-            i16 anim_x, anim_y, anim_w, anim_h;
+            s16 poing_x, poing_y, poing_w, poing_h;
+            s16 anim_x, anim_y, anim_w, anim_h;
             GET_SPRITE_POS(poing_obj, 0, &poing_x, &poing_y, &poing_w, &poing_h);
             GET_ANIM_POS(obj, &anim_x, &anim_y, &anim_w, &anim_h);
             obj->anim_frame = 0;

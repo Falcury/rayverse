@@ -30,7 +30,7 @@ void DO_PAR_TIR(obj_t* obj) {
 }
 
 //3E398
-void DO_PAR_POING_COLLISION(obj_t* obj, i16 sprite) {
+void DO_PAR_POING_COLLISION(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DO_PAR_POING_COLLISION"); //stub
 }
 

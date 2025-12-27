@@ -1,7 +1,7 @@
 
 
 //53BC0
-void getIdealStingCoords(obj_t* obj, i16* out_x, i16* out_y) {
+void getIdealStingCoords(obj_t* obj, s16* out_x, s16* out_y) {
     /* 6F914 80194114 -O2 -msoft-float */
     s16 x;
     s16 calc_y;
@@ -20,7 +20,7 @@ void getIdealStingCoords(obj_t* obj, i16* out_x, i16* out_y) {
 }
 
 //53C2C
-u8 closeEnoughToSting(obj_t* obj, i16 min_x, i16 min_y) {
+u8 closeEnoughToSting(obj_t* obj, s16 min_x, s16 min_y) {
     /* 6F988 80194188 -O2 -msoft-float */
     s16 sting_x; s16 sting_y;
 
@@ -79,7 +79,7 @@ u8 moskitoCanAttak(obj_t* obj) {
 }
 
 //53DC4
-i16 setMoskitoAtScrollBorder(obj_t* obj, u8 a2) {
+s16 setMoskitoAtScrollBorder(obj_t* obj, u8 a2) {
     /* 6FCCC 801944CC -O2 -msoft-float */
     s32 width;
     s16 res;
@@ -758,7 +758,7 @@ void changeMoskitoPhase(obj_t* obj) {
 }
 
 //55144
-void doMoskitoHit(obj_t* obj, i16 sprite) {
+void doMoskitoHit(obj_t* obj, s16 sprite) {
     /* 7151C 80195D1C -O2 -msoft-float */
     s32 act_next;
     s32 act_18;

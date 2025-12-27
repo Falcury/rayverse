@@ -40,12 +40,12 @@ void Clown_Music_Atter(obj_t* obj) {
 }
 
 //2B18C
-void DoWatAndBigClownPoingCollision(obj_t* obj, i16 sprite) {
+void DoWatAndBigClownPoingCollision(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DoWatAndBigClownPoingCollision"); //stub
 }
 
 //2B1FC
-void DoTntClownPoingCollision(obj_t* obj, i16 sprite) {
+void DoTntClownPoingCollision(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DoTntClownPoingCollision"); //stub
 }
 

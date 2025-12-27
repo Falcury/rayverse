@@ -1,7 +1,7 @@
 
 //23030
 void allocateBlacktoonEyes(obj_t* obj) {
-    for (i32 i = 0; i < level_alw.nb_objects; ++i) {
+    for (s32 i = 0; i < level_alw.nb_objects; ++i) {
         obj_t* cur_obj = level.objects + level_alw.obj_ids[i];
         if (cur_obj->type == TYPE_130_BLACKTOON_EYES && !cur_obj->is_active) {
             cur_obj->anim_frame = 0;
@@ -171,7 +171,7 @@ void DO_BLKTOON_COMMAND(obj_t* obj) {
 }
 
 //234FC
-void DoBlackToonPoingCollision(obj_t* obj, i16 sprite) {
+void DoBlackToonPoingCollision(obj_t* obj, s16 sprite) {
     obj_hurt(obj);
     set_main_and_sub_etat(obj, 0, 4);
     obj->speed_y = 0;
@@ -199,7 +199,7 @@ void DoBlackToonRaymanZDD(obj_t* obj) {
             break;
         case 4:
             if (ray.main_etat != 2) {
-                i16 blkt_x, blkt_y, blkt_w, blkt_h;
+                s16 blkt_x, blkt_y, blkt_w, blkt_h;
                 GET_ANIM_POS(obj, &blkt_x, &blkt_y, &blkt_w, &blkt_h);
                 blkt_y -= obj->detect_zone + blkt_h;
                 blkt_x -= blkt_w >> 1;

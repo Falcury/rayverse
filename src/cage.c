@@ -17,7 +17,7 @@ void DO_CAGE(obj_t* obj) {
 }
 
 //28BA4
-void DoCagePoingCollision(obj_t* obj, i16 sprite) {
+void DoCagePoingCollision(obj_t* obj, s16 sprite) {
     obj_hurt(obj);
     if (obj->hit_points != 0) {
         set_sub_etat(obj, 10);
@@ -57,7 +57,7 @@ void DO_MEDAILLON_TOON(obj_t* obj) {
 //28CA0
 void DO_MEDAILLON_TOON_GELE(void) {
     /* 3D050 80161850 -O2 -msoft-float */
-    for (i16 i = 0; i < actobj.num_active_objects; ++i) {
+    for (s16 i = 0; i < actobj.num_active_objects; ++i) {
         obj_t* obj = &level.objects[actobj.objects[i]];
         if (obj->type == TYPE_197_MEDAILLON_TOON) {
             if (!snd_flag_medaillon) {
@@ -90,7 +90,7 @@ void DO_MEDAILLON_TOON_GELE(void) {
 
 //28DD4
 void ALLOCATE_MEDAILLON_TOON(void) {
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* cur_obj = level.objects + i;
         if (cur_obj->type == TYPE_197_MEDAILLON_TOON && !cur_obj->is_active) {
             cur_obj->init_x = cur_obj->x = xmap - (cur_obj->offset_bx - 160);
@@ -126,7 +126,7 @@ void allocate_toons(obj_t* src_obj, u8 count) {
 
     count = MIN(count, COUNT(Toon_Speeds_y)); // added for safety (prevent out-of-bounds reading)
 
-    i32 toon_index = 0;
+    s32 toon_index = 0;
     for (; obj < max_obj; ++obj) {
         if (!obj->is_active && obj->type == TYPE_3_LIDOLPINK) {
             set_main_and_sub_etat(obj, 2, 0);
@@ -171,7 +171,7 @@ void allocate_toons(obj_t* src_obj, u8 count) {
 
 //2912C
 void allocateGrille(obj_t* obj) {
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* cur_obj = level.objects + i;
         if (cur_obj->type == TYPE_59_CAGE2 && !cur_obj->is_active) {
             cur_obj->flags.alive = 1;

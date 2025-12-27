@@ -1,14 +1,14 @@
 
 //60AD0
 void popCmdContext(obj_t* obj) {
-    obj->cmd_offset = obj->cmd_contexts[(i32)obj->cmd_context_depth--].cmd_offset;
+    obj->cmd_offset = obj->cmd_contexts[(s32)obj->cmd_context_depth--].cmd_offset;
 }
 
 //60AE4
-i16 char2short(u8 x) {
-    i16 result = x;
+s16 char2short(u8 x) {
+    s16 result = x;
     if (x > 0x7F) {
-        result = (i16)(x - 256);
+        result = (s16)(x - 256);
     }
     return result;
 }
@@ -203,7 +203,7 @@ u8 handle_5_GO_SUBSTATE(obj_t* obj) {
 
 //60E2C
 u8 handle_6_GO_SKIP(obj_t* obj) {
-    for (i32 i = 0; i < obj->nb_cmd; ++i) {
+    for (s32 i = 0; i < obj->nb_cmd; ++i) {
         skipOneCommand(obj);
     }
     return 1;
@@ -271,7 +271,7 @@ u8 handle_16_GO_BRANCHFALSE(obj_t* obj) {
 //60F18
 u8 handle_31_GO_SKIPTRUE(obj_t* obj) {
     if (obj->flags.command_test) {
-        for (i32 i = 0; i < obj->nb_cmd; ++i) {
+        for (s32 i = 0; i < obj->nb_cmd; ++i) {
             skipOneCommand(obj);
         }
     }
@@ -281,7 +281,7 @@ u8 handle_31_GO_SKIPTRUE(obj_t* obj) {
 //60F44
 u8 handle_32_GO_SKIPFALSE(obj_t* obj) {
     if (!obj->flags.command_test) {
-        for (i32 i = 0; i < obj->nb_cmd; ++i) {
+        for (s32 i = 0; i < obj->nb_cmd; ++i) {
             skipOneCommand(obj);
         }
     }
@@ -368,8 +368,8 @@ void pushCmdContext(obj_t* obj, u8 count) {
 //61220
 void skipToLabel(obj_t* obj, u8 label, u8 skip_label_cmd) {
     u8 initial_read_commands = obj->flags.read_commands;
-    i16 initial_offset = obj->cmd_offset;
-    i16 current_offset;
+    s16 initial_offset = obj->cmd_offset;
+    s16 current_offset;
     do {
         skipOneCommand(obj);
         current_offset = obj->cmd_offset;
@@ -441,7 +441,7 @@ void DO_WIZARD(obj_t* obj) {
 }
 
 //614B4
-i32 get_next_bonus_level(u8 lev) {
+s32 get_next_bonus_level(u8 lev) {
     /* 374A8 8015BCA8 -O2 */
     s16 res = 0;
 
@@ -618,14 +618,14 @@ void DO_TARZAN(obj_t* tz_obj) {
 }
 
 //61968
-void DoTarzanPoingCollision(obj_t* obj, i16 sprite) {
+void DoTarzanPoingCollision(obj_t* obj, s16 sprite) {
     set_main_and_sub_etat(obj, 0, 1);
     obj->cmd = GO_LEFT;
 }
 
 //61980
-void allocate_badguy(obj_t* tentacle_obj, i16 which_enemy, i16 xspeed, i16 yspeed) {
-    for (i32 event_index = 0; event_index < level.nb_objects; ++event_index) {
+void allocate_badguy(obj_t* tentacle_obj, s16 which_enemy, s16 xspeed, s16 yspeed) {
+    for (s32 event_index = 0; event_index < level.nb_objects; ++event_index) {
         obj_t* spawned = level.objects + event_index;
         if (((which_enemy == 1 && spawned->type == TYPE_0_BADGUY1) || (which_enemy == 2 && spawned->type == TYPE_9_BADGUY2))
             && spawned->init_x <= 0 && spawned->is_active == 0
@@ -685,7 +685,7 @@ void DO_PTI_ESQUIVE(obj_t* obj) {
 }
 
 //61BB0
-void DoPrisePoingCollision(obj_t* obj, i16 sprite) {
+void DoPrisePoingCollision(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DoPrisePoingCollision"); //stub
 }
 
@@ -695,7 +695,7 @@ void DO_PETIT_COUTEAU_COMMAND(obj_t* obj) {
 }
 
 //61C20
-void DoPetitCouteauPoingCollision(obj_t* obj, i16 sprite) {
+void DoPetitCouteauPoingCollision(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DoPetitCouteauPoingCollision"); //stub
 }
 
@@ -705,7 +705,7 @@ void DO_TIRE_BOUCHON_COMMAND(obj_t* obj) {
 }
 
 //61C4C
-void DoOneUpPoingCollision(obj_t* obj, i16 sprite) {
+void DoOneUpPoingCollision(obj_t* obj, s16 sprite) {
     if (RayEvts.grap && ray_mode != MODE_3_MORT_DE_RAYMAN) {
         PlaySnd(194, obj->id);
         poing_obj->cmd_arg_2 = obj->id;
@@ -730,7 +730,7 @@ void DoOneUpRaymanCollision(obj_t* obj) {
 }
 
 //61D10
-void DoMorningStarPoingCollision(obj_t* obj, i16 sprite) {
+void DoMorningStarPoingCollision(obj_t* obj, s16 sprite) {
     if (sprite == 4 && obj->sub_etat == 5) {
         if (poing_obj->speed_x >= 0 && (poing_obj->speed_x > 0 || poing_obj->flags.flip_x))
             set_sub_etat(obj, 9);
@@ -1072,10 +1072,10 @@ void DO_TEN_COMMAND(obj_t* obj) {
         if (obj->anim_frame >= 5 && obj->timer == 0) {
             // last hit: spawn 4 enemies
             ++obj->timer;
-            i16 xspeed = -4;
-            for (i32 i = 0; i < 4; ++i) {
-                i16 which_enemy = (i % 2) + 1;
-                i16 yspeed = -which_enemy;
+            s16 xspeed = -4;
+            for (s32 i = 0; i < 4; ++i) {
+                s16 which_enemy = (i % 2) + 1;
+                s16 yspeed = -which_enemy;
                 ++xspeed;
                 allocate_badguy(obj, which_enemy, xspeed, yspeed);
                 if (xspeed == -2) xspeed = 3;
@@ -1110,7 +1110,7 @@ void DO_TEN_COMMAND(obj_t* obj) {
 }
 
 //62854
-void DoGeneBadGuyPoingCollision(obj_t* obj, i16 sprite) {
+void DoGeneBadGuyPoingCollision(obj_t* obj, s16 sprite) {
     if (sprite == 0) {
         poing.damage = 1;
         obj_hurt(obj);
@@ -1130,7 +1130,7 @@ void DoGeneBadGuyRaymanZDD(obj_t* obj) {
 }
 
 //628C0
-void DoChasseurPoingCollision(obj_t* obj, i16 sprite) {
+void DoChasseurPoingCollision(obj_t* obj, s16 sprite) {
     if (get_eta(obj)->flags & 1) {
         obj_hurt(obj);
         if (obj->hit_points != 0) {
@@ -1167,7 +1167,7 @@ void DO_CHASSEUR_COMMAND(obj_t* obj) {
 }
 
 //629D8
-void DoBadGuy23PoingCollision(obj_t* obj, i16 sprite) {
+void DoBadGuy23PoingCollision(obj_t* obj, s16 sprite) {
     if (sprite == 255 || (get_eta(obj)->flags & 1)) {
         obj_hurt(obj);
         if (obj->hit_points == 0) {
@@ -1211,7 +1211,7 @@ void DoBadGuy23RaymanZDD(obj_t* obj) {
 
 
 //62B54
-void DoBadGuy1PoingCollision(obj_t* obj, i16 sprite) {
+void DoBadGuy1PoingCollision(obj_t* obj, s16 sprite) {
     obj_hurt(obj);
     if (poing_obj->speed_x > 0) {
         skipToLabel(obj, 3, 1);
@@ -1274,7 +1274,7 @@ void DO_CCL_COMMAND(obj_t* obj) {
 }
 
 //62D68
-void DoCaisseClairePoingCollision(obj_t* obj, i16 sprite) {
+void DoCaisseClairePoingCollision(obj_t* obj, s16 sprite) {
     if (!(obj->main_etat == 0 && obj->sub_etat == 2)) {
         set_main_and_sub_etat(obj, 1, 1);
         if (!obj->flags.flip_x) {
@@ -1448,7 +1448,7 @@ void DO_PIRATE_POELLE(obj_t* obj) {
 }
 
 //63610
-void DO_PIRATE_POELLE_POING_COLLISION(obj_t* obj, i16 sprite) {
+void DO_PIRATE_POELLE_POING_COLLISION(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DO_PIRATE_POELLE_POING_COLLISION"); //stub
 }
 
@@ -1902,7 +1902,7 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
 }
 
 //643BC
-void DoPlatformPoingCollision(obj_t* obj, i16 sprite) {
+void DoPlatformPoingCollision(obj_t* obj, s16 sprite) {
     if (obj->hit_sprite == sprite) {
         if (poing_obj->speed_x > 0) {
             set_sub_etat(obj, 25);

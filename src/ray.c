@@ -35,12 +35,12 @@ void recale_ray_on_liane(void) {
 void calc_bhand_typ(void) {
     /* 5D2C0 80181AC0 -O2 -msoft-float */
     //NOTE: the PS1 version takes an obj_t as an argument (instead of using ray)
-    i16 x = ray.offset_bx + ray.x;
+    s16 x = ray.offset_bx + ray.x;
     u8 unk_1 = ray.speed_y + 22 + ray.offset_hy;
     if (RayEvts.tiny) {
         unk_1 = 80 - ((80 - unk_1) >> 1);
     }
-    i16 y = unk_1 + ray.y;
+    s16 y = unk_1 + ray.y;
     hand_btyp = BTYP(x >> 4, y >> 4);
     if (hand_btyp != BTYP_LIANE) {
         hand_btypg = BTYP((x - 8) >> 4, y >> 4);
@@ -81,7 +81,7 @@ void IS_RAY_ON_LIANE(void) {
 }
 
 //6C224
-void rayMayLandOnAnObject(u8* param_1, i16 obj_id) {
+void rayMayLandOnAnObject(u8* param_1, s16 obj_id) {
     /* 5D518 80181D18 -O2 -msoft-float */
     s16 var_a1_1;
 
@@ -90,7 +90,7 @@ void rayMayLandOnAnObject(u8* param_1, i16 obj_id) {
     s16 unk_y;
 
 
-    i16 unk_1 = RayEvts.tiny ? 8 : 4;
+    s16 unk_1 = RayEvts.tiny ? 8 : 4;
     ray.cmd_arg_2 = -1;
 
     i = 0;
@@ -320,7 +320,7 @@ void rayMayLandOnAnObject(u8* param_1, i16 obj_id) {
 }
 
 //6CA70
-void set_air_speed(u8 main_etat, u8 sub_etat, i16 param_3, u8 param_4) {
+void set_air_speed(u8 main_etat, u8 sub_etat, s16 param_3, u8 param_4) {
     /* 5DE3C 8018263C -O2 -msoft-float */
     eta_t *eta;
     s8 unk_1;
@@ -484,7 +484,7 @@ void ray_jump(void) {
 }
 
 //6D020
-void ray_inertia_speed(i16 a1, i16 a2, i16 prev_speed_x, i16 a4) {
+void ray_inertia_speed(s16 a1, s16 a2, s16 prev_speed_x, s16 a4) {
     /* 5E4BC 80182CBC -O2 -msoft-float */
     s16 unk_1;
     s16 unk_2;
@@ -600,14 +600,14 @@ void RAY_SWIP(void) {
     u8 temp_v1_2;
 
     /*var_s0 = saved_reg_s0;*/
-    i16 x_accel = 0;
-    i32 var_s4 = num_world == 3 ? 32 : 16;
+    s16 x_accel = 0;
+    s32 var_s4 = num_world == 3 ? 32 : 16;
     if (ray.cmd_arg_2 != -1) {
         obj_t* follow_obj = &level.objects[ray.cmd_arg_2];
         if (!(follow_obj->flags.follow_enabled)) {
             ray.cmd_arg_2 = -1;
         }
-        i16 ray_dist = follow_obj->ray_dist;
+        s16 ray_dist = follow_obj->ray_dist;
         if ((Abs(ray_dist) >= 9) || (ray_dist < 0) || (ray.cmd_arg_2 == -1)) {
             u8 sp10;
             rayMayLandOnAnObject(&sp10, ray.cmd_arg_2);
@@ -914,7 +914,7 @@ void RAY_HELICO(void) {
 }
 
 //6DB1C
-void Make_Ray_Hang(i16 a1, i16 a2) {
+void Make_Ray_Hang(s16 a1, s16 a2) {
     /* 5F52C 80183D2C -O2 -msoft-float */
     s32 unk_4;
 
@@ -922,10 +922,10 @@ void Make_Ray_Hang(i16 a1, i16 a2) {
         ray.iframes_timer = 90;
     }
     set_main_and_sub_etat(&ray, 5, 0);
-    i32 unk_1 = get_proj_dist2(ray.scale, 32);
+    s32 unk_1 = get_proj_dist2(ray.scale, 32);
 
     u8 unk_2 = (RayEvts.tiny) ? 3 : 7;
-    i32 unk_3 = (ray.flags.flip_x) ? 16 - unk_2 : unk_2;
+    s32 unk_3 = (ray.flags.flip_x) ? 16 - unk_2 : unk_2;
 
     if (ray.scale != 0) {
         unk_1 += 37;
@@ -944,12 +944,12 @@ void Make_Ray_Hang(i16 a1, i16 a2) {
 }
 
 //6DC24
-bool AIR(i32 a1) {
+bool AIR(s32 a1) {
     return (block_flags[mp.map[a1].tile_type] & 2) == 0;
 }
 
 //6DC4C
-bool MUR(i32 a1) {
+bool MUR(s32 a1) {
     return block_flags[mp.map[a1].tile_type] & 2;
 }
 
@@ -1188,7 +1188,7 @@ void RAY_RESPOND_TO_UP(void) {
 }
 
 //6E548
-void RAY_RESPOND_TO_DIR(i16 flip_x) {
+void RAY_RESPOND_TO_DIR(s16 flip_x) {
     /* 602E8 80184AE8 -O2 -msoft-float */
     anim_t *sel_anim;
     s32 unk_1;
@@ -1199,7 +1199,7 @@ void RAY_RESPOND_TO_DIR(i16 flip_x) {
             // NOTE: this section is substantially different in the PS1 and PC versions.
             ++joy_done;
             if (ray.sub_etat ==  8 || ray.sub_etat == 10) {
-                i32 v5 = 1;
+                s32 v5 = 1;
                 if (options_jeu.test_fire1() && !ray_on_poelle && downjoy()) {
                     v5 = 0;
                 }
@@ -1207,7 +1207,7 @@ void RAY_RESPOND_TO_DIR(i16 flip_x) {
                     set_main_and_sub_etat(&ray, 0, 47); // stop crawling
                 }
             } else if (ray.sub_etat == 9 || ray.sub_etat == 11) {
-                i32 v5 = 1;
+                s32 v5 = 1;
                 if (options_jeu.test_fire1() && !ray_on_poelle && downjoy()) {
                     v5 = 0;
                 }
@@ -1558,7 +1558,7 @@ static inline s16 inline_RAY_BALANCE_ANIM(s16 angle) {
 }
 
 //6F24C
-i16 RAY_BALANCE_ANIM(i16 grp_angle) {
+s16 RAY_BALANCE_ANIM(s16 grp_angle) {
     if (grp_angle == 0)
         grp_angle++;
 
@@ -1684,7 +1684,7 @@ void RAY_BALANCE(void) {
                 obj_grp->link = 1;
             }
 
-            i16 v4 = (abs_cosinus(grp_angle) >> 7) + 1;
+            s16 v4 = (abs_cosinus(grp_angle) >> 7) + 1;
             if (obj_grp->link < 0) {
                 v4 = -v4;
             }
@@ -1789,7 +1789,7 @@ void RayTestBlocSH(void) {
 
 //6F95C
 void remoteControlRay(void) {
-    i32 diff_x = ray.x - remoteRayXToReach;
+    s32 diff_x = ray.x - remoteRayXToReach;
     if (diff_x > 1) {
         ray.flags.flip_x = 0;
         set_sub_etat(&ray, 21);
@@ -1799,7 +1799,7 @@ void remoteControlRay(void) {
     } else {
         ray.speed_x = 0;
         set_sub_etat(&ray, 20);
-        remoteRayXToReach = (i16)ray.x;
+        remoteRayXToReach = (s16)ray.x;
     }
 }
 
@@ -1820,8 +1820,8 @@ void RAY_IN_THE_AIR(void) {
     if (ray_wind_force) {
         ray.nb_cmd = 1;
     }
-    memmove(&pos_stack[1], &pos_stack[0], sizeof(pos_stack) - sizeof(i16));
-    pos_stack[0] = (i16)ray.x;
+    memmove(&pos_stack[1], &pos_stack[0], sizeof(pos_stack) - sizeof(s16));
+    pos_stack[0] = (s16)ray.x;
 
     if (ray.sub_etat == 7) {
         ray.cmd_arg_2 = -1;
@@ -1916,14 +1916,14 @@ void RAY_IN_THE_AIR(void) {
             }
 
             if (ray.nb_cmd == 0) {
-                i32 i;
+                s32 i;
                 for (i = 1; i < 10; i++) {
                     if (pos_stack[i - 1] != pos_stack[i]) {
                         break;
                     }
                 }
                 if (i != 10) {
-                    i16 new_decalage;
+                    s16 new_decalage;
                     if (pos_stack[i - 1] < pos_stack[i]) {
                         new_decalage = MIN(decalage_en_cours, -256);
                     } else {
@@ -1940,7 +1940,7 @@ void RAY_IN_THE_AIR(void) {
                     button_released = 1;
                 }
             } else if (ray.sub_etat == 8) {
-                i16 new_timer = MIN(ray.iframes_timer, 90);
+                s16 new_timer = MIN(ray.iframes_timer, 90);
                 ray.iframes_timer = new_timer;
             }
             if (ray.sub_etat == 17 || ray.sub_etat == 18 || ray.sub_etat == 19) {
@@ -2686,7 +2686,7 @@ void DO_RAYMAN(void) {
         }
 
         if (RayEvts.reverse != 0) {
-            i16 ray_x, ray_y, ray_w, ray_h;
+            s16 ray_x, ray_y, ray_w, ray_h;
             GET_SPRITE_POS(&ray, 5, &ray_x, &ray_y, &ray_w, &ray_h);
             star_ray_der->x = star_ray_dev->x = ray_x + (ray_w >> 1) - star_ray_dev->offset_bx;
             star_ray_der->y = star_ray_dev->y = ray_y - star_ray_dev->offset_hy;
@@ -2773,12 +2773,12 @@ void FIN_PC(void) {
 }
 
 //71940
-void updateLogo(i32 fade_duration, i32 a2, i32 a3) {
+void updateLogo(s32 fade_duration, s32 a2, s32 a3) {
     start_fade_in(2);
     WaitNSynchro(5);
     memcpy(DrawBufferNormal, PLAN2BIT, 320*200);
     //DisplayBufferModeNormal(DrawBufferNormal, display_buffer, current_rvb);
-    for (i32 i = 0; i < fade_duration; ++i) {
+    for (s32 i = 0; i < fade_duration; ++i) {
         do_fade(&rvb_pres, &current_rvb);
         advance_frame();
         readinput();

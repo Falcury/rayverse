@@ -3,7 +3,7 @@
 void findMereDenisWeapon(void) {
     mereDenis_weapon_id = -1;
     machine_obj_id = -1;
-    for (i16 i = 0; i < level.nb_objects; ++i) {
+    for (s16 i = 0; i < level.nb_objects; ++i) {
         u16 type = level.objects[i].type;
         if (type == TYPE_203_SMA_WEAPON) {
             machine_obj_id = i;
@@ -84,7 +84,7 @@ void fitSaveCurrentAction(obj_t* obj) {
 }
 
 //52AF4
-void doMereDenisHit(obj_t* obj, i16 sprite) {
+void doMereDenisHit(obj_t* obj, s16 sprite) {
     print_once("Not implemented: doMereDenisHit"); //stub
 }
 

@@ -135,7 +135,7 @@ u8 Prio(obj_t* obj) {
 
 //5E640
 void first_obj_init(obj_t* obj) {
-    i16 type = obj->type;
+    s16 type = obj->type;
     if ((flags[type] & 1) != 0 || ((type == TYPE_9_BADGUY2 || type == TYPE_0_BADGUY1 ) && obj->x < 0)) {
         obj->x = -32000;
         obj->y = -32000;
@@ -422,7 +422,7 @@ void obj_init(obj_t* obj) {
             break;
         case TYPE_26_CRUMBLE_PLAT:
             if (num_world != 1) {
-                i16 unk_2 = (i16)(vblToEOA(obj, 1) - 2);
+                s16 unk_2 = (s16)(vblToEOA(obj, 1) - 2);
                 obj->cmd_arg_1 = unk_2;
                 obj->iframes_timer = unk_2;
             } else {
@@ -498,11 +498,11 @@ void obj_init(obj_t* obj) {
 void init_struct_level(void) {
     level_alw.nb_objects = 0;
     level_obj.nb_objects = 0;
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         level_alw.obj_ids[i] = 0;
         level_obj.obj_ids[i] = 0;
     }
-    for (i16 i = 0; i < level.nb_objects; ++i) {
+    for (s16 i = 0; i < level.nb_objects; ++i) {
         obj_t* obj = level.objects + i;
         if (bonus_map || (flags[obj->type] & flags1_2_is_collectible) == 0 || !bonus_taken(obj->id)) {
             if (flags[obj->type] & flags0_1_always) {
@@ -545,10 +545,10 @@ void INIT_OBJECTS(u8 a1) {
     star_ray_der = NULL;
     star_ray_dev = NULL;
 
-    i16 found_bbf2_gauche = -1;
-    i16 found_bbf2_droite = -1;
+    s16 found_bbf2_gauche = -1;
+    s16 found_bbf2_droite = -1;
 
-    for (i16 i = 0; i < level.nb_objects; ++i) {
+    for (s16 i = 0; i < level.nb_objects; ++i) {
         obj_t* obj = level.objects + i;
         obj->id = i;
         if (a1) {
@@ -988,7 +988,7 @@ void REINIT_OBJECT(obj_t* obj) {
 
 //602C4
 void special_flags_init(void) {
-    for (i32 i = 0; i < COUNT(flags); ++i) {
+    for (s32 i = 0; i < COUNT(flags); ++i) {
         if (i == TYPE_0_BADGUY1) {
             if (num_level == 3) {
                 zonediffx[i] = -120;

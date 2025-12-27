@@ -1,13 +1,13 @@
 
 
-static inline void set_def_bande(i32 index, i16 field_0, u8 field_2, u8 field_4, u8 field_6) {
+static inline void set_def_bande(s32 index, s16 field_0, u8 field_2, u8 field_4, u8 field_6) {
     def_bande_t def = {field_0, field_2, field_4, field_6};
     Def_Bande[index] = def;
 }
 
 static void init_def_bande(void) {
     Def_Bande = (def_bande_t*)calloc(18000, sizeof(def_bande_t));
-    for (i32 i = 0; i < 18000; i += 300) {
+    for (s32 i = 0; i < 18000; i += 300) {
         set_def_bande(i, 288, 2, 0, 0);
     }
     set_def_bande(600, 320, 2, 0, 0);
@@ -59,7 +59,7 @@ static void init_def_bande(void) {
 }
 
 //778F0
-void Init_Bande(u8 fnd, i16 width, i16 height, u8* source_buf, u8* dest_buf) {
+void Init_Bande(u8 fnd, s16 width, s16 height, u8* source_buf, u8* dest_buf) {
 
     // NB. Decided to initialize Def_Bande at runtime instead of compile-time because it's a very large and sparse array.
     init_def_bande();
@@ -85,8 +85,8 @@ void Init_Bande(u8 fnd, i16 width, i16 height, u8* source_buf, u8* dest_buf) {
 
     NbBande = Tab_NbBande[10 * (num_world - 1) + fnd];
 
-    i16 cumulative_length = 0;
-    for (i32 i = 0; i < NbBande; ++i) {
+    s16 cumulative_length = 0;
+    for (s32 i = 0; i < NbBande; ++i) {
         def_bande_t* def_bande = Def_Bande + 3000 * (num_world - 1) + 300 * Num_Fond + i;
         bande_t* bande = Bande + i;
         bande->length = def_bande->length;
@@ -109,7 +109,7 @@ void Init_Bande(u8 fnd, i16 width, i16 height, u8* source_buf, u8* dest_buf) {
     }
 
     NbSprite = Tab_NbSprite[10 * (num_world - 1) + Num_Fond];
-    for (i32 i = 0; i < NbSprite; ++i) {
+    for (s32 i = 0; i < NbSprite; ++i) {
         def_sprite_t* def_sprite = Def_Sprite + 200 * (num_world - 1) + 20 * Num_Fond + i;
         def_sprite_t* sprite = Sprite + i;
         sprite->x = def_sprite->x;
@@ -119,8 +119,8 @@ void Init_Bande(u8 fnd, i16 width, i16 height, u8* source_buf, u8* dest_buf) {
 }
 
 //77BA0
-void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2, i16 h2) {
-    i32 y = h1;
+void Display_Back_Screen(s16 plan_width, s16 plan_height, s16 w1, s16 h1, s16 w2, s16 h2) {
+    s32 y = h1;
     u8 type_scroll = Type_Scroll[10 * (num_world - 1) + Num_Fond];
     if (type_scroll == 0 || type_scroll == 2) {
         if (num_world == world_4_image && (num_level == 4 || num_level == 11)) {
@@ -137,7 +137,7 @@ void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2
                 }
             }
         }
-        i32 v68; //?
+        s32 v68; //?
         if (type_scroll != 0) {
             v68 = plan_height - h2;
         } else if (num_world == world_3_mountain && num_level == 10) {
@@ -148,13 +148,13 @@ void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2
         if (v68 > SCREEN_HEIGHT - h2 + (plan_height - SCREEN_HEIGHT)) {
             v68 = plan_height - h2;
         }
-        for (i32 i = 0; i < NbBande; ++i) {
+        for (s32 i = 0; i < NbBande; ++i) {
             bande_t* bande = Bande + i;
             u8* source_buffer_pos = bande->source_buffer_pos + bande->field_6 + w1;
             u8* dest_buffer_pos = bande->draw_buffer_pos - SCREEN_WIDTH * v68 + w1;
-            i32 draw_height = bande->length;
-            i32 v34 = bande->offset - v68;
-            i32 v36 = bande->length + v34;
+            s32 draw_height = bande->length;
+            s32 v34 = bande->offset - v68;
+            s32 v36 = bande->length + v34;
             if (v34 < 0 && v36 > 0 && bande->length != 0) {
                 draw_height = v36;
                 dest_buffer_pos -= SCREEN_WIDTH * v34;
@@ -173,11 +173,11 @@ void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2
             }
         }
         plan_width /= 2;
-        for (i32 i = 0; i < NbSprite; ++i) {
+        for (s32 i = 0; i < NbSprite; ++i) {
             def_sprite_t* sprite = Sprite + i;
             bande_t* bande = Bande + sprite->bande_index;
             if (bande->length != 0) {
-                i32 source_x = sprite->x - bande->field_6;
+                s32 source_x = sprite->x - bande->field_6;
                 if (source_x > SCREEN_WIDTH) {
                     source_x -= plan_width;
                 }
@@ -199,12 +199,12 @@ void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2
 
     } else {
         // type_scroll == 1
-        for (i32 i = 0; i < NbBande; ++i) {
+        for (s32 i = 0; i < NbBande; ++i) {
             bande_t* bande = Bande + i;
-            i16 v24_4 = plan_height - bande->field_6 - h1;
+            s16 v24_4 = plan_height - bande->field_6 - h1;
             if (bande->offset + bande->length > w1 && bande->offset < w2) {
                 if (bande->length != 0) {
-                    i32 v67 = bande->length;
+                    s32 v67 = bande->length;
                     u8* source_buffer_pos = bande->source_buffer_pos + bande->field_6 * plan_width + h1 * plan_width;
                     u8* dest_buffer_pos = bande->draw_buffer_pos + SCREEN_WIDTH * h1;
                     if (bande->offset + bande->length <= w2) {
@@ -220,12 +220,12 @@ void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2
                         dest_buffer_pos += w1 - bande->offset;
                         v67 = w2 - w1;
                     }
-                    i32 v14 = h2 - h1;
-                    i32 v15 = plan_height - bande->field_6 - h1;
+                    s32 v14 = h2 - h1;
+                    s32 v15 = plan_height - bande->field_6 - h1;
                     if (v15 > v14) {
                         v15 = v14;
                     }
-                    i32 v18;
+                    s32 v18;
                     if (v15 <= 0) {
                         source_buffer_pos -= plan_width * v15;
                         v18 = v14;
@@ -248,11 +248,11 @@ void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2
                 }
             }
         }
-        for (i32 i = 0; i < NbSprite; ++i) {
+        for (s32 i = 0; i < NbSprite; ++i) {
             def_sprite_t* sprite = Sprite + i;
             bande_t* bande = Bande + sprite->bande_index;
             if (bande->length != 0) {
-                i32 source_y = sprite->y - bande->field_6;
+                s32 source_y = sprite->y - bande->field_6;
                 if (source_y > SCREEN_HEIGHT) {
                     source_y -= plan_height;
                 }
@@ -275,17 +275,17 @@ void Display_Back_Screen(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2
 }
 
 //784A8
-void Display_Sprite_On_Front(i16 plan_width, i16 plan_height, i16 w1, i16 h1, i16 w2, i16 h2) {
+void Display_Sprite_On_Front(s16 plan_width, s16 plan_height, s16 w1, s16 h1, s16 w2, s16 h2) {
     print_once("Not implemented: Display_Sprite_On_Front"); //stub
 }
 
 //787E8
-void Calcul_Deplacement_Bande(i16 x, i16 plan_width, i16 plan_height) {
-    i32 v17 = 0; // y something?
+void Calcul_Deplacement_Bande(s16 x, s16 plan_width, s16 plan_height) {
+    s32 v17 = 0; // y something?
     u8 type_scroll = Type_Scroll[10 * (num_world - 1) + Num_Fond];
     if (type_scroll != 0) {
         if (type_scroll == 1) {
-            for (i32 i = 0; i < NbBande; ++i) {
+            for (s32 i = 0; i < NbBande; ++i) {
                 bande_t* bande = Bande + i;
                 if (bande->length != 0) {
                     if (bande->field_4 != 0) {
@@ -323,7 +323,7 @@ void Calcul_Deplacement_Bande(i16 x, i16 plan_width, i16 plan_height) {
         // type_scroll == 0
         plan_width /= 2;
         if (NbBande != 0) {
-            for (i32 i = 0; i < NbBande; ++i) {
+            for (s32 i = 0; i < NbBande; ++i) {
                 bande_t* bande = Bande + i;
                 if (bande->length != 0) {
                     if (bande->field_4 != 0) {
@@ -364,12 +364,12 @@ void Calcul_Deplacement_Bande(i16 x, i16 plan_width, i16 plan_height) {
 }
 
 //78C14
-void Init_Effet_Chaleur(i16 width, i16 height, u8* source_buf, u8* dest_buf) {
+void Init_Effet_Chaleur(s16 width, s16 height, u8* source_buf, u8* dest_buf) {
     print_once("Not implemented: Init_Effet_Chaleur"); //stub
 }
 
 //78CA8
-void Do_Effet_Chaleur(i16 a1, i16 a2) {
+void Do_Effet_Chaleur(s16 a1, s16 a2) {
     print_once("Not implemented: Do_Effet_Chaleur"); //stub
 }
 

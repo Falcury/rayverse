@@ -68,7 +68,7 @@ void setBossReachingSpeeds(obj_t* obj, u8 timer, u8 accuracyX, u8 accuracyY) {
 }
 
 //18A64
-i16 testActionEnd(obj_t* obj) {
+s16 testActionEnd(obj_t* obj) {
     /* 66EFC 8018B6FC -O2 -msoft-float */
     s16 res = false;
 
@@ -82,7 +82,7 @@ i16 testActionEnd(obj_t* obj) {
 }
 
 //18AD0
-i16 firstFloorBelow(obj_t* obj) {
+s16 firstFloorBelow(obj_t* obj) {
     /* 6703C 8018B83C -O2 -msoft-float */
     s16 x = obj->offset_bx + obj->x;
     s16 y = obj->offset_by + obj->y;
@@ -99,8 +99,8 @@ i16 firstFloorBelow(obj_t* obj) {
 
 //18B4C
 void adjustBossScrollLocker(void) {
-    i16 new_bossScrollStartX = bossScrollStartX;
-    i16 new_bossScrollEndX = bossScrollEndX;
+    s16 new_bossScrollStartX = bossScrollStartX;
+    s16 new_bossScrollEndX = bossScrollEndX;
     if (GameModeVideo != MODE_NORMAL) {
         if (bossScrollStartX < 0) {
             new_bossScrollStartX = 0;

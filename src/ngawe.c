@@ -10,7 +10,7 @@ void ngaweTriesToGrabShip(obj_t* obj) {
 }
 
 //5D714
-void allocatePirateNgaweRing(obj_t* obj, i16 a2, u8 a3) {
+void allocatePirateNgaweRing(obj_t* obj, s16 a2, u8 a3) {
     print_once("Not implemented: allocatePirateNgaweRing"); //stub
 }
 
@@ -30,7 +30,7 @@ void DO_ONE_NGW_COMMAND(obj_t* obj) {
 }
 
 //5DC90
-void DO_NGW_POING_COLLISION(obj_t* obj, i16 sprite) {
+void DO_NGW_POING_COLLISION(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DO_NGW_POING_COLLISION"); //stub
 }
 

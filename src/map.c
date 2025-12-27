@@ -3,17 +3,17 @@
 
 
 //5C4A0
-void deter_vide_plein_panach(void* a1, i16 a2) {
+void deter_vide_plein_panach(void* a1, s16 a2) {
     print_once("Not implemented: deter_vide_plein_panach"); //stub
 }
 
 //5C4DC
-void deter_nb_blocks(void* a1, i16 a2, i16 a3, i32* a4, i32* a5) {
+void deter_nb_blocks(void* a1, s16 a2, s16 a3, s32* a4, s32* a5) {
     print_once("Not implemented: deter_nb_blocks"); //stub
 }
 
 //5C564
-void Copy_Blocks(mem_t* buffer, void* a2, i16 a3, i16 a4) {
+void Copy_Blocks(mem_t* buffer, void* a2, s16 a3, s16 a4) {
     print_once("Not implemented: Copy_Blocks"); //stub
 }
 
@@ -23,8 +23,8 @@ void construct_MAP(mem_t* mem, big_map_t* big_map, void* map_blocks) {
     big_map->tile_texture_offsets = (u8**)block_malloc(mem, mp.length * sizeof(u8*));
     big_map->map_blocks = (u8*)map_blocks;
     big_map->display_map = (display_map_t*)block_malloc(mem, sizeof(display_map_t));
-    for (i32 i = 0; i < mp.length; ++i) {
-        i32 texture_offset = block_add[big_map->map[i].texture_id];
+    for (s32 i = 0; i < mp.length; ++i) {
+        s32 texture_offset = block_add[big_map->map[i].texture_id];
         big_map->tile_texture_offsets[i] = big_map->map_blocks + texture_offset;
         u32 v11;
         if (texture_offset > 288 * nb_blocks_plein) {
@@ -55,11 +55,11 @@ void init_build_map(big_map_t* a1) {
 void update_display_map(big_map_t* a1) {
     display_map_t* display_map = a1->display_map;
 
-    i32 y = Bloc_lim_H1 + ymap;
+    s32 y = Bloc_lim_H1 + ymap;
     if (y < 0) {
         y = 0; // added bounds clip
     }
-    i32 x = Bloc_lim_W1 + xmap - 8;
+    s32 x = Bloc_lim_W1 + xmap - 8;
     if (x < 0) {
         x = 0; // added bounds clip
     }
@@ -67,8 +67,8 @@ void update_display_map(big_map_t* a1) {
     display_map->tile_index = (a1->width * (y >> 4)) + (x >> 4);
     display_map->y= Bloc_lim_H1 - (y & 0xF);
 
-    i32 v6 = Bloc_lim_W2 - display_map->x;
-    i32 v7 = Bloc_lim_H2 - display_map->y;
+    s32 v6 = Bloc_lim_W2 - display_map->x;
+    s32 v7 = Bloc_lim_H2 - display_map->y;
     display_map->width_in_tiles = (v6 >> 4) + ((v6 & 0xF) != 0);
     display_map->height_in_tiles = (v7 >> 4) + ((v7 & 0xF) != 0);
 
@@ -107,7 +107,7 @@ void set_xymapini(void) {
 
 //5CAD0
 void set_xymap(void) {
-    i32 v0 = xmap;
+    s32 v0 = xmap;
     if (xmap < -Bloc_lim_W1) {
         xmap = -Bloc_lim_W1;
     }
@@ -123,7 +123,7 @@ void set_xymap(void) {
 }
 
 //5CB40
-void set_whmap(i32 a1, i32 a2, void* a3) {
+void set_whmap(s32 a1, s32 a2, void* a3) {
     print_once("Not implemented: set_whmap"); //stub
 }
 
@@ -140,11 +140,11 @@ void recaleRaysurlesBords(void) {
 }
 
 //5CE08
-void set_xywhmap(i16 xmin, i16 xmax, i16 ymin, i16 ymax) {
-    i32 delta_W1 = xmin - Bloc_lim_W1;
-    i32 delta_W2 = Bloc_lim_W2 - xmax;
-    i32 delta_H1 = ymin - Bloc_lim_H1;
-    i32 delta_H2 = Bloc_lim_H2 - ymax;
+void set_xywhmap(s16 xmin, s16 xmax, s16 ymin, s16 ymax) {
+    s32 delta_W1 = xmin - Bloc_lim_W1;
+    s32 delta_W2 = Bloc_lim_W2 - xmax;
+    s32 delta_H1 = ymin - Bloc_lim_H1;
+    s32 delta_H2 = Bloc_lim_H2 - ymax;
 
     Bloc_lim_H1 = ymin;
     Bloc_lim_H2 = ymax;
@@ -233,13 +233,13 @@ void set_xywhmap(i16 xmin, i16 xmax, i16 ymin, i16 ymax) {
 
 //5D144
 void MaskScrollDiffSprites(mem_t* buffer) {
-    for (i32 i = 1; i < ScrollDiffSprites->nb_sprites; ++i) {
+    for (s32 i = 1; i < ScrollDiffSprites->nb_sprites; ++i) {
         sprite_t* sprite = ScrollDiffSprites->sprites + i;
         Scroll_Masque[i] = block_malloc(buffer, sprite->outer_height * sprite->inner_height);
         u8* masque_pos = Scroll_Masque[i];
         u8* image_pos = ScrollDiffSprites->img_buffer + sprite->offset_in_atlas;
-        for (i32 y = 0; y < sprite->outer_height; ++y) {
-            for (i32 x = 0; x < sprite->outer_width; ++x) {
+        for (s32 y = 0; y < sprite->outer_height; ++y) {
+            for (s32 x = 0; x < sprite->outer_width; ++x) {
                 *masque_pos = *image_pos == 0 ? 0 : 0xFF;
                 ++masque_pos;
                 ++image_pos;
@@ -253,12 +253,12 @@ void DRAW_MAP(u8* draw_buf, big_map_t* big_map) {
     display_map_t* display_map = big_map->display_map;
     if (display_map->height_in_tiles > 1 && display_map->width_in_tiles > 1) {
         u8* draw_pos = draw_buf + 320 * display_map->y + display_map->x;
-        for (i32 tile_y = 0; tile_y < display_map->height_in_tiles; ++tile_y) {
-            for (i32 tile_x = 0; tile_x < display_map->width_in_tiles; ++tile_x) {
-                i32 tile_index = display_map->tile_index + tile_y * big_map->width + tile_x;
+        for (s32 tile_y = 0; tile_y < display_map->height_in_tiles; ++tile_y) {
+            for (s32 tile_x = 0; tile_x < display_map->width_in_tiles; ++tile_x) {
+                s32 tile_index = display_map->tile_index + tile_y * big_map->width + tile_x;
                 map_tile_t* tile = big_map->map + tile_index;
-                i32 x = display_map->x + 16 * tile_x;
-                i32 y = display_map->y + 16 * tile_y;
+                s32 x = display_map->x + 16 * tile_x;
+                s32 y = display_map->y + 16 * tile_y;
                 if (tile->transparency != 0) {
                     vec2b_t size = {16, 16};
                     if (tile->transparency == 1) {

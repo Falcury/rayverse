@@ -2,9 +2,9 @@
 //5B7A0
 void DoFirstFlocons(void) {
     if (MapAvecPluieOuNeige && save1.is_just_saved && save1.save_obj_id == -1 && !fin_continue) {
-        for (i16 i = 0; i < 100; ++i) {
-            i16 random1 = myRand(i);
-            i16 random2 = myRand(random1);
+        for (s16 i = 0; i < 100; ++i) {
+            s16 random1 = myRand(i);
+            s16 random2 = myRand(random1);
             do_flocons(xmap + random1, ymap + random2, xmap_old, ymap_old);
             DO_SNOW_SEQUENCE();
             horloges(0);
@@ -146,7 +146,7 @@ void init_flocons(void) {
 }
 
 //5BB78
-void do_flocons(i16 x, i16 y, i16 x_old, i16 y_old) {
+void do_flocons(s16 x, s16 y, s16 x_old, s16 y_old) {
     /* 3B718 8015FF18 -O2 -msoft-float */
 
     s16 unk_x_1; s16 unk_y_1;
@@ -234,14 +234,14 @@ void do_flocons(i16 x, i16 y, i16 x_old, i16 y_old) {
 }
 
 //5BE74
-void set_snow_sequence(i16 seq, i16 len) {
+void set_snow_sequence(s16 seq, s16 len) {
     SNSEQ_no = seq;
     SNSEQ_ptr = 0;
     SNSEQ_len[seq] = len;
 }
 
 //5BE8F and 5C43C (apparently split in two parts?)
-void set_SNSEQ_list(i16 a1) {
+void set_SNSEQ_list(s16 a1) {
     MapAvecPluieOuNeige = 1;
     switch (a1) {
         case 0: {
@@ -457,9 +457,9 @@ void DO_SNOW_SEQUENCE(void) {
 
     if (++SNSEQ_ptr == SNSEQ_len[SNSEQ_no])
     {
-        i16 first = SNSEQ_list[SNSEQ_list_ptr];
+        s16 first = SNSEQ_list[SNSEQ_list_ptr];
         SNSEQ_list_ptr++;
-        i16 second = SNSEQ_list[SNSEQ_list_ptr];
+        s16 second = SNSEQ_list[SNSEQ_list_ptr];
         SNSEQ_list_ptr++;
 
         set_snow_sequence(first, second);

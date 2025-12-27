@@ -1,16 +1,16 @@
 
 //2B2D0
-i32 get_nb_zdc(obj_t* obj) {
+s32 get_nb_zdc(obj_t* obj) {
     return obj->zdc >> 11;
 }
 
 //2B2E0
-i32 get_zdc_index(obj_t* obj) {
-    return (i32)(obj->zdc & 0x7FF);
+s32 get_zdc_index(obj_t* obj) {
+    return (s32)(obj->zdc & 0x7FF);
 }
 
 //2B2E8
-zdc_t* get_zdc(obj_t* obj, i32 a2) {
+zdc_t* get_zdc(obj_t* obj, s32 a2) {
     return zdc_tab + get_zdc_index(obj) + a2;
 }
 
@@ -20,7 +20,7 @@ u16 get_ZDCPTR(void) {
 }
 
 //2B308
-i32 in_coll_sprite_list(obj_t* obj, i16 a2) {
+s32 in_coll_sprite_list(obj_t* obj, s16 a2) {
     /* 1B2E0 8013FAE0 -O2 -msoft-float */
     u8 unk_1[16];
     s16 i;
@@ -82,19 +82,19 @@ i32 in_coll_sprite_list(obj_t* obj, i16 a2) {
 }
 
 //2B3B8
-bool box_inter_v_line(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
+bool box_inter_v_line(s16 a1, s16 a2, s16 a3, s16 a4, s16 a5, s16 a6, s16 a7) {
     print_once("Not implemented: box_inter_v_line");
     return false; //stub
 }
 
 //2B3F4
-bool box_inter_h_line(i16 a1, i16 a2, i16 a3, i16 a4, i16 a5, i16 a6, i16 a7) {
+bool box_inter_h_line(s16 a1, s16 a2, s16 a3, s16 a4, s16 a5, s16 a6, s16 a7) {
     print_once("Not implemented: box_inter_h_line");
     return false; //stub
 }
 
 //2B430
-i16 inter_box(i32 x_1, i32 y_1, i32 w_1, i32 h_1, s16 x_2, s16 y_2, i32 w_2, i32 h_2) {
+s16 inter_box(s32 x_1, s32 y_1, s32 w_1, s32 h_1, s16 x_2, s16 y_2, s32 w_2, s32 h_2) {
     /* 1B57C 8013FD7C -O2 -msoft-float */
     s16 comp_x = x_1 - w_2;
     s16 comp_y = y_1 - h_2;
@@ -108,7 +108,7 @@ i16 inter_box(i32 x_1, i32 y_1, i32 w_1, i32 h_1, s16 x_2, s16 y_2, i32 w_2, i32
 }
 
 //2B48C
-void GET_OBJ_ZDC(obj_t* obj, i16 *out_x, i16 *out_y, i16 *out_w, i16 *out_h) {
+void GET_OBJ_ZDC(obj_t* obj, s16 *out_x, s16 *out_y, s16 *out_w, s16 *out_h) {
     s16 anim_x; s16 anim_y; s16 anim_w; s16 anim_h;
     s32 unk_1;
     s32 unk_2;
@@ -402,7 +402,7 @@ void GET_OBJ_ZDC(obj_t* obj, i16 *out_x, i16 *out_y, i16 *out_w, i16 *out_h) {
 }
 
 //2C028
-i16 GET_SPRITE_ZDC(obj_t* obj, i16 index, i16 *out_x, i16 *out_y, i16 *out_w, i16 *out_h) {
+s16 GET_SPRITE_ZDC(obj_t* obj, s16 index, s16 *out_x, s16 *out_y, s16 *out_w, s16 *out_h) {
     s16 type;
     s32 unk_x; s32 unk_y; s32 unk_w; s32 unk_h;
     s16 spr_x; s16 spr_y; s16 spr_w; s16 spr_h;
@@ -558,13 +558,13 @@ i16 GET_SPRITE_ZDC(obj_t* obj, i16 index, i16 *out_x, i16 *out_y, i16 *out_w, i1
 }
 
 //2C33C
-i32 BOX_HIT_SPECIAL_ZDC(i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
+s32 BOX_HIT_SPECIAL_ZDC(s16 x, s16 y, s16 w, s16 h, obj_t* obj) {
     print_once("Not implemented: BOX_HIT_SPECIAL_ZDC");
     return -1; //stub
 }
 
 //2C670
-i32 BOX_IN_COLL_ZONES(i16 type, i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
+s32 BOX_IN_COLL_ZONES(s16 type, s16 x, s16 y, s16 w, s16 h, obj_t* obj) {
     /* 1C7E4 80140FE4 -O2 -msoft-float */
     s16 res;
     s16 unk_x; s16 unk_y; s16 unk_w; s16 unk_h;
@@ -675,11 +675,11 @@ i32 BOX_IN_COLL_ZONES(i16 type, i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
 }
 
 //2CA84
-i32 COLL_BOX_SPRITE(i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
-    i16 spr_x;
-    i16 spr_y;
-    i16 spr_w;
-    i16 spr_h;
+s32 COLL_BOX_SPRITE(s16 x, s16 y, s16 w, s16 h, obj_t* obj) {
+    s16 spr_x;
+    s16 spr_y;
+    s16 spr_w;
+    s16 spr_h;
     if (GET_SPRITE_POS(obj, obj->hit_sprite, &spr_x, &spr_y, &spr_w, &spr_h)) {
         if (inter_box(x, y, w, h, spr_x, spr_y, spr_w, spr_h)) {
             return obj->hit_sprite;
@@ -689,7 +689,7 @@ i32 COLL_BOX_SPRITE(i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
 }
 
 //2CB1C
-i16 CHECK_BOX_COLLISION(i16 type, i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
+s16 CHECK_BOX_COLLISION(s16 type, s16 x, s16 y, s16 w, s16 h, obj_t* obj) {
     if (obj->hit_sprite == 0xFD) {
         return BOX_HIT_SPECIAL_ZDC(x, y, w, h, obj);
     } else if (obj->hit_sprite < 0xFD) {
@@ -700,7 +700,7 @@ i16 CHECK_BOX_COLLISION(i16 type, i16 x, i16 y, i16 w, i16 h, obj_t* obj) {
 }
 
 //2CB9C
-i16 possible_sprite(obj_t* obj, i16 index) {
+s16 possible_sprite(obj_t* obj, s16 index) {
     /* 1CF08 80141708 -O2 -msoft-float */
     s16 spr[12];
 
@@ -778,7 +778,7 @@ i16 possible_sprite(obj_t* obj, i16 index) {
 }
 
 //2CE34
-i16 setToleranceDist(i16 x, i16 w, i16 y) {
+s16 setToleranceDist(s16 x, s16 w, s16 y) {
     /* 1D11C 8014191C -O2 -msoft-float */
     s16 dist;
     s16 ray_x = ray.x + ray.offset_bx;
@@ -981,7 +981,7 @@ void do_boum(void) {
 
 //2D5FC
 void DO_POING_COLLISION(void) {
-    i16 x, y, w, h;
+    s16 x, y, w, h;
     GET_SPRITE_POS(poing_obj, 0, &x, &y, &w, &h);
     u8 btyp = 0;
 
@@ -991,19 +991,19 @@ void DO_POING_COLLISION(void) {
         do_boum();
         fin_poing_follow(1);
     } else {
-        for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+        for (s32 i = 0; i < actobj.num_active_objects; ++i) {
             obj_t* obj = level.objects + actobj.objects[i];
             if (new_world || new_level || fin_boss || boss_mort) {
                 break;
             }
             if (obj->display_prio != 0 && obj->hit_points != 0 && (get_eta(obj)->flags & 8)) {
-                i16 sprite = CHECK_BOX_COLLISION(TYPE_POING, x, y, w, h, obj);
+                s16 sprite = CHECK_BOX_COLLISION(TYPE_POING, x, y, w, h, obj);
                 if (sprite != -1) {
-                    i8 old_hp = obj->hit_points;
+                    s8 old_hp = obj->hit_points;
                     ObjectsFonctions[obj->type].poing_collision(obj, sprite);
                     do_boum();
                     obj->gravity_value_1 = 0;
-                    i32 unk_1 = get_eta(obj)->anim_speed >> 4;
+                    s32 unk_1 = get_eta(obj)->anim_speed >> 4;
                     if (!(unk_1 == 10 || unk_1 == 11)) {
                         obj->gravity_value_2 = 0;
                     }
@@ -1018,12 +1018,12 @@ void DO_POING_COLLISION(void) {
 }
 
 //2D858
-void DoPoingCollisionDefault(obj_t* obj, i16 sprite) {
+void DoPoingCollisionDefault(obj_t* obj, s16 sprite) {
     //nullsub
 }
 
 //2D85C
-void COLL_BOX_ALL_SPRITES(i16 a1, i16 a2, i16 a3, i16 a4, obj_t* obj) {
+void COLL_BOX_ALL_SPRITES(s16 a1, s16 a2, s16 a3, s16 a4, obj_t* obj) {
     print_once("Not implemented: COLL_BOX_ALL_SPRITES"); //stub
 }
 
@@ -1078,7 +1078,7 @@ bool COLL_RAY_PIC(void) {
 //2DA98
 void COLL_RAY_BLK_MORTEL(void) {
     if ((ray.y + ray.offset_by) < (mp.height * 16)) {
-        i16 btyp = mp.map[ray.ray_dist].tile_type;
+        s16 btyp = mp.map[ray.ray_dist].tile_type;
         if (btyp == BTYP_SPIKES) {
             set_main_and_sub_etat(&ray, 3, 32);
             if (dead_time != 1) {
@@ -1118,7 +1118,7 @@ void RAY_KO(void) {
 void RAY_HIT(bool hurt, obj_t* obj) {
     if (hurt) {
         RAY_HURT();
-        i32 tile_x = (ray.x + ray.offset_bx) / 16;
+        s32 tile_x = (ray.x + ray.offset_bx) / 16;
         while (BTYP(tile_x, (ray.y + ray.offset_by) / 16) == BTYP_WATER) {
             --ray.y;
         }
@@ -1143,7 +1143,7 @@ void RAY_HIT(bool hurt, obj_t* obj) {
                 ray.speed_x = ray.flags.flip_x ? -2 : 2;
                 ray.speed_y = -3;
             } else if (obj && !(ray.main_etat == 0 && ray.sub_etat == 61)){
-                i32 eject_sens = -1;
+                s32 eject_sens = -1;
                 if (obj->type == TYPE_180_SAXO2) {
                     eject_sens = saxo2_get_eject_sens();
                 } else if (obj->type == TYPE_150_SCORPION) {
@@ -1163,14 +1163,14 @@ void RAY_HIT(bool hurt, obj_t* obj) {
                 } else if (obj->type == TYPE_210_FIRE_RIGHT) {
                     eject_sens = -1;
                 } else {
-                    i32 xspeed_delta = obj->speed_x - ray.speed_x;
+                    s32 xspeed_delta = obj->speed_x - ray.speed_x;
                     if (xspeed_delta == 0) {
                         eject_sens = ray.flags.flip_x ? 1 : -1;
                     } else {
                         eject_sens = xspeed_delta > 0 ? 1 : -1;
                     }
                 }
-                i32 bump_speed;
+                s32 bump_speed;
                 if (flags[obj->type] & flags1_4_fast_bump) {
                     bump_speed = 5;
                 } else if (obj->type == TYPE_180_SAXO2) {
@@ -1200,7 +1200,7 @@ void RAY_HIT(bool hurt, obj_t* obj) {
 }
 
 //2DF34
-void standard_frontZone(obj_t* obj, i16* x, i16* w) {
+void standard_frontZone(obj_t* obj, s16* x, s16* w) {
     /* 1FA54 80144254 -O2 -msoft-float */
     if (!obj->flags.flip_x)
         *x -= obj->detect_zone;
@@ -1515,7 +1515,7 @@ void SHOW_COLLISIONS_ZONES(void) {
 
 //2EAE8
 void DO_COLLISIONS(void) {
-    for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+    for (s32 i = 0; i < actobj.num_active_objects; ++i) {
         if (new_world || new_level || fin_boss || boss_mort) {
             break;
         }
@@ -1529,7 +1529,7 @@ void DO_COLLISIONS(void) {
         if (get_eta(obj)->flags & 0x20)  {
             if (flags[obj->type] & flags2_0x10_do_not_check_ray_collision) {
                 if (!(ray.main_etat == 3 && ray.sub_etat == 32)) {
-                    i16 collision;
+                    s16 collision;
                     if (obj->type  == TYPE_81_CYMBALE || obj->type == TYPE_169_CYMBAL2) {
                         collision = 0;
                     } else {
@@ -1541,7 +1541,7 @@ void DO_COLLISIONS(void) {
                 }
             } else if (ray.configuration == 0 && ray.iframes_timer == -1) {
                 if ((get_eta(&ray)->flags & 8) && !(flags[obj->type] & flags0_4_no_collision)) {
-                    i16 collision;
+                    s16 collision;
                     if ((obj->type == TYPE_170_RAYON && (obj->anim_frame == 0 || obj->anim_frame > 3)) ||
                             (obj->type == TYPE_147_MST_SCROLL && obj->hit_points != 0)
                     ) {
@@ -1573,7 +1573,7 @@ void DO_COLLISIONS(void) {
 void DoRaymanCollisionDefault(obj_t* obj) {
     if ((flags[obj->type] & flags2_0x10_do_not_check_ray_collision) && get_eta(obj)->flags & 0x20) {
         if (!(ray.main_etat == 3 && ray.sub_etat == 32)) {
-            i16 command_par3 = ray.iframes_timer;
+            s16 command_par3 = ray.iframes_timer;
             if (command_par3 >= 60 || command_par3 == -1) {
                 RAY_HIT(0, obj);
                 ray.iframes_timer = command_par3;
@@ -1588,7 +1588,7 @@ void DoRaymanCollisionDefault(obj_t* obj) {
 }
 
 //2EE20
-void DO_OBJ_COLLISIONS(obj_t* obj, i16 offs) {
+void DO_OBJ_COLLISIONS(obj_t* obj, s16 offs) {
     /* 218C0 801460C0 -O2 -msoft-float */
     s16 in_x; s16 in_y; s16 in_w; s16 in_h;
     u8 done;
@@ -1693,7 +1693,7 @@ void DO_OBJ_COLLISIONS(obj_t* obj, i16 offs) {
 }
 
 //2F1E0
-u8 test_allowed(obj_t* obj, i16 center_x, i16 center_y) {
+u8 test_allowed(obj_t* obj, s16 center_x, s16 center_y) {
     /* 487A4 8016CFA4 -O2 -msoft-float */
     s16 map_index =
             ((center_x + obj->x) >> 4) +
@@ -1766,12 +1766,12 @@ void DO_MOVING_PLATFORM_COMMAND(obj_t* obj) {
 }
 
 //2F378
-void DoPTGRAPPINPoingCollision(obj_t* obj, i16 sprite) {
+void DoPTGRAPPINPoingCollision(obj_t* obj, s16 sprite) {
     if (RayEvts.grap && ray_mode != MODE_3_MORT_DE_RAYMAN) {
         if (Abs((ray.y + ray.offset_by) - obj->y + obj->offset_by) < 250) {
             SET_RAY_BALANCE();
             id_obj_grapped = obj->id;
-            i16 angle = ANGLE_RAYMAN(obj);
+            s16 angle = ANGLE_RAYMAN(obj);
             obj->follow_x = angle;
             if (angle > 256) {
                 obj->link = -1;
@@ -1892,7 +1892,7 @@ void special_pour_liv(obj_t* event) {
 //2F658
 void DO_ONE_CMD(obj_t* obj) {
     /* 49844 8016E044 -O2 */
-    i16 etat = obj->main_etat;
+    s16 etat = obj->main_etat;
     special_pour_liv(obj);
     switch (obj->cmd) {
         case GO_WAIT:
@@ -2093,7 +2093,7 @@ void DO_ROLL_EYES(obj_t* obj) {
 }
 
 //2F978
-void DoKillingEyesPoingCollision(obj_t* obj, i16 sprite) {
+void DoKillingEyesPoingCollision(obj_t* obj, s16 sprite) {
     --obj->hit_points;
     if (obj->hit_points != 0) {
         set_sub_etat(obj, 5);
@@ -2131,7 +2131,7 @@ void DoRaymanBag1Collision(obj_t* obj) {
 }
 
 //2FCB0
-i16 MarCoince(obj_t* obj, i16 dir) {
+s16 MarCoince(obj_t* obj, s16 dir) {
     /* 4CB88 80171388 -O2 -msoft-float */
     s32 map_ind;
     s32 pos_to_check;
@@ -2846,8 +2846,8 @@ void DO_FALLING_OBJ_CMD(obj_t* obj) {
 }
 
 //3167C
-void DoFallingObjPoingCollision(obj_t* obj, i16 sprite) {
-    i32 fall_x_accel = 0;
+void DoFallingObjPoingCollision(obj_t* obj, s16 sprite) {
+    s32 fall_x_accel = 0;
     switch (obj->type)
     {
         case TYPE_FALLING_OBJ:

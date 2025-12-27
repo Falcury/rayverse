@@ -8,11 +8,11 @@ void init_memory(mem_t** mem, u32 capacity) {
 
 //7F5B0
 u8* block_malloc(mem_t* mem, u32 size) {
-	i32 bytes_left = mem->capacity - mem->cursor;
-	if (bytes_left >= (i32)size) {
+	s32 bytes_left = mem->capacity - mem->cursor;
+	if (bytes_left >= (s32)size) {
 		u8* data_at_cursor = mem->data + mem->cursor;
 		mem->cursor += size;
-		mem->len = MAX(mem->cursor, (i32)mem->len);
+		mem->len = MAX(mem->cursor, (s32)mem->len);
 		return data_at_cursor;
 	} else {
 		printf("Memory error in block_malloc\n");
@@ -82,20 +82,20 @@ mem_t* read_entire_file(const char* filename, bool error_is_fatal) {
 	return result;
 }
 
-i32 mem_write(void* src, mem_t* mem, size_t bytes_to_write) {
-	i32 bytes_left = mem->capacity - mem->cursor;
+s32 mem_write(void* src, mem_t* mem, size_t bytes_to_write) {
+	s32 bytes_left = mem->capacity - mem->cursor;
 	if (bytes_left >= 1) {
 		bytes_to_write = MIN(bytes_to_write, (size_t)bytes_left);
 		memcpy(mem->data + mem->cursor, src, bytes_to_write);
 		mem->cursor += bytes_to_write;
-		mem->len = MAX(mem->cursor, (i32)mem->len);
+		mem->len = MAX(mem->cursor, (s32)mem->len);
 		return bytes_to_write;
 	}
 	return 0;
 }
 
-i32 mem_read(void* dest, mem_t* mem, size_t bytes_to_read) {
-	i32 bytes_left = mem->len - mem->cursor;
+s32 mem_read(void* dest, mem_t* mem, size_t bytes_to_read) {
+	s32 bytes_left = mem->len - mem->cursor;
 	if (bytes_left >= 1) {
 		bytes_to_read = MIN(bytes_to_read, (size_t)bytes_left);
 		memcpy(dest, mem->data + mem->cursor, bytes_to_read);
@@ -105,14 +105,14 @@ i32 mem_read(void* dest, mem_t* mem, size_t bytes_to_read) {
 	return 0;
 }
 
-i32 mem_read_byte(mem_t* mem) {
-	i32 byte = 0;
-	i32 bytes_read = mem_read(&byte, mem, 1);
+s32 mem_read_byte(mem_t* mem) {
+	s32 byte = 0;
+	s32 bytes_read = mem_read(&byte, mem, 1);
 	if (bytes_read <= 0) byte = -1;
 	return byte;
 }
 
-void mem_seek(mem_t* mem, i32 offset) {
+void mem_seek(mem_t* mem, s32 offset) {
 	if (offset >= 0 && (u32)offset < mem->len) {
 		mem->cursor = offset;
 	} else {

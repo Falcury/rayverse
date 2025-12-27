@@ -1,6 +1,6 @@
 
 //78DB0
-void swap(i32 a1, i32 a2) {
+void swap(s32 a1, s32 a2) {
     print_once("Not implemented: swap"); //stub
 }
 
@@ -10,8 +10,8 @@ void set_rubis_list(void) {
 }
 
 //78F94
-void allocate_rayon(i16 a1, i16 a2) {
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+void allocate_rayon(s16 a1, s16 a2) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* cur_obj = level.objects + i;
         if (cur_obj->type == TYPE_170_RAYON && !cur_obj->is_active) {
             print_once("Not implemented: allocate_rayon"); //stub
@@ -22,7 +22,7 @@ void allocate_rayon(i16 a1, i16 a2) {
 }
 
 //7903C
-void allocate_8_petits_rayons(i16 a1, i16 a2) {
+void allocate_8_petits_rayons(s16 a1, s16 a2) {
     print_once("Not implemented: allocate_8_petits_rayons"); //stub
 }
 
@@ -37,22 +37,22 @@ void do_sko_rayon2(void) {
 }
 
 //794D4
-void start_sko_rayon(i16 a1, i16 a2) {
+void start_sko_rayon(s16 a1, s16 a2) {
     print_once("Not implemented: start_sko_rayon"); //stub
 }
 
 //795A0
-void start_sko_rayon2(i16 a1, i16 a2) {
+void start_sko_rayon2(s16 a1, s16 a2) {
     print_once("Not implemented: start_sko_rayon2"); //stub
 }
 
 //79638
-void lance_pince(i32 a1) {
+void lance_pince(s32 a1) {
     print_once("Not implemented: lance_pince"); //stub
 }
 
 //79688
-i32 sko_get_eject_sens(void) {
+s32 sko_get_eject_sens(void) {
     ray.iframes_timer = 40;
     return -1;
 }
@@ -108,12 +108,12 @@ void SKO_ray_in_zone(obj_t* obj) {
 }
 
 //7A264
-void DO_SKO_HIT(obj_t* obj, i16 sprite) {
+void DO_SKO_HIT(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DO_SKO_HIT"); //stub
 }
 
 //7A338
-i16 Get_PosLave_Y(void) {
+s16 Get_PosLave_Y(void) {
     print_once("Not implemented: Get_PosLave_Y");
     return 0; //stub
 }

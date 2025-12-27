@@ -10,14 +10,14 @@ void DO_POISSON_BLEU_CMD(obj_t* obj) {
 }
 
 //67380
-void DoPoissonBleuPoingCollision(obj_t* obj, i16 sprite) {
+void DoPoissonBleuPoingCollision(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DoPoissonBleuPoingCollision"); //stub
 }
 
 //673B4
 bool can_free_fish(obj_t* fish) {
     bool result = true;
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* cur_obj = level.objects + i;
         if (cur_obj->type == TYPE_10_FISH && cur_obj->init_x == fish->init_x && cur_obj->is_active && cur_obj->timer < 100) {
             result = false;
@@ -116,7 +116,7 @@ void DO_PYRANHA(obj_t* in_obj) {
 }
 
 //676EC
-void DoFishPoingCollision(obj_t* obj, i16 sprite) {
+void DoFishPoingCollision(obj_t* obj, s16 sprite) {
     obj_hurt(obj);
     if (obj->hit_points != 0) {
         obj->speed_x = 0;

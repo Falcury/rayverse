@@ -1,6 +1,6 @@
 
 //52D30
-void mite_esquive_poing(obj_t* mit_obj, i16* out_diff_x) {
+void mite_esquive_poing(obj_t* mit_obj, s16* out_diff_x) {
     /* 4A85C 8016F05C -O2 -msoft-float */
     s16 unk_x_1; s16 unk_y_1;
     s16 unk_y_2;
@@ -70,13 +70,13 @@ u8 HAS_MIT_JUMP(obj_t* obj) {
 }
 
 //52ED0
-u8 ray_over_mit(obj_t* obj, i16 a2) {
+u8 ray_over_mit(obj_t* obj, s16 a2) {
     /* 4AACC 8016F2CC -O2 -msoft-float */
     return (!(obj->flags.flip_x) && a2 > 0) || (obj->flags.flip_x && a2 < 0);
 }
 
 //52EF4
-void fix_mit_Xspeed(obj_t* obj, i16 a2) {
+void fix_mit_Xspeed(obj_t* obj, s16 a2) {
     /* 4AB0C 8016F30C -O2 -msoft-float */
     s16 spd_x;
     eta_t* eta;
@@ -542,7 +542,7 @@ void DO_MIT_COMMAND(obj_t* obj) {
 }
 
 //53838
-void DoMitePoingCollision(obj_t* obj, i16 sprite) {
+void DoMitePoingCollision(obj_t* obj, s16 sprite) {
     if (sprite == 1) {
         obj_hurt(obj);
         if (obj->hit_points != 0) {
@@ -621,7 +621,7 @@ void DO_MITE2_COMMAND(obj_t* obj) {
 }
 
 //53A04
-void DoMite2PoingCollision(obj_t* obj, i16 sprite) {
+void DoMite2PoingCollision(obj_t* obj, s16 sprite) {
     if (sprite == 1) {
         if (poing_obj->speed_x > 0) {
             obj->flags.flip_x = 0;

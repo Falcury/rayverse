@@ -6,7 +6,7 @@ void INIT_HORLOGES(void) {
 
 //55498
 void horloges(u8 ticks) {
-    for (i32 i = 0; i < 25; ++i) {
+    for (s32 i = 0; i < 25; ++i) {
         horloge[i] += 1;
         if (horloge[i] >= i) {
             horloge[i] = 0;
@@ -17,10 +17,10 @@ void horloges(u8 ticks) {
 
 //554EC
 void init_allowed_time(void) {
-    for (i32 i = 0; i < 192; ++i) {
+    for (s32 i = 0; i < 192; ++i) {
         allowed_time[i] = -2;
     }
-    i16* allowed_time_world = allowed_time;
+    s16* allowed_time_world = allowed_time;
     allowed_time_world[17] = 30; //magician (swinging plums)
     allowed_time_world[18] = 45; //magician (flower platforms)
     allowed_time_world[19] = 25; //magician (grass platforms)
@@ -54,7 +54,7 @@ void fades(void) {
 }
 
 //55B24
-i16 frapsol(i16 a1) {
+s16 frapsol(s16 a1) {
     return ashr16(expsin[a1], 7);
 }
 
@@ -74,7 +74,7 @@ void DO_SCREEN_TREMBLE2(void) {
 }
 
 //55C08
-void DO_SCROLL(i16* h_speed, i16* v_speed) {
+void DO_SCROLL(s16* h_speed, s16* v_speed) {
     if (*v_speed == 255) {
         *v_speed = 0;
     }
@@ -160,9 +160,9 @@ void allocateLandingSmoke(obj_t* in_obj) {
 }
 
 //55E60
-i32 instantSpeed(i16 speed) {
-    i32 spd_shr = ashr16(speed, 4);
-    i32 spd_abs_max = Abs(speed) & 0xF;
+s32 instantSpeed(s16 speed) {
+    s32 spd_shr = ashr16(speed, 4);
+    s32 spd_abs_max = Abs(speed) & 0xF;
     if (spd_abs_max != 0) {
         spd_shr += sgn(speed) * (ashr32(map_time * spd_abs_max, 4) - ashr32(map_time * spd_abs_max - spd_abs_max, 4));
     }
@@ -171,7 +171,7 @@ i32 instantSpeed(i16 speed) {
 
 //55EE4
 void SET_X_SPEED(obj_t* obj) {
-    i32 xspeed = 0;
+    s32 xspeed = 0;
     anim_t* anim = obj->animations + obj->anim_index;
     u8 horloge_index = ((anim->layers_per_frame & 0xC000) >> 14) + 1;
     if (horloge[horloge_index] == 0) {
@@ -185,7 +185,7 @@ void SET_X_SPEED(obj_t* obj) {
             xspeed /= 2;
         }
     }
-    obj->speed_x = (i16)xspeed;
+    obj->speed_x = (s16)xspeed;
 }
 
 //55F9C
@@ -212,10 +212,10 @@ void make_active(obj_t* obj, u8 do_nova) {
 }
 
 //55FE4
-bool in_action_zone(i16 screen_x, i16 screen_y, obj_t* obj, u8 active) {
-    i32 in_zone = 0;
-    i16 zdiff_x = zonediffx[ot];
-    i16 zdiff_y = zonediffy[ot];
+bool in_action_zone(s16 screen_x, s16 screen_y, obj_t* obj, u8 active) {
+    s32 in_zone = 0;
+    s16 zdiff_x = zonediffx[ot];
+    s16 zdiff_y = zonediffy[ot];
     u8 offset_bx = obj->offset_bx;
     if (flags[ot] & flags0_0x10_keep_active) {
         if ((flags[ot] & flags0_0x80_boss) && IsBossThere) {
@@ -318,9 +318,9 @@ void kill_obj(obj_t* obj) {
 }
 
 //56338
-void SET_ACTIVE_FLAG(i16 screen_x, i16 screen_y, obj_t* obj) {
+void SET_ACTIVE_FLAG(s16 screen_x, s16 screen_y, obj_t* obj) {
     ot = obj->type;
-    i32 was_active = obj->is_active;
+    s32 was_active = obj->is_active;
     obj->is_active = 0;
     if (obj->flags.alive) {
         if (in_action_zone(screen_x, screen_y, obj, was_active)) {
@@ -337,7 +337,7 @@ void SET_ACTIVE_FLAG(i16 screen_x, i16 screen_y, obj_t* obj) {
                 if ((flags[ot] & flags0_1_always) || (flags[ot] & flags3_0x40_no_link)) {
                     make_active2(obj, !obj->is_active && (flags[ot] & flags1_1_keep_linked_objects_active));
                 } else {
-                    i16 id = obj->id;
+                    s16 id = obj->id;
                     do {
                         obj_t* cur_obj = level.objects + id;
                         make_active(cur_obj, !cur_obj->is_active && (flags[obj->type] & flags1_1_keep_linked_objects_active));
@@ -361,7 +361,7 @@ void SET_ACTIVE_FLAG(i16 screen_x, i16 screen_y, obj_t* obj) {
 
                         bool dont_reinit_linked_objects = false;
                         if (obj->type != TYPE_10_FISH) {
-                            i16 id = obj->id;
+                            s16 id = obj->id;
                             while (1) {
                                 obj_t* cur_obj = level.objects + id;
                                 if (cur_obj->active_flag != 4) {
@@ -381,7 +381,7 @@ void SET_ACTIVE_FLAG(i16 screen_x, i16 screen_y, obj_t* obj) {
                         }
 
                         if (!dont_reinit_linked_objects) {
-                            i16 id = obj->id;
+                            s16 id = obj->id;
                             do {
                                 obj_t* cur_obj = level.objects + id;
                                 REINIT_OBJECT(cur_obj);
@@ -396,7 +396,7 @@ void SET_ACTIVE_FLAG(i16 screen_x, i16 screen_y, obj_t* obj) {
 }
 
 //565D0
-i32 DO_PESANTEUR(obj_t* obj) {
+s32 DO_PESANTEUR(obj_t* obj) {
     /* 2C214 80150A14 -O2 -msoft-float */
 
     s16 spd_y;
@@ -516,8 +516,8 @@ void freezeAnim(obj_t* obj, u8 a2) {
 
 //567AC
 void DO_ANIM(obj_t* obj) {
-    i32 prev_anim_frame = obj->anim_frame;
-    i32 prev_anim_index = obj->anim_index;
+    s32 prev_anim_frame = obj->anim_frame;
+    s32 prev_anim_index = obj->anim_index;
     eta_t* eta = get_eta(obj);
     anim_t* prev_anim = obj->animations + obj->anim_index;
     u8 anim_speed = eta->anim_speed & 15;
@@ -589,7 +589,7 @@ void DO_ANIM(obj_t* obj) {
 }
 
 //56A38
-i16 prof_in_bloc(obj_t* obj) {
+s16 prof_in_bloc(obj_t* obj) {
     return (obj->y + obj->offset_by) & 0xF;
 }
 
@@ -713,7 +713,7 @@ void DO_STONEBOMB_REBOND(obj_t* obj) {
 }
 
 //56CD8
-void DO_THROWN_BOMB_REBOND(obj_t* obj, i16 pesanteur, i16 a3) {
+void DO_THROWN_BOMB_REBOND(obj_t* obj, s16 pesanteur, s16 a3) {
     /* 2CBC4 801513C4 -O2 -msoft-float */
     ObjType old_type;
     u8 under;
@@ -815,7 +815,7 @@ void DO_THROWN_BOMB_REBOND(obj_t* obj, i16 pesanteur, i16 a3) {
 }
 
 //56F00
-void DO_FRUIT_REBOND(obj_t* obj, i16 pesanteur, i16 a3) {
+void DO_FRUIT_REBOND(obj_t* obj, s16 pesanteur, s16 a3) {
     /* 2D008 80151808 -O2 -msoft-float */
     u8 under;
     u8 btyp;
@@ -1328,7 +1328,7 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
                     set_main_and_sub_etat(obj, 0, 29);
                     obj->speed_x = 0;
                     obj->speed_y = 0;
-                    i16 flip_x = ray.x > obj->x;
+                    s16 flip_x = ray.x > obj->x;
                     obj->flags.flip_x = flip_x;
                 }
                 break;
@@ -1412,8 +1412,8 @@ void MOVE_OBJECT(obj_t* obj) {
             obj->x += obj->speed_x;
             need_set_flag_0x100 = false;
         } else {
-            i32 dx = 0;
-            i32 dy = 0;
+            s32 dx = 0;
+            s32 dy = 0;
 
             if (flags[obj->type] & flags1_0x20_move_y) {
                 dy = instantSpeed(obj->speed_y);
@@ -1428,9 +1428,9 @@ void MOVE_OBJECT(obj_t* obj) {
             }
 
             if (flags[obj->type] & flags2_0x40_uturn_on_block) {
-                i32 x1 = obj->x + obj->offset_bx;
-                i32 x2 = x1 + dx;
-                i32 y = obj->y + obj->offset_by - 8;
+                s32 x1 = obj->x + obj->offset_bx;
+                s32 x2 = x1 + dx;
+                s32 y = obj->y + obj->offset_by - 8;
                 if ((!(block_flags[BTYP(x1 >> 4, y >> 4)] & 0x10) && (block_flags[BTYP(x2 >> 4, y >> 4)] & 0x10)) ||
                         x2 < 0 || (x2 > xmapmax + SCREEN_WIDTH - 16)) {
                     dx = -dx;
@@ -1502,14 +1502,14 @@ void DO_ONE_OBJECT(obj_t* obj) {
 void build_active_table(void) {
     actobj.objects[0] = -1;
     actobj.num_active_objects = 0;
-    i32 screen_center_x = xmap + 160;
-    i32 screen_center_y = ymap + 100;
-    for (i32 i = 0; i < level_obj.nb_objects; ++i) {
+    s32 screen_center_x = xmap + 160;
+    s32 screen_center_y = ymap + 100;
+    for (s32 i = 0; i < level_obj.nb_objects; ++i) {
         obj_t* obj = &level.objects[level_obj.obj_ids[i]];
         obj->field_1C = 0;
     }
 
-    for (i32 i = level_obj.nb_objects-1; i >= 0; --i) {
+    for (s32 i = level_obj.nb_objects - 1; i >= 0; --i) {
         obj_t* obj = &level.objects[level_obj.obj_ids[i]];
         if (obj->field_1C == 0) {
             if ((Abs(obj->x - screen_center_x) < 660 && Abs(obj->y - screen_center_y) < 600) || (flags[obj->type] & flags2_0x10_do_not_check_ray_collision)) {
@@ -1520,7 +1520,7 @@ void build_active_table(void) {
         }
     }
 
-    for (i32 i = level_obj.nb_objects-1; i >= 0; --i) {
+    for (s32 i = level_obj.nb_objects - 1; i >= 0; --i) {
         obj_t* obj = &level.objects[level_obj.obj_ids[i]];
         if (obj->is_active) {
             obj->screen_x = obj->x - xmap + 8;
@@ -1587,7 +1587,7 @@ void DO_CLING_ANIMS(void) {
 
 //58754
 void DO_OBJECTS_ANIMS(void) {
-    for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+    for (s32 i = 0; i < actobj.num_active_objects; ++i) {
         obj_t* obj = level.objects + actobj.objects[i];
         if (obj->type != TYPE_204_BLACK_RAY && obj->type != TYPE_205_BLACK_FIST) {
             DO_ANIM(obj);
@@ -1604,7 +1604,7 @@ void DO_OBJECTS(void) {
         allocate_toons(lidol_source_obj, 7);
         lidol_to_allocate = 0;
     }
-    for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+    for (s32 i = 0; i < actobj.num_active_objects; ++i) {
         obj_t* obj = level.objects + actobj.objects[i];
         ot = obj->type;
         if (debug_obj_id == obj->id && obj->x <= debug_obj_xmin) {
@@ -1628,7 +1628,7 @@ void DO_OBJECTS(void) {
 
 //58908
 void MOVE_OBJECTS(void) {
-    for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+    for (s32 i = 0; i < actobj.num_active_objects; ++i) {
         obj_t* obj = level.objects + actobj.objects[i];
         if (debug_obj_id == obj->id && obj->x <= debug_obj_xmin) {
             BREAKPOINT; // added for debugging
@@ -1664,7 +1664,7 @@ void RECALE_ALL_OBJECTS(void) {
 }
 
 //58AAC
-u8 RayCoince(i16 dir) {
+u8 RayCoince(s16 dir) {
     /* 30A64 80155264 -O2 -msoft-float */
     s16 x_pos;
     s16 y_pos;
@@ -1744,8 +1744,8 @@ void move_up_ray(void) {
         ray.speed_y = 0;
     }
 
-    i16 unk_y_1 = ((get_eta(&ray)->flags & 0x40) || RayEvts.tiny) ? 40 : 25;
-    i16 unk_y_2 = 20;
+    s16 unk_y_1 = ((get_eta(&ray)->flags & 0x40) || RayEvts.tiny) ? 40 : 25;
+    s16 unk_y_2 = 20;
 
     ray.y += ray.speed_y;
     if (ray.y < scroll_start_y - (unk_y_1 + unk_y_2)) {
@@ -1786,7 +1786,7 @@ void recale_ray_pos(void) {
         return;
     }
     if (scroll_y == -1) {
-        i16 unk_y_1 = ((ray_zdc_h >> 1) - ray.offset_by) + 114; // 136 in the PS1 version
+        s16 unk_y_1 = ((ray_zdc_h >> 1) - ray.offset_by) + 114; // 136 in the PS1 version
         if ((ray.main_etat == 2 && !(ray.sub_etat == 15 && ray_Suphelico_bis)) || screen_trembling) {
             if ((ymap != scroll_end_y && (unk_y_1 < ray.screen_y - ray.speed_y) && ray.speed_y > 0) ||
                 (ymap != scroll_start_y && (-ray.offset_hy - 16 >= ray.screen_y) && ray.speed_y < 0))
@@ -1799,12 +1799,12 @@ void recale_ray_pos(void) {
         } else {
             if (v_scroll_speed != 255 || decalage_en_cours != 0)
             {
-                i16 unk_y_2 = ray.screen_y - unk_y_1;
-                i32 v_scr_temp = v_scroll_speed = ashr16(unk_y_2, 2);
-                i32 spd_y_abs_1 = Abs(ray.speed_y);
+                s16 unk_y_2 = ray.screen_y - unk_y_1;
+                s32 v_scr_temp = v_scroll_speed = ashr16(unk_y_2, 2);
+                s32 spd_y_abs_1 = Abs(ray.speed_y);
                 if (Abs(v_scr_temp) >= spd_y_abs_1) {
                     MAX_2(spd_y_abs_1, 3);
-                    i16 spd_y_abs_2 = spd_y_abs_1;
+                    s16 spd_y_abs_2 = spd_y_abs_1;
                     if (v_scr_temp > 0) {
                         MIN_2(v_scroll_speed, (s16) spd_y_abs_1);
                     } else if (v_scr_temp < 0) {
@@ -1829,10 +1829,10 @@ void recale_ray_pos(void) {
     }
 
     if (scroll_x == -1) {
-        i16 unk_x_1 = (112 - ray.offset_bx) - special_ray_mov_win_x_left;
-        i16 unk_x_2 = special_ray_mov_win_x_right - (ray.offset_bx - 208);
+        s16 unk_x_1 = (112 - ray.offset_bx) - special_ray_mov_win_x_left;
+        s16 unk_x_2 = special_ray_mov_win_x_right - (ray.offset_bx - 208);
         if (decalage_en_cours > 0 || ray.speed_x > 0) {
-            i16 unk_x_3 = ashr16(ray.screen_x - unk_x_1, 2);
+            s16 unk_x_3 = ashr16(ray.screen_x - unk_x_1, 2);
             if (unk_x_3 >= dhspeed) {
                 if (unk_x_3 > dhspeed) {
                     dhspeed++;
@@ -1841,7 +1841,7 @@ void recale_ray_pos(void) {
                 dhspeed--;
             }
         } else if (decalage_en_cours < 0 || ray.speed_x < 0) {
-            i16 unk_x_3 = ashr16(ray.screen_x - unk_x_2, 2);
+            s16 unk_x_3 = ashr16(ray.screen_x - unk_x_2, 2);
             if (unk_x_3 > dhspeed) {
                 dhspeed++;
             } else if (unk_x_3 < dhspeed) {
@@ -1849,7 +1849,7 @@ void recale_ray_pos(void) {
             }
         } else {
             if (ray.flags.flip_x) {
-                i16 unk_x_3 = ashr16(ray.screen_x - unk_x_1, 2);
+                s16 unk_x_3 = ashr16(ray.screen_x - unk_x_1, 2);
                 if (unk_x_3 >= dhspeed) {
                     if (unk_x_3 > dhspeed) {
                         dhspeed++;
@@ -1858,7 +1858,7 @@ void recale_ray_pos(void) {
                     dhspeed--;
                 }
             } else {
-                i16 unk_x_3 = ashr16(ray.screen_x - unk_x_2, 2);
+                s16 unk_x_3 = ashr16(ray.screen_x - unk_x_2, 2);
                 if (unk_x_3 > dhspeed) {
                     dhspeed++;
                 } else if (unk_x_3 < dhspeed) {
@@ -1994,11 +1994,11 @@ u8 linkListHoldsAGendoor(obj_t* obj) {
 
 //596C0
 void correct_gendoor_link(u8 a1) {
-    for (i16 i = 0; i < level.nb_objects; ++i) {
+    for (s16 i = 0; i < level.nb_objects; ++i) {
         obj_t* obj = level.objects + i;
         if (obj->type == TYPE_164_GENERATING_DOOR) {
-            i16 link = link_init[i];
-            i16 last_link = i;
+            s16 link = link_init[i];
+            s16 last_link = i;
 
             // NOTE: I'm not too sure about this part, might need checking
             while (link != i && link != last_link) {
@@ -2020,8 +2020,8 @@ void correct_gendoor_link(u8 a1) {
             }
 
             if (a1 && !obj->flags.alive) {
-                i16 init_link = obj->link;
-                i16 linked_obj_id;
+                s16 init_link = obj->link;
+                s16 linked_obj_id;
                 do {
                     linked_obj_id = link_init[init_link];
                     suppressFromLinkList(level.objects + linked_obj_id);
@@ -2035,8 +2035,8 @@ void correct_gendoor_link(u8 a1) {
 
 //597FC
 void suppressFromLinkList(obj_t* obj) {
-    i16 id = obj->id;
-    i16 linked_id = link_init[id];
+    s16 id = obj->id;
+    s16 linked_id = link_init[id];
     if (id != linked_id) {
         do {
             id = linked_id;
@@ -2053,7 +2053,7 @@ void suppressFromLinkList(obj_t* obj) {
 
 //59888
 void correct_link(void) {
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* obj = level.objects + i;
         if (link_init[i] == i) {
             obj->link_has_gendoor = 0;
@@ -2122,7 +2122,7 @@ void INIT_RAY(u8 new_lvl) {
     ray_se_noie = 0;
     ray_in_fee_zone = 0;
     fin_dark = 0;
-    for (i32 i = 0; i < 10; ++i) {
+    for (s32 i = 0; i < 10; ++i) {
         pos_stack[i] = ray.x;
     }
     poing.is_active = 0;
@@ -2154,7 +2154,7 @@ void INIT_RAY(u8 new_lvl) {
 
         obj_t* obj = level.objects;
         bool found = false;
-        for (i32 i = 0; i < level.nb_objects; ++i) {
+        for (s32 i = 0; i < level.nb_objects; ++i) {
             if (obj->type == TYPE_99_RAY_POS) {
                 found = true;
                 break;
@@ -2192,7 +2192,7 @@ void INIT_RAY(u8 new_lvl) {
     if (RaymanDansUneMapDuJeu) {
         calc_btyp(&ray);
     } else {
-        for (i32 i = 0; i < 5; ++i) {
+        for (s32 i = 0; i < 5; ++i) {
             ray.btypes[i] = 0;
         }
     }
@@ -2207,8 +2207,8 @@ u8 is_icy_pente(u8 btyp) {
 //59D18
 void STOPPE_RAY_EN_XY(void) {
     if (ray.main_etat != 7) {
-        i16 x = ray.offset_bx + ray.x;
-        i16 y = ray.offset_by + ray.y;
+        s16 x = ray.offset_bx + ray.x;
+        s16 y = ray.offset_by + ray.y;
         if (block_flags[ray.btypes[0]] & 0x40) {
             y -= 8;
         }
@@ -2219,7 +2219,7 @@ void STOPPE_RAY_EN_XY(void) {
         u8 btyp_3 = BTYP(x >> 4, (y - 40) >> 4);
         u8 btyp_4 = BTYP(x >> 4, (y - 56) >> 4);
 
-        i16 stop = false;
+        s16 stop = false;
         if (block_flags[btyp_1] & 0x10)
             stop = !is_icy_pente(btyp_2);
         if (!(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40) && !RayEvts.tiny) {
@@ -2333,7 +2333,7 @@ void DO_AUTO_SCROLL(void) {
 
 //5A1E0
 void INIT_MOTEUR(u8 new_lvl) {
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         level.objects[i].field_1C = 0;
     }
 
@@ -2406,7 +2406,7 @@ void INIT_MOTEUR(u8 new_lvl) {
     }
     INIT_RAY(new_lvl);
     if (!bonus_map && departlevel && save1.is_just_saved) {
-        i16 saved_tings = status_bar.num_wiz;
+        s16 saved_tings = status_bar.num_wiz;
         restoreGameState(&save1);
         status_bar.num_wiz = saved_tings;
     } else {
@@ -2491,7 +2491,7 @@ void INIT_MOTEUR_WORLD(void) {
 }
 
 //5A6F4
-void INIT_MOTEUR_LEVEL(i16 a1) {
+void INIT_MOTEUR_LEVEL(s16 a1) {
     Bloc_lim_W1_Aff = Bloc_lim_W1;
     Bloc_lim_W2_Aff = Bloc_lim_W2;
     Bloc_lim_H1_Aff = Bloc_lim_H1;
@@ -2537,7 +2537,7 @@ void restore_gendoor_link(void) {
     s16 test_1;
 
     test_1 = level.nb_objects;
-    for (i32 i = 0; i < level.nb_objects; ++i) {
+    for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* obj = level.objects + i;
         if (obj->type == TYPE_164_GENERATING_DOOR)
         {
@@ -2893,7 +2893,7 @@ void DO_MOTEUR_GELE(void) {
             ProchainEclair = 1;
             numero_palette_special = 0;
         }
-        for (i32 i = 0; i < actobj.num_active_objects; ++i) {
+        for (s32 i = 0; i < actobj.num_active_objects; ++i) {
             obj_t* obj = level.objects + actobj.objects[i];
             if ((flags[obj->type] & flags2_8_can_jump) || (obj->type == TYPE_161_WIZ && obj->sub_etat == 23) ||
                     (obj->type == TYPE_83_EXPLOSION && obj->sub_etat == 1) ||

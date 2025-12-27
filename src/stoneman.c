@@ -111,7 +111,7 @@ void DO_STONEDOG_COMMAND(obj_t* obj) {
 }
 
 //7CCF0
-void DoStoneDogPoingCollision(obj_t* obj, i16 sprite) {
+void DoStoneDogPoingCollision(obj_t* obj, s16 sprite) {
     obj_hurt(obj);
     if (obj->hit_points != 0) {
         skipToLabel(obj, 5, true);
@@ -428,7 +428,7 @@ void allocateStoneChips(obj_t* obj) {
 }
 
 //7D43C
-void DO_STONE_EXPLOSION(obj_t* obj, i16 sprite) {
+void DO_STONE_EXPLOSION(obj_t* obj, s16 sprite) {
     /* 38514 8015CD14 -O2 -msoft-float */
     if (sprite != -1) {
         set_sub_etat(obj, 1); // added in PC/mobile versions
@@ -458,7 +458,7 @@ void DO_STONE_EXPLOSION(obj_t* obj, i16 sprite) {
 }
 
 //7D4E4
-void allocateStonemanStone(obj_t* stmn_obj, i16 param_2, u8 param_3) {
+void allocateStonemanStone(obj_t* stmn_obj, s16 param_2, u8 param_3) {
     /* 388C4 8015D0C4 -O2 -msoft-float */
     s16 i;
     obj_t *cur_obj;
@@ -612,7 +612,7 @@ void DO_STONEMAN2_TIR(obj_t* obj) {
 }
 
 //7D9C0
-void allocateStonewomanStone(obj_t* stwmn_obj,  i16 param_2) {
+void allocateStonewomanStone(obj_t* stwmn_obj, s16 param_2) {
     /* 3907C 8015D87C -O2 -msoft-float */s16 sprite;
     s16 spr_x; s16 spr_y; s16 spr_w; s16 spr_h;
     s16 spd_x; s16 spd_y;
@@ -726,7 +726,7 @@ void DO_STONEWOMAN_TIR(obj_t* obj) {
 }
 
 //7DD78
-void allocateEclatPS(obj_t* obj, i16 param_2) {
+void allocateEclatPS(obj_t* obj, s16 param_2) {
     /* 3A27C 8015EA7C -O2 -msoft-float */
     s16 spd_x;
     s16 i;
@@ -860,7 +860,7 @@ void DO_PI_EXPLOSION(obj_t* obj) {
 }
 
 //7E000
-void DoPiMusPoingCollision(obj_t* obj, i16 sprite) {
+void DoPiMusPoingCollision(obj_t* obj, s16 sprite) {
     if (obj->main_etat == 0 && Mus_obj_id >= 0)
     {
         PlaySnd(83, obj->id);
@@ -895,7 +895,7 @@ void DoPiMusPoingCollision(obj_t* obj, i16 sprite) {
 }
 
 //7E120
-void DoPiPoingCollision(obj_t* obj, i16 sprite) {
+void DoPiPoingCollision(obj_t* obj, s16 sprite) {
     if (obj->main_etat == 0) {
         obj_hurt(obj);
         if (obj->hit_points != 0) {
@@ -915,7 +915,7 @@ void DoPiPoingCollision(obj_t* obj, i16 sprite) {
 }
 
 //7E190
-void DO_PNG_COLL_STONEMAN(obj_t* obj, i16 sprite) {
+void DO_PNG_COLL_STONEMAN(obj_t* obj, s16 sprite) {
     /* 1D9A0 801421A0 -O2 -msoft-float */
     u8 prev_flip_x;
 
@@ -943,7 +943,7 @@ void DO_PNG_COLL_STONEMAN(obj_t* obj, i16 sprite) {
 }
 
 //7E258
-void DO_PNG_COLL_STONEWOMAN(obj_t* obj, i16 sprite) {
+void DO_PNG_COLL_STONEWOMAN(obj_t* obj, s16 sprite) {
     /* 1DAC4 801422C4 -O2 -msoft-float */
     u8 prev_flip_x;
 

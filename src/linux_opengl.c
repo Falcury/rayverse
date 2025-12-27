@@ -1,9 +1,9 @@
 
 typedef struct basic_shader_t {
     u32 program;
-    i32 u_texture0;
-    i32 attrib_location_pos;
-    i32 attrib_location_tex_coord;
+    s32 u_texture0;
+    s32 attrib_location_pos;
+    s32 attrib_location_tex_coord;
 } basic_shader_t;
 
 basic_shader_t basic_shader;
@@ -46,7 +46,7 @@ void load_shader(u32 shader, const char* shader_source) {
     glShaderSource(shader, COUNT(sources), sources, NULL);
     glCompileShader(shader);
 
-    i32 success = 0;
+    s32 success = 0;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (success) {
 //		printf("Loaded %sshader: %s\n", source_from_file ? "" : "cached ", source_filename);
@@ -72,7 +72,7 @@ u32 load_basic_shader_program(const char* vert_source, const char* frag_source) 
     glLinkProgram(shader_program);
 
     {
-        i32 success;
+        s32 success;
         glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
         if (!success) {
             char info_log[2048];
@@ -88,15 +88,15 @@ u32 load_basic_shader_program(const char* vert_source, const char* frag_source) 
     return shader_program;
 }
 
-i32 get_attrib(u32 program, const char *name) {
-    i32 attribute = glGetAttribLocation(program, name);
+s32 get_attrib(u32 program, const char *name) {
+    s32 attribute = glGetAttribLocation(program, name);
     if (attribute == -1)
         printf("Could not get attribute location %s\n", name);
     return attribute;
 }
 
-i32 get_uniform(u32 program, const char *name) {
-    i32 uniform = glGetUniformLocation(program, name);
+s32 get_uniform(u32 program, const char *name) {
+    s32 uniform = glGetUniformLocation(program, name);
     if (uniform == -1)
         printf("Could not get uniform location %s\n", name);
     return uniform;

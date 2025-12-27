@@ -21,7 +21,7 @@ u8 snd_sqrt_table[128] = {
 
 
 
-ogg_t open_cd_vorbis(i32 track_number) {
+ogg_t open_cd_vorbis(s32 track_number) {
 	ogg_t result = {0};
 	if (track_number >= 2 && track_number <= 20) {
 		char filename[512];
@@ -58,7 +58,7 @@ void stop_ogg(ogg_t* ogg) {
 	}
 }
 
-void play_cd_track(i32 track_number) {
+void play_cd_track(s32 track_number) {
 	stop_ogg(&ogg_cd_track);
 	ogg_cd_track = open_cd_vorbis(track_number);
 	is_ogg_playing = true;
@@ -68,12 +68,12 @@ void play_cd_track(i32 track_number) {
 //float volume = 0.5f;
 
 void play_ogg(game_sound_buffer_t* sound_buffer, ogg_t* ogg) {
-	i32 samples_requested = sound_buffer->sample_count;
-	i32 samples_filled = stb_vorbis_get_samples_short_interleaved(ogg->decoder, 2, sound_buffer->samples, samples_requested * 2);
+	s32 samples_requested = sound_buffer->sample_count;
+	s32 samples_filled = stb_vorbis_get_samples_short_interleaved(ogg->decoder, 2, sound_buffer->samples, samples_requested * 2);
 	if (samples_filled < samples_requested) {
-		i32 bytes_per_sample = sizeof(short) * 2;
-		i32 bytes_filled = samples_filled * bytes_per_sample;
-		i32 remaining_bytes = (samples_requested - samples_filled) * bytes_per_sample;
+		s32 bytes_per_sample = sizeof(short) * 2;
+		s32 bytes_filled = samples_filled * bytes_per_sample;
+		s32 remaining_bytes = (samples_requested - samples_filled) * bytes_per_sample;
 		memset(sound_buffer->samples + bytes_filled, 0, remaining_bytes);
 		if (samples_filled == 0) {
 			is_ogg_finished = true;
@@ -87,14 +87,14 @@ float t_pitch_sine;
 float t_sine;
 
 void debug_produce_test_sound(game_sound_buffer_t* sound_buffer) {
-	i16 tone_volume = 3000;
+	s16 tone_volume = 3000;
 	float tone_hz = 400.0f;
 	//	real32 wave_period = sound_buffer.samples_per_second/tone_hz;
 	float pitch_hz = 2.0f;
 	float pitch_period = sound_buffer->samples_per_second / pitch_hz;
 
 
-	i16* sample_out = sound_buffer->samples;
+	s16* sample_out = sound_buffer->samples;
 
 	for (u32 sample_index = 0; sample_index < sound_buffer->sample_count; ++sample_index) {
 #if 1
@@ -106,9 +106,9 @@ void debug_produce_test_sound(game_sound_buffer_t* sound_buffer) {
 		float t = t_sine += two_pi32 / curr_wave_period;
 		if (t_sine > two_pi32) t_sine -= two_pi32;
 		float sine_value = sinf(t);
-		i16 sample_value = (i16) (sine_value * tone_volume);
+		s16 sample_value = (s16) (sine_value * tone_volume);
 #else
-		i16 sample_value = 0;
+		s16 sample_value = 0;
 #endif
 
 		*sample_out++ = sample_value;//left
@@ -117,14 +117,14 @@ void debug_produce_test_sound(game_sound_buffer_t* sound_buffer) {
 }
 
 
-i16 play_digi_snd(snd_t* snd) {
-    for (i32 i = 0; i < COUNT(digi_voices); ++i) {
+s16 play_digi_snd(snd_t* snd) {
+    for (s32 i = 0; i < COUNT(digi_voices); ++i) {
         snd_t* voice = digi_voices + i;
         if (!voice->is_playing) {
             *voice = *snd;
             voice->position = 0.0f;
             voice->is_playing = true;
-            return (i16)i;
+            return (s16)i;
         }
     }
     return -1;
@@ -147,7 +147,7 @@ void game_get_sound_samples(game_sound_buffer_t* output_buffer) {
 			play_ogg(output_buffer, &ogg_cd_track);
 		}
 	} else {
-        i32 bytes_per_sample = sizeof(short) * 2;
+        s32 bytes_per_sample = sizeof(short) * 2;
         memset(output_buffer->samples, 0, output_buffer->sample_count * bytes_per_sample);
 	}
 
@@ -156,7 +156,7 @@ void game_get_sound_samples(game_sound_buffer_t* output_buffer) {
 
     // We need to resample the sound's sample rate (which may also vary depending on pitch shifting) to the output rate.
     const float output_sample_rate = 44100.0f;
-    for (i32 i = 0; i < COUNT(digi_voices); ++i) {
+    for (s32 i = 0; i < COUNT(digi_voices); ++i) {
         snd_t* voice = digi_voices + i;
         if (!voice->is_playing) {
             continue;
@@ -167,13 +167,13 @@ void game_get_sound_samples(game_sound_buffer_t* output_buffer) {
         float step = (float)voice->sample_rate / output_sample_rate;
 
         // Get a pointer to the start of the output buffer for this frame
-        i16* dest = output_buffer->samples;
+        s16* dest = output_buffer->samples;
 
         // Loop through the number of samples we need to generate for this frame
-        for (i32 j = 0; j < output_buffer->sample_count; ++j) {
+        for (s32 j = 0; j < output_buffer->sample_count; ++j) {
 
             // 1. Find the current position and check boundaries
-            i32 source_index = (i32)voice->position;
+            s32 source_index = (s32)voice->position;
 
             // Stop if we've read past the end of the source data.
             // We need source_index and source_index + 1 for interpolation, so we check against size - 1.
@@ -184,8 +184,8 @@ void game_get_sound_samples(game_sound_buffer_t* output_buffer) {
 
             // 2. Get samples for interpolation
             // Convert 8-bit unsigned samples to a signed range (-128 to 127)
-            i32 s1 = (i32)voice->data[source_index] - 128;
-            i32 s2 = (i32)voice->data[source_index + 1] - 128;
+            s32 s1 = (s32)voice->data[source_index] - 128;
+            s32 s2 = (s32)voice->data[source_index + 1] - 128;
 
             // 3. Perform Linear Interpolation
             // Find the fractional part of our position, which is our interpolation factor 't'
@@ -197,16 +197,16 @@ void game_get_sound_samples(game_sound_buffer_t* output_buffer) {
             // 4. Scale to 16-bit and apply volume
             // Scale from the -128 to 127 range to the -32768 to 32767 range
             // Also, apply the volume for this voice
-            i32 dest_sample = (i32)(interpolated_sample * 256.0f * voice->volume);
+            s32 dest_sample = (s32)(interpolated_sample * 256.0f * voice->volume);
 
             // 5. Mix into the output buffer (mono to stereo)
             // Add the new sample to the existing data in the buffer
-            i32 mixed_l = dest[0] + dest_sample;
-            i32 mixed_r = dest[1] + dest_sample;
+            s32 mixed_l = dest[0] + dest_sample;
+            s32 mixed_r = dest[1] + dest_sample;
 
             // Clamp the values to prevent 16-bit integer overflow (clipping)
-            dest[0] = (i16)MIN(32767, MAX(-32768, mixed_l));
-            dest[1] = (i16)MIN(32767, MAX(-32768, mixed_r));
+            dest[0] = (s16)MIN(32767, MAX(-32768, mixed_l));
+            dest[1] = (s16)MIN(32767, MAX(-32768, mixed_r));
             dest += 2; // Move to the next stereo sample pair
 
             // 6. Advance our position in the source sample data
@@ -222,14 +222,14 @@ void manage_snd_event(void) {
 }
 
 //71C04
-void SetVolumeSound(i16 volume) {
+void SetVolumeSound(s16 volume) {
     Volume_Snd = volume;
 }
 
 //71C10
 void stop_all_snd(void) {
     if (CarteSonAutorisee) {
-        for (i32 i = 0; i < COUNT(voice_table); ++i) {
+        for (s32 i = 0; i < COUNT(voice_table); ++i) {
             KeyOff(i, 0, 0, 0, 0);
         }
     }
@@ -242,8 +242,8 @@ void stop_ray_snd(void) {
 
 //71CA8
 u8 get_pan_snd(obj_t* obj) {
-    i32 x = obj->offset_bx + obj->screen_x;
-    i32 result;
+    s32 x = obj->offset_bx + obj->screen_x;
+    s32 result;
     if (x > 416) {
         return 127;
     } else if (x >= -96) {
@@ -259,10 +259,10 @@ u8 get_pan_snd(obj_t* obj) {
 }
 
 //71CEC
-i32 get_vol_snd(obj_t* obj) {
-    i16 x, y, w, h;
+s32 get_vol_snd(obj_t* obj) {
+    s16 x, y, w, h;
     GET_ANIM_POS(obj, &x, &y, &w, &h);
-    i16 vol = (i16)(127 - ((Abs(y + (h >> 1) - (ray.y + ray.offset_by) + 40) + Abs(x + (w >> 1) - (ray.x + ray.offset_bx))) >> 2));
+    s16 vol = (s16)(127 - ((Abs(y + (h >> 1) - (ray.y + ray.offset_by) + 40) + Abs(x + (w >> 1) - (ray.x + ray.offset_bx))) >> 2));
     if (vol < 0) {
         return 0;
     } else {
@@ -271,24 +271,24 @@ i32 get_vol_snd(obj_t* obj) {
 }
 
 //71D80
-void raj_env_sound(i16 volume) {
+void raj_env_sound(s16 volume) {
     SetVolumeSound((volume * 127) / 20);
 }
 
 //71DA0
-void raj_env_audio(i16 enabled) {
+void raj_env_audio(s16 enabled) {
     //nullsub
 }
 
 //71DA4
-bool raj_env_stereo(i16 stereo) {
+bool raj_env_stereo(s16 stereo) {
     return stereo != 0;
 }
 
 //71DA8
 bool InitSnd(void) {
     if (CarteSonAutorisee) {
-        for (i32 i = 0; i < 20; ++i) {
+        for (s32 i = 0; i < 20; ++i) {
             stk_obj[i] = -2;
             stk_snd[i] = 0;
         }
@@ -296,7 +296,7 @@ bool InitSnd(void) {
         indice_snd_wiz = 0;
         indice_ray_wait = 0;
         indice_trz_wait = -2;
-        for (i32 i = 0; i < 32; ++i) {
+        for (s32 i = 0; i < 32; ++i) {
             voice_table[i].obj = -2;
         }
         raj_env_sound(18);
@@ -307,8 +307,8 @@ bool InitSnd(void) {
 }
 
 //71E44
-i16 last_snd(i32 obj_id) {
-    i32 i = 0;
+s16 last_snd(s32 obj_id) {
+    s32 i = 0;
     for (; i < 20; ++i) {
         if (stk_obj[i] == obj_id) break;
     }
@@ -322,14 +322,14 @@ i16 last_snd(i32 obj_id) {
 }
 
 //71EA0
-i32 get_pile_obj(i16 obj_id) {
+s32 get_pile_obj(s16 obj_id) {
     if (pt_pile_snd == 0) {
         return -1;
     }
     pile_snd_t* cur_pile_snd = pile_snd;
-    i32 index = 0;
+    s32 index = 0;
     if (pile_snd[0].obj != obj_id && pt_pile_snd > 0) {
-        i16 next;
+        s16 next;
         do {
             ++cur_pile_snd;
             ++index;
@@ -343,9 +343,9 @@ i32 get_pile_obj(i16 obj_id) {
 }
 
 //71EF4
-i32 get_voice_obj(i32 obj_id) {
+s32 get_voice_obj(s32 obj_id) {
     voice_t* cur_voice = voice_table;
-    i32 index = 0;
+    s32 index = 0;
 
     if (voice_table[0].obj != obj_id) {
         do {
@@ -360,9 +360,9 @@ i32 get_voice_obj(i32 obj_id) {
 }
 
 //71F30 - unused in the PC version
-i32 get_voice_snd(i32 snd) {
+s32 get_voice_snd(s32 snd) {
     voice_t* cur_voice = voice_table;
-    i32 index = 0;
+    s32 index = 0;
 
     if (voice_table[0].snd != snd) {
         do {
@@ -378,9 +378,9 @@ i32 get_voice_snd(i32 snd) {
 }
 
 //71F6C
-i32 get_voice_obj_snd(i16 obj_id, i16 snd) {
+s32 get_voice_obj_snd(s16 obj_id, s16 snd) {
     voice_t* voice = voice_table;
-    i32 index = 0;
+    s32 index = 0;
     // NOTE: there is a conditional here, but the branches are identical?
     // if (snd = 48) { ... } else { ... }
     while ((voice->snd != snd || voice->obj != obj_id) && index < COUNT(voice_table)) {
@@ -394,10 +394,10 @@ i32 get_voice_obj_snd(i16 obj_id, i16 snd) {
 }
 
 //71FC8
-void erase_pile_snd(i16 obj_id) {
-    i16 pile_obj_id = get_pile_obj(obj_id);
+void erase_pile_snd(s16 obj_id) {
+    s16 pile_obj_id = get_pile_obj(obj_id);
     if (pile_obj_id != -1) {
-        for (i32 i = pile_obj_id; i < pt_pile_snd; ++i) {
+        for (s32 i = pile_obj_id; i < pt_pile_snd; ++i) {
             pile_snd[i] = pile_snd[i+1];
         }
         if (pt_pile_snd > 0) {
@@ -408,12 +408,12 @@ void erase_pile_snd(i16 obj_id) {
 
 //720B8
 void nettoie_pile_snd(void) {
-    i32 index = 0;
+    s32 index = 0;
     while (index < pt_pile_snd) {
         pile_snd_t* pile = pile_snd + index;
         if (pile->end_time < map_time && pile->end_time != 0) {
             // erase entry
-            for (i32 i = index; i < pt_pile_snd; ++i) {
+            for (s32 i = index; i < pt_pile_snd; ++i) {
                 pile_snd[i] = pile_snd[i+1];
             }
             if (pt_pile_snd > 0) {
@@ -426,9 +426,9 @@ void nettoie_pile_snd(void) {
 }
 
 //721C4
-void erase_voice_table(i32 obj_id) {
+void erase_voice_table(s32 obj_id) {
     voice_t* cur_voice = voice_table;
-    i32 result = 0;
+    s32 result = 0;
 
     if (voice_table[0].obj != obj_id) {
         do {
@@ -441,9 +441,9 @@ void erase_voice_table(i32 obj_id) {
 }
 
 //72200
-u8 snd_in_pile_snd(i16 snd) {
+u8 snd_in_pile_snd(s16 snd) {
     u8 result = false;
-    i32 index = 0;
+    s32 index = 0;
     if (pt_pile_snd != 0) {
         pile_snd_t* pile = pile_snd;
         if (pile_snd[0].snd != snd) {
@@ -457,19 +457,19 @@ u8 snd_in_pile_snd(i16 snd) {
 }
 
 //72254
-i32 vol_r(i16 a1, i16 a2) {
-    i32 result = (a1 * snd_sqrt_table[a2]) >> 8;
+s32 vol_r(s16 a1, s16 a2) {
+    s32 result = (a1 * snd_sqrt_table[a2]) >> 8;
     return result;
 }
 
 //7226C
-i32 vol_l(i16 a1, i16 a2) {
-    i32 result = (a1 * snd_sqrt_table[127 - a2]) >> 8;
+s32 vol_l(s16 a1, s16 a2) {
+    s32 result = (a1 * snd_sqrt_table[127 - a2]) >> 8;
     return result;
 }
 
 //7228C
-void PlaySnd(i16 snd, i16 obj_id) {
+void PlaySnd(s16 snd, s16 obj_id) {
     if (CarteSonAutorisee) {
         if ((ray.scale != 0 && obj_id == reduced_rayman_id) || obj_id == rayman_obj_id) {
             obj_id = -1;
@@ -477,11 +477,11 @@ void PlaySnd(i16 snd, i16 obj_id) {
         if (obj_id == -1 && snd != 15) {
             indice_ray_wait = 0;
         }
-        i16 sound_to_interrupt = last_snd(obj_id);
+        s16 sound_to_interrupt = last_snd(obj_id);
 //        printf("playing sound %d: want to interrupt sound %d for obj %d\n", sound_id, sound_to_interrupt, obj_id);
         if (sound_to_interrupt != snd && (sound_table[sound_to_interrupt] & 8) != 0) {
             erase_pile_snd(obj_id);
-            i16 voice_id = get_voice_obj_snd(obj_id, sound_to_interrupt);
+            s16 voice_id = get_voice_obj_snd(obj_id, sound_to_interrupt);
             if (voice_id >= 0) {
                 voice_t* voice = voice_table + voice_id;
                 sound_table_entry_t* sound = hard_sound_table + voice->snd;
@@ -508,7 +508,7 @@ void PlaySnd(i16 snd, i16 obj_id) {
             }
         }
 
-        i16 prog = hard_sound_table[snd].prog;
+        s16 prog = hard_sound_table[snd].prog;
         u8 tone = hard_sound_table[snd].tone;
         u8 note;
 
@@ -597,12 +597,12 @@ void PlaySnd(i16 snd, i16 obj_id) {
 
         if (prog != -1 && prog != 255) {
             erase_pile_snd(obj_id);
-            i32 voll = vol_l(Volume_Snd * vol_snd * hard_sound_table[snd].volume >> 14, pan_snd); // NOTE: has no effect?
-            i32 volr = vol_r(Volume_Snd * vol_snd * hard_sound_table[snd].volume >> 14, pan_snd); // NOTE: has no effect?
+            s32 voll = vol_l(Volume_Snd * vol_snd * hard_sound_table[snd].volume >> 14, pan_snd); // NOTE: has no effect?
+            s32 volr = vol_r(Volume_Snd * vol_snd * hard_sound_table[snd].volume >> 14, pan_snd); // NOTE: has no effect?
 
             if (frame_snd[snd] == 0) {
                 // NOTE: the PS1 version implements left/right directional sound here, using SsUtKeyOn
-                i32 voice_id = KeyOn(bank_to_use[snd], prog, tone, note, Volume_Snd * vol_snd * hard_sound_table[snd].volume >> 14, pan_snd);
+                s32 voice_id = KeyOn(bank_to_use[snd], prog, tone, note, Volume_Snd * vol_snd * hard_sound_table[snd].volume >> 14, pan_snd);
                 if (voice_id != -1) {
                     erase_voice_table(obj_id);
                     voice_table[voice_id].obj = obj_id;
@@ -642,7 +642,7 @@ void PlaySnd(i16 snd, i16 obj_id) {
             if ((snd == 203 || snd == 237 || snd == 209 || snd == 225 || snd == 236) && (dead_time == 64 || dead_time == 128)) {
                 start_cd_bbdead();
             }
-            for (i32 i = 0; i < 20; ++i) {
+            for (s32 i = 0; i < 20; ++i) {
                 if (stk_obj[i] == obj_id || stk_obj[i] == -2) {
                     stk_obj[i] = obj_id;
                     stk_snd[i] = snd;
@@ -650,7 +650,7 @@ void PlaySnd(i16 snd, i16 obj_id) {
                 }
             }
             if (snd != -1) {
-                i32 index = 19;
+                s32 index = 19;
                 while(level.objects[stk_obj[index]].is_active) {
                     --index;
                     if (index == -1) {
@@ -667,8 +667,8 @@ void PlaySnd(i16 snd, i16 obj_id) {
 }
 
 //72960
-void PlaySnd_old(i16 sound_id) {
-    i16 voice_index = -1;
+void PlaySnd_old(s16 sound_id) {
+    s16 voice_index = -1;
     if (CarteSonAutorisee) {
         u8 prog = hard_sound_table[sound_id].prog;
         if (prog != 255) {
@@ -689,12 +689,12 @@ void PlaySnd_old(i16 sound_id) {
 }
 
 //72A1C
-void setvol(i16 obj_id) {
+void setvol(s16 obj_id) {
     print_once("Not implemented: setvol"); //stub
 }
 
 //72E74
-void setpan(i16 obj_id) {
+void setpan(s16 obj_id) {
     print_once("Not implemented: setpan"); //stub
 }
 
@@ -710,7 +710,7 @@ void mute_snd_bouclant(void) {
 
 //73138
 void mute_snd(void) {
-    for (i32 i = 0; i < COUNT(voice_table); ++i) {
+    for (s32 i = 0; i < COUNT(voice_table); ++i) {
         KeyVol(i, 0, 0);
     }
     print_once("Not implemented: mute_snd"); //stub
@@ -728,7 +728,7 @@ void stop_freeze_snd(void) {
 }
 
 //7319C
-void PlayTchatchVignette(i32 snd) {
+void PlayTchatchVignette(s32 snd) {
     if (CarteSonAutorisee) {
         if (snd == 0) {
             switch(num_world_choice) {
@@ -763,7 +763,7 @@ void TestCdLoop(void) {
         if (cdTime != -1) {
             //dos_get_time_of_day();
             cdTime = 10 * (cdTimeEnd = cdTimeStart) / 182;
-            i32 duration = timeCd[22 * (num_world - 1) + num_level];
+            s32 duration = timeCd[22 * (num_world - 1) + num_level];
             cdTime += 2;
             if (cdTime >= duration) {
                 if (flagCDPlay != 0) {

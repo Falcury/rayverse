@@ -100,8 +100,8 @@ u8 TestKeyAction(void) {
 }
 
 //41CE4
-i32 leftjoy(void) {
-    i32 result = 0;
+s32 leftjoy(void) {
+    s32 result = 0;
     if (Main_Control == 2) {
         print_once("Not implemented: leftjoy"); //stub?
     }
@@ -115,8 +115,8 @@ i32 leftjoy(void) {
 }
 
 //41D54
-i32 rightjoy(void) {
-    i32 result = 0;
+s32 rightjoy(void) {
+    s32 result = 0;
     if (Main_Control == 2) {
         print_once("Not implemented: rightjoy"); //stub?
     }
@@ -130,8 +130,8 @@ i32 rightjoy(void) {
 }
 
 //41DC4
-i32 downjoy(void) {
-    i32 result = 0;
+s32 downjoy(void) {
+    s32 result = 0;
     if (Main_Control == 2) {
         print_once("Not implemented: downjoy"); //stub?
     }
@@ -145,8 +145,8 @@ i32 downjoy(void) {
 }
 
 //41E34
-i32 upjoy(void) {
-    i32 result = 0;
+s32 upjoy(void) {
+    s32 result = 0;
     if (Main_Control == 2) {
         print_once("Not implemented: upjoy"); //stub?
     }
@@ -160,8 +160,8 @@ i32 upjoy(void) {
 }
 
 //41EA4
-i32 but0pressed(void) {
-    i32 result = 0;
+s32 but0pressed(void) {
+    s32 result = 0;
     if (nb_fade == 0) {
         if (Main_Control && notbut[0] != 1) {
             result = (joy_buttonA1 == 1 || (input_mode == 1 && TEST_KEY_BUTTON0()));
@@ -176,8 +176,8 @@ i32 but0pressed(void) {
 }
 
 //41F30
-i32 but1pressed(void) {
-    i32 result = 0;
+s32 but1pressed(void) {
+    s32 result = 0;
     if (nb_fade == 0) {
         if (Main_Control && notbut[1] != 1) {
             result = (joy_buttonA2 == 1 || (input_mode == 1 && TEST_KEY_BUTTON1()));
@@ -192,8 +192,8 @@ i32 but1pressed(void) {
 }
 
 //41FBC
-i32 but2pressed(void) {
-    i32 result = 0;
+s32 but2pressed(void) {
+    s32 result = 0;
     if (nb_fade == 0) {
         if (Main_Control && notbut[2] != 1) {
             result = (joy_buttonB1 == 1 || (input_mode == 1 && TEST_KEY_BUTTON2()));
@@ -208,8 +208,8 @@ i32 but2pressed(void) {
 }
 
 //42048
-i32 but3pressed(void) {
-    i32 result = 0;
+s32 but3pressed(void) {
+    s32 result = 0;
     if (nb_fade == 0) {
         if (Main_Control && notbut[3] != 1) {
             result = (joy_buttonB2 == 1 || (input_mode == 1 && TEST_KEY_BUTTON3()));
@@ -224,7 +224,7 @@ i32 but3pressed(void) {
 }
 
 //420D4
-i32 butX0pressed(void) {
+s32 butX0pressed(void) {
     bool result = false;
     if (nb_fade == 0) {
         result = bux01 == 1 || (input_mode == 1 && TEST_KEY_BUTTON2());
@@ -233,7 +233,7 @@ i32 butX0pressed(void) {
 }
 
 //4210C
-i32 butX1pressed(void) {
+s32 butX1pressed(void) {
     bool result = false;
     if (nb_fade == 0) {
         result = bux11 == 1;
@@ -242,7 +242,7 @@ i32 butX1pressed(void) {
 }
 
 //4212C
-void sub_4212C(i16 a1) {
+void sub_4212C(s16 a1) {
     word_E0CD0 = a1;
 }
 
@@ -264,7 +264,7 @@ void readinput_center_joystick(void) {
 }
 
 //421C0
-void update_pad_limits(i16* xmax, i16* xmin, i16* ymax, i16* ymin, i16* xcentre, i16* ycentre) {
+void update_pad_limits(s16* xmax, s16* xmin, s16* ymax, s16* ymin, s16* xcentre, s16* ycentre) {
     print_once("Not implemented: update_pad_limits"); //stub
 }
 
@@ -310,7 +310,7 @@ void RESET_TOUCHE(u8 key) {
 
 //4271C
 void RESET_ALL_TOUCHE(void) {
-    for (i32 i = 0; i < COUNT(Touche_Enfoncee); ++i) {
+    for (s32 i = 0; i < COUNT(Touche_Enfoncee); ++i) {
         Touche_Enfoncee[i] = 0;
     }
 }

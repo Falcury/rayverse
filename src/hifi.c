@@ -26,7 +26,7 @@ void sub_3E780(void) {
 }
 
 //3E820
-void LoadBnkFile(i32 header_index, i32 data_index, bnk_header_t* headers, u8** data) {
+void LoadBnkFile(s32 header_index, s32 data_index, bnk_header_t* headers, u8** data) {
     lock_audio(); // added
 
     // Load sound header
@@ -70,16 +70,16 @@ void LoadBnkFile(i32 header_index, i32 data_index, bnk_header_t* headers, u8** d
     // We skip this because it obviously only works on 32-bit systems (for now; might need to change the code later).
     // We should keep this difference in mind when we want to access the sound data.
 #if 0
-    for (i32 i = 1; i < 128; ++i) {
+    for (s32 i = 1; i < 128; ++i) {
         bnk_header_t* bnk_header = headers + i;
-        bnk_header[i].offset += (i32)*data;
+        bnk_header[i].offset += (s32)*data;
     }
 #endif
 
     unlock_audio(); // added
 }
 
-void LoadBnkFile_debug(i32 sound_set, i32 a2, u8** sound_buffer) {
+void LoadBnkFile_debug(s32 sound_set, s32 a2, u8** sound_buffer) {
     // Load sound header
     mem_t* mem = read_entire_file("SNDH8B.DAT", true);
     if (!mem) fatal_error();
@@ -129,7 +129,7 @@ void LoadBnkFixe(void) {
 }
 
 //3EA00
-void LoadBnkWorld(i16 world) {
+void LoadBnkWorld(s16 world) {
     switch(world) {
         case 1: {
             LoadBnkFile(4, 4, bnkHeaderWorld, &bnkDataWorld);
@@ -154,13 +154,13 @@ void LoadBnkWorld(i16 world) {
 }
 
 //3EABC
-i16 KeyOn(u8 bank, u8 prog, u8 tone, u8 note, u8 volume, u8 pan) {
+s16 KeyOn(u8 bank, u8 prog, u8 tone, u8 note, u8 volume, u8 pan) {
 //    printf("KeyOn: bank %d prog %d tone %d note %d volume %d pan %d\n", bank, prog, tone, note, volume, pan);
     snd_t snd = {0};
-    i32 sample_rate = 11025;
+    s32 sample_rate = 11025;
     float base_note = 54.5f; // NOTE: I determined this value by trial and error, it may not be exactly correct
     if (note != 60) {
-        sample_rate = (i32)((float)sample_rate * powf(2.0f, ((float)note - base_note) / 12.0f));
+        sample_rate = (s32)((float)sample_rate * powf(2.0f, ((float)note - base_note) / 12.0f));
     }
 
     if (bank == 1) {
@@ -185,7 +185,7 @@ i16 KeyOn(u8 bank, u8 prog, u8 tone, u8 note, u8 volume, u8 pan) {
         snd.position = 0.0;
         snd.volume = MIN(1.0f, (float)volume / 50.0f);
     }
-    i16 voice_index = play_digi_snd(&snd);
+    s16 voice_index = play_digi_snd(&snd);
     return voice_index;
 }
 
@@ -196,14 +196,14 @@ void KeyOff(u32 voice_id, u8 bank, u8 prog, u8 tone, u8 note) {
 }
 
 //3EC1C
-void KeyVol(i32 voice_id, i32 volume, i32 pan) {
+void KeyVol(s32 voice_id, s32 volume, s32 pan) {
     snd_t* digi_voice = digi_voices + voice_id;
     digi_voice->volume = MIN(1.0f, (float)volume / 50.0f);
 }
 
 //3EC78
 void DigiMusicDone(void) {
-    for (i32 i = 0; i < COUNT(voice_table); ++i) {
+    for (s32 i = 0; i < COUNT(voice_table); ++i) {
         KeyOff(i, 0, 0, 0, 0);
     }
     print_once("Not implemented: DigiMusicDone"); //stub
@@ -230,7 +230,7 @@ void LoadTchatchPerdu(void) {
 }
 
 //3EDF4
-void PlayTchatch(i32 snd, i32 volume) {
+void PlayTchatch(s32 snd, s32 volume) {
     print_once("Not implemented: PlayTchatch"); //stub
 }
 
@@ -240,27 +240,27 @@ void FreeTchatchVignette(void) {
 }
 
 //3EFD4
-void SetPort_(i32 port) {
+void SetPort_(s32 port) {
     current_port = port;
 }
 
 //3EFE0
-void SetIrq(i32 irq) {
+void SetIrq(s32 irq) {
     current_irq = irq;
 }
 
 //3EFE8
-void SetDma(i32 dma) {
+void SetDma(s32 dma) {
     current_dma = dma;
 }
 
 //3EFF0
-void SetParam(i32 param) {
+void SetParam(s32 param) {
     current_param = param;
 }
 
 //3EFF8
-void SetDeviceID(i32 device_id) {
+void SetDeviceID(s32 device_id) {
     current_device_id = device_id;
 }
 
@@ -270,27 +270,27 @@ char* GetDeviceName(void) {
 }
 
 //3F008
-i32 GetPort(void) {
+s32 GetPort(void) {
     return current_port;
 }
 
 //3F010
-i32 GetIrq(void) {
+s32 GetIrq(void) {
     return current_irq;
 }
 
 //3F018
-i32 GetDma(void) {
+s32 GetDma(void) {
     return current_dma;
 }
 
 //3F020
-i32 GetParam(void) {
+s32 GetParam(void) {
     return current_param;
 }
 
 //3F028
-i32 GetDeviceID_Ray(void) {
+s32 GetDeviceID_Ray(void) {
     return current_device_id;
 }
 

@@ -1,18 +1,18 @@
 
 //24E90
-u8 MURDUR(i16 x, i16 y) {
+u8 MURDUR(s16 x, s16 y) {
     bool result = BTYP(x >> 4, y >> 4) == BTYP_SOLID;
     return result;
 }
 
 //24EAC
-i32 dist_to_bloc_floor(i16 btype, i16 x, i16 y) {
-    i32 result = calcblocfloor[btype](x, y) - y;
+s32 dist_to_bloc_floor(s16 btype, s16 x, s16 y) {
+    s32 result = calcblocfloor[btype](x, y) - y;
     return result;
 }
 
 //24EC8
-u8 bloc_floor(i16 btype, i16 x, i16 y) {
+u8 bloc_floor(s16 btype, s16 x, s16 y) {
     if (dist_to_bloc_floor(btype, x, y) > 0) {
         return 0;
     } else {
@@ -551,7 +551,7 @@ void CALC_MOV_ON_BLOC(obj_t* obj) {
                 if ((ray.cmd_arg_2 == -1 && ray.main_etat != 2) && Abs(obj->speed_y) > 2 && Abs(obj->speed_y) < 16 &&
                                         !(block_flags[temp_v0_1] & 2))
                 {
-                    i16 saved_speed_y = obj->speed_y;
+                    s16 saved_speed_y = obj->speed_y;
                     set_main_and_sub_etat(&ray, 0, 0);
                     button_released = 1;
                     ray_jump();
@@ -580,11 +580,11 @@ void CALC_MOV_ON_BLOC(obj_t* obj) {
 
 //25B30
 void recale_position(obj_t* obj) {
-    i16 y = (obj->offset_by + obj->y) & ~0xF;
-    i16 x = (obj->offset_bx + obj->x) & 0xF;
-    i16 btyp = BTYP((obj->x + obj->offset_bx) >> 4, (obj->y + obj->offset_by) >> 4);
+    s16 y = (obj->offset_by + obj->y) & ~0xF;
+    s16 x = (obj->offset_bx + obj->x) & 0xF;
+    s16 btyp = BTYP((obj->x + obj->offset_bx) >> 4, (obj->y + obj->offset_by) >> 4);
 
-    i32 v5 = calcblocrecal[btyp](x, 0);
+    s32 v5 = calcblocrecal[btyp](x, 0);
 
     if (obj->type != TYPE_23_RAYMAN) {
         obj->y = y + v5 - obj->offset_by;
@@ -594,68 +594,68 @@ void recale_position(obj_t* obj) {
 }
 
 //25BB0
-i32 blocs1_empty(i32 x, i32 y) {
+s32 blocs1_empty(s32 x, s32 y) {
     return y + 1;
 }
 
 //25BB4
-i32 blocs1_right_45(i32 x, i32 y) {
+s32 blocs1_right_45(s32 x, s32 y) {
     return 15 - x;
 }
 
 //25BC0
-i32 blocs1_left_45(i32 x, i32 y) {
+s32 blocs1_left_45(s32 x, s32 y) {
     return x;
 }
 
 //25BC4
-i32 blocs1_right1_30(i32 x, i32 y) {
+s32 blocs1_right1_30(s32 x, s32 y) {
     return 15 - (x >> 1);
 }
 
 //25BD4
-i32 blocs1_right2_30(i32 x, i32 y) {
+s32 blocs1_right2_30(s32 x, s32 y) {
     return 7 - (x >> 1);
 }
 
 //25BE4
-i32 blocs1_left1_30(i32 x, i32 y) {
+s32 blocs1_left1_30(s32 x, s32 y) {
     return x >> 1;
 }
 
 //25BE8
-i32 blocs1_left2_30(i32 x, i32 y) {
+s32 blocs1_left2_30(s32 x, s32 y) {
     return (x >> 1) + 8;
 }
 
 //25BF0
-i32 blocs3_empty(i32 x, i32 y) {
+s32 blocs3_empty(s32 x, s32 y) {
     return y;
 }
 
 //25BF0 (identical to blocs3_empty)
-i32 blocs1_liane(i32 x, i32 y) {
+s32 blocs1_liane(s32 x, s32 y) {
     return y;
 }
 
 //25BF4
-i32 blocs4_empty(i32 x, i32 y) {
+s32 blocs4_empty(s32 x, s32 y) {
     return 0;
 }
 
 //25BF4 (identical to blocs4_empty)
-i32 blocs1_hor(i32 x, i32 y) {
+s32 blocs1_hor(s32 x, s32 y) {
     return 0;
 }
 
 //25BF8
-i32 blocs2_empty(i32 x, i32 y) {
+s32 blocs2_empty(s32 x, s32 y) {
     return 16;
 }
 
 //25C7C
 void init_calcbloc_func(void) {
-    for (i32 i = 0; i < 31; ++i) {
+    for (s32 i = 0; i < 31; ++i) {
         switch(i) {
             default: {
                 calcbloc1[i] = blocs1_empty;

@@ -1,13 +1,13 @@
 
 
-i64 get_clock(void) {
+s64 get_clock(void) {
     struct timespec t = {0};
     clock_gettime(CLOCK_MONOTONIC, &t);
     return t.tv_nsec + 1000000000 * t.tv_sec;
 }
 
-float get_seconds_elapsed(i64 start, i64 end) {
-    i64 elapsed_nanoseconds = end - start;
+float get_seconds_elapsed(s64 start, s64 end) {
+    s64 elapsed_nanoseconds = end - start;
     float elapsed_seconds = ((float)elapsed_nanoseconds) / 1e9f;
     return elapsed_seconds;
 }
@@ -123,9 +123,9 @@ int main(int argc, char** argv) {
     app_state->sdl.window = window;
 
     {
-        i32 gl_w, gl_h;
+        s32 gl_w, gl_h;
         SDL_GL_GetDrawableSize(window, &gl_w, &gl_h);
-        i32 window_w, window_h;
+        s32 window_w, window_h;
         SDL_GetWindowSize(window, &window_w, &window_h);
         app_state->client_width = gl_w;
         app_state->client_height = gl_h;
@@ -145,7 +145,7 @@ int main(int argc, char** argv) {
 
     sdl_sound_output_t* sound_output = &app_state->sdl.sound_output;
     sound_output->samples_per_second = 44100;
-    sound_output->bytes_per_sample = sizeof(i16) * 2;
+    sound_output->bytes_per_sample = sizeof(s16) * 2;
     sound_output->secondary_buffer_size = sound_output->samples_per_second * sound_output->bytes_per_sample; // 1 second
     sound_output->secondary_buffer = (u8*)calloc(sound_output->bytes_per_sample, sound_output->samples_per_second);
     sound_output->safety_bytes = (u32)((float)(sound_output->samples_per_second * sound_output->bytes_per_sample) * app_state->target_seconds_per_frame * 0.3333f);
@@ -166,7 +166,7 @@ int main(int argc, char** argv) {
     app_state->sdl.sound_output.audio_device = dev;
     SDL_PauseAudioDevice(app_state->sdl.sound_output.audio_device, 0);
 
-    game_init_sound(&app_state->game.sound_buffer, (i32)sound_output->samples_per_second);
+    game_init_sound(&app_state->game.sound_buffer, (s32)sound_output->samples_per_second);
 
     if (!app_state->game.initialized) {
         game_init(&app_state->game);
@@ -190,15 +190,15 @@ void linux_prepare_frame(app_state_t* app_state) {
 
 void linux_end_frame(app_state_t* app_state) {
     //stub
-    i64 frames_elapsed = 0;
-    i64 ns_per_tick = 1000000000 / app_state->target_game_hz;
+    s64 frames_elapsed = 0;
+    s64 ns_per_tick = 1000000000 / app_state->target_game_hz;
     while (frames_elapsed < 1) {
         frames_elapsed = ((get_clock() / ns_per_tick) - (app_state->frame_clock / ns_per_tick));
         linux_sleep(1);
     }
     app_state->frame_clock += ns_per_tick * frames_elapsed;
 
-    i32 gl_w, gl_h;
+    s32 gl_w, gl_h;
     SDL_GL_GetDrawableSize(app_state->sdl.window, &gl_w, &gl_h);
     opengl_upload_surface(app_state, app_state->active_surface, gl_w, gl_h);
     linux_produce_sound_for_frame(app_state, &app_state->sdl.sound_output, &app_state->game.sound_buffer, app_state->flip_clock);

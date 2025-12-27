@@ -128,7 +128,7 @@ void trompetteAtter(obj_t* obj) {
 }
 
 //7E6BC
-void DoTrumpetPoingCollision(obj_t* obj, i16 sprite) {
+void DoTrumpetPoingCollision(obj_t* obj, s16 sprite) {
     obj_hurt(obj);
     if (poing_obj->speed_x > 0)
         obj->flags.flip_x = 0;

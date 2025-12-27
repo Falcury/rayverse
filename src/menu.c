@@ -100,12 +100,12 @@ void calc_off_fnd(void) {
     print_once("Not implemented: calc_off_fnd"); //stub
 }
 
-i8 byte_49290[4] = {0, 0, 0, 0}; //49290
+s8 byte_49290[4] = {0, 0, 0, 0}; //49290
 
 //49308
 void check_key_table(void) {
     bool valid = true;
-    for (i32 i = 0; i < 7; ++i) {
+    for (s32 i = 0; i < 7; ++i) {
         u8 key = *(tab_key[i]);
         if (key > SC_DELETE || key_descriptions_qwerty[key] == 0 || key_descriptions_azerty[key] == 0) {
             valid = false;
@@ -249,7 +249,7 @@ void DO_NEW_MENUS(void) {
     Keyflush(); //TODO
     CalcTab();
     default_key();
-    i16 NewMenusArgs = 0;
+    s16 NewMenusArgs = 0;
     while (!ModeDemo && !fin_du_jeu && !NewMenusArgs) {
         raj_env_sound(options_jeu.sound_volume);
         raj_env_stereo(options_jeu.is_stereo);
@@ -338,7 +338,7 @@ void INIT_GENERAL_CHOICE(void) {
     option_exit = 3;
     nbre_options = 4;
     basex = 160;
-    for (i32 i = 0; i < nbre_options; ++i) {
+    for (s32 i = 0; i < nbre_options; ++i) {
         display_item_t* display_item = menu_to_display + i;
         strncpy(display_item->text, language_txt[190], 200); // "music"
         display_item->color = byte_49290[i];
@@ -381,7 +381,7 @@ void INIT_GENERAL_CHOICE(void) {
 //4A0DC
 void AFFICHE_ECRAN_GENERAL(void) {
     DISPLAY_FOND_MENU();
-    for (i32 i = 0; i < nbre_options; ++i) {
+    for (s32 i = 0; i < nbre_options; ++i) {
         display_item_t* to_display = menu_to_display + i;
         if (i == positiony) {
             display_box_text_plasma(to_display, 1);
@@ -539,7 +539,7 @@ void INIT_AFFICHE_ECRAN_OPTIONS(void) {
     menu_to_display[9].color = 1;
     char v39[4];
     strncpy(v39, "on", 4);
-    for (i32 i = first_option; i <= first_option + nbre_options; ++i) {
+    for (s32 i = first_option; i <= first_option + nbre_options; ++i) {
         display_item_t* to_display = menu_to_display + i;
         to_display->font_size = 2;
         to_display->field_D5 = 0;
@@ -555,13 +555,13 @@ void INIT_AFFICHE_ECRAN_OPTIONS(void) {
             switch(i) {
                 case 0: {
                     // Text "music" offsetted to the left with "on off" to the right
-                    i32 text_width = calc_largmax_text(to_display->text, -1, 8, 1, 2) + 16 +
+                    s32 text_width = calc_largmax_text(to_display->text, -1, 8, 1, 2) + 16 +
                                      calc_largmax_text(v39, -1, 8, 1, 2) + calc_largmax_text(v32, -1, 8, 1, 2);
                     to_display->xpos = (SCREEN_WIDTH / 2) - (text_width >> 1);
                 } break;
                 case 1: {
                     // Text "sound" offsetted to the left
-                    i32 text_width = calc_largmax_text(to_display->text, -1, 8, 1, 2) + 16 +
+                    s32 text_width = calc_largmax_text(to_display->text, -1, 8, 1, 2) + 16 +
                              20 * calc_largmax_text("|", -1, 8, 1, 2);
                     to_display->xpos = (SCREEN_WIDTH / 2) - (text_width >> 1);
                 } break;
@@ -602,27 +602,27 @@ void INIT_AFFICHE_ECRAN_OPTIONS(void) {
             FonduOption(word_E4CEC_x, word_E4CF0_y, word_E4CF4_w, word_E4CEE_h, 0);
         }
     } else {
-        i16 v21 = debut_titre - 25;
-        i16 v42_hi = menu_to_display[option_exit].ypos - debut_titre + 35;
-        i16 v22_x = (basex >= word_E4CEC_x) ? word_E4CEC_x : basex;
-        i16 v23_y = word_E4CF0_y;
+        s16 v21 = debut_titre - 25;
+        s16 v42_hi = menu_to_display[option_exit].ypos - debut_titre + 35;
+        s16 v22_x = (basex >= word_E4CEC_x) ? word_E4CEC_x : basex;
+        s16 v23_y = word_E4CF0_y;
         if (v21 < word_E4CF0_y) {
             v23_y = debut_titre - 25;
         }
-        i16 v24 = word_E4CF4_w + word_E4CEC_x;
-        i32 v37 = basex;
-        i32 v33 = v24;
-        i32 v25 = basex + 2 * byte_E4CFC;
-        i32 v34 = (v25 >= v24) ? v25 - v22_x : v24 - v22_x;
-        i16 unk_w = v34;
-        i32 v26 = word_E4CEE_h + word_E4CF0_y;
-        i32 v31 = v21;
-        i32 v38 = v42_hi;
-        i32 v36 = v42_hi + v21;
+        s16 v24 = word_E4CF4_w + word_E4CEC_x;
+        s32 v37 = basex;
+        s32 v33 = v24;
+        s32 v25 = basex + 2 * byte_E4CFC;
+        s32 v34 = (v25 >= v24) ? v25 - v22_x : v24 - v22_x;
+        s16 unk_w = v34;
+        s32 v26 = word_E4CEE_h + word_E4CF0_y;
+        s32 v31 = v21;
+        s32 v38 = v42_hi;
+        s32 v36 = v42_hi + v21;
         if (v26 <= v36) {
             v26 = v36;
         }
-        i32 v27_h = v26 - v23_y;
+        s32 v27_h = v26 - v23_y;
         word_E4CEC_x = basex;
         word_E4CF0_y = debut_titre - 25;
         word_E4CEE_h = v42_hi;
@@ -644,9 +644,9 @@ void AFFICHE_ECRAN_OPTIONS(void) {
         CadreTrans(word_E4CEC_x, word_E4CF0_y, word_E4CF4_w, word_E4CEE_h);
     }
     display_text(language_txt[181], SCREEN_WIDTH / 2, debut_titre, 1, 1); // /options/
-    for (i32 option_index = first_option; option_index <= first_option + nbre_options; ++option_index) {
-        i16 x = menu_to_display[option_index].xpos;
-        i16 y = menu_to_display[option_index].ypos;
+    for (s32 option_index = first_option; option_index <= first_option + nbre_options; ++option_index) {
+        s16 x = menu_to_display[option_index].xpos;
+        s16 y = menu_to_display[option_index].ypos;
         if (option_index == position) {
             display_box_text_plasma(menu_to_display + option_index, 1);
         } else if (option_index == option_exit) {
@@ -658,12 +658,12 @@ void AFFICHE_ECRAN_OPTIONS(void) {
         // NOTE: some parts of the code below don't seem to make sense in the disassembly.
         // I rewrote it slightly to make it functionally correct.
         if (option_index == 0) {
-            i32 v5 = calc_largmax_text(menu_to_display[0].text, -1, 8, 1, 2);
-            i32 v6 = v5 + x;
+            s32 v5 = calc_largmax_text(menu_to_display[0].text, -1, 8, 1, 2);
+            s32 v6 = v5 + x;
             const char* nonselected_text;
             const char* other_text;
-            i32 v18;
-            i32 v8;
+            s32 v18;
+            s32 v8;
             if (options.music_enabled) {
                 nonselected_text = "off";
                 v18 = v6 + calc_largmax_text("on", -1, 8, 1, 2) + 32;
@@ -687,9 +687,9 @@ void AFFICHE_ECRAN_OPTIONS(void) {
                 display_text(other_text, v8, y, 2, 5);
             }
         } else if (option_index == 1) {
-            i32 draw_x = x + calc_largmax_text(menu_to_display[1].text, -1, 8, 1, 2u) + 16;
+            s32 draw_x = x + calc_largmax_text(menu_to_display[1].text, -1, 8, 1, 2u) + 16;
             DrawBlackBorderBox(draw_x, y - 14, 15, 20 * ecart_barre + 1, 1);
-            for (i32 i = 0; i < options.sound_volume; ++i) {
+            for (s32 i = 0; i < options.sound_volume; ++i) {
                 u8 color;
                 if (i >= (2 * max_sound) / 3) {
                     color = 1;
@@ -973,7 +973,7 @@ void MAIN_CALIBRATE_JOYSTICK(void) {
 }
 
 //4F17C
-i16 menu_prg(u32 a1) {
+s16 menu_prg(u32 a1) {
     readinput();
     DoCdRap();
     bool pad_limits_changed = false;
@@ -1006,7 +1006,7 @@ i16 menu_prg(u32 a1) {
         InitPlasma(1);
         SWAP_BUFFERS();
     }
-    i16 need_exit = 0;
+    s16 need_exit = 0;
     if (fin_du_jeu || sortie_options || MENU_RETURN || ModeDemo) {
         need_exit = 1;
     }
@@ -1065,7 +1065,7 @@ void DO_MENU(void) {
 //4F488
 void default_key(void) {
     check_key_table();
-    for (i32 i = 0; i < 7; ++i) {
+    for (s32 i = 0; i < 7; ++i) {
         tab_key_sav[i] = *(tab_key[i]);
     }
     *(tab_key[0]) = SC_LEFT;
@@ -1079,19 +1079,19 @@ void default_key(void) {
 
 //4F4EC
 void new_key(void) {
-    for (i32 i = 0; i < 7; ++i) {
+    for (s32 i = 0; i < 7; ++i) {
         *(tab_key[i]) = tab_key_sav[i];
     }
 }
 
 //4F50C
-i32 CalcSpeed(void) {
+s32 CalcSpeed(void) {
     print_once("Not implemented: CalcSpeed");
     return 0; //stub
 }
 
 //4F698
-void general_init_screen(i16 a1, i16 a2, i16 a3) {
+void general_init_screen(s16 a1, s16 a2, s16 a3) {
     debut_titre = a1 + 11;
     ecart_options = (2 * a2 - 15 * nbre_options) / (nbre_options + 1);
     debut_options = 2 * a1 + ecart_options + 15;
@@ -1139,7 +1139,7 @@ void display_box_text_fire(display_item_t* a1) {
 }
 
 //4F8B4
-i16 display_box_msg_prg(u32 a1) {
+s16 display_box_msg_prg(u32 a1) {
     yesno_finished = 0;
     readinput();
     if (pAFFICHE_SCREEN) {
@@ -1335,18 +1335,18 @@ void change_couleur_prg(void) {
 }
 
 //502FC
-void FonduOption(i16 x, i16 y, i16 w, i16 h, u8 a5) {
+void FonduOption(s16 x, s16 y, s16 w, s16 h, u8 a5) {
     print_once("Not implemented: FonduOption"); //stub
 }
 
 //50A38
-i16 FonduPixel_prg(u32 a1) {
+s16 FonduPixel_prg(u32 a1) {
     print_once("Not implemented: FonduPixel_prg");
     return false; //stub
 }
 
 //50B0C
-void FonduPixel(i16 x, i16 y, i16 w, i16 h) {
+void FonduPixel(s16 x, s16 y, s16 w, s16 h) {
     xFondu = x;
     yFondu = y;
     wFondu = w;

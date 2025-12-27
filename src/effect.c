@@ -95,13 +95,13 @@ void sub_380A4(void) {
 }
 
 //38208
-u8 sub_38208(i32 a1, i32 a2, u8* a3, u8* a4) {
+u8 sub_38208(s32 a1, s32 a2, u8* a3, u8* a4) {
     print_once("Not implemented: sub_38208");
     return 0; //stub
 }
 
 //38220
-u8 sub_38220(i32 a1, i32 a2, u8* a3, u8* a4) {
+u8 sub_38220(s32 a1, s32 a2, u8* a3, u8* a4) {
     print_once("Not implemented: sub_38220");
     return 0; //stub
 }
@@ -132,7 +132,7 @@ void DO_AFFICHE_PAUSE(void) {
 }
 
 //38400
-i16 dummy_prg(u32 a1) {
+s16 dummy_prg(u32 a1) {
     print_once("Not implemented: dummy_prg");
     return 0; //stub
 }

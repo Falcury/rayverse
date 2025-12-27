@@ -44,7 +44,7 @@ void INIT_SAXO(obj_t* sax_obj) {
 }
 
 //759B4
-void allocateNote2(obj_t* note_obj, i16 a2) {
+void allocateNote2(obj_t* note_obj, s16 a2) {
     /* 50D7C 8017557C -O2 -msoft-float */
     obj_t* cur_obj;
     s16 i;
@@ -182,7 +182,7 @@ void DO_NOTE_CMD(obj_t* obj) {
 }
 
 //75D20
-void Cree_Eclat_Note(obj_t* bnote, obj_t* note1, i16 index) {
+void Cree_Eclat_Note(obj_t* bnote, obj_t* note1, s16 index) {
     /* 511C4 801759C4 -O2 -msoft-float */
     s16 speed_x;
 
@@ -345,7 +345,7 @@ void BonneNote(obj_t* orig_obj) {
 }
 
 //760CC
-void DO_NOTE_TOUCHEE(obj_t* obj, i16 sprite) {
+void DO_NOTE_TOUCHEE(obj_t* obj, s16 sprite) {
     /* 516B4 80175EB4 -O2 -msoft-float */
     switch (obj->type) {
         case TYPE_90_NOTE0:
@@ -521,7 +521,7 @@ void DO_SAXO2_COUP(obj_t* obj) {
 
 //764F0
 void SetSaxoEventPos(obj_t* obj) {
-    i16 w = 0, h = 0;
+    s16 w = 0, h = 0;
     GET_SPRITE_POS(obj, 2, &Sax.sprite2_x, &Sax.sprite2_y, &w, &h);
     if (obj->flags.flip_x) {
         Sax.sprite2_x += w - 32;
@@ -532,8 +532,8 @@ void SetSaxoEventPos(obj_t* obj) {
 
 //76564
 void SetSaxoCollNoteBox(obj_t* obj) {
-    i16 sprite2_x, sprite2_y, sprite2_w, sprite2_h;
-    i16 sprite5_x, sprite5_y, sprite5_w, sprite5_h;
+    s16 sprite2_x, sprite2_y, sprite2_w, sprite2_h;
+    s16 sprite5_x, sprite5_y, sprite5_w, sprite5_h;
     GET_SPRITE_POS(obj, 2, &sprite2_x, &sprite2_y, &sprite2_w, &sprite2_h);
     GET_SPRITE_POS(obj, 5, &sprite5_x, &sprite5_y, &sprite5_w, &sprite5_h);
     Sax.note_box_coll_y = sprite5_y + 20;
@@ -1239,7 +1239,7 @@ void DO_SAXO3_DEBUT(obj_t* obj) {
 }
 
 //778CC
-i32 saxo2_get_eject_sens(void) {
+s32 saxo2_get_eject_sens(void) {
     return Phase < 2 ? -1 : 1;
 }
 

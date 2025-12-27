@@ -8,8 +8,8 @@ bool debug_clicked;
 float debug_click_obj_dist_sq;
 float debug_click_x;
 float debug_click_y;
-i16 debug_obj_id = -1;
-i32 debug_obj_xmin = -32000;
+s16 debug_obj_id = -1;
+s32 debug_obj_xmin = -32000;
 
 // engine.cpp
 
@@ -22,8 +22,8 @@ snd_t digi_voices[32];
 
 
 // Data sorted by offset
-i32 saved_sprite_color; //92140
-i32 saved_sprite_width; //92144
+s32 saved_sprite_color; //92140
+s32 saved_sprite_width; //92144
 
 //9215C
 archive_header_t HeaderFilevignet[75] = {
@@ -113,10 +113,10 @@ archive_header_t language_infos[] = {
         {16361, 2366, 149, 20},  // Chinese
 };
 
-i16 nb_des = 0; //9251C
-i16 nb_fix_des = 0; //9251E
-i16 dhspeed = 0; //92520
-i16 dvspeed = 0; //92522
+s16 nb_des = 0; //9251C
+s16 nb_fix_des = 0; //9251E
+s16 dhspeed = 0; //92520
+s16 dvspeed = 0; //92522
 
 //92524
 u8 ecroule_rubis_order[24] = {2, 1, 3, 0, 4, 7, 6, 5, 1, 3, 2, 0, 4, 7, 6, 5, 4, 1, 3, 2, 0, 7, 6, 5};
@@ -168,7 +168,7 @@ u32 flags[262] = {
 u8 joy_done; //92994
 
 //92996
-i16 zonediffx[262] = {
+s16 zonediffx[262] = {
         0, 0, 0, 0, 0, -50, 0, 0, -80, 0, 0, 0, 250, 0, 250, 0, -60, -60, 0, 0, 60, 0, 0, 0, 0, 0, -60, 0, 0, 0,
         0, -50, 0, 0, 0, 0, 0, 0, -50, 0, 0, 0, -50, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, 0, -50, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 0, 150, 0, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 450,
@@ -181,7 +181,7 @@ i16 zonediffx[262] = {
 };
 
 //92BA2
-i16 zonediffy[262] = {
+s16 zonediffy[262] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, -50, 0, 0, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 300, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 120, -50, 0, 150, 0, 0, 200, 200, 0, 0, 0, 0, 0, 350, -50, 0, 300,
@@ -675,7 +675,7 @@ obj_procs_t ObjectsFonctions[262] = {
 };
 
 u8 nb_levels_in_world[8] = {0, 22, 18, 13, 13, 12, 4, 0}; //94A74
-i16 pente[16] = {0, 3, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 42, 45}; //94A7C
+s16 pente[16] = {0, 3, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 42, 45}; //94A7C
 
 //94A9C
 u8 N_anim[256] = {
@@ -697,12 +697,12 @@ u8 N_anim[256] = {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 };
 
-i16 bagDy[20] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -60, -26, 8, 32, 75, 32, 8, -26, -60, -1}; //94B9C
-i16 bagW[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 32, 48, 48, 48, 48, 48, 32, 32, 0}; //94BC4
-i16 bagH[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 32, 48, 48, 60, 48, 48, 32, 32, 0}; //94BEC
+s16 bagDy[20] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -60, -26, 8, 32, 75, 32, 8, -26, -60, -1}; //94B9C
+s16 bagW[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 32, 48, 48, 48, 48, 48, 32, 32, 0}; //94BC4
+s16 bagH[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 32, 48, 48, 60, 48, 48, 32, 32, 0}; //94BEC
 
 //94C14
-i16 expsin[63] = {
+s16 expsin[63] = {
         0, 855, 825, 0, -769, -742, -1, 690, 666, 0, -621, -599, -1, 557, 537, 0,
         -501, -484, -1, 449, 434, 0, -405, -391, -1, 363, 350, 0, -327, -315, -1, 292,
         282, 0, -264, -255, -1, 236, 228, 0, -213, -206, -1, 190, 184, 0, -172, -166,
@@ -710,14 +710,14 @@ i16 expsin[63] = {
 };
 
 //94C92
-i16 expsin2[48] = {
+s16 expsin2[48] = {
         3, 0, -3, 0, 3, 0, -3, 0, 3, 0, -3, 0, 3, 0, -3, 0,
         3, 0, -3, 0, 3, 0, -3, 0, 3, 0, -3, 0, 3, 0, -3, 0,
         3, 0, -3, 0, 3, 0, -3, 0, 3, 0, -3, 0, 3, 0, -3, 0,
 };
 
-i16 EauDy[14] = {0, -3, -6, -8, -9, -10, -9, -7, -5, -2, 2, 6, 7, 4}; //94CF4
-i16 DecEau[4] = {9, 0, 7, 5}; //94D10
+s16 EauDy[14] = {0, -3, -6, -8, -9, -10, -9, -7, -5, -2, 2, 6, 7, 4}; //94CF4
+s16 DecEau[4] = {9, 0, 7, 5}; //94D10
 
 //94D18
 u8 angletab[65] = {
@@ -768,7 +768,7 @@ u8 map_cd_tracks[128] = {
 };
 
 //94FBC
-i32 timeCd[132] = {
+s32 timeCd[132] = {
         0, 215, 215, 80, 215, 215, 74, 215, 80, 215, 215, 215, 215, 215, 215, 215, 74, 80, 68, 68, 68, 68,
         68, 238, 238, 238, 238, 238, 238, 238, 238, 238, 238, 80, 238, 238, 238, 84, 84, 68, 68, 0, 0, 0,
         0, 109, 109, 109, 109, 109, 109, 109, 109, 109, 82, 80, 68, 68, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -832,14 +832,14 @@ u8 DemoRecord[1500] = {
         0, 0, 0, 0, 0, 0, 0,
 };
 
-i16 DemoRecordSize[6] = {154, 192, 200, 172, 200, 120}; //95E04
-i16 DemoRecordWorld[6] = {2, 3, 4, 5, 1, 5}; //95E10
-i16 DemoRecordMap[6] = {7, 7, 1, 4, 9, 10}; //95E1C
+s16 DemoRecordSize[6] = {154, 192, 200, 172, 200, 120}; //95E04
+s16 DemoRecordWorld[6] = {2, 3, 4, 5, 1, 5}; //95E10
+s16 DemoRecordMap[6] = {7, 7, 1, 4, 9, 10}; //95E1C
 u8* DisplayBufferNormal = NULL; //95E28 // initialized to 0xA0000 (= VGA video memory)
 u8 ModeVideoActuel = MODE_TEXT; //95E2C
 u8 GameModeVideo = MODE_TEXT; //95E2D
-i32 JumAmpDefMul = 0; //95E30
-i32 JumAmpDefPlus = 0; //95E34
+s32 JumAmpDefMul = 0; //95E30
+s32 JumAmpDefPlus = 0; //95E34
 u8 key_right = SC_RIGHT; //95E38
 u8 key_up = SC_UP; //95E39
 u8 key_left = SC_LEFT; //95E3A
@@ -868,16 +868,16 @@ u16 tRefSpriteX[2] = {255, 255}; //95EAC
 u8 ExitMenu = 0; //95EB0
 u8 ReInitPlasma = 0; //95EB1
 u8 Main_Control = 0; //95EB2
-i16 During_The_Menu = 1; //95EB4
+s16 During_The_Menu = 1; //95EB4
 u8 OptionMusicCdActive = 1; //95EB6
 u8 text_input_buffer[9]; //95EB7
 u8 byte_95EC0 = 0; //95EC0
 u8 byte_95EC1 = 0; //95EC1
 
-i16 niveau = 0; //95EC4
+s16 niveau = 0; //95EC4
 
 //95EC6
-i16 SerieAtakBB[85] = {
+s16 SerieAtakBB[85] = {
         0, 2, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1,
         3, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 2, 2, 2, 0, 1,
         1, 1, 0, 0, 255, 0, 0, 0, 3, 0, 0, 1, 1, 1, 255, 0,
@@ -892,15 +892,15 @@ rgb_t PalPlasma[16] = {
         {45, 15, 48}, {40, 15, 51}, {35, 12, 53}, {35, 10, 56},
         {32, 7, 58}, {30, 5, 61}, {27, 5, 61}, {32, 7, 63},
 };
-i16 word_95FA0 = 0; //95FA0
-i16 word_95FA2 = 0; //95FA2
-i16 word_95FA4 = 0; //95FA4
-i16 word_95FA6 = 0; //95FA6
-i16 word_95FA8 = 0; //95FA8
-i16 word_95FAA = 0; //95FAA
-i16 word_95FAC = 0; //95FAC
-i16 word_95FAE = 0; //95FAE
-i16 word_95FB0 = 0; //95FB0
+s16 word_95FA0 = 0; //95FA0
+s16 word_95FA2 = 0; //95FA2
+s16 word_95FA4 = 0; //95FA4
+s16 word_95FA6 = 0; //95FA6
+s16 word_95FA8 = 0; //95FA8
+s16 word_95FAA = 0; //95FAA
+s16 word_95FAC = 0; //95FAC
+s16 word_95FAE = 0; //95FAE
+s16 word_95FB0 = 0; //95FB0
 
 //95FB2
 rgb_t PalFire[16] = {
@@ -910,39 +910,39 @@ rgb_t PalFire[16] = {
         {60, 10, 56}, {60, 10, 59}, {60, 10, 61}, {60, 10, 63},
 };
 
-i16 no_sound = 0; //95FE4
+s16 no_sound = 0; //95FE4
 u8 InvadersMode = 0; //95FE6
 u8 BonusMode = 0; //95FE7
 u8 BonusBrik = 20; //95FE8
 u8 BonusBrikType = 0; //95FE9
 u8 NbClassicBrik = 0; //95FEA
 u8 NbBrikTouched = 0; //95FEB
-i16 CasseBriqueOffsetX[7] = {0, 0, 6, 2, 5, 4, 8}; //95FEC
-i16 CasseBriqueOffsetY[7] = {16, 16, 8, 8, 16, 16, 8}; //95FFA
-i16 LastTouched = 20; //96008
-i16 NoCB = 0; //9600A
-i16 NoCBInit = 0; //9600C
-i16 tempo = 500; //9600E
-i16 CBoffsetX = 0; //96010
-i16 CBoffsetY = 0; //96012
-i16 Xdir = 0; //96014
-i16 Ydir = 0; //96016
+s16 CasseBriqueOffsetX[7] = {0, 0, 6, 2, 5, 4, 8}; //95FEC
+s16 CasseBriqueOffsetY[7] = {16, 16, 8, 8, 16, 16, 8}; //95FFA
+s16 LastTouched = 20; //96008
+s16 NoCB = 0; //9600A
+s16 NoCBInit = 0; //9600C
+s16 tempo = 500; //9600E
+s16 CBoffsetX = 0; //96010
+s16 CBoffsetY = 0; //96012
+s16 Xdir = 0; //96014
+s16 Ydir = 0; //96016
 
-i16 speed_ball_angle = 18; //9629E
-i16 speed_ball_level = 0; //962A0
-i16 speed_ball_x = 0; //962A2
-i16 speed_ball_y = 0; //962A4
-i32 ball_x = 0; //962A8
-i32 ball_y = 0; //962AC
-i32 dword_962B0 = 441; //962B0
+s16 speed_ball_angle = 18; //9629E
+s16 speed_ball_level = 0; //962A0
+s16 speed_ball_x = 0; //962A2
+s16 speed_ball_y = 0; //962A4
+s32 ball_x = 0; //962A8
+s32 ball_y = 0; //962AC
+s32 dword_962B0 = 441; //962B0
 u8 nb_max_collis = 0; //962B4
 u8 cbout = 0; //962B5
 u8 undestroy = 0; //962B6
 u8 upscreen = 0; //962B7
 u8 casse_brique_active = 0; //962B8
 u8 CasseBriqueON = 0; //962B9
-i16 Toon_Speeds_x[7] = {-3, -2, -1, 0, 1, 1, 3}; //962BC
-i16 Toon_Speeds_y[7] = {-3, -5, -4, -6, -5, -3, -3}; //962CA
+s16 Toon_Speeds_x[7] = {-3, -2, -1, 0, 1, 1, 3}; //962BC
+s16 Toon_Speeds_y[7] = {-3, -5, -4, -6, -5, -3, -3}; //962CA
 
 u8 dark_attaque = 0; //9637D
 u8 type_dark_attaque = 0; //9637E
@@ -1031,7 +1031,7 @@ u8 effect_pause_bloque; //964CE
 
 u8 playing_intro_video = 0; //964DD
 
-i32 prev_Bloc_lim_W1; //9654C
+s32 prev_Bloc_lim_W1; //9654C
 
 //96550
 archive_header_t snd8b_header_infos[7] = {
@@ -1094,13 +1094,13 @@ u8 (*TEST_KEY_BUTTON1)(void) = TestKeyJump; //967C0
 u8 (*TEST_KEY_BUTTON2)(void) = TestKeyAction; //967C4
 u8 (*TEST_KEY_BUTTON3)(void) = TestKeyAction; //967C8
 u8 byte_967CC = 0; //967CC
-i32 XSpeedJumelle = 0; //967D0
-i32 YSpeedJumelle = 0; //967D4
+s32 XSpeedJumelle = 0; //967D0
+s32 YSpeedJumelle = 0; //967D4
 
-i16 TabW1[4] = {4, 12, 20, 24}; //9684C // TODO: change TabW1[0] to 0 here to fix black bar on left of screen?
-i16 TabW2[4] = {320, 312, 304, 300}; //96854
-i16 TabH1[4] = {0, 8, 16, 20}; //9685C
-i16 TabH2[4] = {200, 192, 184, 180}; //96864
+s16 TabW1[4] = {4, 12, 20, 24}; //9684C // TODO: change TabW1[0] to 0 here to fix black bar on left of screen?
+s16 TabW2[4] = {320, 312, 304, 300}; //96854
+s16 TabH1[4] = {0, 8, 16, 20}; //9685C
+s16 TabH2[4] = {200, 192, 184, 180}; //96864
 
 u8 msg_box_being_displayed = 0; //96880
 u8 first_option = 0; //96881
@@ -1153,10 +1153,10 @@ u8* moskitoActionSequences[10] = {
         dyingSequence,                  // 9: animation sequence when dying
 };
 
-i16 MsAnimIndex; //96FDC
+s16 MsAnimIndex; //96FDC
 
 //96FE0
-i16 costab[130] = {
+s16 costab[130] = {
         512, 512, 512, 512, 512, 512, 511, 511, 510, 509, 509,
         508, 507, 506, 505, 504, 503, 501, 500, 499, 497, 496,
         494, 492, 490, 489, 487, 485, 483, 480, 478, 476, 474,
@@ -1214,21 +1214,21 @@ cptr_t cptr_tab[] = {
 u8 pma_couteaux[6] = {3, 5, 5, 3, 3, 4}; //9727C
 u8 pma_sequence[8] = {0, 3, 5, 0, 5, 1, 4, 2}; //97282
 u8 place_sequence[5] = {3, 4, 2, 3, 2}; //9728A
-i16 pst2_sequence[13] = {1, 21, -100, 8, 1, 0, 18, 160, 8, 3, 42, 19, 14}; //97290
-i16 moust1_sequence[9] = {1, 21, -100, 8, 6, 15, 18, 330, 14}; //972AA
-i16 moust2_sequence[9] = {0, 21, 330, 8, 6, 16, 18, -120, 14}; //972BC
-i16 pst1_sequence[13] = {0, 21, 320, 8, 1, 0, 18, -8, 8, 3, 41, 19, 14}; //972CE
-i16 worry_sequence[12] = {0, 21, 100, 8, 3, 43, 19, 8, 3, 44, 19, 14}; //972E8
+s16 pst2_sequence[13] = {1, 21, -100, 8, 1, 0, 18, 160, 8, 3, 42, 19, 14}; //97290
+s16 moust1_sequence[9] = {1, 21, -100, 8, 6, 15, 18, 330, 14}; //972AA
+s16 moust2_sequence[9] = {0, 21, 330, 8, 6, 16, 18, -120, 14}; //972BC
+s16 pst1_sequence[13] = {0, 21, 320, 8, 1, 0, 18, -8, 8, 3, 41, 19, 14}; //972CE
+s16 worry_sequence[12] = {0, 21, 100, 8, 3, 43, 19, 8, 3, 44, 19, 14}; //972E8
 
 //97300
-i16 car_sequence[33] = {
+s16 car_sequence[33] = {
         0, 21, 200, 8, 3, 47, 19, 8, 3, 48, 19, 17, 18, 20,
         -8, 17, 30, 20, -16, 17, 45, 20, -32, 17, 60, 20, -64,
         17, 65, 20, 0, 19, 14,
 };
 
 //97344
-i16 RandArray[256] = {
+s16 RandArray[256] = {
         4, 343, 34, 364, 222, 549, 200, 717, 972, 281, 454,
         111, 714, 577, 42, 169, 835, 701, 782, 847, 982, 224,
         437, 975, 859, 945, 830, 461, 619, 677, 614, 562, 737,
@@ -1608,9 +1608,9 @@ u8 bank_to_use[256] = {
 };
 
 u8 voice_is_working[32] = {0}; //97F44
-i16 Volume_Snd = 127; //97F64
+s16 Volume_Snd = 127; //97F64
 u8 not_snd_wiz[8] = {0, 2, 4, 5, 7, 9, 11, 12}; //97F6E
-i16 was_in_freeze = 0; //97F76
+s16 was_in_freeze = 0; //97F76
 u8 flagCDPlay; //97F78
 u8 phaseCd; //97F79
 
@@ -1708,18 +1708,18 @@ def_sprite_t Def_Sprite[1200] = {
         REPEAT_100({0}), {0}, {0}, {0}, {0}, {0}, {0}, {0}, //1093-1199
 };
 
-i32 dword_BD96C; //BD96C
+s32 dword_BD96C; //BD96C
 
 big_map_t BIG_MAP; //C21D8
 u8* Scroll_Masque[20]; //C21F8
-i32 VitesseYStageNameLevel[30]; //C2248
-i32 VitesseXStageNameWorld[30]; //C22C0
-i32 VitesseXStageNameLevel[30]; //C2338
-i32 PositionYStageNameWorld[50]; //C23B0
-i32 VitesseYStageNameWorld[30]; //C2478
-i32 PositionXStageNameLevel[50]; //C24F0
-i32 PositionXStageNameWorld[50]; //C25B8
-i32 PositionYStageNameLevel [50]; //C2680
+s32 VitesseYStageNameLevel[30]; //C2248
+s32 VitesseXStageNameWorld[30]; //C22C0
+s32 VitesseXStageNameLevel[30]; //C2338
+s32 PositionYStageNameWorld[50]; //C23B0
+s32 VitesseYStageNameWorld[30]; //C2478
+s32 PositionXStageNameLevel[50]; //C24F0
+s32 PositionXStageNameWorld[50]; //C25B8
+s32 PositionYStageNameLevel [50]; //C2680
 calcbloc_func_t* calcblocrecal[64]; //C2748
 calcbloc_func_t* calcbloc1[64]; //C2848
 calcbloc_func_t* calcbloc2[64]; //C2948
@@ -1730,11 +1730,11 @@ options_jeu_t options_jeu_save; //C2F58
 options_jeu_t options_jeu; //C2F78
 
 u32 gros_patai_src[1200]; //C2FA8
-i32 block_add[1200]; //C4268
+s32 block_add[1200]; //C4268
 u8* PLANVIGBIT[8]; //C5528
-i32 planVigbit_length[8]; //C5548
+s32 planVigbit_length[8]; //C5548
 rgb_palette_t rvb_Vig[8]; //C5568
-i32 planVigbit_nb_bytes[8]; //C6D68
+s32 planVigbit_nb_bytes[8]; //C6D68
 rgb_palette_t rvb_save; //C6D88
 rgb_palette_t rvb_pres; //C7088
 u16 rvb_fade[256 * 3]; //C7388
@@ -1742,22 +1742,22 @@ rgb_palette_t current_rvb; //C7988
 rgb_palette_t rvb_plan3; //C7C88
 rgb_palette_t rvb[3]; //C7F88
 
-i16 notbut[4]; //C97F0
-i16 SNSEQ_list[256]; //C97F8
+s16 notbut[4]; //C97F0
+s16 SNSEQ_list[256]; //C97F8
 grp_star_t grp_stars[30]; //C99F8
-i16 invpy0[8]; //C9A70
+s16 invpy0[8]; //C9A70
 pix_gerbe_t pix_gerbe[8]; //C9A80 // 2568 == 321*8
-i16 invpx0[8]; //CAE90
-i16 invpy200[8]; //CAEA0
-i16 nb_floc[8]; //CAEB0
-i16 invpx320[8]; //CAEC0
-i16 SNSEQ_len[64]; //CAED0
+s16 invpx0[8]; //CAE90
+s16 invpy200[8]; //CAEA0
+s16 nb_floc[8]; //CAEB0
+s16 invpx320[8]; //CAEC0
+s16 SNSEQ_len[64]; //CAED0
 record_t record; //CAF50
-i16 tot_nb_flocs[8]; //CAF68
-i16 floc_ind[8]; //CAF78
+s16 tot_nb_flocs[8]; //CAF68
+s16 floc_ind[8]; //CAF78
 u8 wi_save_zone[24]; //CAF88
 u8 save_zone[2592]; //CAFA0
-i16 allowed_time[192]; //CB9C0
+s16 allowed_time[192]; //CB9C0
 u8 bonus_perfect[24]; //CBB40
 display_item_t msg_to_display[2]; //CBB58
 display_item_t menu_to_display[10]; //CBD08
@@ -1768,56 +1768,56 @@ level_obj_t level_obj; //CCDFC
 u8 ecroule_rubis_list[8]; //CCE00
 u8 saveobj[64+3]; //CCE08 //NOTE: originally 64 bytes - I added some safety bytes because read/set2bits might access out of bounds
 eta_t** loaded_eta[100]; //CCE48
-i32 MapTimePause; //CCFD8
+s32 MapTimePause; //CCFD8
 char CheminSauvegarde[100]; //CCFDC
-i32 Port; //CD040
-i32 DeviceID; //CD044
-i32 Irq; //CD048
-i32 Param; //CD04C
-i32 Dma; //CD050
+s32 Port; //CD040
+s32 DeviceID; //CD044
+s32 Irq; //CD048
+s32 Param; //CD04C
+s32 Dma; //CD050
 u32 nb_blocks_plein; //CD054
 u32 nb_total_blocks; //CD058
 u32 RaymanExeSize; //CD05C
-i32 Bloc_lim_W2_Aff; //CD060
-i32 Bloc_lim_W1_Aff; //CD064
+s32 Bloc_lim_W2_Aff; //CD060
+s32 Bloc_lim_W1_Aff; //CD064
 u32 RaymanExeCheckSum2; //CD068
 u32 RaymanExeCheckSum3; //CD06C
 u32 RaymanExeCheckSum1; //CD070
-i32 Bloc_lim_H2_Glob; //CD074
-i32 Bloc_lim_H1_Glob; //CD078
-i32 Bloc_lim_W2_Glob; //CD07C
-i32 Bloc_lim_W1_Glob; //CD080
-i32 Bloc_lim_H2_Aff; //CD084
-i32 Bloc_lim_H1_Aff; //CD088
-i32 TailleStageNameLevel; //CD08C
-i32 CouleurStageNameLevel; //CD090
-i32 TailleStageNameWorld; //CD094
-i32 Bloc_lim_W2; //CD098
-i32 Bloc_lim_W1; //CD09C
-i32 Bloc_lim_H2; //CD0A0
-i32 Bloc_lim_H1; //CD0A4
-i32 CouleurStageNameWorld; //CD0A8
-i32 HauteurJumelle; //CD0AC
-i32 LargeurJumelle; //CD0B0
-i32 JumelleZoomAmp; //CD0B4
+s32 Bloc_lim_H2_Glob; //CD074
+s32 Bloc_lim_H1_Glob; //CD078
+s32 Bloc_lim_W2_Glob; //CD07C
+s32 Bloc_lim_W1_Glob; //CD080
+s32 Bloc_lim_H2_Aff; //CD084
+s32 Bloc_lim_H1_Aff; //CD088
+s32 TailleStageNameLevel; //CD08C
+s32 CouleurStageNameLevel; //CD090
+s32 TailleStageNameWorld; //CD094
+s32 Bloc_lim_W2; //CD098
+s32 Bloc_lim_W1; //CD09C
+s32 Bloc_lim_H2; //CD0A0
+s32 Bloc_lim_H1; //CD0A4
+s32 CouleurStageNameWorld; //CD0A8
+s32 HauteurJumelle; //CD0AC
+s32 LargeurJumelle; //CD0B0
+s32 JumelleZoomAmp; //CD0B4
 void_func_t* drawflocon6NormalETX; //CD0B8
 void_func_t* drawflocon7NormalETX; //CD0BC
-i32 JumellePosY; //CD0C0
-i32 JumellePosX; //CD0C4
-i32* JumelleZoomDef; //CD0C8
-i32 LongueurStageNameWorld; //CD0CC
-i32 LongueurStageNameLevel; //CD0D0
+s32 JumellePosY; //CD0C0
+s32 JumellePosX; //CD0C4
+s32* JumelleZoomDef; //CD0C8
+s32 LongueurStageNameWorld; //CD0CC
+s32 LongueurStageNameLevel; //CD0D0
 void_func_t* drawpluie7NormalETX; //CD0D4
 void_func_t* drawpluie4NormalETX; //CD0D8
-i32 JumelleYMin; //CD0DC
+s32 JumelleYMin; //CD0DC
 void_func_t* drawpluie5NormalETX; //CD0E0
-i32 JumelleXMin; //CD0E4
+s32 JumelleXMin; //CD0E4
 void_func_t* drawflocon4NormalETX; //CD0E8
-i32 RayonJumelle; //CD0EC
+s32 RayonJumelle; //CD0EC
 void_func_t* drawpluie6NormalETX; //CD0F0
 draw_func_t* DrawSpriteNoClipNormalEtX; //CD0F4
 draw_func_t* DrawSpriteColorNormalEtX; //CD0F8
-i32 BufferNormalDeplt; //CD0FC
+s32 BufferNormalDeplt; //CD0FC
 fplot_func_t* fplotNormalETX; //CD100
 void_func_t* drawflocon5NormalETX; //CD104
 void_func_t* drawflocon2NormalETX; //CD108
@@ -1827,11 +1827,11 @@ draw_func_t* DrawSpriteFlipNoClipNormalEtX; //CD114
 draw_func_t* DrawSpriteFlipNormalEtX; //CD118
 draw_func_t* DrawSpriteColorFlipNormalEtX; //CD11C
 swap_func_t* Swap_And_Test_Joystick; //CD120
-void (*Copy_Plan0_To_Buf)(u8* source, u8* dest, i32 width, i32 height, i32 a5); //CD124
+void (*Copy_Plan0_To_Buf)(u8* source, u8* dest, s32 width, s32 height, s32 a5); //CD124
 u8* DrawBufferNormalIni; //CD128
 void_func_t* drawflocon3NormalETX; //CD12C
 u8* EffetBufferNormal; //CD130
-i32 TempsDemo; //CD134
+s32 TempsDemo; //CD134
 u8* DrawBufferNormal; //CD138
 void (*anim_func)(void); //CD13C
 
@@ -1842,21 +1842,21 @@ u8* draw_buffer; //CD7B8
 u32 new_sprite_deform; //CD7BC
 u8* PLANTMPBIT; //CD7C0
 u8* blocks_code; //CD7C4
-i32 plantmp_length; //CD7C8
-i32 plantmp_nb_bytes; //CD7CC
+s32 plantmp_length; //CD7C8
+s32 plantmp_nb_bytes; //CD7CC
 u8* display_buffer; //CD7D0
 x_texture_t* gros_patai_block; //CD7D4
 char world_filename[20]; //CD7D8
-i32 plan2_width; //CD7EC
-i32 plan3bit_nb_bytes; //CD7F0
+s32 plan2_width; //CD7EC
+s32 plan3bit_nb_bytes; //CD7F0
 u32 dword_CD7F4; //CD7F4
-i32 plan2bit_length; //CD7F8
-i32 plan2bit_nb_bytes; //CD7FC
+s32 plan2bit_length; //CD7F8
+s32 plan2bit_nb_bytes; //CD7FC
 u8* PLAN0; //CD800
 u8* PLAN2; //CD804
-i32 plan0bit_length; //CD808
+s32 plan0bit_length; //CD808
 char level_filename[20]; //CD80C
-i32 plan3bit_length; //CD820
+s32 plan3bit_length; //CD820
 u8* PLAN0BIT; //CD824
 u8* PLAN2BIT; //CD828
 u8* PLAN3BIT; //CD82C
@@ -1868,12 +1868,12 @@ rgb_palette_t* rvb_special; //CD83C
 u32 TailleMainMemLevel; //CD844
 u32 TailleMainMemSprite; //CD848
 mem_t* main_mem_level; //CD84C
-i32 cdTimeStart; //CD858
-i32 cdTime; //CD85C
+s32 cdTimeStart; //CD858
+s32 cdTime; //CD85C
 mem_t* main_mem_sprite; //CD860
 
 u32 TailleMainMemTmp; //CD86C
-i32 cdTimeEnd; //CD870
+s32 cdTimeEnd; //CD870
 mem_t* main_mem_fix; //CD874
 
 mem_t* main_mem_world; //CD880
@@ -1881,18 +1881,18 @@ mem_t* temp_mem_buf; //CD88C
 u32 TailleMainMemFix; //CD898
 u32 TailleMainMemWorld; //CD89C
 mem_t* main_mem_tmp; //CD8A0
-i32 nb_wiz_save; //CD8AC
+s32 nb_wiz_save; //CD8AC
 loadinforay_t LoadInfoRay[3]; //CD8B0
 flocon_t* flocon_tab; //CD8BC
-i32 map_time; //CD8C0
-i32 left_time; //CD8C4
+s32 map_time; //CD8C0
+s32 left_time; //CD8C4
 obj_t* lidol_source_obj; //CD8C8
 obj_t mapobj[25]; //CD8CC
-i32 bossSpeedFactor; //CE5B0
-i32 alternateBossSpeedFactor; //CE5B4
-i16 pos_stack[10]; //CE5B8
-i16 cymbal_obj_id[2]; //CE5CC
-i16 scroll_obj_id[50]; //CE5D0
+s32 bossSpeedFactor; //CE5B0
+s32 alternateBossSpeedFactor; //CE5B4
+s16 pos_stack[10]; //CE5B8
+s16 cymbal_obj_id[2]; //CE5CC
+s16 scroll_obj_id[50]; //CE5D0
 obj_t* ScrollDiffSprites; //CE634
 map_data_t mp; //CE638
 obj_t* alpha_numbers; //CE644
@@ -1903,7 +1903,7 @@ obj_t* star_ray_der; //CE6D8
 obj_t* poing_obj; //CE6DC
 obj_t* alpha; //CE6E0
 u8* alpha_image_atlas; //CE6E4
-i16 alpha_sprite_count; //CE6E8
+s16 alpha_sprite_count; //CE6E8
 obj_t div_obj; //CE6EC
 poing_t poing; //CE770
 obj_t bigray; //CE784
@@ -1913,230 +1913,230 @@ save_state_t save2; //CEAE8
 obj_t clockobj; //CED44
 obj_t* alpha2; //CEDC8
 u8* alpha2_image_atlas; //CEDCC
-i16 alpha2_sprite_count; //CEDD0
+s16 alpha2_sprite_count; //CEDD0
 obj_t rms; //CEDD4
-i16* link_init; //CEE58
+s16* link_init; //CEE58
 obj_t raytmp; //CEE5C
 u8 skops_lave_obj[20]; //CEEE0
-i32 pixels_enfonce; //CEEF4
+s32 pixels_enfonce; //CEEF4
 
-i8 Plan0NumPcx[10]; //CEF47
+s8 Plan0NumPcx[10]; //CEF47
 status_bar_t status_bar; //CEF52
 active_objects_t actobj; //CEF5C
 ray_stack_t rayStack[101]; //CF026
-i16 numero_palette_special; //CF740
-i16 ProchainEclair; //CF742
-i16 joyy0; //CF744
-i16 joyx0; //CF746
-i16 xpadmax; //CF748
-i16 ypadmax; //CF74A
-i16 ypadcentre; //CF74C
-i16 xpadcentre; //CF74E
-i16 xpadmin; //CF750
-i16 ypadmin; //CF752
-i16 option_exit; //CF754
-i16 LEFT_MAP_BORDER; //CF756
-i16 xmapmaxini; //CF758
-i16 RIGHT_MAP_BORDER; //CF75A
-i16 ymapmaxini; //CF75C
-i16 HeightNworld; //CF75E
-i16 WidthNworld; //CF760
+s16 numero_palette_special; //CF740
+s16 ProchainEclair; //CF742
+s16 joyy0; //CF744
+s16 joyx0; //CF746
+s16 xpadmax; //CF748
+s16 ypadmax; //CF74A
+s16 ypadcentre; //CF74C
+s16 xpadcentre; //CF74E
+s16 xpadmin; //CF750
+s16 ypadmin; //CF752
+s16 option_exit; //CF754
+s16 LEFT_MAP_BORDER; //CF756
+s16 xmapmaxini; //CF758
+s16 RIGHT_MAP_BORDER; //CF75A
+s16 ymapmaxini; //CF75C
+s16 HeightNworld; //CF75E
+s16 WidthNworld; //CF760
 u16 SauveRayEvtsDemo; //CF762
-i16 nb_credits_lines; //CF764
-i16 snd_flag_medaillon; //CF766
-i16 RunTimeDemo; //CF768
-i16 NumDemo; //CF76A
-i16 animation_attente; //CF76C
-i16 basex; //CF76E
-i16 compteur_clignote; //CF772
-i16 compteur_attente; //CF774
-i16 sortie_save; //CF776
-i16 realisation_effectuee; //CF778
-i16 delai_stereo; //CF77A
-i16 selection_effectuee; //CF77C
-i16 repetition; //CF77E
-i16 vignet_joe_affichee; //CF780
-i16 clignotement; //CF782
-i16 fin_saisie_nom; //CF784
-i16 joe_exp_probleme; //CF786
-i16 fichier_existant; //CF788
-i16 compteur; //CF78A
-i16 position; //CF78C
-i16 sortie_options; //CF78E
-i16 affiche_bon_ecran; //CF790
-i16 delai_barre; //CF792
-i16 max_compteur; //CF794
-i16 prise_branchee; //CF796
-i16 max_sound; //CF798
-i16 delai_repetition; //CF79A
-i16 ecart_barre; //CF79C
-i16 word_CF79E; //CF79E
-i16 action; //CF7A2
-i16 nbre_options; //CF7A4
-i16 positiony2; //CF7A6
-i16 old_x_luc; //CF7A8
-i16 positionx2; //CF7AA
-i16 debut_titre; //CF7AC
-i16 old_y_luc; //CF7AE
-i16 choix_menu; //CF7B0
-i16 ADDLUCLIP; //CF7B2
-i16 ecarty; //CF7B4
-i16 ecartx; //CF7B6
-i16 debut_sortie; //CF7B8
-i16 ecart_options; //CF7BA
-i16 fichier_selectionne; //CF7BC
-i16 positiony; //CF7BE
-i16 positionx; //CF7C0
-i16 fichier_a_copier; //CF7C2
-i16 debut_options; //CF7C4
-i16 rayon_luciole; //CF7C6
-i16 x_luc; //CF7C8
-i16 y_luc; //CF7CA
-i16 coeffktxt; //CF7CC
-i16 y_main_luc; //CF7CE
-i16 x_main_luc; //CF7D0
-i16 vx_luc; //CF7D2
-i16 n_ray; //CF7D4
-i16 vy_luc; //CF7D6
-i16 ktxtenx; //CF7D8
-i16 ktxteny; //CF7DA
-i16 rotationtxt; //CF7DC
-i16 plan0_width; //CF7DE
-i16 yp0; //CF7E0
-i16 plan2_height; //CF7E2
-i16 plan0_height; //CF7E4
-i16 word_CF7E6; //CF7E6
-i16 display_mode; //CF7E8
-i16 fade_speed; //CF7EA
-i16 word_CF7EE; //CF7EE
-i16 word_CF7F0; //CF7F0
-i16 joy_buttonB1; //CF7F2
-i16 joy_buttonB2; //CF7F4
-i16 joy_buttonA1; //CF7F6
-i16 joy_buttonA2; //CF7F8
-i16 SNSEQ_list_ptr; //CF7FA
-i16 current_star; //CF7FC
-i16 SNSEQ_ptr; //CF7FE
-i16 SNSEQ_no; //CF800
-i16 MapAvecPluieOuNeige; //CF802
-i16 skops_ecroule_plat; //CF804
-i16 bonus_map; //CF806
-i16 bateau_obj_id; //CF808
-i16 sko_nb_hit; //CF80A
-i16 mama_pirate_obj_id; //CF80C
-i16 sko_nb_frap; //CF80E
-i16 loop_time; //CF810
-i16 bat_nb_frap; //CF812
-i16 cb_ball_obj_id; //CF814
-i16 sko_phase; //CF816
+s16 nb_credits_lines; //CF764
+s16 snd_flag_medaillon; //CF766
+s16 RunTimeDemo; //CF768
+s16 NumDemo; //CF76A
+s16 animation_attente; //CF76C
+s16 basex; //CF76E
+s16 compteur_clignote; //CF772
+s16 compteur_attente; //CF774
+s16 sortie_save; //CF776
+s16 realisation_effectuee; //CF778
+s16 delai_stereo; //CF77A
+s16 selection_effectuee; //CF77C
+s16 repetition; //CF77E
+s16 vignet_joe_affichee; //CF780
+s16 clignotement; //CF782
+s16 fin_saisie_nom; //CF784
+s16 joe_exp_probleme; //CF786
+s16 fichier_existant; //CF788
+s16 compteur; //CF78A
+s16 position; //CF78C
+s16 sortie_options; //CF78E
+s16 affiche_bon_ecran; //CF790
+s16 delai_barre; //CF792
+s16 max_compteur; //CF794
+s16 prise_branchee; //CF796
+s16 max_sound; //CF798
+s16 delai_repetition; //CF79A
+s16 ecart_barre; //CF79C
+s16 word_CF79E; //CF79E
+s16 action; //CF7A2
+s16 nbre_options; //CF7A4
+s16 positiony2; //CF7A6
+s16 old_x_luc; //CF7A8
+s16 positionx2; //CF7AA
+s16 debut_titre; //CF7AC
+s16 old_y_luc; //CF7AE
+s16 choix_menu; //CF7B0
+s16 ADDLUCLIP; //CF7B2
+s16 ecarty; //CF7B4
+s16 ecartx; //CF7B6
+s16 debut_sortie; //CF7B8
+s16 ecart_options; //CF7BA
+s16 fichier_selectionne; //CF7BC
+s16 positiony; //CF7BE
+s16 positionx; //CF7C0
+s16 fichier_a_copier; //CF7C2
+s16 debut_options; //CF7C4
+s16 rayon_luciole; //CF7C6
+s16 x_luc; //CF7C8
+s16 y_luc; //CF7CA
+s16 coeffktxt; //CF7CC
+s16 y_main_luc; //CF7CE
+s16 x_main_luc; //CF7D0
+s16 vx_luc; //CF7D2
+s16 n_ray; //CF7D4
+s16 vy_luc; //CF7D6
+s16 ktxtenx; //CF7D8
+s16 ktxteny; //CF7DA
+s16 rotationtxt; //CF7DC
+s16 plan0_width; //CF7DE
+s16 yp0; //CF7E0
+s16 plan2_height; //CF7E2
+s16 plan0_height; //CF7E4
+s16 word_CF7E6; //CF7E6
+s16 display_mode; //CF7E8
+s16 fade_speed; //CF7EA
+s16 word_CF7EE; //CF7EE
+s16 word_CF7F0; //CF7F0
+s16 joy_buttonB1; //CF7F2
+s16 joy_buttonB2; //CF7F4
+s16 joy_buttonA1; //CF7F6
+s16 joy_buttonA2; //CF7F8
+s16 SNSEQ_list_ptr; //CF7FA
+s16 current_star; //CF7FC
+s16 SNSEQ_ptr; //CF7FE
+s16 SNSEQ_no; //CF800
+s16 MapAvecPluieOuNeige; //CF802
+s16 skops_ecroule_plat; //CF804
+s16 bonus_map; //CF806
+s16 bateau_obj_id; //CF808
+s16 sko_nb_hit; //CF80A
+s16 mama_pirate_obj_id; //CF80C
+s16 sko_nb_frap; //CF80E
+s16 loop_time; //CF810
+s16 bat_nb_frap; //CF812
+s16 cb_ball_obj_id; //CF814
+s16 sko_phase; //CF816
 rayevts_t SauveRayEvts; //CF818
 rayevts_t RayEvts; //CF81A
 u16 ZDCPTR; //CF81C
 finbosslevel_t finBosslevel; //CF81E
-i16 floorLine; //CF820
-i16 png_or_fee_id; //CF822
-i16 loop_nb_trames; //CF824
-i16 loop_timing; //CF826
-i16 VENT_Y; //CF828
-i16 VENT_X; //CF82A
-i16 id_Cling_1up; //CF82C
-i16 num_level_choice; //CF82E
-i16 id_Cling_Old; //CF830
-i16 ywldmapsave; //CF832
-i16 xwldmapsave; //CF834
-i16 PROJ_CENTER_Y; //CF836
-i16 PROJ_CENTER_X; //CF838
-i16 num_world_choice; //CF83A
-i16 ray_speed_inv; //CF83C
-i16 ymapinit; //CF83E
-i16 ray_clic; //CF840
-i16 id_obj_grapped; //CF842
-i16 xmapinit; //CF844
-i16 id_Cling_Pow; //CF846
-i16 ray_between_clic; //CF848
-i16 bossYToReach; //CF84A
-i16 screen_trembling3; //CF84C
-i16 screen_trembling2; //CF84E
-i16 bossXToReach; //CF850
-i16 screen_trembling; //CF852
-i16 scroll_start_y; //CF854
-i16 bossScrollStartY; //CF856
-i16 bossScrollStartX; //CF858
-i16 bossScrollEndX; //CF85A
-i16 bossScrollEndY; //CF85C
-i16 scroll_end_y; //CF85E
-i16 ray_zdc_x; //CF860
-i16 ray_zdc_h; //CF862
-i16 ray_zdc_w; //CF864
-i16 decalage_en_cours; //CF866
-i16 ray_mode; //CF868
-i16 remoteRayXToReach; //CF86A
-i16 scroll_start_x; //CF86E
-i16 ray_wind_force; //CF870
-i16 scroll_end_x; //CF872
-i16 weather_wind; //CF874
-i16 ray_zdc_y; //CF876
-i16 mst_scroll_obj_id; //CF878
-i16 NumScrollObj; //CF87A
-i16 num_level; //CF87C
-i16 sbar_obj_id; //CF87E
-i16 new_level; //CF880
-i16 eau_obj_id; //CF882
-i16 ymapmax; //CF884
-i16 reduced_rayman_id; //CF886
-i16 fee_obj_id; //CF888
-i16 poing_obj_id; //CF88A
-i16 num_world; // 0xCF88C
-i16 pierreAcorde_obj_id; // CF88E
-i16 xmapmax; //CF890
-i16 new_world; // 0xCF892
-i16 rayman_obj_id; //CF894
-i16 Mus_obj_id; //CF896
-i16 helico_time; //CF898
+s16 floorLine; //CF820
+s16 png_or_fee_id; //CF822
+s16 loop_nb_trames; //CF824
+s16 loop_timing; //CF826
+s16 VENT_Y; //CF828
+s16 VENT_X; //CF82A
+s16 id_Cling_1up; //CF82C
+s16 num_level_choice; //CF82E
+s16 id_Cling_Old; //CF830
+s16 ywldmapsave; //CF832
+s16 xwldmapsave; //CF834
+s16 PROJ_CENTER_Y; //CF836
+s16 PROJ_CENTER_X; //CF838
+s16 num_world_choice; //CF83A
+s16 ray_speed_inv; //CF83C
+s16 ymapinit; //CF83E
+s16 ray_clic; //CF840
+s16 id_obj_grapped; //CF842
+s16 xmapinit; //CF844
+s16 id_Cling_Pow; //CF846
+s16 ray_between_clic; //CF848
+s16 bossYToReach; //CF84A
+s16 screen_trembling3; //CF84C
+s16 screen_trembling2; //CF84E
+s16 bossXToReach; //CF850
+s16 screen_trembling; //CF852
+s16 scroll_start_y; //CF854
+s16 bossScrollStartY; //CF856
+s16 bossScrollStartX; //CF858
+s16 bossScrollEndX; //CF85A
+s16 bossScrollEndY; //CF85C
+s16 scroll_end_y; //CF85E
+s16 ray_zdc_x; //CF860
+s16 ray_zdc_h; //CF862
+s16 ray_zdc_w; //CF864
+s16 decalage_en_cours; //CF866
+s16 ray_mode; //CF868
+s16 remoteRayXToReach; //CF86A
+s16 scroll_start_x; //CF86E
+s16 ray_wind_force; //CF870
+s16 scroll_end_x; //CF872
+s16 weather_wind; //CF874
+s16 ray_zdc_y; //CF876
+s16 mst_scroll_obj_id; //CF878
+s16 NumScrollObj; //CF87A
+s16 num_level; //CF87C
+s16 sbar_obj_id; //CF87E
+s16 new_level; //CF880
+s16 eau_obj_id; //CF882
+s16 ymapmax; //CF884
+s16 reduced_rayman_id; //CF886
+s16 fee_obj_id; //CF888
+s16 poing_obj_id; //CF88A
+s16 num_world; // 0xCF88C
+s16 pierreAcorde_obj_id; // CF88E
+s16 xmapmax; //CF890
+s16 new_world; // 0xCF892
+s16 rayman_obj_id; //CF894
+s16 Mus_obj_id; //CF896
+s16 helico_time; //CF898
 u16 saveRMjumpY; //CF89A
 u16 saveRMjumpX; //CF89C
-i16 xmap; //CF89E
-i16 departlevel; //CF8A0
-i16 ray_Y_main_pos_init; //CF8A2
-i16 jump_time; //CF8A4
-i16 ymap; //CF8A6
-i16 special_ray_mov_win_x_left; //CF8A8
-i16 ray_X_main_pos_init; //CF8AA
-i16 ymap_old; //CF8AC
-i16 special_ray_mov_win_x_right; //CF8AE
-i16 xmap_old; //CF8B0
-i16 h_scroll_speed; //CF8B2
-i16 v_scroll_speed; //CF8B4
-i16 xmapsave; //CF8B6
-i16 ymapsave; //CF8B8
-i16 scroll_y; //CF8BA
-i16 black_ray_obj_id; //CF8BC
+s16 xmap; //CF89E
+s16 departlevel; //CF8A0
+s16 ray_Y_main_pos_init; //CF8A2
+s16 jump_time; //CF8A4
+s16 ymap; //CF8A6
+s16 special_ray_mov_win_x_left; //CF8A8
+s16 ray_X_main_pos_init; //CF8AA
+s16 ymap_old; //CF8AC
+s16 special_ray_mov_win_x_right; //CF8AE
+s16 xmap_old; //CF8B0
+s16 h_scroll_speed; //CF8B2
+s16 v_scroll_speed; //CF8B4
+s16 xmapsave; //CF8B6
+s16 ymapsave; //CF8B8
+s16 scroll_y; //CF8BA
+s16 black_ray_obj_id; //CF8BC
 u16 black_fist_obj_id; //CF8BE
 u16 final_pass_n; //CF8C0
 u16 final_pass_a; //CF8C2
 u16 ray_old_main_etat; //CF8C4
 u16 final_pass_f; //CF8C6
-i16 moskitomama_gauche_obj_id; //CF8C8
+s16 moskitomama_gauche_obj_id; //CF8C8
 u16 final_pass_x; //CF8CA
-i16 rideau_obj_id; //CF8CC
-i16 corde_dark_obj_id; //CF8CE
-i16 stosko_obj_id; //CF8D0
-i16 scroll_x; //CF8D2
+s16 rideau_obj_id; //CF8CC
+s16 corde_dark_obj_id; //CF8CE
+s16 stosko_obj_id; //CF8D0
+s16 scroll_x; //CF8D2
 u16 ray_old_sub_etat; //CF8D4
-i16 moskitosaxo_obj_id; //CF8D6
-i16 moskitomama_droite_obj_id; //CF8D8
+s16 moskitosaxo_obj_id; //CF8D6
+s16 moskitomama_droite_obj_id; //CF8D8
 u16 nb_fade; //CF8DA
 u16 sko_last_action; //CF8DC
 u16 sko_rayon_on; //CF8DE
-i16 skops_final_y; //CF8E0
-i16 skops_final_x; //CF8E2
+s16 skops_final_y; //CF8E0
+s16 skops_final_x; //CF8E2
 u16 word_CF8E4; //CF8E4
-i16 skops_beam_speed; //CF8E6
-i16 skops_beam_ds; //CF8E8
-i16 skops_beam_dy; //CF8EA
+s16 skops_beam_speed; //CF8E6
+s16 skops_beam_ds; //CF8E8
+s16 skops_beam_dy; //CF8EA
 u16 rubis_list_calculated; //CF8EC
-i16 sko_rayon_x; //CF8EE
-i16 sko_rayon_y; //CF8F0
+s16 sko_rayon_x; //CF8EE
+s16 sko_rayon_y; //CF8F0
 u16 path_has_changed; //CF8F2
 u16 inter_select; //CF8F4
 u8 saved_argv[255]; //CF8F6
@@ -2236,7 +2236,7 @@ u8 saveBossEncounter; //CFA69
 u8 bossReachingTimer; //CFA6A
 u8 bossSafeTimer; //CFA6B
 u8 currentBossActionIsOver; //CFA6C
-i8 laserSourceSprNumInAnim; //CFA6D
+s8 laserSourceSprNumInAnim; //CFA6D
 u8 bossEncounter; //CFA6E
 u8 currentBossAction; //CFA6F
 u8 gerbe; //CFA70
@@ -2284,23 +2284,23 @@ u8 life_becoz_wiz; //CFA99
 u8 nb_fix_eta; //CFA9A
 u8 nb_loaded_eta; //CFA9B
 u8 position_ray; //CFA9C
-i32 CompteurTrameAudio; //CFAA0
+s32 CompteurTrameAudio; //CFAA0
 bb_data_t bb1; //CFAA4
-i16 IndAtak; //CFAB4
-i16 YaDesChiens; //CFAB6
-i16 horlogeDog; //CFAB8
-i16 PierreDoitExploser; //CFABA
-i16 NextAtak; //CFABC
-i16 IndSerie; //CFABE
-i16 RMrepere; //CFAC0
-i16 PosPierre; //CFAC2
-i32 SpeedYLine[10]; //CFAC4
-i32 PosXLine[10]; //CFAEC
-i32 PosYLine[320]; //CFB14
+s16 IndAtak; //CFAB4
+s16 YaDesChiens; //CFAB6
+s16 horlogeDog; //CFAB8
+s16 PierreDoitExploser; //CFABA
+s16 NextAtak; //CFABC
+s16 IndSerie; //CFABE
+s16 RMrepere; //CFAC0
+s16 PosPierre; //CFAC2
+s32 SpeedYLine[10]; //CFAC4
+s32 PosXLine[10]; //CFAEC
+s32 PosYLine[320]; //CFB14
 char bonus_time_display_text[20]; //D0014
 obj_t* dword_D0028; //D0028
 
-i16 p1[21000]; //D002C
+s16 p1[21000]; //D002C
 u8 byte_DA43C[128*128]; //DA43C
 rgb_palette_t MenuPalette; //DE43C
 u8 plasma_palette_color_index; //DE73C
@@ -2314,33 +2314,33 @@ u16 word_DE748; //DE748
 u16 word_DE74A; //DE74A
 u16 word_DE74C; //DE74C
 
-i16 old_num_world_choice; //DE80C
-i16 old_num_level_choice; //DE80E
-i16 CBoffsetXMin; //DE810
-i16 CBoffsetYMin; //DE812
-i16 CBoffsetYMax; //DE814
-i16 CBoffsetXMax; //DE816
-i16 LIMITE_GAUCHE; //DE818
-i16 XOFFSETCBRIGHT; //DE81A
-i16 XOFFSETRAY; //DE81C
-i16 LIMITE_DROITE; //DE81E
-i16 YOFFSETCB; //DE820
-i16 XOFFSETCBLEFT; //DE822
+s16 old_num_world_choice; //DE80C
+s16 old_num_level_choice; //DE80E
+s16 CBoffsetXMin; //DE810
+s16 CBoffsetYMin; //DE812
+s16 CBoffsetYMax; //DE814
+s16 CBoffsetXMax; //DE816
+s16 LIMITE_GAUCHE; //DE818
+s16 XOFFSETCBRIGHT; //DE81A
+s16 XOFFSETRAY; //DE81C
+s16 LIMITE_DROITE; //DE81E
+s16 YOFFSETCB; //DE820
+s16 XOFFSETCBLEFT; //DE822
 u8 nb_collis; //DE824
 
-i16 word_DE8BC; //DE8BC
+s16 word_DE8BC; //DE8BC
 u8 byte_DEEFB; //DEEFB
 
 u8 sav_checksum; //DF70C
 vitraux_info_t VitrauxInfos[5];
-i16 dark_rayon_dy; //DF742
-i16 dark_rayon_dx; //DF744
-i16 corde_x; //DF746
-i16 corde_y_haut; //DF748
-i16 corde_y_bas; //DF74A
+s16 dark_rayon_dy; //DF742
+s16 dark_rayon_dx; //DF744
+s16 corde_x; //DF746
+s16 corde_y_haut; //DF748
+s16 corde_y_bas; //DF74A
 u8 byte_DF74C; //DF74C
 
-i16 level_select; //DF750
+s16 level_select; //DF750
 
 u8 ButtonReleasedSav2; //DF756
 u8 ButtonReleasedSav1; //DF757
@@ -2367,49 +2367,49 @@ u8* cheat_code_freq80; //DF7A8
 u8* cheat_code_lens; //DF7AC
 u8* cheat_code_breakout_before_victory; //DF7B0
 u8* cheat_code_level_select; //DF7B4
-i32 freq_from_cheat_code; //DF7B8
+s32 freq_from_cheat_code; //DF7B8
 u8* cheat_code_freq100; //DF7BC
 
-i32 CompteurEclair; //DFAE0
+s32 CompteurEclair; //DFAE0
 u8* smap; //DFAE4
 
 bnk_header_t bnkHeaderFixe[128]; //DFAF0
 bnk_header_t bnkHeaderWorld[128]; //E02F0
-i32 current_port; //E0AF0
-i32 current_irq; //E0AF4
-i32 current_dma; //E0AF8
-i32 current_param; //E0AFC
+s32 current_port; //E0AF0
+s32 current_irq; //E0AF4
+s32 current_dma; //E0AF8
+s32 current_param; //E0AFC
 u8* TchachPerduPtr; //E0B00
-i32 TchachPerduSize; //E0B04
+s32 TchachPerduSize; //E0B04
 char current_device_name[100]; //E0B0A
-i32 current_device_id; //E0B6E
+s32 current_device_id; //E0B6E
 
 obj_t* dark_obj; //E0B84
 char txt_dark2[100]; //E0B88
 u32 dword_E0BEC; //E0BEC
 u32 dword_E0BF0; //E0BF0
-i16 PosArYToon2; //E0BF4
-i16 PosArXToon2; //E0BF6
-i16 PosArYToon1; //E0BF8
-i16 PosArXToon1; //E0BFA
-i16 flamme_droite_id; //E0BFC
-i16 XText; //E0BFE
-i16 dark2_rayon_dx_1; //E0C00
-i16 dark2_rayon_dx_2; //E0C02
-i16 YText; //E0C04
-i16 dark2_rayon_dy_1; //E0C06
-i16 dark2_rayon_dy_2; //E0C08
-i16 flamme_gauche_id; //E0C0A
-i16 phase_dark2; //E0C0C
-i16 dark2_rayon_2_pos_x; //E0C0E
-i16 dark2_rayon_1_pos_x; //E0C10
-i16 VitesseYText; //E0C12
-i16 temps_text; //E0C14
-i16 dark2_rayon_2_pos_y; //E0C16
-i16 dark2_rayon_1_pos_y; //E0C18
-i16 YPosBBF2D; //E0C1C
-i16 YPosBBF2G; //E0C1E
-i16 NiveauSol; //E0C20
+s16 PosArYToon2; //E0BF4
+s16 PosArXToon2; //E0BF6
+s16 PosArYToon1; //E0BF8
+s16 PosArXToon1; //E0BFA
+s16 flamme_droite_id; //E0BFC
+s16 XText; //E0BFE
+s16 dark2_rayon_dx_1; //E0C00
+s16 dark2_rayon_dx_2; //E0C02
+s16 YText; //E0C04
+s16 dark2_rayon_dy_1; //E0C06
+s16 dark2_rayon_dy_2; //E0C08
+s16 flamme_gauche_id; //E0C0A
+s16 phase_dark2; //E0C0C
+s16 dark2_rayon_2_pos_x; //E0C0E
+s16 dark2_rayon_1_pos_x; //E0C10
+s16 VitesseYText; //E0C12
+s16 temps_text; //E0C14
+s16 dark2_rayon_2_pos_y; //E0C16
+s16 dark2_rayon_1_pos_y; //E0C18
+s16 YPosBBF2D; //E0C1C
+s16 YPosBBF2G; //E0C1E
+s16 NiveauSol; //E0C20
 u8 ToonJustGivePoing; //E0C22
 u8 sinus_actif; //E0C23
 u8 num_dark2_phrase; //E0C24
@@ -2422,36 +2422,36 @@ u8 Touche_Enfoncee[128]; //E0C30
 void_func_t* Read_Input_Func; //E0CB0
 void* saved_keyboard_interrupt_handler; //E0CB4
 
-i16 joy_rec_up; //E0CBC
-i16 bux11; //E0CBE
-i16 joy_rec_right; //E0CC0
-i16 bux10; //E0CC2
-i16 bux01; //E0CC4
-i16 bux00; //E0CC6
-i16 joy_rec_down; //E0CC8
-i16 auto_joy_left; //E0CCA (?)
-i16 auto_joy_up; //E0CCC (?)
-i16 joy_rec_left; //E0CCE
-i16 word_E0CD0; //E0CD0
-i16 auto_joy_down; //E0CD2 (?)
-i16 word_E0CD4; //E0CD4
-i16 auto_joy_right; //E0CD6 (?)
-i16 word_E0CD8; //E0CD8
-i32 PositionJumelleDemandeY; //E0CDC
-i32 PositionJumelleDemandeX; //E0CE0
-i32 PositionJumelleY16; //E0CE4
-i32 PositionJumelleX16; //E0CE8
-i32 Xmap16; //E0CEC
-i32 Ymap16; //E0CF0
-i32 ModeAutoPosXJumelle; //E0CF4
-i32 ModeAutoPosYJumelle; //E0CF8
-i32 ModeAutoJumelleZoomAmp; //E0CFC
-i32 ModeAutoRayonJumelle; //E0D00
-i32* DistPointY; //E0D04
-i32* DistPointX; //E0D08
-i32 CompteurJumelle; //E0D0C
-i32* ExpPoint; //E0D10
-i32 dword_E0D14; //E0D14
+s16 joy_rec_up; //E0CBC
+s16 bux11; //E0CBE
+s16 joy_rec_right; //E0CC0
+s16 bux10; //E0CC2
+s16 bux01; //E0CC4
+s16 bux00; //E0CC6
+s16 joy_rec_down; //E0CC8
+s16 auto_joy_left; //E0CCA (?)
+s16 auto_joy_up; //E0CCC (?)
+s16 joy_rec_left; //E0CCE
+s16 word_E0CD0; //E0CD0
+s16 auto_joy_down; //E0CD2 (?)
+s16 word_E0CD4; //E0CD4
+s16 auto_joy_right; //E0CD6 (?)
+s16 word_E0CD8; //E0CD8
+s32 PositionJumelleDemandeY; //E0CDC
+s32 PositionJumelleDemandeX; //E0CE0
+s32 PositionJumelleY16; //E0CE4
+s32 PositionJumelleX16; //E0CE8
+s32 Xmap16; //E0CEC
+s32 Ymap16; //E0CF0
+s32 ModeAutoPosXJumelle; //E0CF4
+s32 ModeAutoPosYJumelle; //E0CF8
+s32 ModeAutoJumelleZoomAmp; //E0CFC
+s32 ModeAutoRayonJumelle; //E0D00
+s32* DistPointY; //E0D04
+s32* DistPointX; //E0D08
+s32 CompteurJumelle; //E0D0C
+s32* ExpPoint; //E0D10
+s32 dword_E0D14; //E0D14
 obj_t wldobj[100]; //E0D18
 u8 sp_y; //E40A9
 
@@ -2472,32 +2472,32 @@ void (*pCOMMANDE_BOX)(void); //E4CD4
 u8 byte_E4CD8; //E4CD8
 u8 byte_E4CD9; //E4CD9
 
-i16 word_E4CE0; //E4CE0
-i16 hFondu; //E4CE2
-i16 xFondu; //E4CE4
-i16 yFondu; //E4CE6
-i16 wFondu; //E4CE8
-i16 EtapeFondu; //E4CEA
-i16 word_E4CEC_x; //E4CEC
-i16 word_E4CEE_h; //E4CEE
-i16 word_E4CF0_y; //E4CF0
-i16 VideoSpeed; //E4CF2
-i16 word_E4CF4_w; //E4CF4
+s16 word_E4CE0; //E4CE0
+s16 hFondu; //E4CE2
+s16 xFondu; //E4CE4
+s16 yFondu; //E4CE6
+s16 wFondu; //E4CE8
+s16 EtapeFondu; //E4CEA
+s16 word_E4CEC_x; //E4CEC
+s16 word_E4CEE_h; //E4CEE
+s16 word_E4CF0_y; //E4CF0
+s16 VideoSpeed; //E4CF2
+s16 word_E4CF4_w; //E4CF4
 u8 but_options[4]; //E4CF6
 u8 InOut; //E4CFB
 u8 byte_E4CFC; //E4CFC
 u8 byte_E4CFD; //E4CFD
 u8 byte_E4CFE; //E4CFE
 
-i16 droppedBombIds[64]; //E4D00
+s16 droppedBombIds[64]; //E4D00
 u8 lastDroppedBombIdInSequence[8]; //E4D80
 u32 dword_E4D88; //E4D88
-i16 mereDenis_weapon_id; //E4D8C
-i16 lastDroppedBombXCenterPos; //E4D8E
-i16 machine_obj_id; //E4D90
-i16 circle_x; //E4D92
-i16 circle_y; //E4D94
-i16 circle_index; //E4D96
+s16 mereDenis_weapon_id; //E4D8C
+s16 lastDroppedBombXCenterPos; //E4D8E
+s16 machine_obj_id; //E4D90
+s16 circle_x; //E4D92
+s16 circle_y; //E4D94
+s16 circle_index; //E4D96
 u8 byte_E4D98; //E4D98
 u8 currentLaserSize; //E4D99
 u8 currentPhaseHitCounter; //E4D9A
@@ -2506,50 +2506,50 @@ u8 currentBombSequence; //E4D9C
 u8 curAct; //E4DA0
 u8 fistAvoided; //E4DA1
 u8 mstMustLeaveScreenToProceed; //E4DA2
-i16 ot; //E4DA4
+s16 ot; //E4DA4
 u8 oldPrio; //E4DA6
 u32 dword_E4DA8; //E4DA8
 
-i16 cou_tempo; //E4E10
-i16 pma_tempo; //E4E12
-i16 pma_touched; //E4E14
-i16 pma_nb_couteau; //E4E15
-i16 pma_phase; //E4E16
-i16 pma_attaque; //E4E17
-i16 cou_place; //E4E18
-i16 pma_groupe; //E4E19
-i16 pma_type_attaque; //E4E1A
+s16 cou_tempo; //E4E10
+s16 pma_tempo; //E4E12
+s16 pma_touched; //E4E14
+s16 pma_nb_couteau; //E4E15
+s16 pma_phase; //E4E16
+s16 pma_attaque; //E4E17
+s16 cou_place; //E4E18
+s16 pma_groupe; //E4E19
+s16 pma_type_attaque; //E4E1A
 
-i16* anim_sequence; //E4E78
+s16* anim_sequence; //E4E78
 
-i32 RandomIndex; //E548C
-i16 stk_obj[20]; //E5490
-i16 stk_snd[20]; //E54B8
+s32 RandomIndex; //E548C
+s16 stk_obj[20]; //E5490
+s16 stk_snd[20]; //E54B8
 pile_snd_t pile_snd[9]; //E5490
 
 voice_t voice_table[32]; //E55D0
 
-i16 indice_ray_wait; //E5750
-i16 indice_trz_wait; //E5754
-i16 pt_pile_snd; //E5756
-i16 indice_snd_wiz; //E575A
+s16 indice_ray_wait; //E5750
+s16 indice_trz_wait; //E5754
+s16 pt_pile_snd; //E5756
+s16 indice_snd_wiz; //E575A
 
 sax_attack_entry_t attaque; //E5764
 sax_data_t Sax; //E5768
 
-i16 IndexSerie; //E577A
-i16 IndexAtak; //E577C
-i16 SaxMarche; //E577E
+s16 IndexSerie; //E577A
+s16 IndexAtak; //E577C
+s16 SaxMarche; //E577E
 u8 NextNote; //E5780
 bande_t Bande[300]; //E5784
 def_sprite_t Sprite[20]; //E73A4
-i16 Val_Div_Scroll_Y; //E7444
-i16 NbSprite; //E7446
-i16 Val_Add_Scroll_Y; //E7448
-i16 NbBande; //E744A
-i16 Num_Fond; //E744C
-i32 skops_screen_tremble; //E7450
-i16 PosLave_Y; //E7454
+s16 Val_Div_Scroll_Y; //E7444
+s16 NbSprite; //E7446
+s16 Val_Add_Scroll_Y; //E7448
+s16 NbBande; //E744A
+s16 Num_Fond; //E744C
+s32 skops_screen_tremble; //E7450
+s16 PosLave_Y; //E7454
 
-i32 OffsetSpriteWorld; //E7470
-i32 OffsetSpriteFixe; //E7474
+s32 OffsetSpriteWorld; //E7470
+s32 OffsetSpriteFixe; //E7474

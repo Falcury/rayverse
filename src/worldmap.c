@@ -2,7 +2,7 @@
 // NOTE: unsure about the source filename
 
 //67860
-void TEST_DISPLAY_PTS_WAY(i16 world, i16 connected_world, i16 xpos, i16 ypos) {
+void TEST_DISPLAY_PTS_WAY(s16 world, s16 connected_world, s16 xpos, s16 ypos) {
     if (world != connected_world) {
         world_info_t* connected_world_info = t_world_info + connected_world;
         if ((connected_world_info->state & 2) == 0) {
@@ -17,11 +17,11 @@ void TEST_DISPLAY_PTS_WAY(i16 world, i16 connected_world, i16 xpos, i16 ypos) {
 
 //678E8
 void DISPLAY_PTS_WAY(void) {
-    for (i16 i = 0; i < 24; ++i) {
+    for (s16 i = 0; i < 24; ++i) {
         world_info_t* world_info = t_world_info + i;
         world_info->state &= ~2;
     }
-    for (i16 i = 0; i < 24; ++i) {
+    for (s16 i = 0; i < 24; ++i) {
         world_info_t* world_info = t_world_info + i;
         if (world_info->state & 1) {
             TEST_DISPLAY_PTS_WAY(i, world_info->index_up, world_info->xpos, world_info->ypos);
@@ -35,7 +35,7 @@ void DISPLAY_PTS_WAY(void) {
 
 //6799C
 void DISPLAY_PLAT_WAY(void) {
-    for (i32 i = 0; i < 24; ++i) {
+    for (s32 i = 0; i < 24; ++i) {
         world_info_t* world_info = t_world_info + i;
         obj_t* obj = mapobj + i;
         if ((world_info->state & 1) || i == 17) {
@@ -43,9 +43,9 @@ void DISPLAY_PLAT_WAY(void) {
             display2(obj); // seems to be DISPLAY_PLATEAU() inlined
 
             // NOTE: disabling clipping for now
-            /*i32 x = obj->screen_x + obj->offset_bx + 8;
+            /*s32 x = obj->screen_x + obj->offset_bx + 8;
             if (x > -8 && x < LargeurJumelle + 14) {
-                i32 y = obj->screen_y + obj->offset_by;
+                s32 y = obj->screen_y + obj->offset_by;
                 if (y > -10 && y < HauteurJumelle + 12) {
                     display2(obj); // seems to be DISPLAY_PLATEAU() inlined
                 }
@@ -78,7 +78,7 @@ void DO_MEDAILLONS(void) {
     if (chemin_percent < 128 && (horloge[2] != 0 || ALL_WORLD)) {
         ++chemin_percent;
     }
-    for (i32 i = 0; i < COUNT(t_world_info); ++i) {
+    for (s32 i = 0; i < COUNT(t_world_info); ++i) {
         world_info_t* world_info = t_world_info + i;
         obj_t* obj = mapobj + i;
         if ((world_info->state & 4) || (world_info->state & 2)) {
@@ -123,7 +123,7 @@ void DO_MEDAILLONS(void) {
     }
     if (unlocked) {
         chemin_percent = 0;
-        for (i32 i = 0; i < COUNT(t_world_info); ++i) {
+        for (s32 i = 0; i < COUNT(t_world_info); ++i) {
             world_info_t* world_info = t_world_info + i;
             if (!(world_info->state & 2) && (world_info->state & 1)) {
                 world_info->state |= 2;
@@ -149,7 +149,7 @@ void INIT_LEVEL_STAGE_NAME(void) {
 
 //67E40
 void INIT_WORLD_STAGE_NAME(void) {
-    i8 new_color = 0;
+    s8 new_color = 0;
     switch (t_world_info[num_world_choice].world) {
         case 1: {
             strcpy(text_to_display[2].text, language_txt[24]); // /the dream forest/
@@ -267,7 +267,7 @@ void DO_STAGE_NAMES(void) {
 
 //68BC0
 void INIT_WORLD_INFO(void) {
-    for (i32 i = 0; i < 24; ++i) {
+    for (s32 i = 0; i < 24; ++i) {
         t_world_info[i].text = language_txt[i];
     }
     num_world = 0;
@@ -320,7 +320,7 @@ void INIT_CHEMIN(void) {
     set_zoom_mode(0);
     chemin_percent = 0;
     Nb_total_cages = 0;
-    for (i32 i = 0; i < 24; ++i) {
+    for (s32 i = 0; i < 24; ++i) {
         obj_t* medaillon = mapobj + i;
         world_info_t* world_info = t_world_info + i;
         medaillon->type = TYPE_54_MEDAILLON;
@@ -330,7 +330,7 @@ void INIT_CHEMIN(void) {
         if (world_info->state & 4) {
             medaillon->init_sub_etat = 46;
         } else {
-            i32 cages = world_info->nb_cages;
+            s32 cages = world_info->nb_cages;
             if (cages != 0) {
                 Nb_total_cages += cages;
                 if (cages == 6) {
@@ -466,15 +466,15 @@ void DO_RAYMAN_IN_WLD_MAP(void) {
             }
         }
     } else {
-        i16 diff_x = t_world_info[num_world_choice].xpos - t_world_info[old_num_world].xpos;
-        i16 diff_y = t_world_info[num_world_choice].ypos - t_world_info[old_num_world].ypos;
+        s16 diff_x = t_world_info[num_world_choice].xpos - t_world_info[old_num_world].xpos;
+        s16 diff_y = t_world_info[num_world_choice].ypos - t_world_info[old_num_world].ypos;
         if (diff_x < 0) {
             ray.flags.flip_x = false;
         } else {
             ray.flags.flip_x = true;
         }
-        i16 xspeed = 0; // speed x?
-        i16 yspeed = 0; // speed y?
+        s16 xspeed = 0; // speed x?
+        s16 yspeed = 0; // speed y?
         if (diff_x != 0 && diff_y != 0) {
             if (Abs(diff_y) > Abs(diff_x)) {
                 xspeed = Abs(ray.timer * diff_x / diff_y);
@@ -530,7 +530,7 @@ void INIT_PASTILLES_SAUVE(void) {
 }
 
 //6954C
-void PASTILLES_SAUVE_SAVED(i16 world) {
+void PASTILLES_SAUVE_SAVED(s16 world) {
     INIT_PASTILLES_SAUVE();
     t_world_info[world].text = language_txt[151]; // /game saved/
 }
@@ -590,19 +590,19 @@ void INIT_NEW_GAME(void) {
     memset(&RayEvts, 0, sizeof(RayEvts)); // added; TODO: figure out why RayEvts doesn't 'leak' into a new game?
     INIT_RAY_BEGIN();
     u8 first_world_is_accessible_flag = (t_world_info[0].state | 1);
-    for (i32 i = 0; i < 24; ++i) {
+    for (s32 i = 0; i < 24; ++i) {
         world_info_t* world_info = t_world_info + 1;
         world_info->nb_cages = 0;
         world_info->state &= ~7;
     }
     t_world_info[0].state |= first_world_is_accessible_flag;
-    i32 save_index = positiony - 1;
+    s32 save_index = positiony - 1;
     loadinforay_t* loadinfo = LoadInfoRay + save_index;
     loadinfo->lives = 3;
     loadinfo->tings = 0;
     loadinfo->cages = 0;
     loadinfo->continues = 0;
-    for (i32 i = 0; i < 23; ++i) { // NOTE: the loop only goes up to 23 here, not 24
+    for (s32 i = 0; i < 23; ++i) { // NOTE: the loop only goes up to 23 here, not 24
         bonus_perfect[i] = 0;
     }
     init_finBossLevel();
@@ -632,7 +632,7 @@ void INIT_SAVE_CHOICE(void) {
     repetition = 50;
     basex = 40;
     sortie_save = 0;
-    for (i32 i = 0; i < NBRE_SAVE; ++i) {
+    for (s32 i = 0; i < NBRE_SAVE; ++i) {
         LoadInfoGame(i + 1);
     }
 }
@@ -855,7 +855,7 @@ void REALISATION_ACTION(void) {
 }
 
 //6A3A0
-void DISPLAY_SYMBOLE(i16 a1, i16 a2, i16 a3, u8 a4) {
+void DISPLAY_SYMBOLE(s16 a1, s16 a2, s16 a3, u8 a4) {
     print_once("Not implemented: DISPLAY_SYMBOLE"); //stub
 }
 
@@ -933,7 +933,7 @@ void INIT_VIGNET(void) {
         default: break;
     }
 
-    for (i32 i = 0; i != 10; i += 2) {
+    for (s32 i = 0; i != 10; i += 2) {
         text_to_display[i].xpos = SCREEN_WIDTH / 2;
         text_to_display[i].ypos = ((SCREEN_HEIGHT / 4) * 3) + 23;
         text_to_display[i].font_size = 2;
@@ -1128,7 +1128,7 @@ void INIT_LEVEL_ANIM(void) {
 
 //6B73C
 void DO_LEVEL_ANIM(void) {
-    i16* anim = anim_sequence;
+    s16* anim = anim_sequence;
     u8 prev_cmd;
     do {
         prev_cmd = ray.cmd;
@@ -1182,7 +1182,7 @@ void DO_LEVEL_ANIM(void) {
     } while (prev_cmd != ray.cmd);
 
     u8 horloge_index = ((ray.animations[ray.anim_index].layers_per_frame & 0xC000) >> 14) + 1;
-    i32 dx = instantSpeed(ray.speed_x);
+    s32 dx = instantSpeed(ray.speed_x);
     if (horloge[horloge_index] == 0) {
         ray.screen_x += dx;
     }

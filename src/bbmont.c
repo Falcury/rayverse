@@ -5,7 +5,7 @@ void BB2_MARCHE(obj_t* obj) {
 }
 
 //200F0
-void DO_TOTEM_TOUCHE(obj_t* obj, i16 sprite) {
+void DO_TOTEM_TOUCHE(obj_t* obj, s16 sprite) {
     /* 5783C 8017C03C -O2 -msoft-float */
     s16 x;
 
@@ -277,7 +277,7 @@ void allocateDog(obj_t* bb1_obj) {
 }
 
 //20868
-void allocateTir(obj_t* bb1_obj, i16 param_2) {
+void allocateTir(obj_t* bb1_obj, s16 param_2) {
     /* 58278 8017CA78 -O2 -msoft-float */
     s32 sprite_ind;
     s16 x; s16 y; s16 w; s16 h;
@@ -515,7 +515,7 @@ void DO_BBMONT_COMMAND(obj_t* obj) {
 }
 
 //22050
-void DO_BBMONT_TOUCHE(obj_t* obj, i16 sprite) {
+void DO_BBMONT_TOUCHE(obj_t* obj, s16 sprite) {
     print_once("Not implemented: DO_BBMONT_TOUCHE"); //stub
 }
 
