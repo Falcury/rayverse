@@ -803,7 +803,7 @@ void read_record(const char* filename);
 void load_record(void);
 void sub_42408(u8 a1);
 void do_record(record_t* rec);
-void keyboard_interrupt_handler(void);
+void PC_keyboard_interrupt_handler(u8 scancode);
 void sub_425AB(void);
 void RESET_TOUCHE(u8 key);
 void RESET_ALL_TOUCHE(void);

@@ -2345,7 +2345,7 @@ s16 level_select; //DF750
 u8 ButtonReleasedSav2; //DF756
 u8 ButtonReleasedSav1; //DF757
 
-u8* cheat_code_programmer_mode; //DF760
+u8* cheat_code_programmer_message; //DF760
 u8* cheat_code_win_map_alt; //DF764
 u8* cheat_code_10_wiz_alt; //DF768
 u8* cheat_code_all_powers_alt; //DF76C
@@ -2367,7 +2367,7 @@ u8* cheat_code_freq80; //DF7A8
 u8* cheat_code_lens; //DF7AC
 u8* cheat_code_breakout_before_victory; //DF7B0
 u8* cheat_code_level_select; //DF7B4
-s32 freq_from_cheat_code; //DF7B8
+s32 saved_frequence; //DF7B8
 u8* cheat_code_freq100; //DF7BC
 
 s32 CompteurEclair; //DFAE0

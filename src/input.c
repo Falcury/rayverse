@@ -294,8 +294,57 @@ void do_record(record_t* rec) {
 }
 
 //4259C
-void keyboard_interrupt_handler(void) {
-    print_once("Not implemented: keyboard_interrupt_handler"); //stub
+void PC_keyboard_interrupt_handler(u8 scancode) {
+    u8 v3 = 0;
+    if (ModeDemo == 1 && (fade & 0x40) != 0) {
+        if (scancode == SC_ESCAPE) {
+            ModeDemo = 4;
+        } else {
+            ModeDemo = 3;
+        }
+    }
+    if (!(scancode & 0x80) && (scancode ^ 0x96) != text_input_buffer[0]) {
+        need_check_cheats = 1;
+        for (s32 i = 8; i > 0; --i) {
+            text_input_buffer[i] = text_input_buffer[i-1];
+        }
+        text_input_buffer[0] = scancode ^ 0x96;
+        if (scancode == SC_R) {
+            BREAKPOINT;
+        }
+    }
+    if (dans_la_map_monde) {
+        ModeAutoJumelle = 0;
+        ChangeJumelleSizeOK &= ~4;
+        if (PositionStageNameCalcule == 1) {
+            PositionStageNameCalcule = 2;
+        }
+    }
+    if (byte_967CC != 0) {
+        if (byte_967CC <= 1) {
+            if (scancode == SC_CONTROL) {
+                byte_967CC = 2;
+            } else {
+                byte_967CC = 0;
+            }
+        } else if (byte_967CC == 2) {
+            if (scancode == SC_NUMLOCK && RaymanDansUneMapDuJeu) {
+                in_pause = !in_pause;
+            }
+            byte_967CC = 0;
+        } else {
+            byte_967CC = 0;
+        }
+    } else if (scancode == 0xE0) {
+        byte_967CC = 1;
+    } else {
+        v3 = 1;
+    }
+    if (v3) {
+        Touche_Enfoncee[scancode & 0x7F] = (scancode & 0x80) ^ 0x80;
+    }
+
+    print_once("Not implemented: PC_keyboard_interrupt_handler"); //stub
 }
 
 //425AB

@@ -141,7 +141,11 @@ void win32_process_keyboard_event(u32 vk_code, bool is_down) {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     };
     enum dos_scancode_enum dos_scancode = (enum dos_scancode_enum)windows_code_to_dos_scancode[vk_code & 0xFF];
-    Touche_Enfoncee[dos_scancode & 0x7F] = is_down;
+    // TODO: handle Alt+Enter fullscreen here (like in the SDL2 version)?
+    if (!is_down) {
+        dos_scancode |= 0x80;
+    }
+    PC_keyboard_interrupt_handler(dos_scancode);
 }
 
 void process_message(HWND window, MSG message) {

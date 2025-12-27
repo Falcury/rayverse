@@ -276,7 +276,7 @@ void DISPLAY_STAGE_NAMES(void) {
 
 //35028
 s16 WORLD_CHOICE(u32 a1) {
-    //map_screen_check_cheats();
+    PC_do_cheats_in_world_map();
     s32 next_clock_target = 0;
     if (need_timer) {
         next_clock_target = word_CF7EE + a1;

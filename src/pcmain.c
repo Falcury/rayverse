@@ -167,6 +167,14 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
         if (TOUCHE(SC_F5)) {
             memset(&finBosslevel, 0, sizeof(finBosslevel));
         }
+        // DEBUG: free movement
+        if (TOUCHE(SC_F7)) {
+            Touche_Enfoncee[SC_F7] = false;
+            ray.cmd_arg_2 = -1;
+            ray_mode = -ray_mode;
+            dead_time = 64;
+            set_main_and_sub_etat(&ray, 2, 2);
+        }
         // DEBUG: freeze screen
         if (TOUCHE(SC_F8)) {
             Touche_Enfoncee[SC_F8] = false;

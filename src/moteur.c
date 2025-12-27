@@ -2245,7 +2245,36 @@ void STOPPE_RAY_EN_XY(void) {
 
 //59E9C
 void DO_PLACE_RAY(void) {
-    print_once("Not implemented: DO_PLACE_RAY"); //stub
+    h_scroll_speed = 0;
+    v_scroll_speed = 0;
+    ray.speed_x = 0;
+    ray.speed_y = 0;
+
+    if (rightjoy()) {
+        ray.speed_x += RAY_MODE_SPEED;
+    } else if (leftjoy()) {
+        ray.speed_x -= RAY_MODE_SPEED;
+    }
+    if (downjoy()) {
+        ray.speed_y += RAY_MODE_SPEED>>1;
+    } else if (upjoy()) {
+        ray.speed_y -= RAY_MODE_SPEED>>1;
+    }
+
+    if (ray.speed_y < 0) {
+        move_up_ray();
+    } else if (ray.speed_y > 0) {
+        move_down_ray();
+    }
+    if (ray.speed_x > 0) {
+        RAY_TO_THE_RIGHT();
+    } else if (ray.speed_x < 0) {
+        RAY_TO_THE_LEFT();
+    }
+    calc_obj_pos(&ray);
+    h_scroll_speed = ray.speed_x;
+    v_scroll_speed = ray.speed_y;
+    SHOW_COLLISIONS_ZONES();
 }
 
 //59FB8
@@ -2515,7 +2544,7 @@ void INIT_MOTEUR_LEVEL(s16 a1) {
         }
         correct_gendoor_link(0);
         ray_mode = MODE_1_RAYMAN;
-        RAY_MODE_SPEED = 16;
+        RAY_MODE_SPEED = 16; // This is Rayman's move speed when the free movement cheat is enabled.
         new_level = 0;
         build_active_table();
     }
@@ -2650,7 +2679,7 @@ void DO_MOTEUR(void) {
             ModeDemo = 2;
         }
     }
-    //check_cheat_code_in_game(); // TODO
+    PC_do_cheats();
     horloges(1);
     calc_left_time();
     ray_old_main_etat = ray.main_etat;
@@ -2710,6 +2739,7 @@ void DO_MOTEUR2(void) {
                 DO_RAY_CASSE_BRIQUE(); //TODO
             } break;
             default: {
+                // NOTE: ray_mode is set to negative when the free movement cheat is enabled.
                 DO_PLACE_RAY(); //TODO
             } break;
         }
@@ -2717,7 +2747,7 @@ void DO_MOTEUR2(void) {
             scroll_x = -1;
             scroll_y = -1;
         } else {
-            DO_AUTO_SCROLL(); //TODO
+            DO_AUTO_SCROLL(); //TODO: fix scroll speed in map with flat stone with ropes
         }
         MOVE_OBJECTS();
         calc_obj_pos(&ray);

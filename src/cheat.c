@@ -87,7 +87,7 @@ void PC_init_cheats(void) {
         cheat_code_all_powers_alt = &cheat_codes[242];
         cheat_code_golden_fist_alt = &cheat_codes[270];
         cheat_code_win_map_alt = &cheat_codes[296];
-        cheat_code_programmer_mode = &cheat_codes[308];
+        cheat_code_programmer_message = &cheat_codes[308];
     } else /* regular keyboard layout */{
         cheat_code_breakout = &cheat_codes[89];
         cheat_code_breakout_before_victory = &cheat_codes[9];
@@ -111,7 +111,7 @@ void PC_init_cheats(void) {
         cheat_code_all_powers_alt = &cheat_codes[249];
         cheat_code_golden_fist_alt = &cheat_codes[278];
         cheat_code_win_map_alt = &cheat_codes[302];
-        cheat_code_programmer_mode = &cheat_codes[316];
+        cheat_code_programmer_message = &cheat_codes[316];
     }
 
 }
@@ -126,19 +126,16 @@ void PC_do_cheats_in_world_map(void) {
         return;
     }
     if (memcmp(text_input_buffer, cheat_code_breakout, 5) == 0 || memcmp(text_input_buffer, cheat_code_breakout_alt, 8) == 0) {
-        if (!finBosslevel.mr_dark) {
-            return;
+        if (finBosslevel.mr_dark) {
+            PositionStageNameCalcule = 0;
+            set_casse_brique_active();
         }
+    }
+    else if (memcmp(text_input_buffer, cheat_code_breakout_before_victory, 9) == 0) {
         PositionStageNameCalcule = 0;
         set_casse_brique_active();
-        return;
     }
-    if (memcmp(text_input_buffer, cheat_code_breakout_before_victory, 9) == 0) {
-        PositionStageNameCalcule = 0;
-        set_casse_brique_active();
-        return;
-    }
-    if (memcmp(text_input_buffer, cheat_code_lens, 4) == 0) {
+    else if (memcmp(text_input_buffer, cheat_code_lens, 4) == 0) {
         if (JumAmpDefMul) {
             JumAmpDefMul = 0;
             JumAmpDefPlus = 0;
@@ -148,18 +145,15 @@ void PC_do_cheats_in_world_map(void) {
         }
         JumelleZoomActif = 1;
         ParamZoomChange = 1;
-        return;
     }
-    if (memcmp(text_input_buffer, cheat_code_all_powers, 5) == 0 || memcmp(text_input_buffer, cheat_code_all_powers_alt, 7) == 0) {
+    else if (memcmp(text_input_buffer, cheat_code_all_powers, 5) == 0 || memcmp(text_input_buffer, cheat_code_all_powers_alt, 7) == 0) {
         RayEvts.poing = 1;
         RayEvts.hang = 1;
         RayEvts.helico = 1;
         RayEvts.grap = 1;
         RayEvts.run = 1;
-        return;
     }
-
-    if (memcmp(text_input_buffer, cheat_code_unlock_all_levels, 7) == 0 || memcmp(text_input_buffer, cheat_code_unlock_all_levels_alt, 9) == 0) {
+    else if (memcmp(text_input_buffer, cheat_code_unlock_all_levels, 7) == 0 || memcmp(text_input_buffer, cheat_code_unlock_all_levels_alt, 9) == 0) {
         ALL_WORLD = 0;
         for (s32 i = 0; i < COUNT(t_world_info); ++i) {
             world_info_t* wi = t_world_info + i;
@@ -180,12 +174,85 @@ void PC_do_cheats_in_world_map(void) {
             }
         }
     }
-
-    //stub
+    else if (memcmp(text_input_buffer, cheat_code_level_select, 8) == 0) {
+        ALL_WORLD = 1;
+    }
+    else if (memcmp(text_input_buffer, cheat_code_freq100, 6) == 0) {
+        if (Frequence != 100) {
+            if (Frequence != 80) {
+                saved_frequence = Frequence;
+            }
+            Frequence = 80;
+            NewFrequency(80);
+        } else {
+            Frequence = saved_frequence;
+            NewFrequency(saved_frequence);
+        }
+    }
+    else if (memcmp(text_input_buffer, cheat_code_freq80, 6) == 0) {
+        if (Frequence != 80) {
+            if (Frequence != 100) {
+                saved_frequence = Frequence;
+            }
+            Frequence = 100;
+            NewFrequency(100);
+        } else {
+            Frequence = saved_frequence;
+            NewFrequency(saved_frequence);
+        }
+    }
 }
 
 //3784C
 void PC_do_cheats(void) {
-    //stub
+    if (!need_check_cheats) {
+        return;
+    }
+    need_check_cheats = false;
+    if (!RaymanDansUneMapDuJeu || num_world == world_6_cake || JeuCracker || ray_mode == MODE_5_CASSE_BRIQUE) {
+        return;
+    }
+
+    if (memcmp(text_input_buffer, cheat_code_99_lives, 8) == 0 || memcmp(text_input_buffer, cheat_code_99_lives_alt, 9) == 0) {
+        status_bar.lives = 99;
+    }
+    else if (memcmp(text_input_buffer, cheat_code_5hp, 8) == 0 || memcmp(text_input_buffer, cheat_code_5hp_alt, 7) == 0) {
+        ray.hit_points = 4;
+        status_bar.max_hitp = 4;
+    }
+    else if (memcmp(text_input_buffer, cheat_code_all_powers, 5) == 0 || memcmp(text_input_buffer, cheat_code_all_powers_alt, 7) == 0) {
+        if (!RayEvts.squashed) {
+            RayEvts.poing = 1;
+            RayEvts.hang = 1;
+            RayEvts.helico = 1;
+            RayEvts.grap = 1;
+            RayEvts.run = 1;
+        }
+    }
+    else if (memcmp(text_input_buffer, cheat_code_golden_fist, 8) == 0 || memcmp(text_input_buffer, cheat_code_golden_fist_alt, 5) == 0) {
+        if (!RayEvts.squashed && RayEvts.poing) {
+            poing_obj->init_sub_etat = 12;
+            poing.sub_etat = poing_obj->init_sub_etat;
+            save1.poing_sub_etat = poing_obj->init_sub_etat;
+            poing_obj->sub_etat = poing_obj->init_sub_etat;
+        }
+    }
+    else if (memcmp(text_input_buffer, cheat_code_10_wiz, 6) == 0 || memcmp(text_input_buffer, cheat_code_10_wiz_alt, 5) == 0) {
+        status_bar.num_wiz = (status_bar.num_wiz + 10 < 99) ? status_bar.num_wiz + 10 : 99;
+    }
+    else if (memcmp(text_input_buffer, cheat_code_win_map, 6) == 0 || memcmp(text_input_buffer, cheat_code_win_map_alt, 6) == 0) {
+        if (ray.main_etat == 0 && ray.speed_x == 0 && ray.speed_y == 0 && ray.cmd_arg_2 == -1) {
+            fin_boss = 1;
+        }
+    }
+    else if (memcmp(text_input_buffer, cheat_code_free_movement, 9) == 0) {
+        ray.cmd_arg_2 = -1;
+        ray_mode = -ray_mode;
+        dead_time = 64;
+        set_main_and_sub_etat(&ray, 2, 2);
+    }
+    else if (memcmp(text_input_buffer, cheat_code_programmer_message, 9) == 0) {
+        MessageProgram = 1 - MessageProgram;
+    }
 }
 

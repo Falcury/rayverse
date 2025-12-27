@@ -60,7 +60,10 @@ void linux_process_keyboard_event(SDL_Scancode scancode, bool is_down) {
         toggle_fullscreen(global_app_state.sdl.window);
     } else {
         u8 dos_scancode = sdl_scancode_to_dos_scancode[scancode & 0xFF];
-        Touche_Enfoncee[dos_scancode & 0x7F] = is_down;
+        if (!is_down) {
+            dos_scancode |= 0x80;
+        }
+        PC_keyboard_interrupt_handler(dos_scancode);
     }
 }
 
