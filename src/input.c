@@ -343,7 +343,7 @@ void PC_keyboard_interrupt_handler(u8 scancode) {
     if (v3) {
         Touche_Enfoncee[scancode & 0x7F] = (scancode & 0x80) ^ 0x80;
     }
-
+    //stub
     print_once("Not implemented: PC_keyboard_interrupt_handler"); //stub
 }
 

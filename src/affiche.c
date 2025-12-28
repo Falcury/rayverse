@@ -412,7 +412,8 @@ void DISPLAY_ALL_OBJECTS(void) {
                     case TYPE_164_GENERATING_DOOR:
                     case TYPE_181_SCROLL_SAX:
                     case TYPE_199_BB1_VIT: {
-                        if (is_debug_mode) {
+                        // Added for debugging
+                        if (need_display_debug_info) {
                             display2(obj);
                             debug_display_obj_id(obj);
                         }
@@ -421,7 +422,7 @@ void DISPLAY_ALL_OBJECTS(void) {
                         display2(obj);
 
                         // Added for debugging
-                        if (is_debug_mode) {
+                        if (need_display_debug_info) {
                             debug_display_obj_id(obj);
                         }
                     } break;

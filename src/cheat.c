@@ -201,6 +201,11 @@ void PC_do_cheats_in_world_map(void) {
             NewFrequency(saved_frequence);
         }
     }
+    // Added: debug cheat "debug" (enables debug mode)
+    else if (memcmp(text_input_buffer, cheat_code_debug, 5) == 0) {
+        is_debug_mode = !is_debug_mode;
+        printf("Debug cheats %s\n", is_debug_mode ? "on" : "off");
+    }
 }
 
 //3784C
@@ -254,5 +259,82 @@ void PC_do_cheats(void) {
     else if (memcmp(text_input_buffer, cheat_code_programmer_message, 9) == 0) {
         MessageProgram = 1 - MessageProgram;
     }
+    // Added: debug cheat "debug" (enables debug mode)
+    else if (memcmp(text_input_buffer, cheat_code_debug, 5) == 0) {
+        is_debug_mode = !is_debug_mode;
+        printf("Debug cheats %s\n", is_debug_mode ? "on" : "off");
+    }
+
 }
 
+//(newly added)
+void rayverse_do_debug_cheats(void) {
+    if (is_debug_mode) {
+        // debug cheat: full hit points
+        if (TOUCHE(SC_F2)) {
+            status_bar.max_hitp = 4;
+            ray.hit_points = 4;
+        }
+        // DEBUG: display ray main and sub etat
+        if (TOUCHE(SC_F3)) {
+            Touche_Enfoncee[SC_F3] = false;
+            need_display_debug_info = !need_display_debug_info;
+        }
+        if (need_display_debug_info) {
+            // display Rayman's main and sub etat at the top of the screen
+            char debug_text[64];
+            snprintf(debug_text, 64, "%d : %d", ray.main_etat, ray.sub_etat);
+            display_text(debug_text, 132, 26, 1, 0);
+
+            // display basic info on the selected object
+            if (debug_obj_id != -1 && debug_obj_id < level.nb_objects) {
+                obj_t* obj = level.objects + debug_obj_id;
+                u8 color = 0;
+                s32 line = 0;
+                snprintf(debug_text, 64, "%d : type %d", obj->id, obj->type);
+                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
+                snprintf(debug_text, 64, "etat %d : %d", obj->main_etat, obj->sub_etat);
+                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
+                snprintf(debug_text, 64, "hitp %d", (u8)obj->hit_points);
+                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
+//                snprintf(debug_text, 64, "cmd %d", obj->cmd);
+//                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
+//                snprintf(debug_text, 64, "coll %d %d %d %d %d", obj->btypes[0], obj->btypes[1], obj->btypes[2], obj->btypes[3], obj->btypes[4]);
+//                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
+                snprintf(debug_text, 64, "x %d y %d", obj->x, obj->y);
+                display_text(debug_text, 20, 50 + line * 15, 2, color); ++line;
+            }
+        }
+        // DEBUG: skip level
+        if (TOUCHE(SC_F4)) {
+            DO_FADE_OUT();
+            ChangeLevel();
+        }
+        // DEBUG: reset all bosses
+        if (TOUCHE(SC_F5)) {
+            memset(&finBosslevel, 0, sizeof(finBosslevel));
+            printf("Bosses have been reset\n");
+        }
+        // DEBUG: free movement
+        if (TOUCHE(SC_F7)) {
+            Touche_Enfoncee[SC_F7] = false;
+            ray.follow_id = -1;
+            ray_mode = -ray_mode;
+            dead_time = 64;
+            set_main_and_sub_etat(&ray, 2, 2);
+        }
+        // DEBUG: freeze screen
+        if (TOUCHE(SC_F8)) {
+            Touche_Enfoncee[SC_F8] = false;
+            for (;;) {
+                advance_frame();
+                if (TOUCHE(SC_F8)) {
+                    Touche_Enfoncee[SC_F8] = false;
+                    break;
+                }
+            }
+        }
+    }
+
+
+}

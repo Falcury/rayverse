@@ -608,6 +608,7 @@ void PC_clear_text_input_buffer(void);
 void PC_init_cheats(void);
 void PC_do_cheats_in_world_map(void);
 void PC_do_cheats(void);
+void rayverse_do_debug_cheats(void);
 
 // effect.c
 void sub_37B90(void);

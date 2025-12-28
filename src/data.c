@@ -1,9 +1,12 @@
 
-// Global data
+// Global data specific to Rayverse
+// ================================
 
 app_state_t global_app_state;
 game_state_t* global_game;
+u8 cheat_code_debug[] = {(SC_G)^0x96, (SC_U)^0x96, (SC_B)^0x96, (SC_E)^0x96, (SC_D)^0x96}; // "debug"
 bool is_debug_mode;
+bool need_display_debug_info;
 bool debug_clicked;
 float debug_click_obj_dist_sq;
 float debug_click_x;
@@ -19,9 +22,11 @@ bool is_ogg_finished;
 snd_t digi_voices[32];
 
 
-
+// Global data (RAYMAN 1.21)
+// =========================
 
 // Data sorted by offset
+
 s32 saved_sprite_color; //92140
 s32 saved_sprite_width; //92144
 

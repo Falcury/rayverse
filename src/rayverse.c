@@ -38,6 +38,11 @@
 #include "stb_vorbis.c"
 
 #include "common.h"
+
+// Define compile-time guards to deal with differences across versions.
+#define PC
+//#define PS1
+
 #include "types.h"
 #include "proto.h"
 
