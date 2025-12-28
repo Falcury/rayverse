@@ -69,28 +69,31 @@ void setBossReachingSpeeds(obj_t* obj, u8 timer, u8 accuracy_x, u8 accuracy_y) {
 
 //18A64
 s16 testActionEnd(obj_t* obj) {
-    /* 66EFC 8018B6FC -O2 -msoft-float */
-    s16 res = false;
+    s16 end_action = false;
 
-    if (bossXToReach == -32000 && bossYToReach == -32000)
-        res = obj->nb_cmd == 0;
-    else if (obj->x == bossXToReach && obj->y == bossYToReach)
-        res = true;
-    if (res)
+    if (bossXToReach == OBJ_INVALID_XY && bossYToReach == OBJ_INVALID_XY) {
+        end_action = obj->nb_cmd == 0;
+    }
+    else if (obj->x == bossXToReach && obj->y == bossYToReach) {
+        end_action = true;
+    }
+
+    if (end_action) {
         currentBossActionIsOver = true;
-    return res;
+    }
+
+    return end_action;
 }
 
 //18AD0
 s16 firstFloorBelow(obj_t* obj) {
-    /* 6703C 8018B83C -O2 -msoft-float */
     s16 x = obj->offset_bx + obj->x;
     s16 y = obj->offset_by + obj->y;
     u8 btyp = BTYP(x >> 4, y >> 4);
 
-    while (!(block_flags[btyp] >> BLOCK_SOLID & 1) && (y <= ymapmax + SCREEN_HEIGHT))
-    {
-        y += 16;
+    // Move down until reaching a solid block or too far down
+    while (!(block_flags[btyp] >> BLOCK_SOLID & 1) && y <= ymapmax + SCREEN_HEIGHT) {
+        y += BLOCK_SIZE;
         btyp = BTYP(x >> 4, y >> 4);
     }
 
@@ -101,6 +104,7 @@ s16 firstFloorBelow(obj_t* obj) {
 void adjustBossScrollLocker(void) {
     s16 new_bossScrollStartX = bossScrollStartX;
     s16 new_bossScrollEndX = bossScrollEndX;
+
     if (GameModeVideo != MODE_NORMAL) {
         if (bossScrollStartX < 0) {
             new_bossScrollStartX = 0;
@@ -115,19 +119,20 @@ void adjustBossScrollLocker(void) {
             new_bossScrollEndX = xmapmax;
         }
     } else {
-        if (bossScrollStartX < (8 - Bloc_lim_W1)) {
-            new_bossScrollStartX = (8 - Bloc_lim_W1);
+        if (bossScrollStartX < 8 - Bloc_lim_W1) {
+            new_bossScrollStartX = 8 - Bloc_lim_W1;
         }
         if (new_bossScrollStartX > xmapmax + 8) {
             new_bossScrollStartX = xmapmax + 8;
         }
-        if (bossScrollEndX < (8 - Bloc_lim_W1)) {
-            new_bossScrollEndX = (8 - Bloc_lim_W1);
+        if (bossScrollEndX < 8 - Bloc_lim_W1) {
+            new_bossScrollEndX = 8 - Bloc_lim_W1;
         }
         if (new_bossScrollEndX > xmapmax + 8) {
             new_bossScrollEndX = xmapmax + 8;
         }
     }
+
     if (bossScrollStartY < -Bloc_lim_H1) {
         bossScrollStartY = -Bloc_lim_H1;
     }
@@ -150,7 +155,7 @@ void setBossScrollLimits(obj_t* obj) {
     bossScrollStartX = scroll_start_x;
     bossScrollEndX = scroll_end_x;
     floorLine = firstFloorBelow(obj);
-    bossScrollStartY = Bloc_lim_H1 - Bloc_lim_H2 + floorLine - 16;
+    bossScrollStartY = Bloc_lim_H1 - Bloc_lim_H2 + floorLine - BLOCK_SIZE;
     bossScrollEndY = ymapmax;
     adjustBossScrollLocker();
 }

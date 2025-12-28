@@ -461,6 +461,8 @@ typedef struct big_map_t {
     s16 field_1C;
 } big_map_t;
 
+#define BLOCK_SIZE 16
+
 typedef struct options_t {
 	s16 music_enabled;
 	s16 sound_volume;
