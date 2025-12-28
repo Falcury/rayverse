@@ -2465,9 +2465,9 @@ void DO_EAU_QUI_MONTE(obj_t* obj) {
                         }
                     }
                 } else if ((level.objects[pierreAcorde_obj_id].hit_points != 0) && (obj->y < (ymapmax + (SCREEN_HEIGHT - 80)))) {
-                    obj->field_3A += 14;
-                    if (obj->field_3A > 16) {
-                        obj->field_3A -= 2;
+                    obj->sub_speed += 14;
+                    if (obj->sub_speed > 16) {
+                        obj->sub_speed -= 16;
                         ++obj->y;
                     }
                 }

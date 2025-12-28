@@ -795,7 +795,7 @@ void INIT_OBJECTS(u8 a1) {
                         obj->cmd_arg_1 = obj->x;
                         obj->hit_points = 0;
                         if (num_world == world_3_mountain && num_level == 7) {
-                            obj->field_3A = 0;
+                            obj->sub_speed = 0;
                         } else {
                             obj->y = ymapmax + (SCREEN_HEIGHT - 80);
                             if (num_world == world_5_cave && num_level == 8) {
@@ -825,7 +825,7 @@ void INIT_OBJECTS(u8 a1) {
                         obj->y = eau->y;
                         if (num_world == world_3_mountain && num_level == 7) {
                             obj->init_y = obj->y;
-                            obj->field_3A = 0;
+                            obj->sub_speed = 0;
                         } else {
                             obj->init_y = ymapmax + (SCREEN_HEIGHT - 80);
                             if (num_world == world_4_image) {

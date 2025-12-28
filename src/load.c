@@ -354,7 +354,7 @@ void load_level(mem_t* mem_level, s32 world_id, const char* filename) {
             mem_read(&obj->id, mem, 2);
             mem_read(&obj->screen_x, mem, 2);
             mem_read(&obj->screen_y, mem, 2);
-            mem_read(&obj->field_3A, mem, 2);
+            mem_read(&obj->sub_speed, mem, 2);
             mem_read(&obj->init_x, mem, 2);
             mem_read(&obj->init_y, mem, 2);
             mem_read(&obj->speed_x, mem, 2);
