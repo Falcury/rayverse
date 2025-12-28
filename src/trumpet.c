@@ -13,7 +13,7 @@ void DO_TRP_COMMAND(obj_t* obj) {
         {
             case GO_SPEED:
                 obj->speed_x = obj->iframes_timer;
-                obj->speed_y = obj->cmd_arg_2;
+                obj->speed_y = obj->follow_id;
                 break;
             case GO_LEFT:
             case GO_RIGHT:

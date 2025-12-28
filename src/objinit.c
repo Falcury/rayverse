@@ -211,7 +211,7 @@ void first_obj_init(obj_t* obj) {
             obj->link = 0;
         } break;
         case TYPE_113_BAG1: {
-            obj->cmd_arg_1 = 0;
+            obj->param = 0;
             obj->link = 0;
         } break;
         case TYPE_116_CLOWN_TNT:
@@ -254,7 +254,7 @@ void obj_init(obj_t* obj) {
     obj->gravity_value_2 = 0;
     obj->detect_zone_flag = 0;
     obj->iframes_timer = -1;
-    obj->cmd_arg_2 = -1;
+    obj->follow_id = -1;
     obj->cmd_offset = -1;
     obj->flags.flip_x = false;
     obj->flags.read_commands = (obj->cmds != NULL);
@@ -267,7 +267,7 @@ void obj_init(obj_t* obj) {
     obj->cmd_context_depth = -1;
     obj->active_flag = 1; //ACTIVE_DEAD;
     obj->timer = 0;
-    obj->configuration = 0;
+    obj->config = 0;
     obj->hit_points = obj->init_hit_points;
 
     switch (obj->type)
@@ -372,42 +372,42 @@ void obj_init(obj_t* obj) {
             switch (obj->follow_sprite)
             {
                 case 1:
-                    obj->configuration = 2;
+                    obj->config = 2;
                     obj->detect_zone = 0;
                     break;
                 case 2:
-                    obj->configuration = 8;
+                    obj->config = 8;
                     obj->detect_zone = 60;
                     break;
                 case 3:
-                    obj->configuration = 24;
+                    obj->config = 24;
                     obj->detect_zone = 170;
                     break;
                 case 4:
-                    obj->configuration = 10;
+                    obj->config = 10;
                     obj->detect_zone = 100;
                     break;
                 case 5:
-                    obj->cmd_arg_2 = 0;
-                    obj->configuration = 1;
+                    obj->follow_id = 0;
+                    obj->config = 1;
                     obj->detect_zone = 0;
                     break;
                 case 6:
-                    obj->configuration = 4;
+                    obj->config = 4;
                     obj->detect_zone = 60;
                     break;
                 case 7:
-                    obj->configuration = 36;
+                    obj->config = 36;
                     obj->detect_zone = 120;
                     break;
             }
             break;
         case TYPE_145_KILLING_EYES:
             obj->iframes_timer = 40;
-            obj->cmd_arg_1 = 40;
+            obj->param = 40;
             break;
         case TYPE_72_PIRATE_NGAWE:
-            obj->configuration = 1;
+            obj->config = 1;
             break;
         case TYPE_77_PIRATE_GUETTEUR:
         case TYPE_239_PIRATE_GUETTEUR2:
@@ -417,16 +417,16 @@ void obj_init(obj_t* obj) {
             break;
         case TYPE_28_ONOFF_PLAT:
             obj->iframes_timer = 100;
-            obj->cmd_arg_2 = 100;
+            obj->follow_id = 100;
             obj->flags.alive = true;
             break;
         case TYPE_26_CRUMBLE_PLAT:
             if (num_world != 1) {
                 s16 unk_2 = (s16)(vblToEOA(obj, 1) - 2);
-                obj->cmd_arg_1 = unk_2;
+                obj->param = unk_2;
                 obj->iframes_timer = unk_2;
             } else {
-                obj->cmd_arg_1 = 40;
+                obj->param = 40;
                 obj->iframes_timer = 20;
             }
             obj->link = 20;
@@ -435,7 +435,7 @@ void obj_init(obj_t* obj) {
             break;
         case TYPE_25_INST_PLAT:
             obj->iframes_timer = 15;
-            obj->cmd_arg_2 = 15;
+            obj->follow_id = 15;
             obj->flags.alive = true;
             break;
         case TYPE_29_AUTOJUMP_PLAT:
@@ -444,13 +444,13 @@ void obj_init(obj_t* obj) {
         case TYPE_237_GOMME:
         case TYPE_243_MARK_AUTOJUMP_PLAT:
             obj->iframes_timer = 1;
-            obj->cmd_arg_2 = 1;
+            obj->follow_id = 1;
             obj->flags.alive = true;
             break;
         case TYPE_116_CLOWN_TNT:
         case TYPE_117_CLOWN_TNT2:
         case TYPE_118_CLOWN_TNT3:
-            obj->configuration = 0; // this line is missing in the Android version
+            obj->config = 0; // this line is missing in the Android version
             obj->link = 0;
             break;
         case TYPE_168_CYMBAL1:
@@ -472,12 +472,12 @@ void obj_init(obj_t* obj) {
             obj->flags.flip_x = true;
             break;
         case TYPE_212_DARK:
-            obj->cmd_arg_1 = 0;
+            obj->param = 0;
             break;
         case TYPE_217_MITE2:
             obj->eta[1][0].flags &= ~0x10;
             obj->eta[1][2].flags &= ~0x10;
-            obj->cmd_arg_2 = 0;
+            obj->follow_id = 0;
             break;
         case TYPE_202_RAY_ETOILES:
             if (obj->main_etat == 0 && obj->sub_etat == 57)
@@ -721,7 +721,7 @@ void INIT_OBJECTS(u8 a1) {
                 obj->init_flag = 7;
             } break;
             case TYPE_96_TOTEM: {
-                obj->cmd_arg_1 = 0;
+                obj->param = 0;
                 obj->iframes_timer = 0;
             } break;
             case TYPE_99_RAY_POS: {
@@ -773,7 +773,7 @@ void INIT_OBJECTS(u8 a1) {
                     obj->speed_x = 2;
                     obj->speed_y = 0;
                     obj->is_active = 1;
-                    obj->cmd_arg_1 = 0;
+                    obj->param = 0;
                     obj->link = 0;
                     obj->timer = 0;
                     mst_scroll_obj_id = i;
@@ -792,7 +792,7 @@ void INIT_OBJECTS(u8 a1) {
                         }
                         obj->y = ymapmax + SCREEN_HEIGHT;
                     } else {
-                        obj->cmd_arg_1 = obj->x;
+                        obj->param = obj->x;
                         obj->hit_points = 0;
                         if (num_world == world_3_mountain && num_level == 7) {
                             obj->sub_speed = 0;
@@ -820,8 +820,8 @@ void INIT_OBJECTS(u8 a1) {
                         obj->speed_x = 0;
                         obj->flags.flip_x = 0;
                         obj_t* eau = level.objects + eau_obj_id;
-                        eau->cmd_arg_1 += 101;
-                        obj->x = eau->cmd_arg_1;
+                        eau->param += 101;
+                        obj->x = eau->param;
                         obj->y = eau->y;
                         if (num_world == world_3_mountain && num_level == 7) {
                             obj->init_y = obj->y;
@@ -849,7 +849,7 @@ void INIT_OBJECTS(u8 a1) {
                 }
             } break;
             case TYPE_173_BATEAU: {
-                obj->cmd_arg_1 = -1;
+                obj->param = -1;
                 obj->link = 0;
                 obj->timer = 0;
                 bateau_obj_id = i;
@@ -865,7 +865,7 @@ void INIT_OBJECTS(u8 a1) {
                 mama_pirate_obj_id = i;
             } break;
             case TYPE_190_COUTEAU: {
-                obj->cmd_arg_2 = 1;
+                obj->follow_id = 1;
                 obj->is_active = 0;
                 obj->init_flag = 7;
                 obj->flags.alive = 0;
@@ -883,7 +883,7 @@ void INIT_OBJECTS(u8 a1) {
                 black_fist_obj_id = obj->id;
             } break;
             case TYPE_218_HYBRIDE_MOSAMS: {
-                obj->cmd_arg_1 = 0;
+                obj->param = 0;
                 moskitosaxo_obj_id = obj->id;
                 obj->flags.alive = 0;
                 obj->is_active = 0;
@@ -906,21 +906,21 @@ void INIT_OBJECTS(u8 a1) {
                 obj->iframes_timer = 0;
             } break;
             case TYPE_223_HYBRIDE_STOSKO: {
-                obj->cmd_arg_1 = 0;
+                obj->param = 0;
                 stosko_obj_id = obj->id;
                 obj->flags.alive = 0;
                 obj->is_active = 0;
             } break;
             case TYPE_231_HYB_BBF2_D: {
                 found_bbf2_droite = obj->id;
-                obj->cmd_arg_1 = 0;
+                obj->param = 0;
                 moskitomama_droite_obj_id = obj->id;
                 obj->flags.alive = 0;
                 obj->is_active = 0;
             } break;
             case TYPE_232_HYB_BBF2_G: {
                 found_bbf2_gauche = obj->id;
-                obj->cmd_arg_1 = 0;
+                obj->param = 0;
                 moskitomama_gauche_obj_id = obj->id;
                 obj->flags.flip_x = 1;
                 obj->flags.alive = 0;

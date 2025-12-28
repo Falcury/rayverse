@@ -9,7 +9,7 @@ void DO_TOTEM_TOUCHE(obj_t* obj, s16 sprite) {
     /* 5783C 8017C03C -O2 -msoft-float */
     s16 x;
 
-    if (sprite == 6 && obj->cmd_arg_1 == 0) {
+    if (sprite == 6 && obj->param == 0) {
         if (poing_obj->speed_x > 0) {
             set_sub_etat(obj, 4);
             x = obj->init_x + 71;
@@ -19,7 +19,7 @@ void DO_TOTEM_TOUCHE(obj_t* obj, s16 sprite) {
         }
         obj->x = x;
         obj->iframes_timer = 0;
-        obj->cmd_arg_1 = 255;
+        obj->param = 255;
         obj->anim_frame = 255;
     } else if (sprite >= 2) {
         if (poing_obj->speed_x > 0)
@@ -41,9 +41,9 @@ void DO_TOTEM_COMMAND(obj_t* tot_obj) {
     u8 unk_1;
     s16 new_x;
 
-    tot_obj->cmd_arg_1--;
-    if (tot_obj->cmd_arg_1 < 0)
-        tot_obj->cmd_arg_1 = 0;
+    tot_obj->param--;
+    if (tot_obj->param < 0)
+        tot_obj->param = 0;
     if (bb1.field2_0x4 == 3) {
         tot_obj->is_active = 0;
         tot_obj->flags.alive = 0;
@@ -201,7 +201,7 @@ void DO_BBL_REBOND(obj_t* obj) {
     s16 x_pierre;
 
     PlaySnd(200, obj->id);
-    switch (obj->cmd_arg_1) {
+    switch (obj->param) {
         case 0:
             obj->speed_y = -5;
             obj->gravity_value_1 = 3 - obj->gravity_value_1;
@@ -220,8 +220,8 @@ void DO_BBL_REBOND(obj_t* obj) {
             DO_PI_EXPLOSION2(obj);
             obj->is_active = 0;
             obj->flags.alive = 0;
-            if (ray.cmd_arg_2 == obj->id) {
-                ray.cmd_arg_2 = -1;
+            if (ray.follow_id == obj->id) {
+                ray.follow_id = -1;
                 obj->ray_dist = 1000;
                 set_main_and_sub_etat(&ray, 2, 2);
             }
@@ -381,9 +381,9 @@ void allocateTir(obj_t* bb1_obj, s16 param_2) {
                 cur_obj->flags.alive = 1;
                 add_alwobj(cur_obj);
                 if (param_2 < 10)
-                    cur_obj->cmd_arg_1 = param_2;
+                    cur_obj->param = param_2;
                 else
-                    cur_obj->cmd_arg_1 = 4;
+                    cur_obj->param = 4;
 //                if (param_2 != 3)
 //                {
 //                    PS1_AlwaysObjects[PS1_AlwaysObjectsCount] = cur_obj->id;
@@ -424,7 +424,7 @@ void CreateFirstBBL(void) {
                 skipToLabel(obj, 1, true);
                 calc_obj_pos(obj);
                 obj->gravity_value_1 = 0;
-                obj->cmd_arg_1 = 2;
+                obj->param = 2;
                 obj->is_active = 1;
                 obj->flags.alive = 1;
                 obj->flags.follow_enabled = 1; // added in PC version
@@ -443,7 +443,7 @@ void CreateFirstBBL(void) {
 void INIT_BBMONT(obj_t* obj) {
     /* 58784 8017CF84 -O2 -msoft-float */
     calc_obj_pos(obj);
-    obj->cmd_arg_1 = 0;
+    obj->param = 0;
     obj->gravity_value_2 = 10;
     Phase = 0;
     WaitForAnim = false;

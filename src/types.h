@@ -338,7 +338,7 @@ typedef struct obj_t {
 	s16* cmd_labels;
 	cmd_context_t cmd_contexts[1];
 	u32 field_1C; // 0x1C
-	u32 link_has_gendoor; // 0x20 - ?
+	u32 link_has_gendoor; // 0x20
 	s32 is_active; // 24
 	s32 x; // 28
 	s32 y; // 2C
@@ -346,7 +346,7 @@ typedef struct obj_t {
 	s16 id;
 	s16 screen_x;
 	s16 screen_y;
-	s16 sub_speed;
+	s16 sub_speed; // 3A
 	s16 init_x;
 	s16 init_y;
 	s16 speed_x;
@@ -354,10 +354,10 @@ typedef struct obj_t {
 	s16 nb_sprites;
 	s16 cmd_offset;
 	s16 nb_cmd;
-	s16 cmd_arg_2; // action (?) // command_par2? follow_id? // field_4A
+	s16 follow_id; // 4A
 	s16 follow_y;
 	s16 follow_x;
-	s16 cmd_arg_1;
+	s16 param; // 50
 	s16 link; // 52
 	s16 ray_dist; //54 // tile index?
 	s16 iframes_timer; // timer (?)
@@ -367,7 +367,7 @@ typedef struct obj_t {
 	u16 active_timer;
 	u16 type;
 	u8 btypes[5]; // 0 = center, 1 = left, 2 = right, 3 = up, 4 = down
-	u8 field_67;
+	u8 unused_padding;
 	u8 offset_bx;
 	u8 offset_by;
 	u8 anim_index;
@@ -389,7 +389,7 @@ typedef struct obj_t {
 	u8 detect_zone; // 7A
 	u8 detect_zone_flag; // 7B
 	s8 cmd_context_depth; // 7C
-	u8 configuration; // 7D
+	u8 config; // 7D
 	u8 display_prio; // layer the obj sprites get drawn to, between 1 and 7; 0 means it doesn't get drawn
 	u8 timer; // 7F
 	u8 anim_count;

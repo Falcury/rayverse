@@ -802,7 +802,7 @@ void MARACAS_GO(obj_t* obj) {
     skipToLabel(obj, 99, true);
     if (obj->cmd == GO_SPEED) {
         obj->speed_x = cur_obj->iframes_timer;
-        obj->speed_y = cur_obj->cmd_arg_2;
+        obj->speed_y = cur_obj->follow_id;
     }
     set_main_and_sub_etat(obj, 0, 12);
 }
@@ -890,7 +890,7 @@ void DO_NOVA(obj_t* obj) {
         GET_ANIM_POS(obj, &obj_x, &obj_y, &obj_w, &obj_h);
         nova->is_active = 1;
         nova->display_prio = 1;
-        nova->cmd_arg_1 = 0;
+        nova->param = 0;
         nova->x += (obj_x + (obj_w >> 1)) - (nova_x + (nova_w >> 1));
         nova->y += (obj_y + (obj_h >> 1)) - (nova_y + (nova_h >> 1));
         calc_obj_pos(nova);
@@ -937,7 +937,7 @@ void DO_NOVA2(obj_t* obj) {
                     break;
             }
             nova_obj->display_prio = 0;
-            nova_obj->cmd_arg_1 = i * 5;
+            nova_obj->param = i * 5;
             nova_obj->x += new_x;
             nova_obj->y += new_y;
             calc_obj_pos(nova_obj);
@@ -953,7 +953,7 @@ s16 NOVA_STATUS_BAR(void) {
     }
     obj->display_prio = 0;
     obj->timer = 10;
-    obj->cmd_arg_1 = 255;
+    obj->param = 255;
     obj->is_active = 1;
     obj->x = xmap + obj->offset_bx;
     obj->y = ymap + obj->offset_by;
@@ -972,147 +972,147 @@ void DO_REDEYE_FIRE(s16 x, s16 y, s16 a3) {
             switch (a3) {
                 case 0:
                     cur_obj->iframes_timer = 256;
-                    cur_obj->cmd_arg_2 = 0;
+                    cur_obj->follow_id = 0;
                     break;
                 case 1:
                     cur_obj->iframes_timer = 252;
-                    cur_obj->cmd_arg_2 = -44;
+                    cur_obj->follow_id = -44;
                     break;
                 case 2:
                     cur_obj->iframes_timer = 240;
-                    cur_obj->cmd_arg_2 = -87;
+                    cur_obj->follow_id = -87;
                     break;
                 case 3:
                     cur_obj->iframes_timer = 221;
-                    cur_obj->cmd_arg_2 = -128;
+                    cur_obj->follow_id = -128;
                     break;
                 case 4:
                     cur_obj->iframes_timer = 196;
-                    cur_obj->cmd_arg_2 = -164;
+                    cur_obj->follow_id = -164;
                     break;
                 case 5:
                     cur_obj->iframes_timer = 164;
-                    cur_obj->cmd_arg_2 = -196;
+                    cur_obj->follow_id = -196;
                     break;
                 case 6:
                     cur_obj->iframes_timer = 128;
-                    cur_obj->cmd_arg_2 = -221;
+                    cur_obj->follow_id = -221;
                     break;
                 case 7:
                     cur_obj->iframes_timer = 87;
-                    cur_obj->cmd_arg_2 = -240;
+                    cur_obj->follow_id = -240;
                     break;
                 case 8:
                     cur_obj->iframes_timer = 44;
-                    cur_obj->cmd_arg_2 = -252;
+                    cur_obj->follow_id = -252;
                     break;
                 case 9:
                     cur_obj->iframes_timer = -252;
-                    cur_obj->cmd_arg_2 = -44;
+                    cur_obj->follow_id = -44;
                     break;
                 case 10:
                     cur_obj->iframes_timer = -240;
-                    cur_obj->cmd_arg_2 = -87;
+                    cur_obj->follow_id = -87;
                     break;
                 case 11:
                     cur_obj->iframes_timer = -221;
-                    cur_obj->cmd_arg_2 = -128;
+                    cur_obj->follow_id = -128;
                     break;
                 case 12:
                     cur_obj->iframes_timer = -196;
-                    cur_obj->cmd_arg_2 = -164;
+                    cur_obj->follow_id = -164;
                     break;
                 case 13:
                     cur_obj->iframes_timer = -164;
-                    cur_obj->cmd_arg_2 = -196;
+                    cur_obj->follow_id = -196;
                     break;
                 case 14:
                     cur_obj->iframes_timer = -128;
-                    cur_obj->cmd_arg_2 = -221;
+                    cur_obj->follow_id = -221;
                     break;
                 case 15:
                     cur_obj->iframes_timer = -87;
-                    cur_obj->cmd_arg_2 = -240;
+                    cur_obj->follow_id = -240;
                     break;
                 case 16:
                     cur_obj->iframes_timer = -44;
-                    cur_obj->cmd_arg_2 = -252;
+                    cur_obj->follow_id = -252;
                     break;
                 case 17:
                     cur_obj->iframes_timer = 0;
-                    cur_obj->cmd_arg_2 = -256;
+                    cur_obj->follow_id = -256;
                     break;
                 case 18:
                     cur_obj->iframes_timer = -256;
-                    cur_obj->cmd_arg_2 = 0;
+                    cur_obj->follow_id = 0;
                     break;
                 case 19:
                     cur_obj->iframes_timer = -252;
-                    cur_obj->cmd_arg_2 = 44;
+                    cur_obj->follow_id = 44;
                     break;
                 case 20:
                     cur_obj->iframes_timer = -240;
-                    cur_obj->cmd_arg_2 = 87;
+                    cur_obj->follow_id = 87;
                     break;
                 case 21:
                     cur_obj->iframes_timer = -221;
-                    cur_obj->cmd_arg_2 = 128;
+                    cur_obj->follow_id = 128;
                     break;
                 case 22:
                     cur_obj->iframes_timer = -196;
-                    cur_obj->cmd_arg_2 = 164;
+                    cur_obj->follow_id = 164;
                     break;
                 case 23:
                     cur_obj->iframes_timer = -164;
-                    cur_obj->cmd_arg_2 = 196;
+                    cur_obj->follow_id = 196;
                     break;
                 case 24:
                     cur_obj->iframes_timer = -128;
-                    cur_obj->cmd_arg_2 = 221;
+                    cur_obj->follow_id = 221;
                     break;
                 case 25:
                     cur_obj->iframes_timer = -87;
-                    cur_obj->cmd_arg_2 = 240;
+                    cur_obj->follow_id = 240;
                     break;
                 case 26:
                     cur_obj->iframes_timer = -44;
-                    cur_obj->cmd_arg_2 = 252;
+                    cur_obj->follow_id = 252;
                     break;
                 case 27:
                     cur_obj->iframes_timer = 252;
-                    cur_obj->cmd_arg_2 = 44;
+                    cur_obj->follow_id = 44;
                     break;
                 case 28:
                     cur_obj->iframes_timer = 240;
-                    cur_obj->cmd_arg_2 = 87;
+                    cur_obj->follow_id = 87;
                     break;
                 case 29:
                     cur_obj->iframes_timer = 221;
-                    cur_obj->cmd_arg_2 = 128;
+                    cur_obj->follow_id = 128;
                     break;
                 case 30:
                     cur_obj->iframes_timer = 196;
-                    cur_obj->cmd_arg_2 = 164;
+                    cur_obj->follow_id = 164;
                     break;
                 case 31:
                     cur_obj->iframes_timer = 164;
-                    cur_obj->cmd_arg_2 = 196;
+                    cur_obj->follow_id = 196;
                     break;
                 case 32:
                     cur_obj->iframes_timer = 128;
-                    cur_obj->cmd_arg_2 = 221;
+                    cur_obj->follow_id = 221;
                     break;
                 case 33:
                     cur_obj->iframes_timer = 87;
-                    cur_obj->cmd_arg_2 = 240;
+                    cur_obj->follow_id = 240;
                     break;
                 case 34:
                     cur_obj->iframes_timer = 44;
-                    cur_obj->cmd_arg_2 = 252;
+                    cur_obj->follow_id = 252;
                     break;
                 case 35:
                     cur_obj->iframes_timer = 0;
-                    cur_obj->cmd_arg_2 = 256;
+                    cur_obj->follow_id = 256;
                     break;
                 default:
                     break;
@@ -1123,7 +1123,7 @@ void DO_REDEYE_FIRE(s16 x, s16 y, s16 a3) {
             cur_obj->speed_x = 0;
             cur_obj->speed_y = 0;
             cur_obj->init_x = cur_obj->iframes_timer;
-            cur_obj->init_y = cur_obj->cmd_arg_2;
+            cur_obj->init_y = cur_obj->follow_id;
             calc_obj_pos(cur_obj);
             cur_obj->flags.alive = 1;
             cur_obj->is_active = 1;

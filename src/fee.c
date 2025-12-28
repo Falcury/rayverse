@@ -141,7 +141,7 @@ void wait_for_dialogue_fee(obj_t* obj, s16 time) {
 //39C04
 void DO_FEE_ETAPE(obj_t* obj) {
     /* 4E020 80172820 -O2 -msoft-float */
-    u8 state = obj->configuration;
+    u8 state = obj->config;
 
     switch (state) {
         case 1:
@@ -149,7 +149,7 @@ void DO_FEE_ETAPE(obj_t* obj) {
             if (display_txt_fee == 5 || text_to_display[display_txt_fee].text[0] == '\0')
             {
                 skipToLabel(obj, 1, false);
-                obj->configuration = 0;
+                obj->config = 0;
                 display_txt_fee = 255;
                 obj->timer = 0;
             }
@@ -158,14 +158,14 @@ void DO_FEE_ETAPE(obj_t* obj) {
             wait_for_dialogue_fee(obj, 100);
             if (display_txt_fee == 7) {
                 display_txt_fee = 255;
-                obj->configuration = 3;
+                obj->config = 3;
                 obj->timer = 0;
             }
             break;
         case 3:
             obj->timer++;
             if (obj->timer >= 51) {
-                obj->configuration = 4;
+                obj->config = 4;
                 display_txt_fee = 7;
                 obj->timer = 0;
             }
@@ -236,11 +236,11 @@ void DO_FEE(obj_t* obj) {
             } else {
                 ray_in_fee_zone = false;
             }
-            obj->configuration = 0;
+            obj->config = 0;
             break;
         case 1:
             if (display_txt_fee == 255) {
-                obj->configuration = 1;
+                obj->config = 1;
                 display_txt_fee = 0;
                 obj->timer = 0;
             }
@@ -256,12 +256,12 @@ void DO_FEE(obj_t* obj) {
         case 4:
             if (EOA(obj)) {
                 fee_gives_super_evts();
-                obj->configuration = 2;
+                obj->config = 2;
                 display_txt_fee = 5;
                 obj->timer = 0;
             }
             else
-                obj->configuration = 0;
+                obj->config = 0;
             break;
         case 6:
             if (ray.main_etat == 3)
@@ -271,7 +271,7 @@ void DO_FEE(obj_t* obj) {
                 if (ray.main_etat == 3 && ray.sub_etat == 20)
                 {
                     remoteRayXToReach = ray.x;
-                    if (obj->configuration == 4)
+                    if (obj->config == 4)
                     {
                         set_main_and_sub_etat(&ray, 0, 0);
                         remoteRayXToReach = -32000;

@@ -64,7 +64,7 @@ void RAY_THROW_FIST(void) {
     add_alwobj(poing_obj);
     poing_obj->speed_y = 0;
     poing_obj->anim_frame = 0;
-    poing_obj->cmd_arg_2 = -1;
+    poing_obj->follow_id = -1;
     set_main_and_sub_etat(poing_obj, poing_obj->init_main_etat, poing_obj->init_sub_etat);
     poing_obj->anim_index = poing_obj->eta[poing_obj->main_etat][poing_obj->sub_etat].anim_index;
     poing_obj->x = ray_zdc_x + (ray_zdc_w >> 1) - poing_obj->offset_bx;
@@ -146,11 +146,11 @@ void RAY_GROW_FIST(void) {
 
 //66BF4
 void fin_poing_follow(u8 a1) {
-    if (poing_obj->cmd_arg_2 != -1) {
-        obj_t* unk_obj = level.objects + poing_obj->cmd_arg_2;
+    if (poing_obj->follow_id != -1) {
+        obj_t* unk_obj = level.objects + poing_obj->follow_id;
         unk_obj->speed_x = 0;
         unk_obj->speed_y = 0;
-        poing_obj->cmd_arg_2 = -1;
+        poing_obj->follow_id = -1;
         if (a1 || !(poing_obj->flags.alive)) {
             unk_obj->x = ray.x + ray.offset_bx - unk_obj->offset_bx;
             s32 ray_y = ray_zdc_y + (ray_zdc_h >> 1);
@@ -166,7 +166,7 @@ void fin_poing_follow(u8 a1) {
 //66CA0
 void POING_FOLLOW(obj_t* obj) {
     /* 47F1C 8016C71C -O2 -msoft-float */
-    obj_t* follow_obj = &level.objects[poing_obj->cmd_arg_2];
+    obj_t* follow_obj = &level.objects[poing_obj->follow_id];
 
     follow_obj->speed_x = poing_obj->speed_x;
     follow_obj->speed_y = poing_obj->speed_y;
@@ -284,7 +284,7 @@ void DO_POING(obj_t* obj) {
                 obj->speed_x++;
         }
 
-        if (obj->cmd_arg_2 != -1) {
+        if (obj->follow_id != -1) {
             POING_FOLLOW(obj);
         }
     }

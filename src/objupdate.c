@@ -36,7 +36,7 @@ u8 readTestArgs(obj_t* obj) {
     obj->nb_cmd = obj->cmds[obj->cmd_offset];
     if (obj->nb_cmd <= 4) {
         ++obj->cmd_offset;
-        obj->cmd_arg_1 = obj->cmds[obj->cmd_offset];
+        obj->param = obj->cmds[obj->cmd_offset];
     }
     return 0;
 }
@@ -60,7 +60,7 @@ u8 readSpeedArgs(obj_t* obj) {
     obj->iframes_timer = char2short(obj->cmds[obj->cmd_offset]);
 
     ++obj->cmd_offset;
-    obj->cmd_arg_2 = char2short(obj->cmds[obj->cmd_offset]);
+    obj->follow_id = char2short(obj->cmds[obj->cmd_offset]);
     return 0;
 }
 
@@ -299,22 +299,22 @@ u8 handle_18_GO_SETTEST(obj_t* obj) {
 u8 handle_17_GO_TEST(obj_t* obj) {
     switch(obj->nb_cmd) {
         case 0: {
-            obj->flags.command_test = (obj->flags.flip_x == obj->cmd_arg_1);
+            obj->flags.command_test = (obj->flags.flip_x == obj->param);
         } break;
         case 1: {
-            obj->flags.command_test = (myRand(obj->cmd_arg_1) == 0);
+            obj->flags.command_test = (myRand(obj->param) == 0);
         } break;
         case 2: {
             u8 saved_flip_x = obj->flags.flip_x;
             calc_obj_dir(obj);
-            obj->flags.command_test = (obj->flags.flip_x == obj->cmd_arg_1);
+            obj->flags.command_test = (obj->flags.flip_x == obj->param);
             obj->flags.flip_x = saved_flip_x;
         } break;
         case 3: {
-            obj->flags.command_test = (obj->main_etat == obj->cmd_arg_1);
+            obj->flags.command_test = (obj->main_etat == obj->param);
         } break;
         case 4: {
-            obj->flags.command_test = (obj->sub_etat == obj->cmd_arg_1);
+            obj->flags.command_test = (obj->sub_etat == obj->param);
         } break;
         case 70: {
             obj->flags.command_test = OBJ_IN_ZONE(obj);
@@ -708,7 +708,7 @@ void DO_TIRE_BOUCHON_COMMAND(obj_t* obj) {
 void DoOneUpPoingCollision(obj_t* obj, s16 sprite) {
     if (RayEvts.grap && ray_mode != MODE_3_MORT_DE_RAYMAN) {
         PlaySnd(194, obj->id);
-        poing_obj->cmd_arg_2 = obj->id;
+        poing_obj->follow_id = obj->id;
     }
 }
 
@@ -975,11 +975,11 @@ void TEST_SIGNPOST(void) {
             ray.speed_y = 0;
             decalage_en_cours = 0;
             NumScrollObj = 0;
-            if (ray.cmd_arg_2 != -1) {
-                level.objects[ray.cmd_arg_2].speed_y = 0;
-                level.objects[ray.cmd_arg_2].speed_x = 0;
-                level.objects[ray.cmd_arg_2].gravity_value_1 = 0;
-                level.objects[ray.cmd_arg_2].gravity_value_2 = 0;
+            if (ray.follow_id != -1) {
+                level.objects[ray.follow_id].speed_y = 0;
+                level.objects[ray.follow_id].speed_x = 0;
+                level.objects[ray.follow_id].gravity_value_1 = 0;
+                level.objects[ray.follow_id].gravity_value_2 = 0;
             }
         }
     } else if (ray.main_etat == 6) /* on moskito, al3? */ {
@@ -1053,15 +1053,15 @@ void DO_TEN_COMMAND(obj_t* obj) {
     if (obj->main_etat == 0 && obj->sub_etat == 11) {
         if (obj->anim_frame >= 5 && obj->timer == 0) {
             ++obj->timer;
-            ++obj->configuration; // alternate between 1=livingstone and 2=small livingstone
-            if (obj->configuration > 2) {
-                obj->configuration = 1;
+            ++obj->config; // alternate between 1=livingstone and 2=small livingstone
+            if (obj->config > 2) {
+                obj->config = 1;
             }
             if (obj->hit_points == 1) {
                 allocate_badguy(obj, 2 /*small livingstone*/, 1, -2);
                 allocate_badguy(obj, 1 /*livingstone*/      , 2, -1);
             } else {
-                allocate_badguy(obj, obj->configuration   , 1, -1);
+                allocate_badguy(obj, obj->config   , 1, -1);
             }
         } else {
             if (obj->anim_frame < 2) {
@@ -1087,10 +1087,10 @@ void DO_TEN_COMMAND(obj_t* obj) {
         }
     } else if (obj->main_etat == 0 && obj->sub_etat == 3) {
         ++obj->timer;
-        if (!(obj->configuration == 0 || obj->timer < 253)) {
-            u8 saved_configuration = obj->configuration;
+        if (!(obj->config == 0 || obj->timer < 253)) {
+            u8 saved_configuration = obj->config;
             DO_INTERACT_PLAT(obj); // TODO: fix this
-            obj->configuration = saved_configuration;
+            obj->config = saved_configuration;
         }
         obj->speed_x = 0;
         obj->speed_y = 0;
@@ -1388,14 +1388,14 @@ void DO_BOUEE_JOE_COMMAND(obj_t* obj) {
 
     obj->y = obj->iframes_timer - unk_1 + GetY(obj->x + obj->offset_bx - 12);
 
-    if (ray.cmd_arg_2 == obj->id)
-        obj->cmd_arg_1 = 13;
+    if (ray.follow_id == obj->id)
+        obj->param = 13;
     else
-        obj->cmd_arg_1 = 0;
+        obj->param = 0;
 
-    if (obj->iframes_timer < obj->cmd_arg_1)
+    if (obj->iframes_timer < obj->param)
         obj->iframes_timer++;
-    else if (obj->iframes_timer > obj->cmd_arg_1)
+    else if (obj->iframes_timer > obj->param)
         obj->iframes_timer--;
 }
 
@@ -1421,7 +1421,7 @@ void DO_PHOTOGRAPHE_CMD(obj_t* obj) {
         saveGameState(obj, &save1);
         correct_gendoor_link(1);
         obj->timer = 0;
-    } else if (!RayEvts.tiny && !obj->flags.hurtbyfist && OBJ_IN_ZONE(obj) && ray.cmd_arg_2 == -1
+    } else if (!RayEvts.tiny && !obj->flags.hurtbyfist && OBJ_IN_ZONE(obj) && ray.follow_id == -1
                && !decalage_en_cours && ray.main_etat == 0 && ray.sub_etat == 0
                && inter_box(obj->x + 42, obj->y + 48, 5, 15, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h)
     ) {
@@ -1476,7 +1476,7 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
         case TYPE_CAISSE_CLAIRE:
         case TYPE_GOMME:
         case TYPE_MARK_AUTOJUMP_PLAT:
-            if (ray.cmd_arg_2 == obj->id)
+            if (ray.follow_id == obj->id)
             {
                 if (obj->iframes_timer == 0 || --obj->iframes_timer == 0)
                 {
@@ -1520,10 +1520,10 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                 }
             }
             else
-                obj->iframes_timer = obj->cmd_arg_2;
+                obj->iframes_timer = obj->follow_id;
             break;
         case TYPE_INST_PLAT:
-            if (ray.cmd_arg_2 == obj->id)
+            if (ray.follow_id == obj->id)
             {
                 if (obj->iframes_timer == 0 || --obj->iframes_timer == 0)
                 {
@@ -1536,11 +1536,11 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                 }
             }
             else
-                obj->iframes_timer = obj->cmd_arg_2;
+                obj->iframes_timer = obj->follow_id;
             break;
         case TYPE_COUTEAU:
             if (
-                    ray.cmd_arg_2 == obj->id &&
+                    ray.follow_id == obj->id &&
                     obj->main_etat == 0 && obj->sub_etat == 9
                     )
             {
@@ -1569,15 +1569,15 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                 }
             }
             else
-                obj->iframes_timer = obj->cmd_arg_2;
+                obj->iframes_timer = obj->follow_id;
             break;
         case TYPE_PAILLETTE:
         case TYPE_DESTROYING_DOOR:
             if (obj->flags.alive)
             {
-                if (ray.cmd_arg_2 == obj->id || obj->link != obj->cmd_arg_1)
+                if (ray.follow_id == obj->id || obj->link != obj->param)
                 {
-                    if (obj->link == obj->cmd_arg_1)
+                    if (obj->link == obj->param)
                     {
                         set_sub_etat(obj, 11);
                         obj->link--;
@@ -1587,9 +1587,9 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                         obj_init(obj);
                         obj->flags.alive = 0;
                         obj->is_active = 0;
-                        if (ray.cmd_arg_2 == obj->id)
+                        if (ray.follow_id == obj->id)
                         {
-                            ray.cmd_arg_2 = -1;
+                            ray.follow_id = -1;
                             obj->ray_dist = 1000;
                             set_main_and_sub_etat(&ray, 2, 2);
                             Reset_air_speed(is_rolling_speed);
@@ -1605,16 +1605,16 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
         case TYPE_CRUMBLE_PLAT:
             if (obj->link != 0) {
                 if (
-                        (ray.cmd_arg_2 == obj->id || obj->link != 0x0014) &&
+                        (ray.follow_id == obj->id || obj->link != 0x0014) &&
                         --obj->link == 0
                         )
                     set_sub_etat(obj, 11);
             }
             else
             {
-                if (obj->cmd_arg_1 != 0)
+                if (obj->param != 0)
                 {
-                    obj->cmd_arg_1--;
+                    obj->param--;
                     if (num_world == 1)
                     {
                         if (horloge[2] != 0) /* TODO: ternary? */
@@ -1623,11 +1623,11 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                             obj->display_prio = 4;
                     }
 
-                    if (obj->cmd_arg_1 <= obj->iframes_timer)
+                    if (obj->param <= obj->iframes_timer)
                     {
-                        if (ray.cmd_arg_2 == obj->id)
+                        if (ray.follow_id == obj->id)
                         {
-                            ray.cmd_arg_2 = -1;
+                            ray.follow_id = -1;
                             set_main_and_sub_etat(&ray, 2, 1);
                             Reset_air_speed(is_rolling_speed);
                             jump_time = 0;
@@ -1640,9 +1640,9 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                 }
                 else if (num_world != 1) /* this? or else{} then nest? */
                 {
-                    if (ray.cmd_arg_2 == obj->id)
+                    if (ray.follow_id == obj->id)
                     {
-                        ray.cmd_arg_2 = -1;
+                        ray.follow_id = -1;
                         set_main_and_sub_etat(&ray, 2, 1);
                         Reset_air_speed(is_rolling_speed);
                         jump_time = 0;
@@ -1663,9 +1663,9 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                     obj->active_flag = 4;//ACTIVE_SPECIAL;
                     obj->display_prio = 4;
                     obj->flags.follow_enabled = 1;
-                    if (ray.cmd_arg_2 == obj->id)
+                    if (ray.follow_id == obj->id)
                     {
-                        ray.cmd_arg_2 = -1;
+                        ray.follow_id = -1;
                         set_main_and_sub_etat(&ray, 2, 1);
                         Reset_air_speed(is_rolling_speed);
                         jump_time = 0;
@@ -1678,9 +1678,9 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
             break;
         case TYPE_BIG_BOING_PLAT:
             unk_2 = false;
-            if (ray.cmd_arg_2 == obj->id)
+            if (ray.follow_id == obj->id)
             {
-                if (!(obj->main_etat == 2 || obj->cmd_arg_2 == 0))
+                if (!(obj->main_etat == 2 || obj->follow_id == 0))
                 {
                     unk_2 = true;
                     set_main_and_sub_etat(obj, 2, 4);
@@ -1689,10 +1689,10 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                     obj->gravity_value_2 = 0;
                     obj->speed_y =
                     obj->iframes_timer =
-                            obj->cmd_arg_2 + 1;
-                    obj->cmd_arg_2 = 0;
+                            obj->follow_id + 1;
+                    obj->follow_id = 0;
                 }
-                else if (obj->iframes_timer == obj->cmd_arg_2 + 1)
+                else if (obj->iframes_timer == obj->follow_id + 1)
                     unk_2 = true;
             }
             if (obj->main_etat == 2)
@@ -1704,7 +1704,7 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                     obj->y = obj->init_y;
                     obj->speed_y = 0;
 
-                    if (ray.cmd_arg_2 == obj->id)
+                    if (ray.follow_id == obj->id)
                     {
                         ray.y += obj->init_y - obj->y;
                         switch (ray.main_etat * 0x100 + ray.sub_etat)
@@ -1726,7 +1726,7 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                 {
                     test_1 = 1; /* TODO: remove? */
                     if (
-                            !unk_2 && ray.cmd_arg_2 == obj->id &&
+                            !unk_2 && ray.follow_id == obj->id &&
                             (button_released & 1) == test_1 &&
                             options_jeu.test_fire1()
                             )
@@ -1755,9 +1755,9 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
             break;
         case TYPE_BOING_PLAT:
             unk_2 = false;
-            if (ray.cmd_arg_2 == obj->id)
+            if (ray.follow_id == obj->id)
             {
-                if (!(obj->main_etat == 2 || obj->cmd_arg_2 == 0))
+                if (!(obj->main_etat == 2 || obj->follow_id == 0))
                 {
                     unk_2 = true;
                     set_main_and_sub_etat(obj, 2, 3);
@@ -1766,10 +1766,10 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                     obj->gravity_value_2 = 0;
                     obj->speed_y =
                     obj->iframes_timer =
-                            obj->cmd_arg_2 + 1;
-                    obj->cmd_arg_2 = 0;
+                            obj->follow_id + 1;
+                    obj->follow_id = 0;
                 }
-                else if (obj->iframes_timer == obj->cmd_arg_2 + 1)
+                else if (obj->iframes_timer == obj->follow_id + 1)
                     unk_2 = true;
             }
 
@@ -1780,7 +1780,7 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                     set_main_and_sub_etat(obj, 0, 24);
                     obj->iframes_timer = 0;
                     obj->speed_y = 0;
-                    if (ray.cmd_arg_2 == obj->id)
+                    if (ray.follow_id == obj->id)
                     {
                         ray.y += obj->init_y - obj->y;
                         switch (ray.main_etat * 0x100 + ray.sub_etat)
@@ -1803,7 +1803,7 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                 {
                     test_1 = 1;
                     if (
-                            !unk_2 && ray.cmd_arg_2 == obj->id &&
+                            !unk_2 && ray.follow_id == obj->id &&
                             (button_released & 1) == test_1 &&
                             options_jeu.test_fire1()
                             )
@@ -1831,7 +1831,7 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
             {
                 if (obj->iframes_timer == 0)
                 {
-                    obj->iframes_timer = obj->cmd_arg_2;
+                    obj->iframes_timer = obj->follow_id;
                     if (num_world != 1)
                         set_sub_etat(obj, 7);
                     else
@@ -1851,9 +1851,9 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                     (num_world == 1 || obj->sub_etat != 20)
                     )
             {
-                if (ray.cmd_arg_2 == obj->id)
+                if (ray.follow_id == obj->id)
                 {
-                    ray.cmd_arg_2 = -1;
+                    ray.follow_id = -1;
                     set_main_and_sub_etat(&ray, 2, 2);
                     Reset_air_speed(is_rolling_speed);
                     jump_time = 0;
@@ -1875,9 +1875,9 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
                     obj->flags.alive = 0;
                 }
 
-                if (ray.cmd_arg_2 == obj->id)
+                if (ray.follow_id == obj->id)
                 {
-                    ray.cmd_arg_2 = -1;
+                    ray.follow_id = -1;
                     set_main_and_sub_etat(&ray, 2, 2);
                     Reset_air_speed(is_rolling_speed);
                     jump_time = 0;
@@ -1889,7 +1889,7 @@ void DO_SPECIAL_PLATFORM(obj_t* obj) {
 
             if (obj->sub_etat == 20)
             {
-                if (ray.cmd_arg_2 == obj->id || obj->link != obj->cmd_arg_1)
+                if (ray.follow_id == obj->id || obj->link != obj->param)
                     obj->link--;
 
                 if (obj->iframes_timer == 0 || obj->link == 0)

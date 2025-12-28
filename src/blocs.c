@@ -260,7 +260,7 @@ u8 calc_typ_travd(obj_t* obj, u8 a2) {
                 unk_1 = 2;
             }
 
-            if (ray.cmd_arg_1 != -1)
+            if (ray.param != -1)
                 x_offs_1 -= unk_1;
         }
         x_offs_1 *= spd_x_sgn;
@@ -467,7 +467,7 @@ void CALC_MOV_ON_BLOC(obj_t* obj) {
         }
         x_in_tile = speed_x + ((obj->offset_bx + obj->x) & 0xF);
         y_in_tile = (obj->offset_by + obj->y) & 0xF;
-        if ((obj->type == TYPE_23_RAYMAN) && (ray.cmd_arg_1 != -1)) {
+        if ((obj->type == TYPE_23_RAYMAN) && (ray.param != -1)) {
             if (speed_x > 0)
             {
                 x_in_tile = 15;
@@ -548,8 +548,8 @@ void CALC_MOV_ON_BLOC(obj_t* obj) {
         }
         if (!IS_ON_RESSORT_BLOC(obj)) {
             if (obj->type == TYPE_23_RAYMAN) {
-                if ((ray.cmd_arg_2 == -1 && ray.main_etat != 2) && Abs(obj->speed_y) > 2 && Abs(obj->speed_y) < 16 &&
-                                        !(block_flags[temp_v0_1] & 2))
+                if ((ray.follow_id == -1 && ray.main_etat != 2) && Abs(obj->speed_y) > 2 && Abs(obj->speed_y) < 16 &&
+                    !(block_flags[temp_v0_1] & 2))
                 {
                     s16 saved_speed_y = obj->speed_y;
                     set_main_and_sub_etat(&ray, 0, 0);

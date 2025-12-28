@@ -14,7 +14,7 @@ void DO_CYMBAL_COMMAND(obj_t* obj) {
     s16 spd_x = obj->speed_x;
     s16 diff_x = ray.x + ray.offset_bx - obj->x - obj->offset_bx;
 
-    if (ray.cmd_arg_2 == obj->id)
+    if (ray.follow_id == obj->id)
     {
         obj->gravity_value_2 = 5;
         if (diff_x > 0)
@@ -104,7 +104,7 @@ void DO_CYMBAL_COMMAND(obj_t* obj) {
         sub_etat = obj->sub_etat;
         if (sub_etat == 0)
         {
-            if (obj->link == 0 && ray.cmd_arg_2 == obj->id)
+            if (obj->link == 0 && ray.follow_id == obj->id)
             {
                 if (obj->timer > 100)
                 {
@@ -141,7 +141,7 @@ void DO_CYMBAL_COMMAND(obj_t* obj) {
         }
         else if (sub_etat == 3)
         {
-            if (!(ray.is_active) && obj->anim_frame == 0 && ray.cmd_arg_2 == obj->id)
+            if (!(ray.is_active) && obj->anim_frame == 0 && ray.follow_id == obj->id)
             {
                 ray.is_active = 1;
                 ray.iframes_timer = -1;
@@ -177,7 +177,7 @@ void DO_2_PARTS_CYMBAL(obj_t* cym_obj) {
     }
     else if (cym_obj->link == 1)
     {
-        if (ray.cmd_arg_2 == cym_obj->id)
+        if (ray.follow_id == cym_obj->id)
         {
             diff_x_1 = (ray.x + ray.offset_bx) - cym_obj->x - cym_offs_bx;
             diff_x_2 = diff_x_1; /* ??? */
@@ -194,7 +194,7 @@ void DO_2_PARTS_CYMBAL(obj_t* cym_obj) {
         {
             /* ??? */
             cym_obj->speed_x = cym_obj->iframes_timer;
-            cym_obj->speed_y = cym_obj->cmd_arg_2;
+            cym_obj->speed_y = cym_obj->follow_id;
         }
     }
     if (cym_obj->link > 0)
@@ -271,7 +271,7 @@ void DO_2_PARTS_CYMBAL(obj_t* cym_obj) {
                     {
                         cym_obj->link = 5;
                         if (
-                                ray.is_active == 0 && ray.cmd_arg_2 == cym_obj->id &&
+                                ray.is_active == 0 && ray.follow_id == cym_obj->id &&
                                 ray.iframes_timer == unk_1 && cym_obj->type == TYPE_CYMBAL2
                                 )
                         {
@@ -396,7 +396,7 @@ void DO_COLL_RAY_CYMBALE(obj_t* cym_obj) {
                         ray.is_active = 0;
                         ray.iframes_timer = -1;
                         set_main_and_sub_etat(&ray, 0, 0);
-                        ray.cmd_arg_2 = cym_obj->id;
+                        ray.follow_id = cym_obj->id;
                     }
                     else
                     {

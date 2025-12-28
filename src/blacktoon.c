@@ -27,22 +27,22 @@ void DO_BLK_SPEED_COMMAND(obj_t* obj) {
     /* 6721C 8018BA1C -O2 -msoft-float */
     s16 cen_x; s16 cen_y;
 
-    if (obj->configuration & 4) {
+    if (obj->config & 4) {
         cen_x = get_center_x(obj);
         cen_y = get_center_y(obj);
         if (on_block_chdir(obj, cen_x, cen_y) && test_allowed(obj, cen_x, cen_y))
             skipToLabel(obj, 99, true);
 
         obj->speed_x = obj->iframes_timer;
-        obj->speed_y = obj->cmd_arg_2;
+        obj->speed_y = obj->follow_id;
         if (obj->speed_x > 0)
             obj->flags.flip_x = 1;
         else if (obj->speed_x < 0)
             obj->flags.flip_x = 0;
     }
-    if (obj->configuration & 8) {
+    if (obj->config & 8) {
         obj->speed_x = obj->iframes_timer;
-        obj->speed_y = obj->cmd_arg_2;
+        obj->speed_y = obj->follow_id;
     }
 }
 
@@ -71,7 +71,7 @@ void DO_BLK_LR_COMMAND(obj_t* obj) {
         else
             obj->flags.flip_x = 1;
 
-        if (obj->configuration & 2) {
+        if (obj->config & 2) {
             SET_X_SPEED(obj);
             if (block_flags[calc_typ_travd(obj, false)] & 1) {
                 if (obj->cmd == GO_LEFT)
@@ -81,8 +81,8 @@ void DO_BLK_LR_COMMAND(obj_t* obj) {
             }
             CALC_MOV_ON_BLOC(obj);
         }
-        if (obj->configuration & 1) {
-            obj->speed_y = sinYspeed(obj, 48, 40, &obj->cmd_arg_2);
+        if (obj->config & 1) {
+            obj->speed_y = sinYspeed(obj, 48, 40, &obj->follow_id);
             cen_x = get_center_x(obj);
             cen_y = get_center_y(obj);
             if (on_block_chdir(obj, cen_x, cen_y) && test_allowed(obj, cen_x, cen_y))
@@ -98,7 +98,7 @@ void DO_BLK_LR_COMMAND(obj_t* obj) {
             }
             SET_X_SPEED(obj);
         }
-        if (obj->configuration & 0x10)
+        if (obj->config & 0x10)
         {
             SET_X_SPEED(obj);
             obj->speed_y = 0;
@@ -109,11 +109,11 @@ void DO_BLK_LR_COMMAND(obj_t* obj) {
 //23350
 void DO_BLK_NOP_COMMAND(obj_t* obj) {
     /* 6753C 8018BD3C -O2 -msoft-float */
-    if (obj->configuration & 0x10 &&
-            ((obj->main_etat == 0 && obj->sub_etat == 2) || (obj->main_etat == 2 && obj->sub_etat == 3))
+    if (obj->config & 0x10 &&
+        ((obj->main_etat == 0 && obj->sub_etat == 2) || (obj->main_etat == 2 && obj->sub_etat == 3))
     ) {
         if (obj->timer == 255) {
-            if (((obj->y + obj->speed_y <= obj->cmd_arg_1) && obj->y >= obj->cmd_arg_1) || obj->speed_y == 0) {
+            if (((obj->y + obj->speed_y <= obj->param) && obj->y >= obj->param) || obj->speed_y == 0) {
                 obj->timer = 60;
             }
         } else if (obj->timer == 0) {
@@ -134,7 +134,7 @@ void DO_BLK_NOP_COMMAND(obj_t* obj) {
             (obj->main_etat == 0 && obj->sub_etat == 2) || (obj->main_etat == 2 && obj->sub_etat == 3))
     ) {
         if (obj->detect_zone_flag != 0) {
-            if ((obj->y + obj->speed_y <= obj->cmd_arg_1) && obj->y >= obj->cmd_arg_1) {
+            if ((obj->y + obj->speed_y <= obj->param) && obj->y >= obj->param) {
                 set_main_and_sub_etat(obj, 0, 3);
                 obj->speed_y = 0;
             }
@@ -143,7 +143,7 @@ void DO_BLK_NOP_COMMAND(obj_t* obj) {
         }
     }
 
-    if (obj->configuration & 2 && obj->speed_x != 0 && block_flags[calc_typ_travd(obj, false)] & 1) {
+    if (obj->config & 2 && obj->speed_x != 0 && block_flags[calc_typ_travd(obj, false)] & 1) {
         if (obj->cmd == GO_LEFT)
             skipToLabel(obj, 3, true);
         else
@@ -209,8 +209,8 @@ void DoBlackToonRaymanZDD(obj_t* obj) {
                         && inter_box(blkt_x, blkt_y, blkt_w, blkt_h, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h)
                 ) {
                     calc_obj_dir(obj);
-                    obj->cmd_arg_1 = ray_zdc_y - obj->offset_hy;
-                    if (obj->cmd_arg_1 < obj->y - 16) {
+                    obj->param = ray_zdc_y - obj->offset_hy;
+                    if (obj->param < obj->y - 16) {
                         skipToLabel(obj, 4, true);
                         obj->gravity_value_1 = 0;
                         obj->gravity_value_2 = 6;
@@ -222,8 +222,8 @@ void DoBlackToonRaymanZDD(obj_t* obj) {
         case 3:
             if (obj->main_etat == 0 && obj->sub_etat == 0 && ray.main_etat != 2) {
                 calc_obj_dir(obj);
-                obj->cmd_arg_1 = ray.y + ray.offset_hy - obj->offset_hy;
-                if (obj->cmd_arg_1 < obj->y - 16) {
+                obj->param = ray.y + ray.offset_hy - obj->offset_hy;
+                if (obj->param < obj->y - 16) {
                     skipToLabel(obj, 4, true);
                     obj->gravity_value_2 = 6;
                     obj->gravity_value_1 = 0;

@@ -514,7 +514,7 @@ void makeUturn(obj_t* obj) {
             if (!(obj->main_etat == 0 && obj->sub_etat == 3))
             {
                 label = 3;
-                obj->cmd_arg_2 = 0;
+                obj->follow_id = 0;
             }
             break;
         case TYPE_BADGUY1:
@@ -651,7 +651,7 @@ void makeUturn(obj_t* obj) {
             if (!(obj->main_etat == 0 && obj->sub_etat == 3))
             {
                 label = 3;
-                obj->cmd_arg_2 = 0;
+                obj->follow_id = 0;
             }
             break;
         case TYPE_CAISSE_CLAIRE:
@@ -765,7 +765,7 @@ u8 calc_btyp(obj_t* obj) {
 
     if (obj->type == TYPE_RAYMAN)
     {
-        ray.cmd_arg_1 = -1;
+        ray.param = -1;
         switch (ray.btypes[0])
         {
             case BTYP_NONE:
@@ -828,9 +828,9 @@ u8 calc_btyp(obj_t* obj) {
                             if (ray.main_etat != 2) {
                                 /* ??? don't understand */
                                 if (btypes_1_2_solid != (ray.flags.flip_x))
-                                    obj->cmd_arg_1 = 0;
+                                    obj->param = 0;
                                 else
-                                    obj->cmd_arg_1 = 1;
+                                    obj->param = 1;
                             }
 
                             ray_btypes = ray.btypes;
@@ -847,11 +847,11 @@ u8 calc_btyp(obj_t* obj) {
                             obj->type == TYPE_BADGUY2 || obj->type == TYPE_BADGUY3 || obj->type == TYPE_GENEBADGUY ||
                             obj->type == TYPE_STONEMAN1 || obj->type == TYPE_STONEMAN2 ||
                             obj->type == TYPE_BIG_CLOWN || obj->type == TYPE_WAT_CLOWN ||
-                            (obj->type == TYPE_SPIDER && obj->cmd_arg_1 != 0) ||
+                         (obj->type == TYPE_SPIDER && obj->param != 0) ||
                             obj->type == TYPE_TROMPETTE || obj->type == TYPE_MITE || obj->type == TYPE_MITE2 ||
                             obj->type == TYPE_CAISSE_CLAIRE || obj->type == TYPE_WALK_NOTE_1 || obj->type == TYPE_SPIDER_PLAFOND ||
                             (obj->type == TYPE_BLACKTOON1 &&
-                             (foll_spr = obj->follow_sprite, foll_spr == 1 || foll_spr == 4 || (foll_spr == 7 && obj->configuration == 2)) &&
+                             (foll_spr = obj->follow_sprite, foll_spr == 1 || foll_spr == 4 || (foll_spr == 7 && obj->config == 2)) &&
                              !(obj->main_etat == 0 && obj->sub_etat == 4)
                             )
                         )

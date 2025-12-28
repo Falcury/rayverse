@@ -152,18 +152,18 @@ void DO_MIT_ATTAK(obj_t* obj) {
     s16 new_var;
 
     if ((obj->main_etat == 0) && (obj->sub_etat == 10)) {
-        temp_v0_1 = obj->cmd_arg_2;
+        temp_v0_1 = obj->follow_id;
         if (temp_v0_1 > 50) {
-            obj->cmd_arg_2 = temp_v0_1 - 50;
+            obj->follow_id = temp_v0_1 - 50;
         }
     }
     else if (HAS_MIT_JUMP(obj))
     {
-        if (obj->sub_etat != 1 && obj->cmd_arg_2 == 500) {
-            obj->configuration = 140;
+        if (obj->sub_etat != 1 && obj->follow_id == 500) {
+            obj->config = 140;
             obj->speed_y = 0;
             obj->follow_x = obj->x;
-            ++obj->cmd_arg_2;
+            ++obj->follow_id;
             set_sub_etat(obj, 3);
         } else if (obj->sub_etat == 3) {
             if (obj->gravity_value_2 != 0) {
@@ -193,11 +193,11 @@ void DO_MIT_ATTAK(obj_t* obj) {
                 new_var = ray.x; /* flip order of ray.x and ray.offset_bx? see DO_STONEWOMAN_COMMAND */
                 var_v1_1 = 10 - (((ray.offset_bx + new_var) - temp_a0_1) - obj->offset_bx);
             }
-            if (obj->configuration < var_v0_1 || ((var_v1_1 < var_v0_1) && obj->configuration == 140))
+            if (obj->config < var_v0_1 || ((var_v1_1 < var_v0_1) && obj->config == 140))
             {
-                if ((obj->configuration == 140) && (var_v1_1 < 140))
+                if ((obj->config == 140) && (var_v1_1 < 140))
                 {
-                    obj->configuration = (u8) var_v1_1;
+                    obj->config = (u8) var_v1_1;
                 }
                 if (obj->gravity_value_2 == 1)
                 {
@@ -304,7 +304,7 @@ void DO_MIT_ATTAK(obj_t* obj) {
                     }
                     if ((obj->speed_x == 0) && (var_v0_1 < 8))
                     {
-                        obj->cmd_arg_2 = 0;
+                        obj->follow_id = 0;
                         set_sub_etat(obj, 0U);
                     }
                 }
@@ -347,7 +347,7 @@ u8 IS_MIT_PAF(obj_t* obj) {
     {
         res = true;
         if (EOA(obj))
-            obj->cmd_arg_2 = 0;
+            obj->follow_id = 0;
         else
         {
             if (obj->main_etat != 2)
@@ -355,7 +355,7 @@ u8 IS_MIT_PAF(obj_t* obj) {
             else
             {
                 obj->speed_y = 0;
-                if (obj->cmd_arg_2 >= 500)
+                if (obj->follow_id >= 500)
                 {
                     unk_x_1 = obj->x;
                     unk_x_2 = obj->follow_x;
@@ -396,7 +396,7 @@ void DO_MIT_COMMAND(obj_t* obj) {
     eta_t* obj_eta = &obj->eta[obj->main_etat][obj->sub_etat];
 
     if (!IS_MIT_PAF(obj)) {
-        if (obj->cmd_arg_2 >= 500) {
+        if (obj->follow_id >= 500) {
             DO_MIT_ATTAK(obj);
             return;
         }
@@ -412,7 +412,7 @@ void DO_MIT_COMMAND(obj_t* obj) {
                 diff_x_1 = (ray.x + ray.offset_bx) - obj->x - obj->offset_bx;
                 diff_x_2 = Abs(diff_x_1) >> 1;
                 diff_y_1 = (obj->y + obj->offset_by) - ray.y - ray.offset_by;
-                obj->cmd_arg_2++;
+                obj->follow_id++;
                 if (ray_over_mit(obj, diff_x_1))
                 {
                     if (obj->main_etat == 0 && obj->sub_etat == 10)
@@ -568,7 +568,7 @@ void DO_MITE2_COMMAND(obj_t* obj) {
     else
     {
         DO_MITE2_ESQUIVE(obj);
-        if (obj->cmd_arg_2 != 0 && HAS_MIT_JUMP(obj))
+        if (obj->follow_id != 0 && HAS_MIT_JUMP(obj))
         {
             if (!obj->flags.flip_x)
                 obj->speed_x = -2;
@@ -580,7 +580,7 @@ void DO_MITE2_COMMAND(obj_t* obj) {
         {
             if (on_block_chdir(obj, obj->offset_bx, obj->offset_by - 16))
             {
-                obj->cmd_arg_2 = 502;
+                obj->follow_id = 502;
                 obj->speed_x = 0;
             }
             SET_X_SPEED(obj);
@@ -655,7 +655,7 @@ void DO_MITE2_ESQUIVE(obj_t* mit2_obj) {
             mit2_obj->speed_x = 0;
             mit2_obj->speed_y = 0;
             if (ray.main_etat != 2) {
-                mit2_obj->cmd_arg_2 = 501;
+                mit2_obj->follow_id = 501;
             } else {
                 if (mit2_obj->eta[mit2_obj->main_etat][mit2_obj->sub_etat].flags & 4) {
                     set_main_and_sub_etat(mit2_obj, 0, 9);
@@ -665,7 +665,7 @@ void DO_MITE2_ESQUIVE(obj_t* mit2_obj) {
         }
     } else {
         if (mit2_obj->main_etat == 0 && mit2_obj->sub_etat == 10) {
-            mit2_obj->cmd_arg_2 = 0;
+            mit2_obj->follow_id = 0;
             set_sub_etat(mit2_obj, 12);
             skipToLabel(mit2_obj, 8, true);
         }

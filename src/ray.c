@@ -91,7 +91,7 @@ void rayMayLandOnAnObject(u8* param_1, s16 obj_id) {
 
 
     s16 unk_1 = RayEvts.tiny ? 8 : 4;
-    ray.cmd_arg_2 = -1;
+    ray.follow_id = -1;
 
     i = 0;
     obj_t* cur_obj = &level.objects[actobj.objects[i]];
@@ -111,12 +111,12 @@ void rayMayLandOnAnObject(u8* param_1, s16 obj_id) {
             }
 
             if (Abs(cur_obj->ray_dist) < unk_y && !(block_flags[(u8) calc_typ_trav(&ray, 2)] & 0x10)) {
-                ray.cmd_arg_2 = actobj.objects[i];
+                ray.follow_id = actobj.objects[i];
                 if (left_time == -2 && (map_time % 2 != 0)) {
                     ++map_time;
                 }
 
-                ray.cmd_arg_1 = -1;
+                ray.param = -1;
                 ray_last_ground_btyp = 1;
                 if (ray.main_etat == 2)
                 {
@@ -197,7 +197,7 @@ void rayMayLandOnAnObject(u8* param_1, s16 obj_id) {
                         }
                         break;
                     case TYPE_TAMBOUR1:
-                        cur_obj->configuration = 0x10;
+                        cur_obj->config = 0x10;
                         if (cur_obj->main_etat == 0)
                         {
                             if (cur_obj->sub_etat == 7)
@@ -213,7 +213,7 @@ void rayMayLandOnAnObject(u8* param_1, s16 obj_id) {
                         }
                         break;
                     case TYPE_TAMBOUR2:
-                        cur_obj->configuration = 0x10;
+                        cur_obj->config = 0x10;
                         set_main_and_sub_etat(cur_obj, 2, 1);
                         PlaySnd(111, cur_obj->id);
                         break;
@@ -255,7 +255,7 @@ void rayMayLandOnAnObject(u8* param_1, s16 obj_id) {
                             set_main_and_sub_etat(cur_obj, 0, 1);
                             cur_obj->flags.follow_enabled = 0;
                             ray_on_poelle = 1;
-                            ray.cmd_arg_2 = -1;
+                            ray.follow_id = -1;
                             ray.speed_x = 1;
                             SauveRayEvts = RayEvts;
                             memset(&RayEvts, 0, sizeof(RayEvts));
@@ -281,7 +281,7 @@ void rayMayLandOnAnObject(u8* param_1, s16 obj_id) {
                         break;
                     case TYPE_BOING_PLAT:
                     case TYPE_BIG_BOING_PLAT:
-                        cur_obj->cmd_arg_2 = MAX(ray.speed_y, 2);
+                        cur_obj->follow_id = MAX(ray.speed_y, 2);
                         break;
                 }
 
@@ -313,10 +313,10 @@ void rayMayLandOnAnObject(u8* param_1, s16 obj_id) {
         cur_obj = &level.objects[actobj.objects[i]];
     }
 
-    if (obj_id != -1 && ray.cmd_arg_2 == -1)
-        ray.cmd_arg_2 = obj_id;
-    else if (ray.cmd_arg_2 != -1)
-        level.objects[ray.cmd_arg_2].ray_dist = 0;
+    if (obj_id != -1 && ray.follow_id == -1)
+        ray.follow_id = obj_id;
+    else if (ray.follow_id != -1)
+        level.objects[ray.follow_id].ray_dist = 0;
 }
 
 //6CA70
@@ -375,7 +375,7 @@ void determineRayAirInertia(void) {
         ray.nb_cmd = 1;
         return;
     }
-    if (ray.cmd_arg_2 != -1) {
+    if (ray.follow_id != -1) {
         ray.nb_cmd = 0;
         return;
     }
@@ -412,8 +412,8 @@ void ray_jump(void) {
             }
         }
         speed_y = ray.speed_y;
-        if (ray.cmd_arg_2 != -1) {
-            follow_y = level.objects[ray.cmd_arg_2].follow_y;
+        if (ray.follow_id != -1) {
+            follow_y = level.objects[ray.follow_id].follow_y;
             if (speed_y > follow_y) {
                 speed_y = follow_y;
             }
@@ -473,7 +473,7 @@ void ray_jump(void) {
         helico_time = -1;
         ray.gravity_value_1 = 0;
         ray.gravity_value_2 = 0;
-        ray.cmd_arg_2 = -1;
+        ray.follow_id = -1;
         button_released = 0;
         poing.is_charging = false;
         saveRMjumpX = ray.x;
@@ -572,7 +572,7 @@ void ray_inertia_speed(s16 a1, s16 a2, s16 prev_speed_x, s16 a4) {
     else
         ray.speed_x = 0;
 
-    if ((ray.main_etat == 0 || ray.main_etat == 1 || ray.main_etat == 3) && ray.cmd_arg_2 == -1)
+    if ((ray.main_etat == 0 || ray.main_etat == 1 || ray.main_etat == 3) && ray.follow_id == -1)
         CALC_MOV_ON_BLOC(&ray);
 
     if (ray.main_etat == 2 && ray.sub_etat == 15)
@@ -602,18 +602,18 @@ void RAY_SWIP(void) {
     /*var_s0 = saved_reg_s0;*/
     s16 x_accel = 0;
     s32 var_s4 = num_world == 3 ? 32 : 16;
-    if (ray.cmd_arg_2 != -1) {
-        obj_t* follow_obj = &level.objects[ray.cmd_arg_2];
+    if (ray.follow_id != -1) {
+        obj_t* follow_obj = &level.objects[ray.follow_id];
         if (!(follow_obj->flags.follow_enabled)) {
-            ray.cmd_arg_2 = -1;
+            ray.follow_id = -1;
         }
         s16 ray_dist = follow_obj->ray_dist;
-        if ((Abs(ray_dist) >= 9) || (ray_dist < 0) || (ray.cmd_arg_2 == -1)) {
+        if ((Abs(ray_dist) >= 9) || (ray_dist < 0) || (ray.follow_id == -1)) {
             u8 sp10;
-            rayMayLandOnAnObject(&sp10, ray.cmd_arg_2);
-            if (ray.cmd_arg_2 != -1) {
+            rayMayLandOnAnObject(&sp10, ray.follow_id);
+            if (ray.follow_id != -1) {
                 if (Abs(follow_obj->ray_dist) >= 9) {
-                    ray.cmd_arg_2 = -1;
+                    ray.follow_id = -1;
                     u8 old_ray_main_etat = ray.main_etat;
                     set_main_etat(&ray, 2);
 
@@ -687,9 +687,9 @@ void RAY_SWIP(void) {
                 var_s2 = 0;
                 break;*/
     } else if (ray.main_etat == 0 || ray.main_etat == 1 || ray.main_etat == 3) {
-        if (ray.cmd_arg_2 != -1) {
+        if (ray.follow_id != -1) {
             // NOTE: slopey plat code is not present in the PS1 version
-            obj_t* follow_obj = &level.objects[ray.cmd_arg_2];
+            obj_t* follow_obj = &level.objects[ray.follow_id];
             if (follow_obj->type == TYPE_254_SLOPEY_PLAT) {
                 var_s0 = 255 / (Abs(follow_obj->hit_points) + 1);
                 x_accel = -ashr16(follow_obj->hit_points, 1);
@@ -803,7 +803,7 @@ void RAY_STOP(void) {
     /* 5EF40 80183740 -O2 -msoft-float */
     u8 main_etat = ray.main_etat;
 
-    if (main_etat == 1 || ray.cmd_arg_2 != -1)
+    if (main_etat == 1 || ray.follow_id != -1)
     {
         switch (main_etat * 0x100 + ray.sub_etat)
         {
@@ -936,7 +936,7 @@ void Make_Ray_Hang(s16 a1, s16 a2) {
     ray.link = 0;
     ray.gravity_value_1 = 0;
     ray.gravity_value_2 = 0;
-    ray.cmd_arg_2 = -1;
+    ray.follow_id = -1;
     decalage_en_cours = 0;
     jump_time = 0;
     unk_4 = 1;
@@ -1028,7 +1028,7 @@ void RAY_TOMBE(void) {
     helico_time = -1;
     ray.gravity_value_1 = 0;
     ray.gravity_value_2 = 0;
-    ray.cmd_arg_2 = -1;
+    ray.follow_id = -1;
     button_released = 0;
     poing.is_charging = false;
     determineRayAirInertia();
@@ -1170,7 +1170,7 @@ void RAY_RESPOND_TO_UP(void) {
                 set_sub_etat(&ray, 38);
             }
             RAY_SWIP();
-            if (ray.cmd_arg_2 == -1) {
+            if (ray.follow_id == -1) {
                 v_scroll_speed = 255;
             }
             if (ray.main_etat == 0 && ray.sub_etat == 15 && !(block_flags[(u8) calc_typ_trav(&ray, 2)] & 0x10)) {
@@ -1365,9 +1365,9 @@ void RAY_RESPOND_TO_NOTHING(void) {
             break;
         case 0:
             ray.speed_x = 0;
-            if (ray.cmd_arg_1 != -1 && ray.sub_etat == 0)
+            if (ray.param != -1 && ray.sub_etat == 0)
             {
-                if (ray.cmd_arg_1 == 1)
+                if (ray.param == 1)
                     set_sub_etat(&ray, 49);
                 else
                     set_sub_etat(&ray, 3);
@@ -1498,7 +1498,7 @@ void RAY_RESPOND_TO_BUTTON3(void) {
                      ray.sub_etat == 3 || ray.sub_etat == 8)
              ) {
                 if (RayEvts.magicseed) {
-                    if (ray.cmd_arg_2 == -1) {
+                    if (ray.follow_id == -1) {
                         set_main_and_sub_etat(&ray, 3, 16);
                         ray.speed_x = 0;
                         ray.speed_y = 0;
@@ -1578,7 +1578,7 @@ void SET_RAY_BALANCE(void) {
     ray.gravity_value_1 = 0;
     ray.gravity_value_2 = 0;
     compteur_attente = 0; // added in PC/Android
-    ray.cmd_arg_2 = -1;
+    ray.follow_id = -1;
     decalage_en_cours = 0;
     button_released = 1;
     ray.speed_y = 0;
@@ -1824,7 +1824,7 @@ void RAY_IN_THE_AIR(void) {
     pos_stack[0] = (s16)ray.x;
 
     if (ray.sub_etat == 7) {
-        ray.cmd_arg_2 = -1;
+        ray.follow_id = -1;
     }
 
     u8 may_land_obj = true;
@@ -2049,7 +2049,7 @@ u8 RAY_DEAD(void) {
                 !(ray.main_etat == 3 && ray.sub_etat == 22) &&
                 ray.flags.alive
         ) {
-            if (ray.btypes[0] == BTYP_WATER && ray.cmd_arg_2 == -1 && ray.main_etat != 6) {
+            if (ray.btypes[0] == BTYP_WATER && ray.follow_id == -1 && ray.main_etat != 6) {
                 rayfallsinwater();
             } else if (ray.y + ray.offset_by > (mp.height + 1) * 16) {
                 set_main_and_sub_etat(&ray, 2, 9);
@@ -2063,7 +2063,7 @@ u8 RAY_DEAD(void) {
         ) {
             --dead_time;
             if (dead_time != 0 || fin_du_jeu) {
-                ray.cmd_arg_2 = -1;
+                ray.follow_id = -1;
             } else {
                 ray.hit_points = 2;
                 if (ray.is_active) {
@@ -2167,7 +2167,7 @@ u8 RayEstIlBloque(void) {
                 ani_w -= ani_w >> 2;
                 if (cur_obj->flags.follow_enabled) {
                     GET_SPRITE_POS(cur_obj, cur_obj->follow_sprite, &spr_x, &spr_y, &spr_w, &spr_h);
-                    ani_y = spr_y + cur_obj->offset_hy + (ray.cmd_arg_2 == cur_obj->id);
+                    ani_y = spr_y + cur_obj->offset_hy + (ray.follow_id == cur_obj->id);
                 }
                 else
                     ani_y = cur_obj->y + cur_obj->offset_hy;
@@ -2248,7 +2248,7 @@ void stackRay(void) {
 //70964
 void RAY_SURF(void) {
     /* 63BD0 801883D0 -O2 -msoft-float */
-    if (ray.cmd_arg_2 == -1 || (level.objects[ray.cmd_arg_2].type != TYPE_159_TIBETAIN_6 && level.objects[ray.cmd_arg_2].type != TYPE_160_TIBETAIN_2)) {
+    if (ray.follow_id == -1 || (level.objects[ray.follow_id].type != TYPE_159_TIBETAIN_6 && level.objects[ray.follow_id].type != TYPE_160_TIBETAIN_2)) {
         if (ray.main_etat == 0 && !(ray.sub_etat == 13 || ray.sub_etat == 11 || ray.sub_etat == 12)) {
             if (Abs(ray.speed_x) > 3 && ray.sub_etat != 40) {
                 if (!(ray.eta[ray.main_etat][ray.sub_etat].flags & 0x40) &&
@@ -2359,7 +2359,7 @@ void TEST_FIN_FOLLOW(void) {
         }
 
         ray.speed_x = 0;
-        ray.cmd_arg_2 = -1;
+        ray.follow_id = -1;
     }
 }
 
@@ -2368,7 +2368,7 @@ void RAY_FOLLOW(void) {
     /* 31AA8 801562A8 -O2 -msoft-float */
     s16 other_spd_x;
     s16 other_spd_y;
-    obj_t* other_obj = &level.objects[ray.cmd_arg_2];
+    obj_t* other_obj = &level.objects[ray.follow_id];
 
     if (flags[other_obj->type] & flags1_0x10_move_x)
         other_spd_x = instantSpeed(other_obj->speed_x);
@@ -2385,7 +2385,7 @@ void RAY_FOLLOW(void) {
     ray.speed_y = other_spd_y + (ray.speed_y + other_obj->follow_y);
     TEST_FIN_FOLLOW();
     if (!(other_obj->is_active))
-        ray.cmd_arg_2 = -1;
+        ray.follow_id = -1;
 }
 
 //70E14
@@ -2518,7 +2518,7 @@ void DO_RAY_ON_MS(void) {
 
     joy_done = 0;
     calc_obj_pos(&ray);
-    if (ray.cmd_arg_2 == -1)
+    if (ray.follow_id == -1)
         calc_btyp(&ray);
 
     if (ray.main_etat != 3 && (ray.main_etat != 6 || ray.sub_etat != 14))
@@ -2603,7 +2603,7 @@ void DO_RAYMAN(void) {
 
         joy_done = 0;
         calc_obj_pos(&ray);
-        if (ray.cmd_arg_2 == -1) {
+        if (ray.follow_id == -1) {
             calc_btyp(&ray);
         } else {
             ray.speed_y = 0;
@@ -2711,7 +2711,7 @@ void DO_RAYMAN(void) {
             }
         }
 
-        if (ray.cmd_arg_2 != -1) {
+        if (ray.follow_id != -1) {
             RAY_FOLLOW(); //TODO
         }
 

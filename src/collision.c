@@ -187,7 +187,7 @@ void GET_OBJ_ZDC(obj_t* obj, s16 *out_x, s16 *out_y, s16 *out_w, s16 *out_h) {
             obj->flags.flip_x = 0;
             GET_ANIM_POS(obj, &anim_x, &anim_y, &anim_w, &anim_h); /* ... */
             obj->flags.flip_x = old_flip_x;
-            if (obj->cmd_arg_1 != 2)
+            if (obj->param != 2)
             {
                 *out_x = anim_x + 3;
                 *out_y = anim_y + 20;
@@ -828,7 +828,7 @@ void SET_RAY_DIST_MULTISPR_CANTCHANGE(obj_t* obj) {
     ray_x = ray.x + ray.offset_bx;
     ray_y = ray.y + ray.offset_by;
 
-    if (ray.cmd_arg_2 == obj->id) {
+    if (ray.follow_id == obj->id) {
         GET_SPRITE_POS(obj, obj->follow_sprite, &spr_x, &spr_y, &spr_w, &spr_h);
         spr_y += obj->offset_hy;
         if (obj->type == TYPE_ROULETTE || obj->type == TYPE_ROULETTE2 || obj->type == TYPE_ROULETTE3) {
@@ -919,8 +919,8 @@ void SET_RAY_DIST_BAG(obj_t* obj) {
         new_dist = 10000;
     }
 
-    if (ray.cmd_arg_2 == obj->id && obj->sub_etat == 6 && obj->anim_frame == 11) {
-        ray.cmd_arg_2 = -1;
+    if (ray.follow_id == obj->id && obj->sub_etat == 6 && obj->anim_frame == 11) {
+        ray.follow_id = -1;
         set_main_and_sub_etat(&ray, 2, 0);
         new_dist = 10000;
         ray.speed_y -= 10;
@@ -1040,7 +1040,7 @@ bool COLL_RAY_PIC(void) {
 
     if ((ray.y + ray.offset_by) < (mp.height * 16)) {
         ray_dist = ray.ray_dist;
-        if (ray.cmd_arg_2 == -1) {
+        if (ray.follow_id == -1) {
             res = (mp.map[ray_dist].tile_type) == BTYP_HURT;
         }
         if (!res) {
@@ -1111,7 +1111,7 @@ void RAY_KO(void) {
     set_main_and_sub_etat(&ray, 3, 0);
     ray.speed_y = 0;
     ray.speed_x = 0;
-    ray.configuration = 0;
+    ray.config = 0;
 }
 
 //2DBDC
@@ -1187,7 +1187,7 @@ void RAY_HIT(bool hurt, obj_t* obj) {
             helico_time = -1;
             ray.gravity_value_1 = 0;
             ray.gravity_value_2 = 0;
-            ray.cmd_arg_2 = -1;
+            ray.follow_id = -1;
             poing.is_charging = false;
             decalage_en_cours = 0;
             ray.nb_cmd = 0;
@@ -1539,7 +1539,7 @@ void DO_COLLISIONS(void) {
                         ObjectsFonctions[obj->type].rayman_collision(obj);
                     }
                 }
-            } else if (ray.configuration == 0 && ray.iframes_timer == -1) {
+            } else if (ray.config == 0 && ray.iframes_timer == -1) {
                 if ((get_eta(&ray)->flags & 8) && !(flags[obj->type] & flags0_4_no_collision)) {
                     s16 collision;
                     if ((obj->type == TYPE_170_RAYON && (obj->anim_frame == 0 || obj->anim_frame > 3)) ||
@@ -1561,7 +1561,7 @@ void DO_COLLISIONS(void) {
             }
         }
     }
-    if (ray.configuration != 0) {
+    if (ray.config != 0) {
         RAY_KO();
     }
     if (ray.iframes_timer > -1) {
@@ -1638,7 +1638,7 @@ void DO_OBJ_COLLISIONS(obj_t* obj, s16 offs) {
                             cur_obj->speed_y = 0;
                             cur_obj->offset_hy = 11;
                             cur_obj->flags.follow_enabled = 1;
-                            if (ray.cmd_arg_2 == obj->id)
+                            if (ray.follow_id == obj->id)
                                 RAY_TOMBE();
                             if (cur_obj->cmd == GO_WAIT)
                             {
@@ -1666,7 +1666,7 @@ void DO_OBJ_COLLISIONS(obj_t* obj, s16 offs) {
                                     (cur_obj->x + cur_obj->offset_bx) - obj->x - obj->offset_bx > -1
                                     )
                             {
-                                cur_obj->configuration = 1;
+                                cur_obj->config = 1;
                                 skipToLabel(obj, 3, true);
                                 cur_obj->speed_x = 8;
                             }
@@ -1675,7 +1675,7 @@ void DO_OBJ_COLLISIONS(obj_t* obj, s16 offs) {
                                     (cur_obj->x + cur_obj->offset_bx) - obj->x - obj->offset_bx < 0
                                     )
                             {
-                                cur_obj->configuration = 1;
+                                cur_obj->config = 1;
                                 skipToLabel(obj, 4, true);
                                 cur_obj->speed_x = -8;
                             }
@@ -1725,7 +1725,7 @@ void obj_jump(obj_t* obj) {
             }
             break;
         case TYPE_123_BLACKTOON1:
-            if (obj->configuration & 2) {
+            if (obj->config & 2) {
                 label = 1;
                 set_main_and_sub_etat(obj, 2, 5);
                 spd_y = -3;
@@ -1761,7 +1761,7 @@ void DO_MOVING_PLATFORM_COMMAND(obj_t* obj) {
     obj->flags.flip_x = 0;
     if (obj->cmd == GO_SPEED) {
         obj->speed_x = obj->iframes_timer;
-        obj->speed_y = obj->cmd_arg_2;
+        obj->speed_y = obj->follow_id;
     }
 }
 
@@ -1922,7 +1922,7 @@ void DO_ONE_CMD(obj_t* obj) {
             break;
         case GO_SPEED:
             obj->speed_x = obj->iframes_timer;
-            obj->speed_y = obj->cmd_arg_2;
+            obj->speed_y = obj->follow_id;
             break;
         case GO_NOP:
             break;
@@ -1974,9 +1974,9 @@ void DO_ROLL_EYES(obj_t* obj) {
             case 5:
                 if (--obj->iframes_timer == 0)
                 {
-                    obj->iframes_timer = obj->cmd_arg_1;
+                    obj->iframes_timer = obj->param;
                     obj->sub_etat = 0;
-                    obj->cmd_arg_1 = 100;
+                    obj->param = 100;
                 }
                 break;
         }
@@ -2082,7 +2082,7 @@ void DO_ROLL_EYES(obj_t* obj) {
                 DO_REDEYE_FIRE(obj->x, obj->y, fire_par_3);
             }
             else {
-                obj->cmd_arg_1 = 40;
+                obj->param = 40;
             }
         }
     }
@@ -2218,9 +2218,9 @@ void DO_MOVE_MARACAS_COMMAND(obj_t* obj) {
         obj->flags.flip_x = 0;
         speed_x = 0;
         if (obj->cmd == 0x14)
-            obj->speed_y = obj->cmd_arg_2;
+            obj->speed_y = obj->follow_id;
 
-        if (ray.cmd_arg_2 == obj->id)
+        if (ray.follow_id == obj->id)
         {
             diff_x = (ray.offset_bx + ray.x) - (obj->offset_bx + obj->x);
             if (diff_x > 0)
@@ -2254,8 +2254,8 @@ void DO_MOVE_MARACAS_COMMAND(obj_t* obj) {
             if (MarCoince(obj, 2))
             {
                 obj->speed_y = 0;
-                obj->cmd_arg_1++;
-                if (obj->cmd_arg_1 >= 241)
+                obj->param++;
+                if (obj->param >= 241)
                 {
                     obj->y -= 80;
                     allocateExplosion(obj);
@@ -2269,7 +2269,7 @@ void DO_MOVE_MARACAS_COMMAND(obj_t* obj) {
                 }
             }
             else
-                obj->cmd_arg_1 = 0;
+                obj->param = 0;
         }
         if (obj->speed_x > 0)
         {
@@ -2298,9 +2298,9 @@ void DO_FLASH_COMMAND(obj_t* obj) {
         }
     }
 
-    obj->init_y = obj->init_y + obj->cmd_arg_2;
+    obj->init_y = obj->init_y + obj->follow_id;
     while (Abs(obj->init_y) >= 128) {
-        if (obj->cmd_arg_2 > 0) {
+        if (obj->follow_id > 0) {
             obj->y++;
             obj->init_y -= 128;
         } else {
@@ -2356,7 +2356,7 @@ void ACTIVE_L_EAU(obj_t* eau_obj) {
     obj_t *cur_obj;
     s16 nb_objs;
 
-    eau_obj->cmd_arg_1 = 130;
+    eau_obj->param = 130;
     eau_obj->y = ymapmax + (SCREEN_HEIGHT - 10);
     eau_obj->x = xmap - eau_obj->offset_bx;
     i = 0;
@@ -2370,7 +2370,7 @@ void ACTIVE_L_EAU(obj_t* eau_obj) {
             cur_obj->x = eau_obj->x + 101 * 1;
             cur_obj->y = eau_obj->y;
             calc_obj_pos(cur_obj);
-            cur_obj->cmd_arg_1 = 130;
+            cur_obj->param = 130;
             cur_obj->flags.alive = 1;
             cur_obj->is_active = 1;
             cur_obj->sub_etat = 1;
@@ -2386,7 +2386,7 @@ void ACTIVE_L_EAU(obj_t* eau_obj) {
     cur_obj->x = eau_obj->x + 101 * 2;
     cur_obj->y = eau_obj->y;
     calc_obj_pos(cur_obj);
-    cur_obj->cmd_arg_1 = 130;
+    cur_obj->param = 130;
     cur_obj->flags.alive = 1;
     cur_obj->is_active = 1;
     cur_obj->sub_etat = 2;
@@ -2398,7 +2398,7 @@ void ACTIVE_L_EAU(obj_t* eau_obj) {
     cur_obj->x = eau_obj->x + 101 * 3;
     cur_obj->y = eau_obj->y;
     calc_obj_pos(cur_obj);
-    cur_obj->cmd_arg_1 = 130;
+    cur_obj->param = 130;
     cur_obj->flags.alive = 1;
     cur_obj->is_active = 1;
     cur_obj->sub_etat = 3;
@@ -2430,14 +2430,14 @@ void DO_EAU_QUI_MONTE(obj_t* obj) {
                     } else {
                         obj->hit_points--;
                     }
-                } else if (obj->cmd_arg_1 > 40 || level.objects[eau_obj_id].iframes_timer == 1) {
+                } else if (obj->param > 40 || level.objects[eau_obj_id].iframes_timer == 1) {
                     if (horloge[2] != 0 && obj->y >= (SCREEN_HEIGHT - 80)) {
                         obj->speed_y = -1;
                     } else {
                         obj->speed_y = 0;
                     }
-                    if (obj->cmd_arg_1 > 0) {
-                        --obj->cmd_arg_1;
+                    if (obj->param > 0) {
+                        --obj->param;
                     }
                 } else {
                     obj->speed_y = 0;
@@ -2526,7 +2526,7 @@ void allocateOtherPosts(obj_t* her_bh_obj) {
         cur_obj->init_x = her_bh_obj->init_x + i * ((her_bh_obj->hit_points - 2) << 5);
         cur_obj->init_y = her_bh_obj->init_y;
         unk_1 = i << 8;
-        cur_obj->cmd_arg_1 = her_bh_obj->cmd_arg_1 - unk_1;
+        cur_obj->param = her_bh_obj->param - unk_1;
         cur_obj->x = cur_obj->init_x;
         cur_obj->y = cur_obj->init_y;
         calc_obj_pos(her_bh_obj);
@@ -2539,11 +2539,11 @@ void doHerseCommand(obj_t* obj) {
     /* 4EF0C 8017370C -O2 -msoft-float */
     if ((obj->type == TYPE_178_HERSE_BAS || obj->type == TYPE_HERSE_HAUT) && obj->link == 0) {
         obj->anim_frame = myRand(obj->animations[obj->anim_index].frame_count - 1);
-        obj->cmd_arg_1 = 0x1000;
+        obj->param = 0x1000;
         allocateOtherPosts(obj);
         obj->link = 1;
     } else {
-        obj->speed_y = sinYspeed(obj, 24, 40, &obj->cmd_arg_1);
+        obj->speed_y = sinYspeed(obj, 24, 40, &obj->param);
         obj->speed_x = 0;
     }
 }
@@ -2573,11 +2573,11 @@ void DO_POELLE_COMMAND(obj_t* po_obj) {
         if ((ray.speed_x > 0 && ray.flags.flip_x) || (ray.speed_x < 0 && !ray.flags.flip_x)) {
             abs_ray_spd_x = Abs(ray.speed_x);
             if (abs_ray_spd_x < 2)
-                po_obj->cmd_arg_1 = ray.speed_x > 0 ? 2 : -2;
+                po_obj->param = ray.speed_x > 0 ? 2 : -2;
             else if (abs_ray_spd_x >= 7)
-                po_obj->cmd_arg_1 = ray.speed_x > 0 ? 7 : -7;
+                po_obj->param = ray.speed_x > 0 ? 7 : -7;
             else
-                po_obj->cmd_arg_1 = ray.speed_x;
+                po_obj->param = ray.speed_x;
         }
         if (po_obj->iframes_timer == 0)
         {
@@ -2623,14 +2623,14 @@ void DO_POELLE_COMMAND(obj_t* po_obj) {
         po_obj->iframes_timer = 0;
         po_obj->anim_frame = 1;
         if (ray.main_etat == 3 && ray.sub_etat == 22)
-            po_obj->speed_x = po_obj->cmd_arg_1;
+            po_obj->speed_x = po_obj->param;
         else if (
                 ray.main_etat == 2 &&
                 ((sub_etat = ray.sub_etat, sub_etat == 1) || sub_etat == 2 || sub_etat == 6)
                 )
             ray.speed_x = 0;
         else
-            po_obj->cmd_arg_1 = 0;
+            po_obj->param = 0;
     }
 }
 
@@ -2707,11 +2707,11 @@ void DO_CORDE_COMMAND(obj_t* obj) {
                 if (level.objects[pierreAcorde_obj_id].iframes_timer == 0)
                     DO_FUMEE_CORDE(obj_x_pos + 128, ray_y_pos + 30);
 
-                level.objects[pierreAcorde_obj_id].cmd_arg_1 = 0;
+                level.objects[pierreAcorde_obj_id].param = 0;
                 return;
             }
         }
-        level.objects[pierreAcorde_obj_id].cmd_arg_1++;
+        level.objects[pierreAcorde_obj_id].param++;
     }
 }
 
@@ -2736,12 +2736,12 @@ void DO_PAC_COMMAND(obj_t* obj) {
         obj->speed_y = 0;
     }
 
-    if (obj->cmd_arg_1 >= 2) {
+    if (obj->param >= 2) {
         obj->iframes_timer = 0;
     } else {
         obj->iframes_timer = 1;
     }
-    obj->cmd_arg_1 = 0;
+    obj->param = 0;
 }
 
 //310F8
@@ -2761,17 +2761,17 @@ void DO_CFUMEE_COMMAND(obj_t* obj) {
 
 //31190
 void DO_NOVA2_COMMAND(obj_t* obj) {
-    if (obj->cmd_arg_1 != 255) {
-        if (obj->cmd_arg_1 == -1) {
+    if (obj->param != 255) {
+        if (obj->param == -1) {
             if (EOA(obj)) {
                 obj->flags.alive = 0;
                 obj->is_active = 0;
             }
-        } else if (obj->cmd_arg_1 != 0) {
-            --obj->cmd_arg_1;
+        } else if (obj->param != 0) {
+            --obj->param;
         } else {
             obj->anim_frame = 0;
-            obj->cmd_arg_1 = -1;
+            obj->param = -1;
             obj->display_prio = 2;
         }
     }
@@ -2799,17 +2799,17 @@ void move_fruit_in_water(obj_t* obj) {
     u8 obj_flip_x = obj->flags.flip_x;
     if (obj->main_etat == 0)
     {
-        if (obj->sub_etat == 13 && ray.cmd_arg_2 == obj->id)
+        if (obj->sub_etat == 13 && ray.follow_id == obj->id)
             set_main_and_sub_etat(obj, 0, 15);
 
         if (obj->main_etat == 0 && obj->sub_etat == 15)
         {
-            if (obj->type == TYPE_FALLING_OBJ2 && ray.cmd_arg_2 == -1)
+            if (obj->type == TYPE_FALLING_OBJ2 && ray.follow_id == -1)
             {
                 set_sub_etat(obj, 13);
                 obj->speed_x = 0;
             }
-            else if (ray.cmd_arg_2 == obj->id)
+            else if (ray.follow_id == obj->id)
             {
                 obj->flags.flip_x = ray.flags.flip_x;
                 SET_X_SPEED(obj);

@@ -408,8 +408,8 @@ s32 DO_PESANTEUR(obj_t* obj) {
     {
         if (obj->type == TYPE_TAMBOUR1 || obj->type == TYPE_TAMBOUR2)
         {
-            if (obj->configuration != 0)
-                obj->configuration--;
+            if (obj->config != 0)
+                obj->config--;
             else if (obj->gravity_value_1 == 0)
             {
                 obj->speed_y++;
@@ -912,7 +912,7 @@ void DO_FRUIT_REBOND(obj_t* obj, s16 pesanteur, s16 a3) {
             if (obj_type == TYPE_FALLING_OBJ || obj_type == TYPE_FALLING_OBJ2 || obj_type == TYPE_FALLING_OBJ3 ||
                 obj_type == TYPE_FALLING_YING || obj_type == TYPE_FALLING_YING_OUYE
             ) {
-                if (ray.cmd_arg_2 == obj->id) {
+                if (ray.follow_id == obj->id) {
                     obj->speed_y = RayEvts.tiny ? -4 : -3;
                 }
                 else
@@ -971,8 +971,8 @@ void MiteAtter(obj_t* obj) {
     if (obj->speed_y > 0) {
         recale_position(obj);
         skipToLabel(obj, 2, 1);
-        if (obj->cmd_arg_2 > 500) {
-            obj->cmd_arg_2 = 0;
+        if (obj->follow_id > 500) {
+            obj->follow_id = 0;
         }
     }
 }
@@ -1133,7 +1133,7 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
                     case 6:
                         break;
                     case 7:
-                        obj->configuration = 2;
+                        obj->config = 2;
                         calc_obj_dir(obj);
                     case 1:
                     case 4:
@@ -1171,7 +1171,7 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
                 if (obj->speed_y >= 0)
                 {
                     skipToLabel(obj, 16, true);
-                    obj->configuration = 0;
+                    obj->config = 0;
                 }
                 break;
             case TYPE_TNT_BOMB:
@@ -1202,30 +1202,30 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
                 DO_FRUIT_REBOND(obj, pesanteur, 1);
                 break;
             case TYPE_MST_SHAKY_FRUIT:
-                if (obj->cmd_arg_1 != 0)
+                if (obj->param != 0)
                 {
                     PlaySnd(45, obj->id);
                     obj->speed_y = 6;
                     DO_FRUIT_REBOND(obj, 1, 1);
-                    obj->cmd_arg_1--;
+                    obj->param--;
                 }
                 break;
             case TYPE_MST_FRUIT1:
-                if (obj->cmd_arg_1 != 0)
+                if (obj->param != 0)
                 {
                     PlaySnd(45, obj->id);
                     obj->speed_y = 7;
                     DO_FRUIT_REBOND(obj, 1, 1);
-                    obj->cmd_arg_1--;
+                    obj->param--;
                 }
                 break;
             case TYPE_MST_FRUIT2:
-                if (obj->cmd_arg_1 != 0)
+                if (obj->param != 0)
                 {
                     PlaySnd(45, obj->id);
                     obj->speed_y = 6;
                     DO_THROWN_BOMB_REBOND(obj, 1, 1);
-                    obj->cmd_arg_1--;
+                    obj->param--;
                 }
                 break;
             case TYPE_FALLING_OBJ:
@@ -1399,10 +1399,10 @@ void test_fall_in_water(obj_t* obj) {
 //58084
 void MOVE_OBJECT(obj_t* obj) {
     if (obj->speed_x != 0 || obj->speed_y != 0) {
-        if ((flags[obj->type] & flags2_0x80_increase_speed_x) && obj->configuration == 1 && horloge[20] == 0) {
+        if ((flags[obj->type] & flags2_0x80_increase_speed_x) && obj->config == 1 && horloge[20] == 0) {
             obj->speed_x = obj->speed_x <= 0 ? obj->speed_x + 1 : obj->speed_x - 1;
             if (obj->speed_x == 0) {
-                obj->configuration = 0;
+                obj->config = 0;
             }
         }
         bool need_set_flag_0x100;
@@ -1651,9 +1651,9 @@ void RECALE_ALL_OBJECTS(void) {
         cur_obj = &level.objects[actobj.objects[i]];
     }
 
-    if (ray.cmd_arg_2 != -1)
+    if (ray.follow_id != -1)
     {
-        cur_obj = &level.objects[ray.cmd_arg_2];
+        cur_obj = &level.objects[ray.follow_id];
         if (cur_obj->is_active)
         {
             GET_SPRITE_POS(cur_obj, cur_obj->follow_sprite, &x, &y, &w, &h);
@@ -1751,7 +1751,7 @@ void move_up_ray(void) {
     if (ray.y < scroll_start_y - (unk_y_1 + unk_y_2)) {
         ray.y = scroll_start_y - (unk_y_1 + unk_y_2);
         ray.speed_y = 0;
-        if (ray.cmd_arg_2 != -1) {
+        if (ray.follow_id != -1) {
             RAY_HIT(ray.iframes_timer == -1, NULL);
         }
     }
@@ -1879,9 +1879,9 @@ void recale_ray_pos(void) {
         }
     }
 
-    if (scroll_y == -1 && ray.cmd_arg_2 != -1)
+    if (scroll_y == -1 && ray.follow_id != -1)
     {
-        obj_t* other_obj = &level.objects[ray.cmd_arg_2];
+        obj_t* other_obj = &level.objects[ray.follow_id];
         if (flags[other_obj->type] & flags1_0x20_move_y) {
             v_scroll_speed += instantSpeed(other_obj->speed_y);
         } else {
@@ -2102,11 +2102,11 @@ void INIT_RAY(u8 new_lvl) {
     ray.anim_frame = 0;
     ray.main_etat = 2;
     ray.sub_etat = 2;
-    ray.configuration = 0;
+    ray.config = 0;
     ray.timer = 0;
     ray.offset_bx = 80;
     ray.offset_by = 78;
-    ray.cmd_arg_2 = -1;
+    ray.follow_id = -1;
     ray.link = -1;
     ray.iframes_timer = -1;
     ray.is_active = 1;
@@ -2317,7 +2317,7 @@ void DO_AUTO_SCROLL(void) {
                     scr_obj->y = 10000;
                 break;
             case 3:
-                if (eau_id == -1 || (level.objects[eau_id].hit_points == 0 && level.objects[eau_id].cmd_arg_1 == 0)) {
+                if (eau_id == -1 || (level.objects[eau_id].hit_points == 0 && level.objects[eau_id].param == 0)) {
                     if (scr_obj->y <= ray_y)
                     {
                         if (Abs(scroll_y) == 1)
@@ -2695,8 +2695,8 @@ void DO_MOTEUR(void) {
         LEFT_MAP_BORDER = Bloc_lim_W1 + xmap + 20 - ray.offset_bx;
     }
 
-    if (ray.cmd_arg_1 != -1) {
-        level.objects[ray.cmd_arg_1].display_prio = oldPrio;
+    if (ray.param != -1) {
+        level.objects[ray.param].display_prio = oldPrio;
     }
 
     if (RayEvts.firefly) {
@@ -2719,7 +2719,7 @@ void DO_MOTEUR2(void) {
     DO_OBJECTS_ANIMS();
     if (ray.flags.alive) {
         if (dead_time != 64) {
-            ray.cmd_arg_2 = -1;
+            ray.follow_id = -1;
         }
         switch(ray_mode) {
             case MODE_1_RAYMAN: {
@@ -2805,8 +2805,8 @@ void DO_MOTEUR2(void) {
         DO_SCROLL(&h_scroll_speed, &v_scroll_speed);
         build_active_table();
         RECALE_ALL_OBJECTS();
-        if (ray.cmd_arg_2 != -1) {
-            obj_t* v20 = level.objects + ray.cmd_arg_2;
+        if (ray.follow_id != -1) {
+            obj_t* v20 = level.objects + ray.follow_id;
             oldPrio = v20->display_prio;
             if (oldPrio > 3) {
                 v20->display_prio = 3;
@@ -2881,15 +2881,15 @@ void RAY_DEMIRAY(void) {
     ray.anim_index = rms.anim_index;
     ray.anim_frame = rms.anim_frame;
     ray.flags.flip_x = rms.flags.flip_x;
-    ray.cmd_arg_1 = rms.cmd_arg_1;
+    ray.param = rms.param;
     ray.main_etat = rms.main_etat;
     ray.sub_etat = rms.sub_etat;
-    ray.cmd_arg_2 = rms.cmd_arg_2;
+    ray.follow_id = rms.follow_id;
     ray.flags.alive = 1;
     ray.is_active = 1;
     ray.link = rms.link;
     ray.iframes_timer = rms.iframes_timer;
-    ray.configuration = rms.configuration;
+    ray.config = rms.config;
     ray.timer = rms.timer;
     ray.hit_points = rms.hit_points;
     ray.init_hit_points = rms.init_hit_points;

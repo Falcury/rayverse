@@ -519,11 +519,11 @@ obj_t* allocateMoskitoFruit(obj_t* mst2_obj) {
             switch (cur_obj_type)
             {
                 case TYPE_MST_FRUIT1:
-                    cur_obj->cmd_arg_1 = 1;
+                    cur_obj->param = 1;
                     cur_obj->speed_x = 0;
                     break;
                 case TYPE_MST_FRUIT2:
-                    cur_obj->cmd_arg_1 = 3;
+                    cur_obj->param = 3;
                     cur_obj->speed_x = mst2_obj->speed_x;
                     break;
                 default: break;
@@ -815,7 +815,7 @@ void DO_MST_SCROLL_COMMAND(obj_t* obj) {
         switch (obj->timer)
         {
             case 0:
-                obj->cmd_arg_2 = ray.x - 50;
+                obj->follow_id = ray.x - 50;
                 obj->iframes_timer = ray.y - 80;
                 unk_x = 1;
                 unk_y = 1;
@@ -823,14 +823,14 @@ void DO_MST_SCROLL_COMMAND(obj_t* obj) {
             case 1:
                 if (scroll_x == -1)
                     obj->timer = 2;
-                obj->cmd_arg_2 = xmap + obj->cmd_arg_1 - 100;
+                obj->follow_id = xmap + obj->param - 100;
                 obj->iframes_timer = ymap + obj->link - 10;
                 unk_x = h_scroll_speed + 1;
                 unk_y = 2;
                 break;
             case 2:
-                obj->cmd_arg_1 = 500;
-                obj->cmd_arg_2 = xmap + 1000;
+                obj->param = 500;
+                obj->follow_id = xmap + 1000;
                 obj->iframes_timer = ray.y - 125;
                 unk_y = 1;
                 unk_x = 3;
@@ -842,12 +842,12 @@ void DO_MST_SCROLL_COMMAND(obj_t* obj) {
 
         if (horloge[5] != 0)
         {
-            if (obj->cmd_arg_2 > obj->x)
+            if (obj->follow_id > obj->x)
             {
                 obj->speed_x++;
                 MIN_2(obj->speed_x, unk_x);
 
-                if (obj->cmd_arg_2 < (obj->x + obj->speed_x))
+                if (obj->follow_id < (obj->x + obj->speed_x))
                     obj->speed_x = unk_x - 1;
             }
             else
@@ -876,18 +876,18 @@ void DO_MST_SCROLL_COMMAND(obj_t* obj) {
 void DO_MST_CHANGE_COMMAND(obj_t* obj) {
     /* 4D5AC 80171DAC -O2 -msoft-float */
     /* ugh */
-    if (level.objects[mst_scroll_obj_id].cmd_arg_1 != 500)
+    if (level.objects[mst_scroll_obj_id].param != 500)
     {
         switch (obj->hit_points)
         {
             case 1:
-                level.objects[mst_scroll_obj_id].cmd_arg_1 = 100;
+                level.objects[mst_scroll_obj_id].param = 100;
                 return;
             case 2:
-                level.objects[mst_scroll_obj_id].cmd_arg_1 = 0;
+                level.objects[mst_scroll_obj_id].param = 0;
                 return;
             case 3:
-                level.objects[mst_scroll_obj_id].cmd_arg_1 = -80;
+                level.objects[mst_scroll_obj_id].param = -80;
                 return;
             case 4:
                 level.objects[mst_scroll_obj_id].link = -100;
@@ -902,7 +902,7 @@ void DO_MST_CHANGE_COMMAND(obj_t* obj) {
 //5544C
 void DoMstShakyFruitRaymanZDD(obj_t* obj) {
     if (!(obj->main_etat == 2 || obj->sub_etat == 1)) {
-        obj->cmd_arg_1 = 1;
+        obj->param = 1;
         skipToLabel(obj, 0, true);
         obj->gravity_value_2 = 4;
     }

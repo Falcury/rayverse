@@ -362,10 +362,10 @@ void load_level(mem_t* mem_level, s32 world_id, const char* filename) {
             mem_read(&obj->nb_sprites, mem, 2);
             mem_read(&obj->cmd_offset, mem, 2);
             mem_read(&obj->nb_cmd, mem, 2);
-            mem_read(&obj->cmd_arg_2, mem, 2);
+            mem_read(&obj->follow_id, mem, 2);
             mem_read(&obj->follow_y, mem, 2);
             mem_read(&obj->follow_x, mem, 2);
-            mem_read(&obj->cmd_arg_1, mem, 2);
+            mem_read(&obj->param, mem, 2);
             mem_read(&obj->link, mem, 2);
             mem_read(&obj->ray_dist, mem, 2);
             mem_read(&obj->iframes_timer, mem, 2);
@@ -375,7 +375,7 @@ void load_level(mem_t* mem_level, s32 world_id, const char* filename) {
             mem_read(&obj->active_timer, mem, 2);
             mem_read(&obj->type, mem, 2);
             mem_read(&obj->btypes, mem, 5);
-            mem_read(&obj->field_67, mem, 1);
+            mem_read(&obj->unused_padding, mem, 1);
             mem_read(&obj->offset_bx, mem, 1);
             mem_read(&obj->offset_by, mem, 1);
             mem_read(&obj->anim_index, mem, 1);
@@ -397,7 +397,7 @@ void load_level(mem_t* mem_level, s32 world_id, const char* filename) {
             mem_read(&obj->detect_zone, mem, 1);
             mem_read(&obj->detect_zone_flag, mem, 1);
             mem_read(&obj->cmd_context_depth, mem, 1);
-            mem_read(&obj->configuration, mem, 1);
+            mem_read(&obj->config, mem, 1);
             mem_read(&obj->display_prio, mem, 1);
             mem_read(&obj->timer, mem, 1);
             mem_read(&obj->anim_count, mem, 1);

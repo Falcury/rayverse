@@ -50,7 +50,7 @@ void DO_STONEDOG_COMMAND(obj_t* obj) {
     switch (obj->cmd) {
         case GO_SPEED:
             obj->speed_x = obj->iframes_timer;
-            obj->speed_y = obj->cmd_arg_2;
+            obj->speed_y = obj->follow_id;
             break;
         case GO_LEFT:
         case GO_RIGHT:
@@ -211,7 +211,7 @@ void DO_STONEWOMAN_COMMAND(obj_t* obj) {
             if (obj->detect_zone_flag != 0)
             {
                 if (diff_x < 170 && diff_y < 38)
-                    obj->configuration = 1;
+                    obj->config = 1;
 
                 if (IS_STONEWOMAN_WAIT(obj))
                 {
@@ -220,10 +220,10 @@ void DO_STONEWOMAN_COMMAND(obj_t* obj) {
                         unk_1 = 1;
                         obj->timer = 100;
                     }
-                    else if (obj->configuration != 0 && obj->timer == 0)
+                    else if (obj->config != 0 && obj->timer == 0)
                     {
                         unk_1 = -1;
-                        obj->configuration = 0;
+                        obj->config = 0;
                     }
                 }
             }
@@ -904,8 +904,8 @@ void DoPiPoingCollision(obj_t* obj, s16 sprite) {
         } else {
             DO_PI_EXPLOSION(obj);
             obj->is_active = 0;
-            if (obj->id == ray.cmd_arg_2) {
-                ray.cmd_arg_2 = -1;
+            if (obj->id == ray.follow_id) {
+                ray.follow_id = -1;
                 obj->ray_dist = 1000;
                 set_main_and_sub_etat(&ray, 2, 2);
             }

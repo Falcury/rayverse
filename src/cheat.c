@@ -241,12 +241,12 @@ void PC_do_cheats(void) {
         status_bar.num_wiz = (status_bar.num_wiz + 10 < 99) ? status_bar.num_wiz + 10 : 99;
     }
     else if (memcmp(text_input_buffer, cheat_code_win_map, 6) == 0 || memcmp(text_input_buffer, cheat_code_win_map_alt, 6) == 0) {
-        if (ray.main_etat == 0 && ray.speed_x == 0 && ray.speed_y == 0 && ray.cmd_arg_2 == -1) {
+        if (ray.main_etat == 0 && ray.speed_x == 0 && ray.speed_y == 0 && ray.follow_id == -1) {
             fin_boss = 1;
         }
     }
     else if (memcmp(text_input_buffer, cheat_code_free_movement, 9) == 0) {
-        ray.cmd_arg_2 = -1;
+        ray.follow_id = -1;
         ray_mode = -ray_mode;
         dead_time = 64;
         set_main_and_sub_etat(&ray, 2, 2);

@@ -209,7 +209,7 @@ void DO_BAT_COMMAND(obj_t* obj) {
                         obj->speed_x = Abs(obj->iframes_timer);
                         break;
                 }
-                obj->speed_y = obj->cmd_arg_2;
+                obj->speed_y = obj->follow_id;
             }
 
             offs_bx = obj->offset_bx;

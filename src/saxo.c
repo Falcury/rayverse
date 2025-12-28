@@ -83,7 +83,7 @@ void allocateNote2(obj_t* note_obj, s16 a2) {
                     cur_obj->gravity_value_1 = 0;
                     cur_obj->iframes_timer = note_obj->iframes_timer - 1;
                     calc_obj_pos(cur_obj);
-                    cur_obj->cmd_arg_1 = 10;
+                    cur_obj->param = 10;
                     allocateExplosion(cur_obj);
                     break;
                 }
@@ -103,7 +103,7 @@ void DO_EXPLOSE_NOTE2(obj_t* obj) {
     set_main_and_sub_etat(obj, 0, 1);
     PlaySnd(246, obj->id);
     allocateExplosion(obj);
-    obj->cmd_arg_1 = 10;
+    obj->param = 10;
     obj->iframes_timer = 3;
 }
 
@@ -143,8 +143,8 @@ void DO_NOTE_CMD(obj_t* obj) {
             break;
         case TYPE_92_NOTE2:
             if (obj->main_etat == 0) {
-                obj->cmd_arg_1--;
-                if (obj->cmd_arg_1 == 0)
+                obj->param--;
+                if (obj->param == 0)
                 {
                     switch (obj->sub_etat)
                     {
@@ -307,7 +307,7 @@ void BonneNote(obj_t* orig_obj) {
                     cur_obj->speed_x = -1;
                     cur_obj->speed_y = -4;
                     cur_obj->gravity_value_2 = 10;
-                    cur_obj->cmd_arg_1 = 2;
+                    cur_obj->param = 2;
                 } else {
                     speed_x = 4;
                     if (poing_obj->speed_x < 0)
@@ -318,7 +318,7 @@ void BonneNote(obj_t* orig_obj) {
                     else
                         cur_obj->flags.flip_x = 1;
                     cur_obj->gravity_value_2 = 255;
-                    cur_obj->cmd_arg_1 = 1;
+                    cur_obj->param = 1;
                     cur_obj->speed_y = -1;
                 }
                 cur_obj->x = orig_obj->x;
@@ -359,7 +359,7 @@ void DO_NOTE_TOUCHEE(obj_t* obj, s16 sprite) {
             obj->speed_x += poing_obj->speed_x;
             obj->speed_y = -1;
             obj->gravity_value_2 = 255;
-            obj->cmd_arg_1 = 1;
+            obj->param = 1;
             break;
     }
 }
