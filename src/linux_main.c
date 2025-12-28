@@ -56,7 +56,7 @@ void linux_process_keyboard_event(SDL_Scancode scancode, bool is_down) {
             SC_RSHIFT, SC_ALT, 0, 0,
     };
 
-    if (is_down && scancode == SDL_SCANCODE_RETURN && Touche_Enfoncee[SC_ALT]) {
+    if (is_down && ((scancode == SDL_SCANCODE_RETURN && Touche_Enfoncee[SC_ALT]) || scancode == SDL_SCANCODE_F11)) {
         toggle_fullscreen(global_app_state.sdl.window);
     } else {
         u8 dos_scancode = sdl_scancode_to_dos_scancode[scancode & 0xFF];
