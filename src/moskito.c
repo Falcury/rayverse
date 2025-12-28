@@ -486,7 +486,7 @@ obj_t* allocateMoskitoFruit(obj_t* mst2_obj) {
     s16 i;
     obj_t* cur_obj;
     s16 nb_objs;
-    ObjType cur_obj_type;
+    u16 cur_obj_type;
     s16 unk_x; s16 unk_y; s16 unk_w; s16 unk_h;
     obj_t* res = NULL;
 

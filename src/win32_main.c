@@ -140,7 +140,7 @@ void win32_process_keyboard_event(u32 vk_code, bool is_down) {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     };
-    enum dos_scancode_enum dos_scancode = (enum dos_scancode_enum)windows_code_to_dos_scancode[vk_code & 0xFF];
+    u8 dos_scancode = windows_code_to_dos_scancode[vk_code & 0xFF];
     if (is_down && ((dos_scancode == SC_ENTER && Touche_Enfoncee[SC_ALT]) || dos_scancode == SC_F11)) {
         toggle_fullscreen(global_app_state.win32.window);
     } else {
