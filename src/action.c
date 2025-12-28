@@ -1,15 +1,15 @@
 
 //18890
-void setBossReachingSpeeds(obj_t* obj, u8 timer, u8 accuracyX, u8 accuracyY) {
-    s16 xDiff;
-    s16 yDiff;
-    s32 xDist;
-    s32 yDist;
+void setBossReachingSpeeds(obj_t* obj, u8 timer, u8 accuracy_x, u8 accuracy_y) {
+    s16 diff_x;
+    s16 diff_y;
+    s32 dist_x;
+    s32 dist_y;
     s32 speed;
-    s16 maxDist;
+    s16 max_dist;
     s32 dir;
-    s32 newSpeedX;
-    s32 newSpeedY;
+    s32 new_speed_x;
+    s32 new_speed_y;
 
     // Check if x and y targets have been set
     if (bossXToReach != OBJ_INVALID_XY && bossYToReach != OBJ_INVALID_XY) {
@@ -23,35 +23,35 @@ void setBossReachingSpeeds(obj_t* obj, u8 timer, u8 accuracyX, u8 accuracyY) {
         speed = speed >> 0xE;
         
         // Get x and y differences as fixed-point Q4
-        xDiff = (bossXToReach - obj->x) * 16;
-        yDiff = (bossYToReach - obj->y) * 16;
+        diff_x = (bossXToReach - obj->x) * 16;
+        diff_y = (bossYToReach - obj->y) * 16;
         
-        if (!(xDiff == 0 && yDiff == 0) && speed != 0) {
+        if (!(diff_x == 0 && diff_y == 0) && speed != 0) {
             // Get the distance to reach
-            xDist = Abs(xDiff);
-            yDist = Abs(yDiff);
-            maxDist = MAX(xDist, yDist);
+            dist_x = Abs(diff_x);
+            dist_y = Abs(diff_y);
+            max_dist = MAX(dist_x, dist_y);
 
             // Make sure speed isn't greater than the distance to move
-            speed = MIN(maxDist, speed);
+            speed = MIN(max_dist, speed);
 
             // Get the direction as an integer
-            dir = ashl32(maxDist, 4) / speed;
+            dir = ashl32(max_dist, 4) / speed;
 
             // Get the new speed for x and y as integers
-            newSpeedX = ashl32(xDiff, 4) / dir;
-            newSpeedY = ashl32(yDiff, 4) / dir;
+            new_speed_x = ashl32(diff_x, 4) / dir;
+            new_speed_y = ashl32(diff_y, 4) / dir;
 
             // Check the frame timer and change to new speed, using lerp based on accuracy value (0-255)
             if (horloge[timer] == 0) {
-                obj->speed_x = LERP(obj->speed_x, newSpeedX, accuracyX, U8_MAX) / U8_MAX;
+                obj->speed_x = LERP(obj->speed_x, new_speed_x, accuracy_x, U8_MAX) / U8_MAX;
 
                 // If the object is in the air then optionally force full accuracy
-                if (obj->main_etat == OBJ_MAIN_ETAT_IN_AIR && speed >= yDiff) {
-	                accuracyY = U8_MAX;
+                if (obj->main_etat == OBJ_MAIN_ETAT_IN_AIR && speed >= diff_y) {
+	                accuracy_y = U8_MAX;
                 }
 
-                obj->speed_y = LERP(obj->speed_y, newSpeedY, accuracyY, U8_MAX) / U8_MAX;
+                obj->speed_y = LERP(obj->speed_y, new_speed_y, accuracy_y, U8_MAX) / U8_MAX;
             }
         }
         // If no movement to perform then reset speed
