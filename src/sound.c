@@ -141,14 +141,15 @@ void unlock_audio(void) {
 }
 
 void game_get_sound_samples(game_sound_buffer_t* output_buffer) {
+    // Start with silence (zero everything)
+    s32 bytes_per_sample = sizeof(short) * 2;
+    memset(output_buffer->samples, 0, output_buffer->sample_count * bytes_per_sample);
+
     // Play music
 	if (is_ogg_playing) {
 		if (ogg_cd_track.decoder) {
 			play_ogg(output_buffer, &ogg_cd_track);
 		}
-	} else {
-        s32 bytes_per_sample = sizeof(short) * 2;
-        memset(output_buffer->samples, 0, output_buffer->sample_count * bytes_per_sample);
 	}
 
     // Play digi sounds
@@ -510,7 +511,7 @@ void PlaySnd(s16 snd, s16 obj_id) {
 
         s16 prog = hard_sound_table[snd].prog;
         u8 tone = hard_sound_table[snd].tone;
-        u8 note;
+        u8 note = hard_sound_table[snd].note;
 
         switch(snd) {
             case 53:
