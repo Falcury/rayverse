@@ -1103,7 +1103,11 @@ u8 byte_967CC = 0; //967CC
 s32 XSpeedJumelle = 0; //967D0
 s32 YSpeedJumelle = 0; //967D4
 
-s16 TabW1[4] = {4, 12, 20, 24}; //9684C // TODO: change TabW1[0] to 0 here to fix black bar on left of screen?
+#ifdef FIX_BLACK_BAR_ON_THE_LEFT
+s16 TabW1[4] = {0, 12, 20, 24}; //9684C
+#else
+s16 TabW1[4] = {4, 12, 20, 24}; //9684C
+#endif
 s16 TabW2[4] = {320, 312, 304, 300}; //96854
 s16 TabH1[4] = {0, 8, 16, 20}; //9685C
 s16 TabH2[4] = {200, 192, 184, 180}; //96864

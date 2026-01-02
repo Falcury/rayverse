@@ -82,7 +82,11 @@ void update_display_map(big_map_t* a1) {
 void set_default_Bloc_clipping(void) {
     Bloc_lim_H1 = 0;
     Bloc_lim_H2 = 200;
-    Bloc_lim_W1 = 4; //TODO: change to 0? (it's also 0 in the Android version)
+#ifdef FIX_BLACK_BAR_ON_THE_LEFT
+    Bloc_lim_W1 = 0;
+#else
+    Bloc_lim_W1 = 4;
+#endif
     Bloc_lim_W2 = 320;
 }
 

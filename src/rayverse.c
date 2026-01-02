@@ -43,6 +43,8 @@
 #define PC
 //#define PS1
 
+#define FIX_BLACK_BAR_ON_THE_LEFT // Remove the 4-pixel-wide black bar on the left of the screen.
+
 #include "types.h"
 #include "proto.h"
 
