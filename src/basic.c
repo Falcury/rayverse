@@ -453,8 +453,25 @@ void GET_RAY_ZDC(obj_t* obj, s16* x, s16* y, s16* w, s16* h) {
 }
 
 //1DEC0
-void GET_BB1_ZDCs(obj_t* obj, s16* a2, s16* a3, s16* a4, s16* a5, s16* a6, s16* a7, s16* a8, s16* a9) {
-    print_once("Not implemented: GET_BB1_ZDCs"); //stub
+void GET_BB1_ZDCs(obj_t* obj, s16 *x_1, s16 *y_1, s16 *w_1, s16 *h_1, s16 *x_2, s16 *y_2, s16 *w_2, s16 *h_2) {
+    // NOTE(Falcury): PS1 and PC versions seem functionally identical.
+    s16 spr_ind = 6;
+    s16 h_loc;
+
+    GET_ANIM_POS(obj, x_1, y_1, w_1, &h_loc);
+    if (obj->main_etat == 2 && (obj->sub_etat == 0 || obj->sub_etat == 4))
+        spr_ind = 3;
+    GET_SPRITE_POS(obj, spr_ind, x_1, y_1, w_1, h_1);
+    *x_2 = *x_1 - 7;
+    *y_2 = *y_1 + *h_1;
+    *w_2 = *w_1 + 14;
+    *h_2 = h_loc >> 1;
+    *x_1 += 4;
+    *w_1 -= 8;
+    *y_1 += 4;
+    *h_1 -= 8;
+    if (obj->main_etat == 0 && (obj->sub_etat == 16 || obj->sub_etat == 19))
+        GET_SPRITE_POS(obj, 0, x_1, y_1, w_1, h_1);
 }
 
 //1DFB8

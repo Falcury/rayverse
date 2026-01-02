@@ -761,6 +761,11 @@ typedef struct bb_data_t {
     u8 field8_0xe;
 } bb_data_t;
 
+typedef struct bb_attack_entry_t {
+    s16 attack;
+    u8 wait_for_fin_atan;
+} bb_attack_entry_t;
+
 enum game_mode_video_enum {
     MODE_NORMAL = 0,
     MODE_X = 1,

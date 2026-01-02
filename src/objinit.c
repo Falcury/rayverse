@@ -682,7 +682,7 @@ void INIT_OBJECTS(u8 a1) {
             case TYPE_46_BB1:
             case TYPE_198_BB12:
             case TYPE_200_BB13: {
-                INIT_BBMONT(obj); //TODO
+                INIT_BBMONT(obj);
             } break;
             case TYPE_55_MUS_WAIT: {
                 obj->init_flag = 7;

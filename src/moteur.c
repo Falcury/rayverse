@@ -60,17 +60,44 @@ s16 frapsol(s16 a1) {
 
 //55B48
 void DO_SCREEN_TREMBLE(void) {
-    print_once("Not implemented: DO_SCREEN_TREMBLE"); //stub
+    // NOTE(Falcury): PS1 and PC versions appear to be identical
+    s16 unk_1;
+
+    if (screen_trembling != 0) {
+        unk_1 = frapsol(screen_trembling);
+        screen_trembling++;
+        if (unk_1 == 255) {
+            unk_1 = 0;
+            screen_trembling = 0;
+        }
+        ymap += unk_1;
+    }
 }
 
 //55B90
 void DO_SCREEN_TREMBLE3(void) {
-    print_once("Not implemented: DO_SCREEN_TREMBLE3"); //stub
+    // NOTE(Falcury): PS1 and PC versions appear to be identical
+    s16 unk_1 = expsin2[screen_trembling3];
+
+    if (unk_1 != 255) {
+        screen_trembling3++;
+        ymap += unk_1;
+    } else {
+        screen_trembling3 = 0;
+    }
 }
 
 //55BCC
 void DO_SCREEN_TREMBLE2(void) {
-    print_once("Not implemented: DO_SCREEN_TREMBLE2"); //stub
+    // NOTE(Falcury): PS1 and PC versions appear to be identical
+    s16 unk_1 = expsin2[screen_trembling2];
+
+    if (unk_1 != 255) {
+        screen_trembling2++;
+        xmap += unk_1;
+    } else {
+        screen_trembling2 = 0;
+    }
 }
 
 //55C08
@@ -1299,19 +1326,19 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
                 break;
             case TYPE_BB1:
                 if (obj->iframes_timer < 10)
-                    DO_BBMONT_ATTER(obj); //TODO
+                    DO_BBMONT_ATTER(obj);
                 break;
             case TYPE_BB12:
-                DO_BBMONT2_ATTER(obj); //TODO
+                DO_BBMONT2_ATTER(obj);
                 break;
             case TYPE_BB13:
-                DO_BBMONT3_ATTER(obj); //TODO
+                DO_BBMONT3_ATTER(obj);
                 break;
             case TYPE_SAXO2:
-                DO_SAXO2_ATTER(obj); //TODO
+                DO_SAXO2_ATTER(obj);
                 break;
             case TYPE_SAXO:
-                DO_SAXO_ATTER(obj); //TODO
+                DO_SAXO_ATTER(obj);
                 break;
             case TYPE_MAMA_PIRATE:
                 DO_PMA_ATTER(obj); //TODO
@@ -1320,7 +1347,7 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
                 DO_COU_ATTER(obj); //TODO
                 break;
             case TYPE_BOUT_TOTEM:
-                DO_TOTBT_REBOND(obj); //TODO
+                DO_TOTBT_REBOND(obj);
                 break;
             case TYPE_SPIDER_PLAFOND:
                 if (obj->main_etat == 2 && obj->speed_y > 0)
