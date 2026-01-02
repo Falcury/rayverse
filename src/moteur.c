@@ -2722,8 +2722,8 @@ void DO_MOTEUR(void) {
         LEFT_MAP_BORDER = Bloc_lim_W1 + xmap + 20 - ray.offset_bx;
     }
 
-    if (ray.param != -1) {
-        level.objects[ray.param].display_prio = oldPrio;
+    if (ray.follow_id != -1) {
+        level.objects[ray.follow_id].display_prio = oldPrio;
     }
 
     if (RayEvts.firefly) {
@@ -2736,7 +2736,7 @@ void DO_MOTEUR(void) {
         ray_wind_force = weather_wind;
     }
 
-    DO_OBJECTS(); //TODO
+    DO_OBJECTS();
 }
 
 //5AC70
