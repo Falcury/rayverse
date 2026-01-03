@@ -1233,7 +1233,7 @@ void DO_BOUEE_JOE_COMMAND(obj_t* obj);
 void DO_PHOTOGRAPHE_CMD(obj_t* obj);
 void DoAudioStartRaymanCollision(obj_t* obj);
 void DO_SLOPEY_PLAT_CMD(obj_t* obj);
-void DO_PIRATE_POELLE(obj_t* obj);
+void DO_PIRATE_POELLE(obj_t* pirp_obj);
 void DO_PIRATE_POELLE_POING_COLLISION(obj_t* obj, s16 sprite);
 void PIRATE_POELLE_REACT(obj_t* obj);
 void DO_SPECIAL_PLATFORM(obj_t* obj);
