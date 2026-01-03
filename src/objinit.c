@@ -998,9 +998,9 @@ void special_flags_init(void) {
         }
         if (i == TYPE_17_LIFTPLAT || i == TYPE_16_FALLPLAT || i == TYPE_24_INTERACTPLT) {
             if (num_world == world_1_jungle) {
-                flags[i] |= flags2_8_can_jump;
+                flags[i] |= flags1_8_ray_dist_multispr_cantchange;
             } else {
-                flags[i] &= ~flags2_8_can_jump;
+                flags[i] &= ~flags1_8_ray_dist_multispr_cantchange;
             }
         }
     }
