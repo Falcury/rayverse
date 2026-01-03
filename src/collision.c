@@ -1563,7 +1563,12 @@ void unleashMonsterHost(obj_t* obj) {
 
 //2EA2C
 void SHOW_COLLISIONS_ZONES(void) {
-    print_once("Not implemented: SHOW_COLLISIONS_ZONES"); //stub
+    for (s16 i = 0; i < actobj.num_active_objects; ++i) {
+        obj_t* obj = &level.objects[actobj.objects[i]];
+        if (!(flags[obj->type] & flags0_4_no_collision) && (get_eta(obj)->flags & 0x20)) {
+            CHECK_BOX_COLLISION(TYPE_23_RAYMAN, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h, obj);
+        }
+    }
 }
 
 //2EAE8

@@ -267,6 +267,42 @@ void PC_do_cheats(void) {
 
 }
 
+
+//(newly added)
+void rayverse_draw_white_outline(s16 x, s16 y, s16 w, s16 h) {
+    x -= xmap - 8;
+    y -= ymap;
+
+    // bounds checks
+    if (x < XMIN) {
+        w += x;
+        x = XMIN;
+    }
+    if (y < YMIN) {
+        h += y;
+        y = YMIN;
+    }
+    if (x + w > XMAX) {
+        w = XMAX - x;
+    }
+    if (y + h > YMAX) {
+        h = YMAX - y;
+    }
+    // Draw white outline
+    if (w > 0 && h > 0) {
+        u8* dest = draw_buffer + SCREEN_WIDTH * y + x;
+        u8 color = 255;
+        memset(dest, color, w);
+        for (s32 j = 1; j < h - 1; ++j) {
+            dest += SCREEN_WIDTH;
+            dest[0] = color;
+            dest[w - 1] = color;
+        }
+        dest += SCREEN_WIDTH;
+        memset(dest, color, w);
+    }
+}
+
 //(newly added)
 void rayverse_do_debug_cheats(void) {
     if (is_debug_mode) {
@@ -307,11 +343,13 @@ void rayverse_do_debug_cheats(void) {
         }
         // DEBUG: skip level
         if (TOUCHE(SC_F4)) {
+            Touche_Enfoncee[SC_F4] = false;
             DO_FADE_OUT();
             ChangeLevel();
         }
         // DEBUG: reset all bosses
         if (TOUCHE(SC_F5)) {
+            Touche_Enfoncee[SC_F5] = false;
             memset(&finBosslevel, 0, sizeof(finBosslevel));
             printf("Bosses have been reset\n");
         }
@@ -331,6 +369,99 @@ void rayverse_do_debug_cheats(void) {
                 if (TOUCHE(SC_F8)) {
                     Touche_Enfoncee[SC_F8] = false;
                     break;
+                }
+            }
+        }
+        // DEBUG: show collisions
+        static bool show_collisions = false;
+        if (TOUCHE(SC_F9)) {
+            Touche_Enfoncee[SC_F9] = false;
+            show_collisions = !show_collisions;
+        }
+        if (show_collisions) {
+            rayverse_draw_white_outline(ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h);
+            for (s16 i = 0; i < actobj.num_active_objects; ++i) {
+                obj_t* obj = &level.objects[actobj.objects[i]];
+                if (!(flags[obj->type] & flags0_4_no_collision) && (get_eta(obj)->flags & 0x20)) {
+                    CHECK_BOX_COLLISION(TYPE_23_RAYMAN, ray_zdc_x, ray_zdc_y, ray_zdc_w, ray_zdc_h, obj);
+
+                    s16 spr_x;
+                    s16 spr_y;
+                    s16 spr_w;
+                    s16 spr_h;
+                    if (obj->hit_sprite == 0xFD) {
+                        // TODO
+//                    return BOX_HIT_SPECIAL_ZDC(x, y, w, h, obj);
+                    } else if (obj->hit_sprite < 0xFD) {
+                        if (GET_SPRITE_POS(obj, obj->hit_sprite, &spr_x, &spr_y, &spr_w, &spr_h)) {
+                            rayverse_draw_white_outline(spr_x, spr_y, spr_w, spr_h);
+                        }
+                    } else {
+                        s16 unk_h = 0;
+                        s16 unk_w = 0;
+                        s16 unk_y = 0;
+                        s16 unk_x = 0;
+                        if (obj->zdc != 0) {
+                            s16 nb_zdc = get_nb_zdc(obj);
+                            if (num_world == 1 && (
+                                            ((obj->type == TYPE_MOSKITO || obj->type == TYPE_MOSKITO2) &&
+                                             !(obj->eta[obj->main_etat][obj->sub_etat].flags & 0x40)) ||
+                                            (obj->type == TYPE_BADGUY3 &&
+                                             obj->eta[obj->main_etat][obj->sub_etat].flags & 0x40)
+                            )) {
+                                nb_zdc--;
+                            }
+
+                            for (s32 j = 0; j < nb_zdc; j++) {
+                                zdc_t* cur_zdc = get_zdc(obj, j);
+                                if (!(cur_zdc->flags & 4) || obj->type == TYPE_POING) {
+                                    if (cur_zdc->flags & 2) {
+                                        anim_t* cur_anim = &obj->animations[obj->anim_index];
+                                        anim_layer_t* cur_layer = &cur_anim->layers[(cur_anim->layers_per_frame & 0x3FFF) * obj->anim_frame];
+                                        if (cur_layer[cur_zdc->sprite].sprite_index != 0) {
+                                            GET_SPRITE_POS(obj, cur_zdc->sprite, &unk_x, &unk_y, &unk_w, &unk_h);
+                                            if (obj->flags.flip_x)
+                                                unk_x += unk_w - cur_zdc->width - cur_zdc->x_pos;
+                                            else
+                                                unk_x += cur_zdc->x_pos;
+
+                                            unk_y += cur_zdc->y_pos;
+                                            unk_w = cur_zdc->width;
+                                            unk_h = cur_zdc->height;
+                                        }
+                                    } else {
+                                        unk_x = obj->x + cur_zdc->x_pos;
+                                        unk_y = obj->y + cur_zdc->y_pos;
+                                        unk_w = cur_zdc->width;
+                                        unk_h = cur_zdc->height;
+                                        /* TODO: can't take << 1 or * 2??? */
+                                        if (obj->flags.flip_x)
+                                            unk_x = (obj->x + obj->offset_bx) + (obj->x + obj->offset_bx) - (unk_x + unk_w);
+                                    }
+                                }
+                                rayverse_draw_white_outline(unk_x, unk_y, unk_w, unk_h);
+                            }
+                        } else {
+                            if (obj->hit_sprite == 0xFE) {
+                                GET_OBJ_ZDC(obj, &unk_x, &unk_y, &unk_w, &unk_h);
+                                if (obj->flags.flip_x) {
+                                    unk_x = (obj->x + obj->offset_bx) + (obj->x + obj->offset_bx) - (unk_x + unk_w);
+                                }
+                                rayverse_draw_white_outline(unk_x, unk_y, unk_w, unk_h);
+                            } else if (obj->hit_sprite == 0xFF) {
+                                s16 layers_count = obj->animations[obj->anim_index].layers_per_frame & 0x3FFF;
+                                for (s32 j = 0; j < layers_count; j++) {
+                                    if (in_coll_sprite_list(obj, j)) {
+                                        GET_SPRITE_ZDC(obj, j, &unk_x, &unk_y, &unk_w, &unk_h);
+                                    }
+                                    rayverse_draw_white_outline(unk_x, unk_y, unk_w, unk_h);
+                                }
+                            }
+                        }
+
+
+                    }
+
                 }
             }
         }

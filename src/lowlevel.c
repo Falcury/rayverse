@@ -148,7 +148,7 @@ void DisplayAnyPictureNormal(u8* source_buffer, u8* dest_buffer, s32 source_x, s
         width = SCREEN_WIDTH - dest_x;
     }
     if (dest_y + height > SCREEN_HEIGHT) {
-        width = SCREEN_HEIGHT - dest_x;
+        height = SCREEN_HEIGHT - dest_y;
     }
     if (width <= 0 || height <= 0) {
         return;
