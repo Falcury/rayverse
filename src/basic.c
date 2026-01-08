@@ -1105,12 +1105,16 @@ s32 deter_num_let(u8 c, const char* next_chars) {
         return 46;
     } else if (c == 129) {
         return 44;
+    } else if (c == 132) {
+        return 42;
     } else if (c == 148) {
         return 43;
     } else if (c == 248) {
         return 45;
     } else if (c == 156) {
         return 42;
+    } else if (c == 94) {
+        return 46;
     } else if (c == '#') {
         return 47;
     } else if (c == '%') {
