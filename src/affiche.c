@@ -400,7 +400,7 @@ void DISPLAY_ALL_OBJECTS(void) {
                     case TYPE_173_BATEAU: {
                         s32 xmin, xmax, ymin, ymax;
                         get_sprite_clipping(&xmin, &xmax, &ymin, &ymax);
-                        sprite_clipping(xmin, Bloc_lim_H2 - 40, ymin, ymax);
+                        sprite_clipping(xmin, xmax, ymin, Bloc_lim_H2 - 40);
                         display2(obj);
                         sprite_clipping(xmin, xmax, ymin, ymax);
                     } break;

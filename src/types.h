@@ -766,6 +766,20 @@ typedef struct bb_attack_entry_t {
     u8 wait_for_fin_atan;
 } bb_attack_entry_t;
 
+typedef struct couteaux_info_t {
+    s16 x_pos;
+    s16 y_pos;
+    s16 field2_0x4;
+    s16 field3_0x6;
+    s16 field4_0x8;
+    s16 field5_0xa;
+    s16 field6_0xc;
+    u8 field7_0xe;
+    u8 active;
+    u8 field9_0x10;
+    u8 id; /* Created by retype action */
+} couteaux_info_t;
+
 enum game_mode_video_enum {
     MODE_NORMAL = 0,
     MODE_X = 1,

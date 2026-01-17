@@ -2837,7 +2837,132 @@ void DO_NOVA2_COMMAND(obj_t* obj) {
 
 //31208
 void doShipCommand(obj_t* obj) {
-    print_once("Not implemented: doShipCommand"); //stub
+    // NOTE(Falcury): PS1 non-matching function - needs checking!
+    obj_t *temp_s0_2;
+    s16 temp_a0_1;
+    s16 temp_v1_2;
+    s32 temp_s0_1;
+    u8 var_s2;
+    s32 var_v0_1;
+    s32 var_v0_2;
+    u8 var_v1;
+    u8 *var_v0_3;
+    u8 temp_a0_2;
+    u8 temp_v1;
+    s32 temp_v1_3;
+    u8 var_s3;
+    obj_t *test_1;
+//    LevelData *test_2;
+    u8 test_3;
+    u32 test_4;
+
+#ifdef PC
+    scroll_end_y = ymapmax;
+    scroll_start_y = ymapmax;
+    ymap = ymapmax;
+    if (GameModeVideo == MODE_NORMAL) {
+        scroll_start_x = scroll_end_x;
+        xmap = scroll_end_x;
+    }
+#endif
+
+    /*var_s3 = saved_reg_s3;*/
+    temp_v1 = obj->cmd;
+    switch (temp_v1)
+    {
+        case 2:
+            obj->speed_y = 0;
+            obj->speed_x = 0;
+            return;
+        case 20:
+            obj->speed_x = obj->iframes_timer;
+            obj->speed_y = obj->follow_id;
+            return;
+        case 30:
+            if (obj->link_has_gendoor) {
+                temp_a0_1 = obj->param;
+                var_v1 = 1;
+                if (temp_a0_1 != -1)
+                {
+                    test_4 = level.objects[temp_a0_1].is_active;
+                    var_v1 = !test_4;
+                }
+                if ((var_v1) && (obj->timer != 0) && (horloge[2] != 0))
+                {
+                    obj->timer--;
+                }
+                do
+                {
+                    var_s2 = 0;
+                    if (obj->timer == 0)
+                    {
+                        switch (obj->link)
+                        {
+                            case 0:
+                                obj->link = 2;
+                            case 4:
+                                var_s3 = obj->type;
+                                break;
+                            case 1:
+                                obj->link = 3;
+                                var_s3 = TYPE_77_PIRATE_GUETTEUR;
+                                break;
+                            case 2:
+                                obj->link = 1;
+                                var_s3 = TYPE_72_PIRATE_NGAWE;
+                                var_s2 = 1;
+                                break;
+                            case 3:
+                                obj->link = 4;
+                                var_s3 = TYPE_187_MAMA_PIRATE;
+                                break;
+                        }
+                        if (var_s2 == 0)
+                        {
+                            obj->timer = 0x32;
+                        }
+                        if (var_s3 != obj->type)
+                        {
+                            skipOneCommand(obj);
+                            obj->nb_cmd = 0;
+                            test_3 = obj->id;
+                            do
+                            {
+                                test_3 = link_init[test_3];
+                                temp_s0_2 = &level.objects[test_3];
+                                temp_v1_3 = temp_s0_2->type;
+                                if (temp_v1_3 == var_s3)
+                                {
+                                    break;
+                                }
+                            } while (temp_v1_3 != obj->type);
+
+                            if (temp_v1_3 != obj->type)
+                            {
+                                switch (temp_v1_3) {
+                                    case TYPE_77_PIRATE_GUETTEUR:
+                                        guetteurFollowsShip(temp_s0_2);
+                                        break;
+                                    case TYPE_72_PIRATE_NGAWE:
+                                        ngaweTriesToGrabShip(temp_s0_2);
+                                        break;
+                                    case TYPE_187_MAMA_PIRATE:
+                                        pmamaFollowsShip(temp_s0_2);
+                                        PMA_SORT_DU_CANON(temp_s0_2);
+                                        break;
+                                }
+                                suppressFromLinkList(temp_s0_2);
+                                MOVE_OBJECT(temp_s0_2);
+                                calc_obj_pos(temp_s0_2);
+                                temp_s0_2->flags.alive = 1;
+                                obj->param = temp_s0_2->id;
+                            }
+                        }
+                    }
+                } while (var_s2 != 0);
+            }
+            return;
+    }
 }
 
 //31400

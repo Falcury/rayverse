@@ -1222,7 +1222,7 @@ cptr_t cptr_tab[] = {
 };
 
 u8 pma_couteaux[6] = {3, 5, 5, 3, 3, 4}; //9727C
-u8 pma_sequence[8] = {0, 3, 5, 0, 5, 1, 4, 2}; //97282
+u8 pma_sequence[4][2] = {{0, 3}, {5, 0}, {5, 1}, {4, 2}}; //97282
 u8 place_sequence[5] = {3, 4, 2, 3, 2}; //9728A
 s16 pst2_sequence[13] = {1, 21, -100, 8, 1, 0, 18, 160, 8, 3, 42, 19, 14}; //97290
 s16 moust1_sequence[9] = {1, 21, -100, 8, 6, 15, 18, 330, 14}; //972AA
@@ -2519,7 +2519,7 @@ u8 mstMustLeaveScreenToProceed; //E4DA2
 s16 ot; //E4DA4
 u8 oldPrio; //E4DA6
 u32 dword_E4DA8; //E4DA8
-
+couteaux_info_t CouteauxInfos[5]; //E4DAC
 s16 cou_tempo; //E4E10
 s16 pma_tempo; //E4E12
 s16 pma_touched; //E4E14
