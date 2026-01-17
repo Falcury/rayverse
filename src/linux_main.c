@@ -116,9 +116,13 @@ int main(int argc, char** argv) {
 //        window_flags |= SDL_WINDOW_MAXIMIZED;
 //    }
     window_flags |= SDL_WINDOW_ALLOW_HIGHDPI;
-    SDL_Renderer* renderer;
-    SDL_Window* window;
-    if (SDL_CreateWindowAndRenderer(desired_window_width, desired_window_height, window_flags, &window, &renderer) != 0) {
+    SDL_Window* window = SDL_CreateWindow("Rayverse", 
+                                          SDL_WINDOWPOS_CENTERED, 
+                                          SDL_WINDOWPOS_CENTERED,
+                                          desired_window_width, 
+                                          desired_window_height, 
+                                          window_flags);
+    if (!window) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window and renderer: %s", SDL_GetError());
         return 3;
     }

@@ -149,7 +149,16 @@ bool linux_init_opengl(app_state_t* app_state) {
         fatal_error();
     }
 #endif
+    // load the shader that renders the surface to the screen
+    basic_shader.program = load_basic_shader_program(vertex_shader_source, fragment_shader_source);
+    basic_shader.u_texture0 = get_uniform(basic_shader.program, "texture0");
+    basic_shader.attrib_location_pos = get_attrib(basic_shader.program, "pos");
+    basic_shader.attrib_location_tex_coord = get_attrib(basic_shader.program, "tex_coord");
 
+    glUseProgram(basic_shader.program);
+    glUniform1i(basic_shader.u_texture0, 0);
+
+    init_draw_normalized_quad();
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &app_state->opengl.max_texture_size);
 
 	glEnable(GL_TEXTURE_2D);
@@ -163,16 +172,7 @@ bool linux_init_opengl(app_state_t* app_state) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    // load the shader that renders the surface to the screen
-    basic_shader.program = load_basic_shader_program(vertex_shader_source, fragment_shader_source);
-    basic_shader.u_texture0 = get_uniform(basic_shader.program, "texture0");
-    basic_shader.attrib_location_pos = get_attrib(basic_shader.program, "pos");
-    basic_shader.attrib_location_tex_coord = get_attrib(basic_shader.program, "tex_coord");
 
-    glUseProgram(basic_shader.program);
-    glUniform1i(basic_shader.u_texture0, 0);
-
-    init_draw_normalized_quad();
 
 	return true;
 }
