@@ -2,6 +2,7 @@ cmake-build*/
 .idea/
 .vs/
 build/
+data/
 out/
 Debug/
 Release/
