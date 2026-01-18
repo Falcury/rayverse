@@ -278,6 +278,22 @@ void DRAW_MAP(u8* draw_buf, big_map_t* big_map) {
         }
 
     }
+
+    // Optionally draw collision blocks
+    if (debug_show_block_types && display_map->height_in_tiles > 1 && display_map->width_in_tiles > 1) {
+        for (s32 tile_y = 0; tile_y < display_map->height_in_tiles; ++tile_y) {
+            for (s32 tile_x = 0; tile_x < display_map->width_in_tiles; ++tile_x) {
+                s32 tile_index = display_map->tile_index + tile_y * big_map->width + tile_x;
+                map_tile_t* tile = big_map->map + tile_index;
+                s32 x = display_map->x + 16 * tile_x;
+                s32 y = display_map->y + 16 * tile_y;
+                if (tile->tile_type != 0) {
+                    vec2b_t size = { 16, 16 };
+                    DrawSpriteNormal256(x, 0, y, size, draw_buf, &block_types_img_data[tile->tile_type * 16 * 16]);
+                }
+            }
+        }
+    }
 }
 
 //5D5B0

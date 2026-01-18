@@ -465,6 +465,11 @@ void rayverse_do_debug_cheats(void) {
                 }
             }
         }
+        // DEBUG: show map block types
+        if (TOUCHE(SC_F10)) {
+            Touche_Enfoncee[SC_F10] = false;
+            debug_show_block_types = !debug_show_block_types;
+        }
     }
 
 
