@@ -794,15 +794,17 @@ void DISPLAY_SAVE_SPRITES(s16 x, s16 save_index) {
     display_sprite(&div_obj, sprite_index, x, y, 1);
     x += div_obj.sprites[37].outer_width + 10;
 
-    sprite_index = loadinfo->cages / 100 + 28;
+    u16 percentage = (loadinfo->cages * 100) / 102;
+
+    sprite_index = percentage / 100 + 28;
     display_sprite(&div_obj, sprite_index, x, y, 1);
     x += div_obj.sprites[sprite_index].outer_width;
 
-    sprite_index = (loadinfo->cages / 10) % 10 + 28;
+    sprite_index = (percentage / 10) % 10 + 28;
     display_sprite(&div_obj, sprite_index, x, y, 1);
     x += div_obj.sprites[sprite_index].outer_width;
 
-    sprite_index = loadinfo->cages % 10 + 28;
+    sprite_index = percentage % 10 + 28;
     display_sprite(&div_obj, sprite_index, x, y, 1);
     x += div_obj.sprites[sprite_index].outer_width;
 
