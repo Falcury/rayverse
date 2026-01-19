@@ -611,7 +611,12 @@ void INIT_NEW_GAME(void) {
 
 //697DC
 void DO_NOT_SAVE_CHOICE(void) {
-    print_once("Not implemented: DO_NOT_SAVE_CHOICE"); //stub
+    fichier_existant = 0;
+    fichier_selectionne = 0;
+    TempsDemo = 0;
+    NBRE_SAVE = 0;
+    nouvelle_partie = 1;
+    INIT_NEW_GAME();
 }
 
 //6980C
