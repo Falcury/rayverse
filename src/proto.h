@@ -938,17 +938,16 @@ s16 FonduPixel_prg(u32 a1);
 void FonduPixel(s16 x, s16 y, s16 w, s16 h);
 
 // meredenis.c
-void findMereDenisWeapon(void);
-void mereDenisCanAttak(obj_t* obj);
-void setMereDenisAtScrollBorder(obj_t* obj);
+u8 mereDenisCanAttak(obj_t* obj);
+void setMereDenisAtScrollBorder(obj_t* obj, u8 flip_x);
 void setCirclePointToReach(obj_t* obj);
 void allocateMereDenisBombChips(obj_t* obj);
 void mereDenisExplodeBombs(obj_t* obj);
 void mereDenisDropBomb(obj_t* obj);
-void swapWeaponAnimState(obj_t* obj);
+void swapWeaponAnimState(obj_t* obj, u8 new_sub_etat);
 void swapMereDenisCollZones(obj_t* obj, u8 a2);
 void prepareNewMereDenisAttack(obj_t* obj);
-void snapLaserToWeapon(obj_t* obj);
+void snapLaserToWeapon(obj_t* obj, u8 param_2);
 void allocateSpaceMamaLaser(obj_t* obj);
 void doMereDenisCommand(obj_t* obj);
 void changeMereDenisPhase(obj_t* obj);
@@ -956,6 +955,7 @@ void fitSaveCurrentAction(obj_t* obj);
 void doMereDenisHit(obj_t* obj, s16 sprite);
 void mereDenisBigLaserCommand(obj_t* obj);
 void mereDenisBombCommand(obj_t* obj);
+
 
 // mite.c
 void mite_esquive_poing(obj_t* mit_obj, s16* out_diff_x);
