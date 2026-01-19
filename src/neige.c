@@ -470,5 +470,42 @@ void DO_SNOW_SEQUENCE(void) {
 
 //5C3DC
 void DoNeigeRaymanCollision(obj_t* obj) {
-    print_once("Not implemented: DoNeigeRaymanCollision"); //stub
+    obj->flags.alive = 0;
+    switch (obj->sub_etat) {
+        case 0x15:  // 21
+            set_SNSEQ_list(1);
+            break;
+        case 0x16:  // 22
+            set_SNSEQ_list(2);
+            break;
+        case 0x17:  // 23
+            set_SNSEQ_list(3);
+            break;
+        case 0x18:  // 24
+            set_SNSEQ_list(4);
+            break;
+        case 0x19:  // 25
+            set_SNSEQ_list(5);
+            break;
+        case 0x1A:  // 26
+            set_SNSEQ_list(6);
+            break;
+        case 0x1B:  // 27
+            set_SNSEQ_list(7);
+            break;
+        case 0x1C:  // 28
+            set_SNSEQ_list(8);
+            break;
+        case 0x1D:  // 29
+            set_SNSEQ_list(9);
+            break;
+        case 0x1E:  // 30
+            set_SNSEQ_list(10);
+            break;
+        case 0x20:  // 32
+            set_SNSEQ_list(0);
+            break;
+        default:
+            break;
+    }
 }
