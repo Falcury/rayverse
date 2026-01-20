@@ -46,7 +46,7 @@ void game_init(game_state_t* game) {
 
 void advance_frame(void) {
 	// Since we don't have a display buffer we have a separate buffer for the debug boxes/lines which we overlay
-	if (debug_show_obj_collision) {
+	if (debug_show_obj_collision || debug_show_mini_map) {
 		for (s32 i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++) {
 			if (debug_overlay_draw_buffer[i]) {
 				draw_buffer[i] = debug_overlay_draw_buffer[i];

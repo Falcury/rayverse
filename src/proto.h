@@ -150,6 +150,7 @@ void CLRSCR(void);
 void display_etoile(s16 in_x, s16 in_y);
 void display_grp_stars(void);
 void DISPLAY_TEXT_FEE(void);
+void display_mini_map(void); // Re-implemented from Rayman Designer
 void DISPLAY_SAVE_SPRITES(s16 x, s16 save_index);
 void DISPLAY_SAVE_POING(void);
 void DISPLAY_OPTIONS_POING(void);

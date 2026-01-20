@@ -136,6 +136,11 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
             DISPLAY_GAME_VIGNET(); //TODO
         }
 
+        // Re-implemented from Rayman Designer
+        if (debug_show_mini_map) {
+            display_mini_map();
+        }
+
         if (TOUCHE(SC_ESCAPE)) {
             if (nb_fade == 0 && !GoMenu) {
                 if (!get_casse_brique_ON() && !ModeDemo && !gele && dead_time == 64) {

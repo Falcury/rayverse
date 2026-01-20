@@ -9,6 +9,7 @@ bool is_debug_mode;
 bool need_display_debug_info;
 bool debug_show_obj_collision;
 bool debug_show_block_types;
+bool debug_show_mini_map;
 bool debug_clicked;
 float debug_click_obj_dist_sq;
 float debug_click_x;

@@ -852,6 +852,110 @@ void DISPLAY_TEXT_FEE(void) {
     }
 }
 
+// Re-implemented from Rayman Designer
+void display_mini_map(void) {
+    // Should maybe move these out of here?
+    #define MINI_MAP_MIN_WIDTH 60
+    #define MINI_MAP_MIN_HEIGHT 30
+    #define MINI_MAP_X_POS 20
+    #define MINI_MAP_Y_POS 155
+
+    s16 map_width = MINI_MAP_MIN_WIDTH;
+    if (mp.width < MINI_MAP_MIN_WIDTH) {
+        map_width = mp.width;
+    }
+
+    s16 map_height = MINI_MAP_MIN_HEIGHT;
+    if (mp.height < MINI_MAP_MIN_HEIGHT) {
+        map_height = mp.height;
+    }
+    
+    s16 map_scroll_x = ray.screen_x + ray.offset_bx + xmap;
+    if (map_scroll_x < 0) {
+        map_scroll_x = -(-map_scroll_x >> 4);
+    }
+    else {
+        map_scroll_x = map_scroll_x >> 4;
+    }
+    s16 map_scroll_y = ((ray.offset_hy + ray.offset_by) >> 1) + ray.screen_y + ymap;
+    if (map_scroll_y < 0) {
+        map_scroll_y = -(-map_scroll_y >> 4);
+    }
+    else {
+        map_scroll_y = map_scroll_y >> 4;
+    }
+
+    s16 map_start_x;
+    if (map_width < 0) {
+        map_start_x = -(-map_width >> 1);
+    }
+    else {
+        map_start_x = map_width >> 1;
+    }
+    map_start_x = map_scroll_x - map_start_x;
+    if (map_start_x < 0) {
+        map_start_x = 0;
+    }
+    else if (mp.width - map_width <= map_start_x) {
+        map_start_x = mp.width - map_width;
+    }
+
+    s16 map_start_y;
+    if (map_height < 0) {
+        map_start_y = -(-map_height >> 1);
+    }
+    else {
+        map_start_y = map_height >> 1;
+    }
+    map_start_y = map_scroll_y - map_start_y;
+    if (map_start_y < 0) {
+        map_start_y = 0;
+    }
+    else if (mp.height - map_height <= map_start_y) {
+        map_start_y = mp.height - map_height;
+    }
+
+    // Draw map borders
+    draw_horizontal_line_to_display_buffer(MINI_MAP_X_POS - 1, MINI_MAP_Y_POS - 1, map_width + 1, 1);
+    draw_vertical_line_to_display_buffer(MINI_MAP_X_POS - 1, MINI_MAP_Y_POS - 1, map_height + 1, 1);
+    draw_horizontal_line_to_display_buffer(MINI_MAP_X_POS - 1, map_height + MINI_MAP_Y_POS, map_width + 1, 1);
+    draw_vertical_line_to_display_buffer(map_width + MINI_MAP_X_POS, MINI_MAP_Y_POS - 1, map_height + 1, 1);
+
+    // Draw map blocks
+    for (s16 map_y = 0; map_y < map_height; map_y++) {
+        for (s16 map_x = 0; map_x < map_width; map_x++) {
+            u8 tile_type = mp.map[(map_start_x + map_x) + (map_start_y + map_y) * mp.width].tile_type;
+            if (tile_type != 0) {
+                draw_pixel_to_display_buffer(MINI_MAP_X_POS + map_x, MINI_MAP_Y_POS + map_y, 13 + tile_type);
+            }
+        }
+    }
+
+    // Draw Rayman
+    s16 layers_count = ray.animations[ray.anim_index].layers_per_frame & 0x3FFF;
+    for (s16 sprite_id = 0; sprite_id < layers_count; sprite_id++) {
+        s16 x; s16 y; s16 w; s16 h;
+        GET_SPRITE_POS(&ray, sprite_id, &x, &y, &w, &h);
+
+        x += w >> 1;
+        if (x < 0) {
+            x = -(-x >> 4);
+        }
+        else {
+            x = x >> 4;
+        }
+        y += h >> 1;
+        if (y < 0) {
+            y = -(-y >> 4);
+        }
+        else {
+            y = y >> 4;
+        }
+
+        draw_pixel_to_display_buffer((MINI_MAP_X_POS + x) - map_start_x, (MINI_MAP_Y_POS + y) - map_start_y, 4);
+    }
+}
+
 //1B0E0
 void DISPLAY_SAVE_SPRITES(s16 x, s16 save_index) {
     s16 y = save_index * (ecarty + 23) + debut_options - 23;

@@ -348,6 +348,11 @@ void rayverse_do_debug_cheats(void) {
             Touche_Enfoncee[SC_T] = false;
             debug_show_block_types = !debug_show_block_types;
         }
+        // DEBUG: show mini map
+        if (TOUCHE(SC_CONTROL) && TOUCHE(SC_M)) {
+            Touche_Enfoncee[SC_M] = false;
+            debug_show_mini_map = !debug_show_mini_map;
+        }
     }
 
 
