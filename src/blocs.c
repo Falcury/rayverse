@@ -216,6 +216,12 @@ u8 calc_typ_trav(obj_t* obj, u8 a2) {
     var_s2 = 0;
     while (var_s3_1 >= var_s0_2)
     {
+        // Re-implemented from Rayman Designer
+        if (debug_show_obj_collision) {
+            inter_box(0, 0, 0, 0, (temp_v1_0 >> 4) << 4, (((temp_v0_0 - temp_s0) + (var_s3_1 - var_s0_2) * -16) >> 4) << 4, 16, 16);
+            draw_horizontal_line_to_display_buffer(temp_v1_0 - xmap + 3, temp_v0_0 - temp_s0 - ymap, 10, 0x14);
+            draw_vertical_line_to_display_buffer(temp_v1_0 - xmap + 8, ((temp_v0_0 - ymap) - temp_s0) - 5, 10, 0x14);
+        }
 
         if ((MURDUR(temp_v1_0, (temp_v0_0 - temp_s0) - ((var_s3_1 - var_s0_2) * 0x10))) != 0)
         {

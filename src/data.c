@@ -7,6 +7,7 @@ game_state_t* global_game;
 u8 cheat_code_debug[] = {(SC_G)^0x96, (SC_U)^0x96, (SC_B)^0x96, (SC_E)^0x96, (SC_D)^0x96}; // "debug"
 bool is_debug_mode;
 bool need_display_debug_info;
+bool debug_show_obj_collision;
 bool debug_show_block_types;
 bool debug_clicked;
 float debug_click_obj_dist_sq;
@@ -14,6 +15,7 @@ float debug_click_x;
 float debug_click_y;
 s16 debug_obj_id = -1;
 s32 debug_obj_xmin = 32000;
+u8 debug_overlay_draw_buffer[SCREEN_WIDTH * SCREEN_HEIGHT];
 
 u8 block_types_img_data[8192] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

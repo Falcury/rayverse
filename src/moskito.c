@@ -624,6 +624,11 @@ void doMoskitoCommand(obj_t* obj) {
         }
     }
 
+    // Re-implemented from Rayman Designer
+    if (debug_show_obj_collision) {
+        draw_horizontal_line_to_display_buffer(bossXToReach - xmap + 3, bossYToReach - ymap, 10, 0x28);
+        draw_vertical_line_to_display_buffer(bossXToReach + 8 - xmap, bossYToReach - ymap - 5, 10, 0x28);
+    }
 
     if (moskitoCanAttak(obj)) {
         if (obj->scale != 0) {

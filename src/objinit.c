@@ -19,12 +19,11 @@ u8 Prio(obj_t* obj) {
         case TYPE_245_DUNE:
             // NOTE: these below are added in the PC version.
             // In the PS1 version, they are explicitly not drawn in DISPLAY_ALL_OBJECTS() instead
-            // We're following the PS1 way here, so we can easily choose to toggle displaying them for debugging.
-        /*case TYPE_141_NEIGE:
+        case TYPE_141_NEIGE:
         case TYPE_158_PALETTE_SWAPPER:
         case TYPE_164_GENERATING_DOOR:
         case TYPE_181_SCROLL_SAX:
-        case TYPE_199_BB1_VIT:*/
+        case TYPE_199_BB1_VIT:
             res = 0;
             break;
         case TYPE_147_MST_SCROLL:

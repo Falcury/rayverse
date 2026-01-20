@@ -96,6 +96,13 @@ bool box_inter_h_line(s16 a1, s16 a2, s16 a3, s16 a4, s16 a5, s16 a6, s16 a7) {
 //2B430
 s16 inter_box(s32 x_1, s32 y_1, s32 w_1, s32 h_1, s16 x_2, s16 y_2, s32 w_2, s32 h_2) {
     /* 1B57C 8013FD7C -O2 -msoft-float */
+
+    // Re-implemented from Rayman Designer
+    if (debug_show_obj_collision) {
+        draw_collision_box(x_1 - xmap + 8, y_1 - ymap, w_1, h_1);
+        draw_collision_box(x_2 - xmap + 8, y_2 - ymap, w_2, h_2);
+    }
+
     s16 comp_x = x_1 - w_2;
     s16 comp_y = y_1 - h_2;
     s16 sum_w = w_1 + w_2;
@@ -398,6 +405,11 @@ void GET_OBJ_ZDC(obj_t* obj, s16 *out_x, s16 *out_y, s16 *out_w, s16 *out_h) {
         default:
             GET_ANIM_POS(obj, out_x, out_y, out_w, out_h);
             break;
+    }
+
+    // Re-implemented from Rayman Designer
+    if (debug_show_obj_collision) {
+        draw_collision_box(*out_x - xmap + 8, *out_y - ymap, *out_w, *out_h);
     }
 }
 

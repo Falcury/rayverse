@@ -1,6 +1,42 @@
 
 //18CE8
 void display2(obj_t* obj) {
+    // Re-implemented from Rayman Designer
+    if (debug_show_obj_collision) {
+        if (obj->type == TYPE_SCROLL) {
+            if (obj->hit_points == 0) {
+                draw_vertical_line_to_draw_buffer(obj->screen_x + obj->offset_bx, 10, SCREEN_HEIGHT - 10, 0xF);
+                draw_vertical_line_to_draw_buffer(obj->screen_x + 25, 30, 11, 0xF);
+                draw_horizontal_line_to_draw_buffer(obj->screen_x + 20, 35, 11, 0xF);
+            }
+            else if (obj->hit_points == 1) {
+                draw_vertical_line_to_draw_buffer(obj->offset_bx + obj->screen_x, 10, SCREEN_HEIGHT - 10, 0xF);
+                draw_horizontal_line_to_draw_buffer(obj->screen_x + 20, 35, 11, 0xF);
+            }
+            else if (obj->hit_points == 3) {
+                draw_horizontal_line_to_draw_buffer(obj->screen_x, obj->offset_by + obj->screen_y + -30, 150, 0xF);
+                draw_horizontal_line_to_draw_buffer(obj->screen_x, obj->offset_by + obj->screen_y + -20, 150, 0xF);
+            }
+            else if (obj->hit_points == 4) {
+                draw_horizontal_line_to_draw_buffer(obj->offset_by + obj->screen_y, 10, SCREEN_WIDTH - 10, 0xF);
+                draw_vertical_line_to_draw_buffer(obj->screen_x + 25, 30, 11, 0xF);
+                draw_horizontal_line_to_draw_buffer(obj->screen_x + 20, 35, 11, 0xF);
+            }
+            else if (obj->hit_points == 5) {
+                draw_horizontal_line_to_draw_buffer(obj->offset_by + obj->screen_y, 10, SCREEN_WIDTH - 10, 0xF);
+                draw_horizontal_line_to_draw_buffer(obj->screen_x + 20, 35, 11, 0xF);
+            }
+            else {
+                draw_horizontal_line_to_draw_buffer(obj->screen_x, obj->offset_by + obj->screen_y + -30, 150, 0xF);
+            }
+        }
+        else if (obj->type == TYPE_MST_SCROLL) {
+            if (obj->hit_points != 0) {
+                draw_vertical_line_to_draw_buffer(obj->offset_bx + obj->screen_x, 10, SCREEN_HEIGHT - 10, 0xF);
+            }
+        }
+    }
+
     anim_t* anim = obj->animations + obj->anim_index;
     u16 layers_per_frame = anim->layers_per_frame & 0x3FFF;
     anim_layer_t* layer = anim->layers + (obj->anim_frame * layers_per_frame);
@@ -44,6 +80,36 @@ void display2(obj_t* obj) {
         ++layer;
     }
 
+    // Re-implemented from Rayman Designer
+    // The check for RaymanDansUneMapDuJeu was added here to avoid drawing this on the worldmap
+    if (debug_show_obj_collision && RaymanDansUneMapDuJeu) {
+        s16 spr_x; s16 spr_y; s16 spr_w; s16 spr_h;
+
+        // We don't need to do this since we don't use the display buffer, but re-implemented for consistency
+        byte* saved_display_buffer = display_buffer;
+        display_buffer = draw_buffer;
+
+        // Draw pivot (bx/by)
+        draw_horizontal_line_to_display_buffer(obj->offset_bx + obj->screen_x + -5, obj->offset_by + obj->screen_y, 10, 0x1E);
+        draw_vertical_line_to_display_buffer(obj->offset_bx + obj->screen_x, obj->offset_by + obj->screen_y + -5, 10, 0x1E);
+
+        // Draw hy
+        if (obj->flags.follow_enabled == 0) {
+            draw_horizontal_line_to_display_buffer(obj->offset_bx + obj->screen_x + -5, obj->offset_hy + obj->screen_y, 10, 0x1E);
+            draw_vertical_line_to_display_buffer(obj->offset_bx + obj->screen_x, obj->offset_hy + obj->screen_y + -5, 10, 0x1E);
+        }
+        else {
+            GET_SPRITE_POS(obj, obj->follow_sprite, &spr_x, &spr_y, &spr_w, &spr_h);
+            draw_horizontal_line_to_display_buffer(obj->offset_bx + obj->screen_x + -5, spr_y - ymap + obj->offset_hy, 10, 0x1E);
+            draw_vertical_line_to_display_buffer(obj->offset_bx + obj->screen_x, obj->offset_hy + (spr_y - ymap) - 5, 10, 0x1E);
+        }
+
+        // Draw origin
+        draw_horizontal_line_to_display_buffer(obj->screen_x + -10, obj->screen_y, 20, 0x1E);
+        draw_vertical_line_to_display_buffer(obj->screen_x, obj->screen_y + -10, 20, 0x1E);
+        
+        display_buffer = saved_display_buffer;
+    }
 }
 
 
@@ -379,6 +445,25 @@ void DISPLAY_ALL_OBJECTS(void) {
                 display_bar_boss(obj);
             }
             if (obj->display_prio != current_display_prio) {
+                // This code has been added for debugging so we can display trigger objects
+                if ((debug_show_obj_collision || need_display_debug_info) && obj->display_prio == 0 && current_display_prio == 4) {
+                    switch (obj->type) {
+                        case TYPE_AUDIOSTART:
+                        case TYPE_NEIGE:
+                        case TYPE_MST_SCROLL:
+                        case TYPE_PALETTE_SWAPPER:
+                        case TYPE_GENERATING_DOOR:
+                        case TYPE_SCROLL_SAX:
+                        case TYPE_BB1_VIT:
+                        case TYPE_ANNULE_SORT_DARK: {
+                            display2(obj);
+
+                            if (need_display_debug_info) {
+                                debug_display_obj_id(obj);
+                            }
+                        } break;
+                    }
+                }
                 continue;
             }
             if (obj->type == TYPE_157_EAU && num_world == world_5_cave && num_level == 8) {
@@ -403,20 +488,6 @@ void DISPLAY_ALL_OBJECTS(void) {
                         sprite_clipping(xmin, xmax, ymin, Bloc_lim_H2 - 40);
                         display2(obj);
                         sprite_clipping(xmin, xmax, ymin, ymax);
-                    } break;
-                    // The cases below are added for debugging (these objects are usually not supposed to be drawn).
-                    // In the PS1 version they are also explicitly excluded in DISPLAY_ALL_OBJECTS() but in the
-                    // PC version they are excluded from drawing by assigning display priority 0, set in Prio()
-                    case TYPE_141_NEIGE:
-                    case TYPE_158_PALETTE_SWAPPER:
-                    case TYPE_164_GENERATING_DOOR:
-                    case TYPE_181_SCROLL_SAX:
-                    case TYPE_199_BB1_VIT: {
-                        // Added for debugging
-                        if (need_display_debug_info) {
-                            display2(obj);
-                            debug_display_obj_id(obj);
-                        }
                     } break;
                     default: {
                         display2(obj);
@@ -451,6 +522,18 @@ void DISPLAY_ALL_OBJECTS(void) {
         if (obj->display_prio == 0 && obj->type == TYPE_245_DUNE) {
             display2(obj);
             break;
+        }
+    }
+
+    // This code has been added for debugging so we can display auto-scroll triggers
+    if (debug_show_obj_collision || need_display_debug_info) {
+        for (s16 i = 0; i < NumScrollObj; i++) {
+            obj_t* scr_obj = &level.objects[scroll_obj_id[i]];
+            calc_obj_pos(scr_obj);
+            display2(scr_obj);
+            if (need_display_debug_info) {
+                debug_display_obj_id(scr_obj);
+            }
         }
     }
 }

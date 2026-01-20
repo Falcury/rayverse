@@ -786,4 +786,74 @@ void speaker_enable(void) {
     set_speaker_on();
 }
 
+// Below functions are re-implemented from Rayman Designer
 
+void draw_pixel_to_display_buffer(s16 x, s16 y, u8 color) {
+    if (x > 0 && x < SCREEN_WIDTH && y > 0 && y < SCREEN_HEIGHT) {
+        if (ModeVideoActuel == MODE_X) {
+            // NOTE: Not implemented in rayverse
+        }
+        else {
+            // NOTE: The game draws directly to display_buffer here - we instead use a separate buffer which we overlay later on
+            debug_overlay_draw_buffer[y * SCREEN_WIDTH + x] = color;
+        }
+    }
+}
+
+void draw_pixel_to_buffer(u8* buffer, s16 x, s16 y, u8 color) {
+    if (x > 0 && x < SCREEN_WIDTH && y > 0 && y < SCREEN_HEIGHT) {
+        if (ModeVideoActuel == MODE_X) {
+            // NOTE: Not implemented in rayverse
+        }
+        else {
+            buffer[y * SCREEN_WIDTH + x] = color;
+        }
+    }
+}
+
+void draw_horizontal_line_to_display_buffer(s16 start_x, s16 start_y, s16 width, u8 color) {
+    if (start_y > 0 && start_y < SCREEN_HEIGHT) {
+        for (s16 x = start_x; x < start_x + width; x++) {
+            if (x > 0 && x < SCREEN_WIDTH) {
+                draw_pixel_to_display_buffer(x, start_y, color);
+            }
+        }
+    }
+}
+
+void draw_horizontal_line_to_draw_buffer(s16 start_x, s16 start_y, s16 width, u8 color) {
+    if (start_y > 0 && start_y < SCREEN_HEIGHT) {
+        for (s16 x = start_x; x < start_x + width; x++) {
+            if (x > 0 && x < SCREEN_WIDTH) {
+                draw_pixel_to_buffer(draw_buffer, x, start_y, color);
+            }
+        }
+    }
+}
+
+void draw_vertical_line_to_display_buffer(s16 start_x, s16 start_y, s16 height, u8 color) {
+    if (start_x > 0 && start_x < SCREEN_WIDTH) {
+        for (s16 y = start_y; y < start_y + height; y++) {
+            if (y > 0 && y < SCREEN_HEIGHT) {
+                draw_pixel_to_display_buffer(start_x, y, color);
+            }
+        }
+    }
+}
+
+void draw_vertical_line_to_draw_buffer(s16 start_x, s16 start_y, s16 height, u8 color) {
+    if (start_x > 0 && start_x < SCREEN_WIDTH) {
+        for (s16 y = start_y; y < start_y + height; y++) {
+            if (y > 0 && y < SCREEN_HEIGHT) {
+                draw_pixel_to_buffer(draw_buffer, start_x, y, color);
+            }
+        }
+    }
+}
+
+void draw_collision_box(s16 x, s16 y, s16 width, s16 height) {
+    draw_horizontal_line_to_display_buffer(x, y, width, 0xC);
+    draw_horizontal_line_to_display_buffer(x, y + height - 1, width, 0xC);
+    draw_vertical_line_to_display_buffer(x, y, height, 0xC);
+    draw_vertical_line_to_display_buffer(x + width - 1, y, height, 0xC);
+}
