@@ -272,13 +272,14 @@ void PC_do_cheats(void) {
 void rayverse_do_debug_cheats(void) {
     if (is_debug_mode) {
         // debug cheat: full hit points
-        if (TOUCHE(SC_F2)) {
+        if (TOUCHE(SC_CONTROL) && TOUCHE(SC_H)) {
+            Touche_Enfoncee[SC_H] = false;
             status_bar.max_hitp = 4;
             ray.hit_points = 4;
         }
         // DEBUG: display ray main and sub etat
-        if (TOUCHE(SC_F3)) {
-            Touche_Enfoncee[SC_F3] = false;
+        if (TOUCHE(SC_CONTROL) && TOUCHE(SC_D)) {
+            Touche_Enfoncee[SC_D] = false;
             need_display_debug_info = !need_display_debug_info;
         }
         if (need_display_debug_info) {
@@ -307,44 +308,44 @@ void rayverse_do_debug_cheats(void) {
             }
         }
         // DEBUG: skip level
-        if (TOUCHE(SC_F4)) {
-            Touche_Enfoncee[SC_F4] = false;
+        if (TOUCHE(SC_CONTROL) && TOUCHE(SC_S)) {
+            Touche_Enfoncee[SC_S] = false;
             DO_FADE_OUT();
             ChangeLevel();
         }
         // DEBUG: reset all bosses
-        if (TOUCHE(SC_F5)) {
-            Touche_Enfoncee[SC_F5] = false;
+        if (TOUCHE(SC_CONTROL) && TOUCHE(SC_R)) {
+            Touche_Enfoncee[SC_R] = false;
             memset(&finBosslevel, 0, sizeof(finBosslevel));
             printf("Bosses have been reset\n");
         }
         // DEBUG: free movement
-        if (TOUCHE(SC_F7)) {
-            Touche_Enfoncee[SC_F7] = false;
+        if (TOUCHE(SC_CONTROL) && TOUCHE(SC_Z)) {
+            Touche_Enfoncee[SC_Z] = false;
             ray.follow_id = -1;
             ray_mode = -ray_mode;
             dead_time = 64;
             set_main_and_sub_etat(&ray, 2, 2);
         }
         // DEBUG: freeze screen
-        if (TOUCHE(SC_F8)) {
-            Touche_Enfoncee[SC_F8] = false;
+        if (TOUCHE(SC_CONTROL) && TOUCHE(SC_P)) {
+            Touche_Enfoncee[SC_P] = false;
             for (;;) {
                 advance_frame();
-                if (TOUCHE(SC_F8)) {
-                    Touche_Enfoncee[SC_F8] = false;
+                if (TOUCHE(SC_CONTROL) && TOUCHE(SC_P)) {
+                    Touche_Enfoncee[SC_P] = false;
                     break;
                 }
             }
         }
         // DEBUG: show collisions
-        if (TOUCHE(SC_F9)) {
-            Touche_Enfoncee[SC_F9] = false;
+        if (TOUCHE(SC_CONTROL) && TOUCHE(SC_C)) {
+            Touche_Enfoncee[SC_C] = false;
             debug_show_obj_collision = !debug_show_obj_collision;
         }
         // DEBUG: show map block types
-        if (TOUCHE(SC_F10)) {
-            Touche_Enfoncee[SC_F10] = false;
+        if (TOUCHE(SC_CONTROL) && TOUCHE(SC_T)) {
+            Touche_Enfoncee[SC_T] = false;
             debug_show_block_types = !debug_show_block_types;
         }
     }
