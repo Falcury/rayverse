@@ -273,13 +273,13 @@ void rayverse_do_debug_cheats(void) {
     if (is_debug_mode) {
         // debug cheat: full hit points
         if (TOUCHE(SC_CONTROL) && TOUCHE(SC_H)) {
-            Touche_Enfoncee[SC_H] = false;
+            RESET_TOUCHE(SC_H);
             status_bar.max_hitp = 4;
             ray.hit_points = 4;
         }
         // DEBUG: display ray main and sub etat
         if (TOUCHE(SC_CONTROL) && TOUCHE(SC_D)) {
-            Touche_Enfoncee[SC_D] = false;
+            RESET_TOUCHE(SC_D);
             need_display_debug_info = !need_display_debug_info;
         }
         if (need_display_debug_info) {
@@ -309,19 +309,19 @@ void rayverse_do_debug_cheats(void) {
         }
         // DEBUG: skip level
         if (TOUCHE(SC_CONTROL) && TOUCHE(SC_S)) {
-            Touche_Enfoncee[SC_S] = false;
+            RESET_TOUCHE(SC_S);
             DO_FADE_OUT();
             ChangeLevel();
         }
         // DEBUG: reset all bosses
         if (TOUCHE(SC_CONTROL) && TOUCHE(SC_R)) {
-            Touche_Enfoncee[SC_R] = false;
+            RESET_TOUCHE(SC_R);
             memset(&finBosslevel, 0, sizeof(finBosslevel));
             printf("Bosses have been reset\n");
         }
         // DEBUG: free movement
         if (TOUCHE(SC_CONTROL) && TOUCHE(SC_Z)) {
-            Touche_Enfoncee[SC_Z] = false;
+            RESET_TOUCHE(SC_Z);
             ray.follow_id = -1;
             ray_mode = -ray_mode;
             dead_time = 64;
@@ -329,7 +329,7 @@ void rayverse_do_debug_cheats(void) {
         }
         // DEBUG: freeze screen
         if (TOUCHE(SC_CONTROL) && TOUCHE(SC_P)) {
-            Touche_Enfoncee[SC_P] = false;
+            RESET_TOUCHE(SC_P);
             for (;;) {
                 advance_frame();
                 if (TOUCHE(SC_CONTROL) && TOUCHE(SC_P)) {
@@ -340,17 +340,17 @@ void rayverse_do_debug_cheats(void) {
         }
         // DEBUG: show collisions
         if (TOUCHE(SC_CONTROL) && TOUCHE(SC_C)) {
-            Touche_Enfoncee[SC_C] = false;
+            RESET_TOUCHE(SC_C);
             debug_show_obj_collision = !debug_show_obj_collision;
         }
         // DEBUG: show map block types
         if (TOUCHE(SC_CONTROL) && TOUCHE(SC_T)) {
-            Touche_Enfoncee[SC_T] = false;
+            RESET_TOUCHE(SC_T);
             debug_show_block_types = !debug_show_block_types;
         }
         // DEBUG: show mini map
         if (TOUCHE(SC_CONTROL) && TOUCHE(SC_M)) {
-            Touche_Enfoncee[SC_M] = false;
+            RESET_TOUCHE(SC_M);
             debug_show_mini_map = !debug_show_mini_map;
         }
     }
