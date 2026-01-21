@@ -453,6 +453,9 @@ void load_level(mem_t* mem_level, s32 world_id, const char* filename) {
         }
 
         free(mem);
+
+        // Debug code to show links
+        calculate_link_positions(mem_level);
     } else {
         printf("Can not open file %s (load_level).\n", full_filename);
         fatal_error();

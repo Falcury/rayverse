@@ -101,6 +101,7 @@ void draw_horizontal_line_to_draw_buffer(s16 start_x, s16 start_y, s16 width, u8
 void draw_vertical_line_to_display_buffer(s16 start_x, s16 start_y, s16 height, u8 color);
 void draw_vertical_line_to_draw_buffer(s16 start_x, s16 start_y, s16 height, u8 color);
 void draw_collision_box(s16 x, s16 y, s16 width, s16 height);
+void draw_deformed_line(u8* buffer, s16 x1, s16 y1, s16 x2, s16 y2, u8 color);
 
 // pcmain.c
 void InitData(void);
@@ -151,6 +152,9 @@ void display_etoile(s16 in_x, s16 in_y);
 void display_grp_stars(void);
 void DISPLAY_TEXT_FEE(void);
 void display_mini_map(void); // Re-implemented from Rayman Designer
+bool calculate_link_positions(mem_t* mem); // Re-implemented from Rayman Designer
+bool get_link_line(s16 obj_id, s16* out_x1, s16* out_y1, s16* out_x2, s16* out_y2); // Re-implemented from Rayman Designer
+void display_obj_links(void); // Re-implemented from Rayman Designer
 void DISPLAY_SAVE_SPRITES(s16 x, s16 save_index);
 void DISPLAY_SAVE_POING(void);
 void DISPLAY_OPTIONS_POING(void);

@@ -956,6 +956,93 @@ void display_mini_map(void) {
     }
 }
 
+// Re-implemented from Rayman Designer
+void calculate_link_positions(mem_t* mem) {
+    debug_obj_links_x_pos = (s16*)block_malloc(mem, level.nb_objects * sizeof(s16));
+    debug_obj_links_y_pos = (s16*)block_malloc(mem, level.nb_objects * sizeof(s16));
+    debug_obj_is_linked = block_malloc(mem, level.nb_objects * sizeof(bool));
+
+    s16 max_x = (mp.width * 16 + 63) >> 6;
+    s16 max_y = (mp.height * 16 + 63) >> 6;
+
+    for (s16 obj_id = 0; obj_id < level.nb_objects; obj_id++) {
+        obj_t* obj = &level.objects[obj_id];
+
+        anim_frame_t* frame = obj->animations[obj->anim_index].frames + obj->anim_frame;
+        s16 link_x = ((frame->width >> 1) + frame->x + obj->x) >> 6;
+        s16 link_y = ((frame->height >> 1) + frame->y + obj->y) >> 6;
+        if (link_x >= max_x) {
+            link_x = max_x - 1;
+        }
+        if (link_y >= max_y) {
+            link_y = max_y - 1;
+        }
+        if (link_x < 0) {
+            link_x = 0;
+        }
+        if (link_y < 0) {
+            link_y = 0;
+        }
+
+        s16 link_obj_id = obj_id;
+        do {
+            debug_obj_links_x_pos[link_obj_id] = link_x;
+            debug_obj_links_y_pos[link_obj_id] = link_y;
+            link_obj_id = link_init[link_obj_id];
+        } while (link_obj_id != obj_id);
+
+        debug_obj_is_linked[obj_id] = link_init[link_obj_id] != obj_id;
+    }
+}
+
+// Re-implemented from Rayman Designer
+bool get_link_line(s16 obj_id, s16* out_x1, s16* out_y1, s16* out_x2, s16* out_y2) {
+    bool is_on_screen;
+
+    obj_t* obj = &level.objects[obj_id];
+    anim_frame_t* frame = obj->animations[obj->anim_index].frames + obj->anim_frame;
+
+    *out_x1 = (obj->x - xmap) + 8 + frame->x + (frame->width >> 1);
+    *out_y1 = (obj->y - ymap) + frame->y + (frame->height >> 1);
+    
+    *out_x2 = debug_obj_links_x_pos[obj_id] * 64 + 40 - xmap;
+    *out_y2 = debug_obj_links_y_pos[obj_id] * 64 + 32 - ymap;
+    
+    is_on_screen = false;
+    if (*out_x1 < 404 && *out_y1 < 292 && *out_x1 > -100 && *out_y1 > -100) {
+        is_on_screen = true;
+    }
+    if (*out_x2 < 404 && *out_y2 < 292 && *out_x2 > -100 && *out_y2 > -100) {
+        is_on_screen = true;
+    }
+    return is_on_screen;
+}
+
+// Re-implemented from Rayman Designer
+void display_obj_links(void) {
+    for (s16 obj_id = 0; obj_id < level.nb_objects; obj_id++) {
+        obj_t* obj = &level.objects[obj_id];
+
+        s16 x1; s16 y1; s16 x2; s16 y2;
+        if (get_link_line(obj_id, &x1, &y1, &x2, &y2)) {
+            if ((flags[obj->type] & flags3_0x40_no_link) == 0 || (flags[obj->type] & flags3_0x20_link_requires_gendoor) != 0) {
+                // Don't draw if not linked
+                if (!debug_obj_is_linked[obj_id])
+                    continue;
+
+                u8 color = 30;
+
+                draw_deformed_line(draw_buffer, x1, y1, x2, y2, color);
+
+                draw_horizontal_line_to_draw_buffer(x2 - 4, y2 - 4, 8, color);
+                draw_horizontal_line_to_draw_buffer(x2 - 4, y2 + 4, 8, color);
+                draw_vertical_line_to_draw_buffer(x2 - 4, y2 - 4, 8, color);
+                draw_vertical_line_to_draw_buffer(x2 + 4, y2 - 4, 8, color);
+            }
+        }
+    }
+}
+
 //1B0E0
 void DISPLAY_SAVE_SPRITES(s16 x, s16 save_index) {
     s16 y = save_index * (ecarty + 23) + debut_options - 23;

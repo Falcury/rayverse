@@ -857,3 +857,23 @@ void draw_collision_box(s16 x, s16 y, s16 width, s16 height) {
     draw_vertical_line_to_display_buffer(x, y, height, 0xC);
     draw_vertical_line_to_display_buffer(x + width - 1, y, height, 0xC);
 }
+
+void draw_deformed_line(u8* buffer, s16 x1, s16 y1, s16 x2, s16 y2, u8 color) {
+    s16 next_x2;
+    s16 next_y2;
+
+    do {
+        if (x1 == x2 || x1 == x2 + 1 || x1 == x2 - 1) {
+            if (y1 == y2 || y1 == y2 + 1 || y1 == y2 - 1) {
+                draw_pixel_to_buffer(buffer, x1, y1, color);
+                return;
+            }
+        }
+        
+        next_x2 = (x2 + x1 >> 1);
+        next_y2 = (y2 + y1 >> 1);
+        draw_deformed_line(buffer, x1, y1, next_x2, next_y2, color);
+        x1 = next_x2;
+        y1 = next_y2;
+    } while (true);
+}

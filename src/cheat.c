@@ -353,6 +353,11 @@ void rayverse_do_debug_cheats(void) {
             RESET_TOUCHE(SC_M);
             debug_show_mini_map = !debug_show_mini_map;
         }
+        // DEBUG: show links
+        if (TOUCHE(SC_CONTROL) && TOUCHE(SC_L)) {
+            RESET_TOUCHE(SC_L);
+            debug_show_obj_links = !debug_show_obj_links;
+        }
     }
 
 

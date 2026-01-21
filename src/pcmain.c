@@ -141,6 +141,11 @@ void DO_MAIN_LOOP_PC_NORMAL(u8* a1) {
             display_mini_map();
         }
 
+        // Re-implemented from Rayman Designer
+        if (debug_show_obj_links) {
+            display_obj_links();
+        }
+
         if (TOUCHE(SC_ESCAPE)) {
             if (nb_fade == 0 && !GoMenu) {
                 if (!get_casse_brique_ON() && !ModeDemo && !gele && dead_time == 64) {
