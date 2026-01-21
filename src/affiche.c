@@ -86,7 +86,7 @@ void display2(obj_t* obj) {
         s16 spr_x; s16 spr_y; s16 spr_w; s16 spr_h;
 
         // We don't need to do this since we don't use the display buffer, but re-implemented for consistency
-        byte* saved_display_buffer = display_buffer;
+        u8* saved_display_buffer = display_buffer;
         display_buffer = draw_buffer;
 
         // Draw pivot (bx/by)
