@@ -2560,7 +2560,7 @@ void DO_RAY_ON_MS(void) {
             ray.speed_x = 0;
         if (ray.screen_y < 3 && ray.speed_y < 0)
             ray.speed_y = 0;
-        if ((ray.screen_y + ray.offset_by >= 191) && ray.speed_y > 0)
+        if ((ray.screen_y + ray.offset_by >= SCREEN_HEIGHT - 9) && ray.speed_y > 0)
             ray.speed_y = 0;
     }
     if (ray.speed_y > 0)
