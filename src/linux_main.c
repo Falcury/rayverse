@@ -128,6 +128,8 @@ int main(int argc, char** argv) {
 //    g_window = window;
     app_state->sdl.window = window;
 
+    SDL_ShowCursor(SDL_DISABLE);
+
     {
         s32 gl_w, gl_h;
         SDL_GL_GetDrawableSize(window, &gl_w, &gl_h);
