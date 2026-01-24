@@ -960,13 +960,18 @@ void display_mini_map(void) {
 void calculate_link_positions(mem_t* mem) {
     debug_obj_links_x_pos = (s16*)block_malloc(mem, level.nb_objects * sizeof(s16));
     debug_obj_links_y_pos = (s16*)block_malloc(mem, level.nb_objects * sizeof(s16));
-    debug_obj_is_linked = block_malloc(mem, level.nb_objects * sizeof(bool));
+    debug_obj_is_linked = (bool*)block_malloc(mem, level.nb_objects * sizeof(bool));
 
     s16 max_x = (mp.width * 16 + 63) >> 6;
     s16 max_y = (mp.height * 16 + 63) >> 6;
 
     for (s16 obj_id = 0; obj_id < level.nb_objects; obj_id++) {
         obj_t* obj = &level.objects[obj_id];
+
+        // TODO: animations might be NULL, causing a crash - should we then calculate x/y in another way?
+        if (!obj->animations) {
+            continue;
+        }
 
         anim_frame_t* frame = obj->animations[obj->anim_index].frames + obj->anim_frame;
         s16 link_x = ((frame->width >> 1) + frame->x + obj->x) >> 6;
@@ -1000,6 +1005,10 @@ bool get_link_line(s16 obj_id, s16* out_x1, s16* out_y1, s16* out_x2, s16* out_y
     bool is_on_screen;
 
     obj_t* obj = &level.objects[obj_id];
+    // TODO: animations might be NULL, causing a crash; check that this workaround is right?
+    if (!obj->animations) {
+        return false;
+    }
     anim_frame_t* frame = obj->animations[obj->anim_index].frames + obj->anim_frame;
 
     *out_x1 = (obj->x - xmap) + 8 + frame->x + (frame->width >> 1);
