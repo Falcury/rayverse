@@ -197,8 +197,8 @@ typedef struct eta_t {
 	s8 speed_x_right;
 	s8 speed_x_left;
 	u8 anim_index;
-	u8 next_etat;
-	u8 next_subetat;
+	u8 next_main_etat;
+	u8 next_sub_etat;
 	u8 anim_speed;
 	u8 sound_index;
 	u8 flags;
@@ -288,7 +288,7 @@ typedef struct anim_t {
 	anim_layer_t* layers;
 	anim_frame_t* frames;
 	u16 layers_per_frame;
-	u16 frame_count;
+	u16 frames_count;
 } anim_t;
 
 typedef struct pcx_header_t {

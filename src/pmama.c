@@ -154,7 +154,11 @@ void init_move_couteau(obj_t* obj) {
                     CouteauxInfos[cout_ind].x_pos = x_pos(test_1, 6);
                 else
                     CouteauxInfos[cout_ind].x_pos = x_pos(4 - test_1, 6);
+#ifdef PC
+                CouteauxInfos[cout_ind].y_pos = y_pos(9 - cout_ind, 1) + 8;
+#else
                 CouteauxInfos[cout_ind].y_pos = y_pos(11 - cout_ind, 1) + 8;
+#endif
                 CouteauxInfos[cout_ind].field9_0x10 = 0;
                 if (cout_ind == 0)
                     CouteauxInfos[cout_ind].field2_0x4 = 50;
@@ -799,7 +803,13 @@ void DO_PMA_COMMAND(obj_t* obj) {
                     obj->speed_x = 1;
                     obj->speed_y = 0;
                     CALC_MOV_ON_BLOC(obj);
-                    if ((obj->x + obj->offset_bx) > (xmap + (SCREEN_WIDTH + 32))) {
+                    if ((obj->x + obj->offset_bx) > (xmap +
+#ifdef PC
+                            256
+#else
+                            272
+#endif
+                    )) {
                         obj->speed_x = 0;
                         set_main_and_sub_etat(obj, 0, 2);
                     }
@@ -907,7 +917,7 @@ void DO_PMA_COMMAND(obj_t* obj) {
                     break;
                 case 4:
                     y = obj->offset_by + obj->y;
-                    if ((y_floor((s16) (xmap + 160), y) - y) < 5) {
+                    if ((y_floor((s16) (xmap + (SCREEN_WIDTH / 2)), y) - y) < 5) {
                         obj->speed_y = 1;
                         obj->param = 0;
                         set_main_and_sub_etat(obj, 2, 5);

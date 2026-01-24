@@ -299,7 +299,7 @@ void obj_init(obj_t* obj) {
             break;
         case TYPE_176_CRAYON_BAS:
         case TYPE_240_CRAYON_HAUT:
-            obj->anim_frame = myRand(obj->animations[obj->anim_index].frame_count - 1);
+            obj->anim_frame = myRand(obj->animations[obj->anim_index].frames_count - 1);
             break;
         case TYPE_191_FALLING_CRAYON:
         case TYPE_235_PUNAISE4:

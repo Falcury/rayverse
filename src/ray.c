@@ -1383,7 +1383,7 @@ void RAY_RESPOND_TO_NOTHING(void) {
                 {
                     sel_anim = &ray.animations[ray.anim_index];
                     set_main_and_sub_etat(&ray, 0, 15);
-                    ray.anim_frame = sel_anim->frame_count - 1;
+                    ray.anim_frame = sel_anim->frames_count - 1;
                 }
             }
             else

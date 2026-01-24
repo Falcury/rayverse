@@ -717,7 +717,7 @@ void DO_GROWING_PLATFORM(void) {
     if (dword_BD96C != true)
         dword_BD96C = false;
 
-    if (ray.anim_frame == ray.animations[ray.anim_index].frame_count - 1)
+    if (ray.anim_frame == ray.animations[ray.anim_index].frames_count - 1)
     {
         if (dword_BD96C == false)
         {

@@ -350,7 +350,7 @@ void INIT_CHEMIN(void) {
         medaillon->offset_by = 64;
         obj_init(medaillon);
         CalcObjPosInWorldMap(medaillon);
-        medaillon->anim_frame = i % medaillon->animations[get_eta(medaillon)->anim_index].frame_count;
+        medaillon->anim_frame = i % medaillon->animations[get_eta(medaillon)->anim_index].frames_count;
     }
 
     // unlock Mr Dark's Dare

@@ -309,9 +309,6 @@ void PC_keyboard_interrupt_handler(u8 scancode) {
             text_input_buffer[i] = text_input_buffer[i-1];
         }
         text_input_buffer[0] = scancode ^ 0x96;
-        if (scancode == SC_R) {
-            BREAKPOINT;
-        }
     }
     if (dans_la_map_monde) {
         ModeAutoJumelle = 0;

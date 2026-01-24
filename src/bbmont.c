@@ -144,7 +144,7 @@ void DO_TOTEM_COMMAND(obj_t* tot_obj) {
             IndAtak = 0;
         }
 
-        if (tot_obj->anim_frame == (tot_obj->animations[tot_obj->anim_index].frame_count - 1))
+        if (tot_obj->anim_frame == (tot_obj->animations[tot_obj->anim_index].frames_count - 1))
             unk_1 = horloge[get_eta(tot_obj)->anim_speed & 0xf] == 0;
         else
             unk_1 = false;
@@ -794,7 +794,7 @@ void DO_BBMONT_COMMAND(obj_t* obj) {
     GET_SPRITE_POS(obj, 6, &bb1.sprite6_x, &bb1.sprite6_y, &unk_1, &unk_2);
     unk_1 = obj->x;
     unk_2 = obj->y;
-    if (obj->anim_frame == obj->animations[obj->anim_index].frame_count - 1 &&
+    if (obj->anim_frame == obj->animations[obj->anim_index].frames_count - 1 &&
             horloge[obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0xf] == 0
     ) {
         FinAnim = true;
@@ -1161,7 +1161,7 @@ void DO_BBMONT2_COMMAND(obj_t* obj) {
 
     temp_s2 = (u16) obj->x + obj->offset_bx;
     temp_s3 = obj->offset_hy + (u16) obj->y + 0x40;
-    FinAnim = ((obj->anim_frame == (obj->animations[obj->anim_index].frame_count - 1)) && (horloge[obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0xF] == 0));
+    FinAnim = ((obj->anim_frame == (obj->animations[obj->anim_index].frames_count - 1)) && (horloge[obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0xF] == 0));
     if (((u8) Phase < 2) && (obj->main_etat != 2) && ((u32) ((ray_zdc_x - temp_s2) + 0x10) < 0x21) && (ray_zdc_y < (temp_s3 - 32))) {
         set_main_and_sub_etat(obj, 0, 16);
         obj->speed_x = 0;
@@ -1516,7 +1516,7 @@ void DO_BBMONT3_COMMAND(obj_t* obj) {
     // NOTE(Falcury): I did not spot functional differences PS1 and PC versions at first glance
     u8 eight;
 
-    if (obj->anim_frame == (obj->animations[obj->anim_index].frame_count - 1) &&
+    if (obj->anim_frame == (obj->animations[obj->anim_index].frames_count - 1) &&
         horloge[obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0xF] == 0
     )
         FinAnim = true;
@@ -1589,7 +1589,7 @@ void DO_BBMONT3_ATTER(obj_t* obj) {
 void DO_BBMONT4_COMMAND(obj_t* obj) {
     // NOTE(Falcury): PS1 and PC versions seem functionally identical
     obj->flags.flip_x = 1;
-    if (obj->anim_frame == (obj->animations[obj->anim_index].frame_count - 1) &&
+    if (obj->anim_frame == (obj->animations[obj->anim_index].frames_count - 1) &&
         horloge[obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0xF] == 0
     )
         FinAnim = true;

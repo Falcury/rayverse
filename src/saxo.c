@@ -600,7 +600,7 @@ void DO_SAXO_COMMAND(obj_t* obj) {
         FinAnim = 0;
     } else {
         if (
-                obj->anim_frame == (obj->animations[obj->anim_index].frame_count - 1) &&
+                obj->anim_frame == (obj->animations[obj->anim_index].frames_count - 1) &&
                 horloge[obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0xF] == 0
                 )
         {
@@ -989,7 +989,7 @@ void DO_SAXO2_COMMAND(obj_t* obj) {
         DO_SAXO2_COUP(obj);
 
     if (
-            obj->anim_frame == (obj->animations[obj->anim_index].frame_count - 1) &&
+            obj->anim_frame == (obj->animations[obj->anim_index].frames_count - 1) &&
             horloge[obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0xF] == 0
             )
     {
@@ -1186,7 +1186,7 @@ void DO_SAXO3_COMMAND(obj_t* obj) {
     if (Phase == 2 && obj->main_etat == 0 && obj->sub_etat != 0)
         Phase = 0;
     if (
-            obj->anim_frame == (obj->animations[obj->anim_index].frame_count - 1) &&
+            obj->anim_frame == (obj->animations[obj->anim_index].frames_count - 1) &&
             horloge[obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0xF] == 0
             )
     {

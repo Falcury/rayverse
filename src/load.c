@@ -76,7 +76,7 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
                     for (s32 anim_index = 0; anim_index < cur_wldobj->anim_count; ++anim_index) {
                         anim_t* anim = cur_wldobj->animations + anim_index;
                         mem_read(&anim->layers_per_frame, mem, 2);
-                        mem_read(&anim->frame_count, mem, 2);
+                        mem_read(&anim->frames_count, mem, 2);
                         s32 frames_ptr = 0;
                         mem_read(&frames_ptr, mem, 4); // ptr field, but might be -1
                         u16 layer_table_size;
@@ -85,8 +85,8 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
                         mem_read(anim->layers, mem, layer_table_size);
                         if (frames_ptr != -1) {
                             ASSERT(sizeof(anim_frame_t) == 4);
-                            anim->frames = (anim_frame_t*) block_malloc(mem_world, anim->frame_count * sizeof(anim_frame_t));
-                            mem_read(anim->frames, mem, anim->frame_count * sizeof(anim_frame_t));
+                            anim->frames = (anim_frame_t*) block_malloc(mem_world, anim->frames_count * sizeof(anim_frame_t));
+                            mem_read(anim->frames, mem, anim->frames_count * sizeof(anim_frame_t));
                         }
 
                     }
@@ -489,7 +489,7 @@ void load_big_ray(mem_t* buffer) {
         for (s32 i = 0; i < sprite_group->anim_count; ++i) {
             anim_t* anim_desc = sprite_group->animations + i;
             fread(&anim_desc->layers_per_frame, 2, 1, fp);
-            fread(&anim_desc->frame_count, 2, 1, fp);
+            fread(&anim_desc->frames_count, 2, 1, fp);
             s32 field_4 = 0;
             fread(&field_4, 4, 1, fp); // ptr field, but might be -1
 //			anim_desc->anim_layers_or_frames = (u8*)field_4;
@@ -498,8 +498,8 @@ void load_big_ray(mem_t* buffer) {
             anim_desc->layers = (anim_layer_t*) block_malloc(buffer, layer_table_size);
             fread(anim_desc->layers, 1, layer_table_size, fp);
             if (field_4 != -1) {
-                anim_desc->frames = (anim_frame_t*) block_malloc(buffer, anim_desc->frame_count * 4);
-                fread(anim_desc->frames, 4, anim_desc->frame_count, fp);
+                anim_desc->frames = (anim_frame_t*) block_malloc(buffer, anim_desc->frames_count * 4);
+                fread(anim_desc->frames, 4, anim_desc->frames_count, fp);
             }
         }
         fread(&nb_loaded_eta, 1, 1, fp);
@@ -601,7 +601,7 @@ void LOAD_ALL_FIX(void) {
                 for (s32 i = 0; i < obj->anim_count; ++i) {
                     anim_t* anim_desc = obj->animations + i;
                     mem_read(&anim_desc->layers_per_frame, mem, 2);
-                    mem_read(&anim_desc->frame_count, mem, 2);
+                    mem_read(&anim_desc->frames_count, mem, 2);
                     s32 frames_ptr = 0;
                     mem_read(&frames_ptr, mem, 4); // ptr field, but might be -1
                     u16 layer_table_size = 0;
@@ -610,8 +610,8 @@ void LOAD_ALL_FIX(void) {
                     mem_read(anim_desc->layers, mem, layer_table_size);
                     if (frames_ptr != -1) {
                         ASSERT(sizeof(anim_frame_t) == 4);
-                        anim_desc->frames = (anim_frame_t*) block_malloc(main_mem_fix, anim_desc->frame_count * sizeof(anim_frame_t));
-                        mem_read(anim_desc->frames, mem, anim_desc->frame_count * sizeof(anim_frame_t));
+                        anim_desc->frames = (anim_frame_t*) block_malloc(main_mem_fix, anim_desc->frames_count * sizeof(anim_frame_t));
+                        mem_read(anim_desc->frames, mem, anim_desc->frames_count * sizeof(anim_frame_t));
                     }
                 }
             }

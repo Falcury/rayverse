@@ -870,8 +870,8 @@ void draw_deformed_line(u8* buffer, s16 x1, s16 y1, s16 x2, s16 y2, u8 color) {
             }
         }
         
-        next_x2 = (x2 + x1 >> 1);
-        next_y2 = (y2 + y1 >> 1);
+        next_x2 = ((x2 + x1) >> 1);
+        next_y2 = ((y2 + y1) >> 1);
         draw_deformed_line(buffer, x1, y1, next_x2, next_y2, color);
         x1 = next_x2;
         y1 = next_y2;

@@ -2584,7 +2584,7 @@ void allocateOtherPosts(obj_t* her_bh_obj) {
     obj_t *cur_obj;
     s32 unk_1;
     s16 cur_id = link_init[her_bh_obj->id];
-    u8 her_bh_frames = her_bh_obj->animations[get_eta(her_bh_obj)->anim_index].frame_count;
+    u8 her_bh_frames = her_bh_obj->animations[get_eta(her_bh_obj)->anim_index].frames_count;
     s16 i = 0;
 
     while (cur_id != her_bh_obj->id) {
@@ -2608,7 +2608,7 @@ void allocateOtherPosts(obj_t* her_bh_obj) {
 void doHerseCommand(obj_t* obj) {
     /* 4EF0C 8017370C -O2 -msoft-float */
     if ((obj->type == TYPE_178_HERSE_BAS || obj->type == TYPE_HERSE_HAUT) && obj->link == 0) {
-        obj->anim_frame = myRand(obj->animations[obj->anim_index].frame_count - 1);
+        obj->anim_frame = myRand(obj->animations[obj->anim_index].frames_count - 1);
         obj->param = 0x1000;
         allocateOtherPosts(obj);
         obj->link = 1;
@@ -2819,7 +2819,7 @@ void DO_CFUMEE_COMMAND(obj_t* obj) {
     /* 4FEF8 801746F8 -O2 -msoft-float */
     obj->y = ray.y + -98;
     if (
-            obj->anim_frame == obj->animations[obj->anim_index].frame_count - 1 &&
+            obj->anim_frame == obj->animations[obj->anim_index].frames_count - 1 &&
             horloge[obj->eta[obj->main_etat][obj->sub_etat].anim_speed & 0xf] == 0 &&
             level.objects[pierreAcorde_obj_id].iframes_timer == 0
             )
@@ -2931,7 +2931,7 @@ void doShipCommand(obj_t* obj) {
                         }
                         if (var_s2 == 0)
                         {
-                            obj->timer = 0x32;
+                            obj->timer = 50;
                         }
                         if (var_s3 != obj->type)
                         {
