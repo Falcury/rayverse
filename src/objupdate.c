@@ -887,7 +887,7 @@ void DoGeneratingDoorRaymanCollision(obj_t* obj) {
 
 //620E4
 void DO_REDUCTEUR(obj_t* obj) {
-    if (obj->hit_points < obj->init_hit_points) {
+    if ((u8)obj->hit_points < (u8)obj->init_hit_points) {
         --obj->hit_points;
         if (obj->hit_points == 0) {
             obj->hit_points = obj->init_hit_points;
