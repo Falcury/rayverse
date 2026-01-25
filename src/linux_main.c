@@ -115,7 +115,6 @@ int main(int argc, char** argv) {
 //    if (window_start_maximized) {
 //        window_flags |= SDL_WINDOW_MAXIMIZED;
 //    }
-    window_flags |= SDL_WINDOW_ALLOW_HIGHDPI;
     SDL_Window* window = SDL_CreateWindow("Rayverse", 
                                           SDL_WINDOWPOS_CENTERED, 
                                           SDL_WINDOWPOS_CENTERED,
@@ -128,6 +127,8 @@ int main(int argc, char** argv) {
     }
 //    g_window = window;
     app_state->sdl.window = window;
+
+    SDL_ShowCursor(SDL_DISABLE);
 
     {
         s32 gl_w, gl_h;
