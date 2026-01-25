@@ -18,6 +18,7 @@ void allocateBlacktoonEyes(obj_t* obj) {
             cur_obj->is_active = 1;
             add_alwobj(cur_obj);
             cur_obj->flags.flag_0x40 = 0;
+            break;
         }
     }
 }
