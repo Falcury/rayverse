@@ -20,7 +20,7 @@ bool EOA(obj_t* obj) {
 void save_objects_flags(void) {
     for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* obj = level.objects + i;
-        set2bits((u32*) &saveobj[i >> 4], i & 0xF, 2 * (obj->is_active & 1) + obj->flags.alive);
+        set2bits(&saveobj[i >> 4], i & 0xF, 2 * (obj->is_active & 1) + obj->flags.alive);
     }
 }
 
@@ -31,7 +31,7 @@ void restore_objects_flags(void) {
         if (obj->type != TYPE_58_CAGE) {
             u32 high_bit = 0;
             u32 low_bit = 0;
-            read2bits((u32*) &saveobj[i >> 4], i & 0xF, &high_bit, &low_bit);
+            read2bits(&saveobj[i >> 4], i & 0xF, &high_bit, &low_bit);
             obj->is_active = high_bit;
             obj->flags.alive = low_bit;
         }

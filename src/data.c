@@ -1570,8 +1570,8 @@ u8 Main_Control = 0; //95EB2
 s16 During_The_Menu = 1; //95EB4
 u8 OptionMusicCdActive = 1; //95EB6
 u8 text_input_buffer[9]; //95EB7
-u8 byte_95EC0 = 0; //95EC0
-u8 byte_95EC1 = 0; //95EC1
+u8 PC_TingsToGet_Col = 0; //95EC0
+u8 PC_TingsToGet_ColAdd = 0; //95EC1
 
 s16 niveau = 0; //95EC4
 
@@ -2540,7 +2540,7 @@ level_obj_t level_alw; //CCDE8
 level_t level; //CCDF0
 level_obj_t level_obj; //CCDFC
 u8 ecroule_rubis_list[8]; //CCE00
-u8 saveobj[64+3]; //CCE08 //NOTE: originally 64 bytes - I added some safety bytes because read/set2bits might access out of bounds
+u32 saveobj[16]; //CCE08
 eta_t** loaded_eta[100]; //CCE48
 s32 MapTimePause; //CCFD8
 char CheminSauvegarde[100]; //CCFDC

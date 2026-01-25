@@ -1113,8 +1113,54 @@ void DISPLAY_YESNO_POING(void) {
 }
 
 //1B56C
-void display_time(s32 a1) {
-    print_once("Not implemented: display_time"); //stub
+void display_time(s16 time) {
+    // NOTE(Falcury): based on the PC version (the PS1 version is slightly different)
+    obj_t *sbar_obj;
+    char text[24];
+    u8 nb_wiz_text[8];
+    s32 time_div;
+    u32 col;
+    u32 col_add;
+
+    sbar_obj = &level.objects[sbar_obj_id];
+    if (time != -2) {
+        u8 seconds = time / 60 % 10;
+        u8 tens = time / 600 % 10;
+        u8 hundreds = time / 6000 % 10;
+        s16 x_offset = 0;
+
+        display_text(language_txt[159], Bloc_lim_W2 - 52, Bloc_lim_H2 - 32, 2, 5); // /time/
+        if (hundreds != 0) {
+            display_sprite(sbar_obj, hundreds + 28, Bloc_lim_W2 - 50, Bloc_lim_H2 - 30, 1);
+            x_offset = 15;
+        }
+        display_sprite(sbar_obj, tens + 28, Bloc_lim_W2 - 50 + x_offset, Bloc_lim_H2 - 30, 1);
+        display_sprite(sbar_obj, seconds + 28, Bloc_lim_W2 - 35 + x_offset, Bloc_lim_H2 - 30, 1);
+
+        if (map_time > 100) {
+            if (map_time <= 160 && map_time > 120) {
+                strcpy(text, "/go !/");
+                display_text(text, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0, 5);
+            }
+        } else {
+            ray.is_active = 0;
+            snprintf(text, sizeof(text), language_txt[156], nb_wiz); // /%d tings to get/
+            if (horloge[8] < 4) {
+                col = PC_TingsToGet_Col;
+                col_add = PC_TingsToGet_ColAdd;
+                PC_TingsToGet_Col = col + col_add;
+                if (PC_TingsToGet_Col >= 6) {
+                    PC_TingsToGet_ColAdd *= -1;
+                    PC_TingsToGet_Col = 5;
+                } else if (PC_TingsToGet_Col == 0) {
+                    PC_TingsToGet_ColAdd *= -1;
+                    PC_TingsToGet_Col = 1;
+                }
+
+                display_text(text, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 2, PC_TingsToGet_Col);
+            }
+        }
+    }
 }
 
 //1B79C

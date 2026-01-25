@@ -159,7 +159,7 @@ void DISPLAY_SAVE_SPRITES(s16 x, s16 save_index);
 void DISPLAY_SAVE_POING(void);
 void DISPLAY_OPTIONS_POING(void);
 void DISPLAY_YESNO_POING(void);
-void display_time(s32 a1);
+void display_time(s16 time);
 void DISPLAY_CONTINUE_SPR(void);
 void AFFICHE_SPRITE_DEFORME(void* a1, s32 a2, s16 a3, s16 a4, s16 a5, s16 a6, s16 a7, s16 a8, s16 a9, s16 a10);
 void DISPLAY_DEFORMATION(obj_t* obj, s16 a2, s16 a3, s16 a4);

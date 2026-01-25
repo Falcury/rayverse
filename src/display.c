@@ -809,7 +809,7 @@ void DEPART_WORLD(void) {
         new_level = 1;
     }
     if (You_Win == 1 && num_world_choice == world_6_cake) {
-        DO_VICTOIRE();
+        DO_VICTOIRE(); //TODO
     } else if (!fin_du_jeu && new_world != 0) {
         START_WORLD_VIGNET();
         block_free(main_mem_world);
