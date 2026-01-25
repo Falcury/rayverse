@@ -313,7 +313,7 @@ void DO_FEE(obj_t* obj) {
         }
     }
     if (png_or_fee->flags.alive) {
-        //NOTE: below is added in PC versino
+        //NOTE: below is added in PC version
         if (png_or_fee->active_flag == 2 && !png_or_fee->is_active) {
             png_or_fee->active_timer = 0;
             png_or_fee->active_flag = 0;

@@ -253,7 +253,7 @@ void CLEAR_STAGE_NAMES(void) {
 //34D2C
 void DISPLAY_STAGE_NAMES(void) {
     DO_STAGE_NAMES(); //TODO
-    sprite_clipping(0, 320, 0, 200);
+    sprite_clipping(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT);
     if (PositionStageNameCalcule != 1) {
         if (text_to_display[1].text[0] != '\0') {
             display_text(text_to_display[1].text, text_to_display[1].xpos, text_to_display[1].ypos, text_to_display[1].font_size, text_to_display[1].color);
@@ -428,7 +428,7 @@ void DISPLAY_GAME_VIGNET(void) {
 
     s32 xmin, xmax, ymin, ymax;
     get_sprite_clipping(&xmin, &xmax, &ymin, &ymax);
-    sprite_clipping(0, SCREEN_HEIGHT, 0, SCREEN_WIDTH);
+    sprite_clipping(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT);
     display_Vignet = 0;
     SAVE_PALETTE(rvb_Vig);
     SAVE_PLAN3();
