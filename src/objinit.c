@@ -761,7 +761,7 @@ void INIT_OBJECTS(u8 a1) {
                 reduced_rayman_id = i;
             } break;
             case TYPE_145_KILLING_EYES: {
-                obj->iframes_timer = 0;
+                obj->iframes_timer = 40;
             } break;
             case TYPE_147_MST_SCROLL: {
                 if (obj->hit_points == 0) {
