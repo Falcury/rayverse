@@ -129,7 +129,7 @@ void allocatePirateGuetteurBomb(obj_t* gue_obj, s32 param_2, u8 param_3, u8 para
     s16 gue_x; s16 gue_y; s16 gue_w; s16 gue_h;
     s16 unk_x;
     s16 new_spd_x;
-    u8 mul_x_pos;
+    u8 mul_x_pos = 0; // NOTE: added zero initialization to prevent use of uninitialized variable (bug in original game)
     eta_t *cur_eta_1;
     eta_t *cur_eta_2;
     eta_t *cur_eta_3;
