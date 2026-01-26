@@ -170,7 +170,7 @@ void DO_STONEWOMAN_COMMAND(obj_t* obj) {
     /* 4E820 80173020 -O2 -msoft-float */
     s32 prev_flip_x;
     s16 diff_x; s16 diff_y;
-    s16 unk_1;
+    s16 unk_1 = 0; // NOTE: added zero initialization to prevent using an uninitialized value (bug in the original game)
 
     if (IS_STONEWOMAN_WAIT(obj)) {
         obj->speed_x = 0;
