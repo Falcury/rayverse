@@ -712,7 +712,6 @@ u8 block_types_img_data[8192] = {
 
 ogg_t ogg_cd_track;
 bool is_ogg_playing;
-bool is_ogg_finished;
 snd_t digi_voices[32];
 
 

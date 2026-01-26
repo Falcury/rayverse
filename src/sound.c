@@ -76,8 +76,7 @@ void play_ogg(game_sound_buffer_t* sound_buffer, ogg_t* ogg) {
 		s32 remaining_bytes = (samples_requested - samples_filled) * bytes_per_sample;
 		memset(sound_buffer->samples + bytes_filled, 0, remaining_bytes);
 		if (samples_filled == 0) {
-			is_ogg_finished = true;
-			is_ogg_playing = false;
+            stb_vorbis_seek_start(ogg->decoder); // loop track (rewind to start)
             SetCompteurTrameAudio();
 		}
 	}
