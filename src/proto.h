@@ -168,14 +168,14 @@ void CALCUL_DEFORMATION(s16* a1, s16* a2, s16 a3, s16 a4, s16 a5);
 
 // araignee.c
 void get_spi_zdc(obj_t* obj, s16* x, s16* y, s16* w, s16* h);
-void DO_SPIDER_PLAFOND(obj_t* obj);
+void DO_SPIDER_PLAFOND(obj_t* spipl_obj);
 void DO_SPIDER_PLAFOND_POING_COLLISION(obj_t* obj, s16 sprite);
 void SPIDER_PLAFOND_REACT(obj_t* obj);
 void DO_DARD_PLAFOND_ALWAYS(obj_t* obj);
 void DO_SPIDER_COMMAND(obj_t* obj);
 void DO_SPIDER_TIR(obj_t* obj);
 void allocateDard(obj_t* obj);
-void DoSpiderPoingCollision(obj_t* obj, s16 sprite);
+void DoSpiderPoingCollision(obj_t* other_obj, s16 sprite);
 void DoSpiderRaymanZDD(obj_t* obj);
 
 // audiocd.c
