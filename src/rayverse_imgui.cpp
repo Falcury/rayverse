@@ -267,9 +267,6 @@ extern "C" void win32_prepare_frame(app_state_t* app_state) {
 
     win32_get_window_dimension(app_state->win32.window, &app_state->client_width, &app_state->client_height);
 
-}
-
-extern "C" void win32_end_frame(app_state_t* app_state) {
     s64 frames_elapsed = 0;
     s64 clocks_per_tick = performance_counter_frequency / app_state->target_game_hz;
     while (frames_elapsed < 1) {
@@ -286,27 +283,42 @@ extern "C" void win32_end_frame(app_state_t* app_state) {
 
     glBindTexture(GL_TEXTURE_2D, app_state->opengl.screen_texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->width_pow2, surface->height_pow2, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->memory);
-
+/*
     glUseProgram(basic_shader.program);
     glBindVertexArray(vao_screen);
     glDisable(GL_DEPTH_TEST); // because we want to make sure the quad always renders in front of everything else
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, app_state->opengl.screen_texture);
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindVertexArray(0);
+    glBindVertexArray(0);*/
 
 
     win32_produce_sound_for_frame(app_state, &app_state->win32.sound_output, &app_state->game.sound_buffer, app_state->flip_clock);
 
-//    ImGui::DockSpaceOverViewport(); //TODO
+    ImGui::DockSpaceOverViewport();
 
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
 
     if (show_game_window) {
-        ImGui::Begin("Game");
-//            ImGui::Image()
+        const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 650, main_viewport->WorkPos.y + 20), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(640, 400), ImGuiCond_FirstUseEver);
+
+        ImGui::Begin("Game", NULL, ImGuiWindowFlags_NoScrollbar);
+        float desired_aspect_ratio = 320.0f / 200.0f;
+        float width = ImGui::GetWindowWidth();
+        float height = ImGui::GetWindowHeight();
+        float aspect_ratio = width / height;
+        if (aspect_ratio != desired_aspect_ratio) {
+            if (aspect_ratio > desired_aspect_ratio) {
+                width = height * desired_aspect_ratio;
+            } else {
+                height = width / desired_aspect_ratio;
+            }
+        }
+        ImGui::Image((ImTextureID)(intptr_t)app_state->opengl.screen_texture, ImVec2(width, height));
         ImGui::End();
     }
 
@@ -335,7 +347,6 @@ extern "C" void win32_end_frame(app_state_t* app_state) {
 
 extern "C" void win32_advance_frame(app_state_t* app_state) {
     win32_prepare_frame(app_state);
-    win32_end_frame(app_state);
     if (!app_state->running) {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplWin32_Shutdown();
@@ -434,7 +445,7 @@ int main(int argc, char** argv)
     // - Read 'docs/FONTS.md' for more instructions and details.
     // - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use FreeType for higher quality font rendering.
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-    style.FontSizeBase = 13.0f;
+    style.FontSizeBase = 12.0f;
     io.Fonts->AddFontDefaultVector();
 //    io.Fonts->AddFontDefaultBitmap();
     //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf");

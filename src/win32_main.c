@@ -237,6 +237,9 @@ bool process_input(HWND window) {
 void win32_init_game(void) {
     app_state_t* app_state = &global_app_state;
 
+    app_state->win32.instance = GetModuleHandle(NULL);
+    app_state->win32.cursor = LoadCursor(NULL, IDC_ARROW);
+
     // Initialize the game surface
     memset(&app_state->game_surface, 0, sizeof(app_state->game_surface));
     surface_resize(&app_state->game_surface, 320, 200, USE_POWER_OF_2_TEXTURES_ON_WINDOWS);
