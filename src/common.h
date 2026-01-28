@@ -1,3 +1,6 @@
+#ifndef COMMON_H
+#define COMMON_H
+
 #ifndef __cplusplus
 // If we don't have access to C99, stdbool.h is not available and we need to supply 'bool' and 'inline'
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
@@ -72,3 +75,5 @@ static inline void fatal_error(void) {
 
 #define ASSERT(expr) do { if(!((expr))) fatal_error(); } while (0)
 #define BREAKPOINT do { int _ = 5; } while (0)
+
+#endif //COMMON_H

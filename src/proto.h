@@ -1,3 +1,5 @@
+#ifndef PROTO_H
+#define PROTO_H
 
 // (win32/linux)_main.cpp
 #ifdef _WIN32
@@ -1648,3 +1650,5 @@ void SetPalette(rgb_palette_t* palette, u8 first_color, s32 num_colors);
 void set_special_key_descriptions(const char** descriptions);
 image_t load_vignet_pcx(u32 resource_id);
 void detect_and_remove_invalid_link_cycles();
+
+#endif //PROTO_H

@@ -39,9 +39,7 @@
 
 #include "common.h"
 
-// Define compile-time guards to deal with differences across versions.
-#define PC
-//#define PS1
+#include "config.h"
 
 #define FIX_BLACK_BAR_ON_THE_LEFT // Remove the 4-pixel-wide black bar on the left of the screen.
 

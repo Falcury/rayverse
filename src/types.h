@@ -1,3 +1,5 @@
+#ifndef TYPES_H
+#define TYPES_H
 
 #define SCREEN_HEIGHT 200
 #define SCREEN_WIDTH 320
@@ -1688,3 +1690,4 @@ typedef s32 (calcbloc_func_t)(s32 a1, s32 a2);
 typedef s32 (swap_func_t)(u8* source_buf, u8* dest_buf, s32 width, s32 height);
 typedef void (void_func_t)(void);
 
+#endif //TYPES_H

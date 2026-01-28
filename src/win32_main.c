@@ -256,7 +256,7 @@ bool process_input(HWND window) {
 	return true;
 }
 
-
+#ifndef WITH_IMGUI
 int main(int argc, char** argv) {
 	app_state_t* app_state = &global_app_state;
 
@@ -354,6 +354,7 @@ int main(int argc, char** argv) {
 	global_app_state.running = true;
 	return main_Ray(argc, argv); // run the game!
 }
+#endif //WITH_IMGUI
 
 void win32_prepare_frame(app_state_t* app_state) {
 	process_input(app_state->win32.window);
