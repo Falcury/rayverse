@@ -12,16 +12,7 @@ u8 snd_sqrt_table[128] = {
 };
 
 
-
-
-
-
-
-
-
-
-
-ogg_t open_cd_vorbis(s32 track_number) {
+ogg_t open_cd_vorbis(s32 track_number, bool looping) {
 	ogg_t result = {0};
 	if (track_number >= 2 && track_number <= 20) {
 		char filename[512];
@@ -42,6 +33,7 @@ ogg_t open_cd_vorbis(s32 track_number) {
 				result.decoder = decoder;
 				result.file = mem;
 				result.sample_count = stb_vorbis_stream_length_in_samples(decoder);
+                result.looping = looping;
 				return result;
 			}
 		}
@@ -52,15 +44,17 @@ ogg_t open_cd_vorbis(s32 track_number) {
 void stop_ogg(ogg_t* ogg) {
 	if (ogg->decoder) {
 		stb_vorbis_close(ogg->decoder);
+        ogg->decoder = NULL;
 	}
 	if (ogg->file) {
 		free(ogg->file);
+        ogg->file = NULL;
 	}
 }
 
-void play_cd_track(s32 track_number) {
+void play_cd_track(s32 track_number, bool looping) {
 	stop_ogg(&ogg_cd_track);
-	ogg_cd_track = open_cd_vorbis(track_number);
+	ogg_cd_track = open_cd_vorbis(track_number, looping);
 	is_ogg_playing = true;
 	MusicCdActive = true;
 }
@@ -78,6 +72,9 @@ void play_ogg(game_sound_buffer_t* sound_buffer, ogg_t* ogg) {
 		if (samples_filled == 0) {
             stb_vorbis_seek_start(ogg->decoder); // loop track (rewind to start)
             SetCompteurTrameAudio();
+            if (!ogg->looping) {
+                is_ogg_playing = false;
+            }
 		}
 	}
 }
@@ -783,7 +780,7 @@ void TestCdLoop(void) {
             }
         }
     } else {
-        play_cd_track(map_cd_tracks[22 * (num_world - 1) + num_level -1 ]);
+        play_cd_track(map_cd_tracks[22 * (num_world - 1) + num_level -1 ], true);
         phaseCd = 0;
         cdTime = 1;
     }

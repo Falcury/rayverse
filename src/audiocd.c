@@ -62,7 +62,7 @@ void start_cd_bbdead(void) {
         MusicCdActive = 0;
     }
     if (MusicCdActive) {
-        play_cd_track(19); // Menu music - "World Map"
+        play_cd_track(19, true); // Menu music - "World Map"
     }
 }
 

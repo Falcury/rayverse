@@ -128,6 +128,7 @@ typedef struct ogg_t {
 	stb_vorbis* decoder;
 	mem_t* file;
 	u32 sample_count;
+    bool looping;
 } ogg_t;
 
 
