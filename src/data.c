@@ -7,6 +7,10 @@
 #undef extern
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // Global data specific to Rayverse
 // ================================
 
@@ -3347,3 +3351,7 @@ extern s32 OffsetSpriteFixe; //E7474
 
 #undef INIT
 #undef extern
+
+#ifdef __cplusplus
+}
+#endif
