@@ -141,6 +141,7 @@ typedef struct win32_state_t {
     HWND window;
     HINSTANCE instance;
     HCURSOR cursor;
+    WNDCLASSA window_class;
     win32_sound_output_t sound_output;
 } win32_state_t;
 #else

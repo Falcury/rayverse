@@ -239,6 +239,14 @@ void rayverse_imgui_init_opengl(app_state_t* app_state) {
 
 
 extern "C" void win32_prepare_frame(app_state_t* app_state) {
+    s64 frames_elapsed = 0;
+    s64 clocks_per_tick = performance_counter_frequency / app_state->target_game_hz;
+    while (frames_elapsed < 1) {
+        frames_elapsed = ((get_clock() / clocks_per_tick) - (app_state->frame_clock / clocks_per_tick));
+        Sleep(1);
+    }
+    app_state->frame_clock += clocks_per_tick * frames_elapsed;
+
     global_app_state.was_client_leftclicked = false;
     // Poll and handle messages (inputs, window resize, etc.)
     // See the WndProc() function below for our to dispatch events to the Win32 backend.
@@ -256,43 +264,21 @@ extern "C" void win32_prepare_frame(app_state_t* app_state) {
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-//    ImGui::DockSpaceOverViewport(); //TODO
-
-
-
-
     glDrawBuffer(GL_BACK);
     glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     win32_get_window_dimension(app_state->win32.window, &app_state->client_width, &app_state->client_height);
 
-    s64 frames_elapsed = 0;
-    s64 clocks_per_tick = performance_counter_frequency / app_state->target_game_hz;
-    while (frames_elapsed < 1) {
-        frames_elapsed = ((get_clock() / clocks_per_tick) - (app_state->frame_clock / clocks_per_tick));
-        Sleep(1);
-    }
-    app_state->frame_clock += clocks_per_tick * frames_elapsed;
-
-//    opengl_upload_surface(app_state, app_state->active_surface, app_state->client_width, app_state->client_height); //TODO
-    // Upload surface
+    // Upload surface to texture
     surface_t* surface = app_state->active_surface;
     glDrawBuffer(GL_BACK);
     glViewport(0, 0, global_app_state.client_width, global_app_state.client_height);
 
     glBindTexture(GL_TEXTURE_2D, app_state->opengl.screen_texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->width_pow2, surface->height_pow2, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->memory);
-/*
-    glUseProgram(basic_shader.program);
-    glBindVertexArray(vao_screen);
-    glDisable(GL_DEPTH_TEST); // because we want to make sure the quad always renders in front of everything else
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, app_state->opengl.screen_texture);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindVertexArray(0);*/
 
-
+    // Output sound
     win32_produce_sound_for_frame(app_state, &app_state->win32.sound_output, &app_state->game.sound_buffer, app_state->flip_clock);
 
     ImGui::DockSpaceOverViewport();
@@ -326,13 +312,10 @@ extern "C" void win32_prepare_frame(app_state_t* app_state) {
     // Rendering
     ImGui::Render();
     glViewport(0, 0, global_app_state.client_width, global_app_state.client_height);
-//    glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-//    glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     // Update and Render additional Platform Windows
-    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
+    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
 
@@ -355,38 +338,70 @@ extern "C" void win32_advance_frame(app_state_t* app_state) {
         CleanupDeviceWGL(app_state->win32.window, &g_MainWindow);
         wglDeleteContext(g_hRC);
         ::DestroyWindow(app_state->win32.window);
-//        ::UnregisterClassW(app_state->win32..lpszClassName, wc.hInstance);
+        ::UnregisterClass(app_state->win32.window_class.lpszClassName, app_state->win32.window_class.hInstance);
         exit(0);
     }
 }
 
 // Main code
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
+    app_state_t* app_state = &global_app_state;
+
+    app_state->win32.instance = GetModuleHandle(NULL);
+    app_state->win32.cursor = LoadCursor(NULL, IDC_ARROW);
+
     // Make process DPI aware and obtain main monitor scale
     ::SetProcessDPIAware();
     ImGui_ImplWin32_EnableDpiAwareness();
     float main_scale = ImGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
 
     // Create application window
-    WNDCLASSEXW wc = { sizeof(wc), CS_HREDRAW | CS_VREDRAW | CS_OWNDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"Rayverse", nullptr };
-    ::RegisterClassExW(&wc);
-    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Rayverse", WS_OVERLAPPEDWINDOW, 100, 100, (int)(1280 * main_scale), (int)(800 * main_scale), nullptr, nullptr, wc.hInstance, nullptr);
-    global_app_state.win32.window = hwnd;
+    WNDCLASSA window_class;
+    memset(&window_class, 0, sizeof(window_class));
+
+    window_class.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+    window_class.lpfnWndProc = WndProc;
+    window_class.hInstance = GetModuleHandle(NULL);
+    window_class.lpszClassName = "Rayverse";
+    window_class.hbrBackground = NULL;
+    app_state->win32.window_class = window_class;
+
+    if (!RegisterClass(&window_class)) {
+        return EXIT_FAILURE;
+    }
+
+    RECT desired_window_rect;
+    memset(&desired_window_rect, 0, sizeof(desired_window_rect));
+    int desired_width = 1280;
+    int desired_height = 800;
+    desired_window_rect.right = desired_width;
+    desired_window_rect.bottom = desired_height;
+
+    DWORD window_style = WS_OVERLAPPEDWINDOW;
+    AdjustWindowRect(&desired_window_rect, window_style, FALSE);
+    int initial_width = desired_window_rect.right - desired_window_rect.left;
+    int initial_height = desired_window_rect.bottom - desired_window_rect.top;
+
+    app_state->win32.window = CreateWindowEx(0, window_class.lpszClassName, "Rayverse", window_style, 0, 0,
+                                             initial_width, initial_height, NULL, NULL, app_state->win32.instance, 0);
+
+    if (!app_state->win32.window) {
+        return EXIT_FAILURE;
+    }
 
     // Initialize OpenGL
-    if (!CreateDeviceWGL(hwnd, &g_MainWindow))
+    if (!CreateDeviceWGL(app_state->win32.window, &g_MainWindow))
     {
-        CleanupDeviceWGL(hwnd, &g_MainWindow);
-        ::DestroyWindow(hwnd);
-        ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
+        CleanupDeviceWGL(app_state->win32.window, &g_MainWindow);
+        ::DestroyWindow(app_state->win32.window);
+        ::UnregisterClass(window_class.lpszClassName, window_class.hInstance);
         return 1;
     }
     wglMakeCurrent(g_MainWindow.hDC, g_hRC);
 
     // Show the window
-    ::ShowWindow(hwnd, SW_SHOWDEFAULT);
-    ::UpdateWindow(hwnd);
+    ::ShowWindow(app_state->win32.window, SW_SHOWDEFAULT);
+    ::UpdateWindow(app_state->win32.window);
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -416,7 +431,7 @@ int main(int argc, char** argv)
     }
 
     // Setup Platform/Renderer backends
-    ImGui_ImplWin32_InitForOpenGL(hwnd);
+    ImGui_ImplWin32_InitForOpenGL(app_state->win32.window);
     ImGui_ImplOpenGL3_Init();
     if (!gladLoadGL()) {
         fprintf(stderr, "Failed to initialize OpenGL loader!\n");
