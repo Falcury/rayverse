@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
 if (NOT MSVC)
-    set(GCC_WARN_OPTIONS "-Wall -Wpedantic -Wno-unused-variable -Wno-unused-but-set-variable")
+    set(GCC_WARN_OPTIONS "-Wall -Wno-unused-variable -Wno-unused-but-set-variable")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${GCC_WARN_OPTIONS}")
 endif()
 
@@ -36,6 +36,7 @@ if (WITH_IMGUI)
             src/imgui/imgui_widgets.cpp
             src/imgui/backends/imgui_impl_win32.cpp
             src/imgui/backends/imgui_impl_opengl3.cpp
+            src/glad.c
     )
 endif()
 

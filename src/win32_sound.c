@@ -144,7 +144,7 @@ static void win32_fill_sound_buffer(win32_sound_output_t* sound, DWORD byte_to_l
 	}
 }
 
-static void win32_produce_sound_for_frame(app_state_t* app_state, win32_sound_output_t* sound, game_sound_buffer_t* game_sound_buffer, s64 flip_clock) {
+void win32_produce_sound_for_frame(app_state_t* app_state, win32_sound_output_t* sound, game_sound_buffer_t* game_sound_buffer, s64 flip_clock) {
 	float from_begin_to_audio_seconds = get_seconds_elapsed(flip_clock, get_clock());
 //	printf("from_begin_to_audio_seconds = %g\n", from_begin_to_audio_seconds);
 

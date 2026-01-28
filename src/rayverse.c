@@ -46,6 +46,7 @@
 #include "types.h"
 #include "proto.h"
 
+#define DATA_IMPLEMENTATION
 #include "data.c"
 
 #include "intrinsics.c"

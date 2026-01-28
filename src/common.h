@@ -61,6 +61,8 @@ typedef long long s64;
 #define PATH_SEP "/"
 #endif
 
+#include <stdlib.h> // for abort()
+
 static inline void fatal_error(void) {
 	abort();
 }

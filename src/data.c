@@ -1,28 +1,46 @@
 
+#if defined(DATA_IMPLEMENTATION)
+#define INIT(...) __VA_ARGS__
+#define extern
+#else
+#define INIT(...)
+#undef extern
+#endif
+
 // Global data specific to Rayverse
 // ================================
 
-app_state_t global_app_state;
-game_state_t* global_game;
-u8 cheat_code_debug[] = {(SC_G)^0x96, (SC_U)^0x96, (SC_B)^0x96, (SC_E)^0x96, (SC_D)^0x96}; // "debug"
-bool is_debug_mode;
-bool need_display_debug_info;
-bool debug_show_obj_collision;
-bool debug_show_block_types;
-bool debug_show_mini_map;
-bool debug_show_obj_links;
-s16* debug_obj_links_x_pos;
-s16* debug_obj_links_y_pos;
-bool* debug_obj_is_linked;
-bool debug_clicked;
-float debug_click_obj_dist_sq;
-float debug_click_x;
-float debug_click_y;
-s16 debug_obj_id = -1;
-s32 debug_obj_xmin = 32000;
-u8 debug_overlay_draw_buffer[SCREEN_WIDTH * SCREEN_HEIGHT];
+#if WITH_IMGUI
+extern bool show_demo_window INIT(= true);
+extern bool show_game_window INIT(= true);
+#endif
 
-u8 block_types_img_data[8192] = {
+#ifdef _WIN32
+extern s64 performance_counter_frequency;
+extern s32 monitor_refresh_hz;
+#endif
+
+extern app_state_t global_app_state;
+extern game_state_t* global_game;
+extern u8 cheat_code_debug[5] INIT(= {(SC_G)^0x96, (SC_U)^0x96, (SC_B)^0x96, (SC_E)^0x96, (SC_D)^0x96}); // "debug"
+extern bool is_debug_mode;
+extern bool need_display_debug_info;
+extern bool debug_show_obj_collision;
+extern bool debug_show_block_types;
+extern bool debug_show_mini_map;
+extern bool debug_show_obj_links;
+extern s16* debug_obj_links_x_pos;
+extern s16* debug_obj_links_y_pos;
+extern bool* debug_obj_is_linked;
+extern bool debug_clicked;
+extern float debug_click_obj_dist_sq;
+extern float debug_click_x;
+extern float debug_click_y;
+extern s16 debug_obj_id INIT(= -1);
+extern s32 debug_obj_xmin INIT(= 32000);
+extern u8 debug_overlay_draw_buffer[SCREEN_WIDTH * SCREEN_HEIGHT];
+
+extern u8 block_types_img_data[8192] INIT(= {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -706,13 +724,13 @@ u8 block_types_img_data[8192] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
+});
 
 // engine.cpp
 
-ogg_t ogg_cd_track;
-bool is_ogg_playing;
-snd_t digi_voices[32];
+extern ogg_t ogg_cd_track;
+extern bool is_ogg_playing;
+extern snd_t digi_voices[32];
 
 
 // Global data (RAYMAN 1.21)
@@ -720,11 +738,11 @@ snd_t digi_voices[32];
 
 // Data sorted by offset
 
-s32 saved_sprite_color; //92140
-s32 saved_sprite_width; //92144
+extern s32 saved_sprite_color; //92140
+extern s32 saved_sprite_width; //92144
 
 //9215C
-archive_header_t HeaderFilevignet[75] = {
+extern archive_header_t HeaderFilevignet[75] INIT(= {
         {0, 42275, 5, 253}, // 0
         {42275, 36462, 145, 81}, // 1
         {78737, 36152, 208, 209}, // 2
@@ -800,27 +818,27 @@ archive_header_t HeaderFilevignet[75] = {
         {2927732, 19114, 33, 36}, // 72
         {2946846, 47407, 97, 52}, // 73
         {2994253, 14885, 77, 155}, // 74
-};
+});
 
 //924E0
-archive_header_t language_infos[] = {
+extern archive_header_t language_infos[] INIT(= {
         {0, 4234, 48, 180},      // English
         {4234, 4713, 130, 161},  // French
         {8947, 4903, 207, 92},   // German
         {13850, 2511, 208, 192}, // Japanese
         {16361, 2366, 149, 20},  // Chinese
-};
+});
 
-s16 nb_des = 0; //9251C
-s16 nb_fix_des = 0; //9251E
-s16 dhspeed = 0; //92520
-s16 dvspeed = 0; //92522
+extern s16 nb_des INIT(= 0); //9251C
+extern s16 nb_fix_des INIT(= 0); //9251E
+extern s16 dhspeed INIT(= 0); //92520
+extern s16 dvspeed INIT(= 0); //92522
 
 //92524
-u8 ecroule_rubis_order[24] = {2, 1, 3, 0, 4, 7, 6, 5, 1, 3, 2, 0, 4, 7, 6, 5, 4, 1, 3, 2, 0, 7, 6, 5};
+extern u8 ecroule_rubis_order[24] INIT(= {2, 1, 3, 0, 4, 7, 6, 5, 1, 3, 2, 0, 4, 7, 6, 5, 4, 1, 3, 2, 0, 7, 6, 5});
 
 // 0x9253C
-u8 block_flags[64] = {
+extern u8 block_flags[64] INIT(= {
         0x00, 0x20, 0x42, 0xC2, 0x42, 0x42, 0xC2, 0xC2, 0x04, 0x0B, //0-9
         0x00, 0x00, 0x00, 0x00, 0x03, 0x13, 0x00, 0x00, 0x4A, 0xCA, //10-19
         0x4A, 0x4A, 0xCA, 0xCA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //20-29
@@ -828,10 +846,10 @@ u8 block_flags[64] = {
         0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, //40-49
         0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, //50-59
         0x20, 0x20, 0x20, 0x20, //60-63
-};
+});
 
 //9257C
-u32 flags[262] = {
+extern u32 flags[262] INIT(= {
         0x23038028, 0x02030004, 0x42020000, 0x42218021, 0x42020004, 0x02020020, 0x26471008, 0x02020008, 0x20431100,
         0x23038028, 0x02018018, 0x4A000005, 0x03028028, 0x4222800B, 0x03028028, 0x4222800B, 0x02028104, 0x02028104,
         0x02038004, 0x4A200001, 0x03039128, 0x02028020, 0x02038100, 0x02038040, 0x02038000, 0x02020000, 0x02024000, 0x202C000,
@@ -861,12 +879,12 @@ u32 flags[262] = {
         0x12060008, 0x12060008, 0x0206C008, 0x42229019, 0x02028000, 0x42038000, 0x02038000, 0x42029009, 0x4202A004,
         0x02020008, 0x42020004, 0x42020004, 0x42020004, 0x02038000, 0x02038000, 0x4203B001, 0x0203B000, 0x02038800,
         0x02038000, 0x02038000, 0x02038000,
-};
+});
 
-u8 joy_done; //92994
+extern u8 joy_done; //92994
 
 //92996
-s16 zonediffx[262] = {
+extern s16 zonediffx[262] INIT(= {
         0, 0, 0, 0, 0, -50, 0, 0, -80, 0, 0, 0, 250, 0, 250, 0, -60, -60, 0, 0, 60, 0, 0, 0, 0, 0, -60, 0, 0, 0,
         0, -50, 0, 0, 0, 0, 0, 0, -50, 0, 0, 0, -50, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, 0, -50, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 0, 150, 0, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 450,
@@ -876,10 +894,10 @@ s16 zonediffx[262] = {
         0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 450, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 200, 200, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -50, -50, -50, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0,
-};
+});
 
 //92BA2
-s16 zonediffy[262] = {
+extern s16 zonediffy[262] INIT(= {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, -50, 0, 0, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 300, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 120, -50, 0, 150, 0, 0, 200, 200, 0, 0, 0, 0, 0, 350, -50, 0, 300,
@@ -889,10 +907,10 @@ s16 zonediffy[262] = {
         0, 0, 0, 0, 0, 0, 0, 150, 0, 50, 0, 0, 0, 0, 0, 350, 0, 0, 0, 0, 0, 150, 0, 0, 0, 0, 0, 50, 100, 150, 0,
         0, 0, 0, 200, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 20, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0,
-};
+});
 
 //92DAE
-zdc_t zdc_tab[200] = {
+extern zdc_t zdc_tab[200] INIT(= {
         {84, 44, 13, 17, 4, 255}, // 0
         {3, 4, 3, 13, 3, 0}, // 1
         {12, 11, 16, 16, 3, 4}, // 2
@@ -1078,10 +1096,10 @@ zdc_t zdc_tab[200] = {
         {4, 4, 8, 8, 3, 5}, // 182
         {11, 186, 56, 34, 1, 255}, // 183
         {16, -24, 2, 81, 3, 0}, // 184
-};
+});
 
 //933EE
-u16 type_zdc[262] = {
+extern u16 type_zdc[262] INIT(= {
         0, 0, 0, 0, 0, 0, 4096, 2050, 2051, 4100, 2054, 0, 4103,
         2057, 4106, 2060, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 2061, 0, 2062, 2063, 0, 0, 2064, 2065, 0, 0, 2066,
@@ -1103,11 +1121,11 @@ u16 type_zdc[262] = {
         4257, 4259, 2213, 2214, 0, 2215, 0, 0, 4264, 4266, 4268,
         4270, 4272, 10418, 0, 0, 0, 2231, 0, 2232, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
-};
+});
 
 
 //935FC
-obj_procs_t ObjectsFonctions[262] = {
+extern obj_procs_t ObjectsFonctions[262] INIT(= {
         {DO_ONE_CMD,                       DoBadGuy1PoingCollision,          DoRaymanCollisionDefault,        DoBadGuy1RaymanZDD,        ObjectUTurnDefault}, // 0: livingstone
         {DO_ONE_CMD,                       DoPlatformPoingCollision,         DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 1: platform
         {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoPowerupRaymanCollision,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 2: energy point
@@ -1370,13 +1388,13 @@ obj_procs_t ObjectsFonctions[262] = {
         {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 259: EDU letter
         {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 260: EDU digit
         {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 261: EDU road sign
-};
+});
 
-u8 nb_levels_in_world[8] = {0, 22, 18, 13, 13, 12, 4, 0}; //94A74
-s16 pente[16] = {0, 3, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 42, 45}; //94A7C
+extern u8 nb_levels_in_world[8] INIT(= {0, 22, 18, 13, 13, 12, 4, 0}); //94A74
+extern s16 pente[16] INIT(= {0, 3, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 42, 45}); //94A7C
 
 //94A9C
-u8 N_anim[256] = {
+extern u8 N_anim[256] INIT(= {
         8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 7, 7, 7, 7, 7, 7,
         7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5,
         5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
@@ -1393,42 +1411,42 @@ u8 N_anim[256] = {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-};
+});
 
-s16 bagDy[20] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -60, -26, 8, 32, 75, 32, 8, -26, -60, -1}; //94B9C
-s16 bagW[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 32, 48, 48, 48, 48, 48, 32, 32, 0}; //94BC4
-s16 bagH[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 32, 48, 48, 60, 48, 48, 32, 32, 0}; //94BEC
+extern s16 bagDy[20] INIT(= {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -60, -26, 8, 32, 75, 32, 8, -26, -60, -1}); //94B9C
+extern s16 bagW[20] INIT(= {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 32, 48, 48, 48, 48, 48, 32, 32, 0}); //94BC4
+extern s16 bagH[20] INIT(= {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 32, 48, 48, 60, 48, 48, 32, 32, 0}); //94BEC
 
 //94C14
-s16 expsin[63] = {
+extern s16 expsin[63] INIT(= {
         0, 855, 825, 0, -769, -742, -1, 690, 666, 0, -621, -599, -1, 557, 537, 0,
         -501, -484, -1, 449, 434, 0, -405, -391, -1, 363, 350, 0, -327, -315, -1, 292,
         282, 0, -264, -255, -1, 236, 228, 0, -213, -206, -1, 190, 184, 0, -172, -166,
         -1, 153, 148, 0, -139, -134, -1, 124, 120, 0, -112, -108, -1, 80, 32640,
-};
+});
 
 //94C92
-s16 expsin2[49] = {
+extern s16 expsin2[49] INIT(= {
         3, 0, -3, 0, 3, 0, -3, 0, 3, 0, -3, 0, 3, 0, -3, 0,
         3, 0, -3, 0, 3, 0, -3, 0, 3, 0, -3, 0, 3, 0, -3, 0,
         3, 0, -3, 0, 3, 0, -3, 0, 3, 0, -3, 0, 3, 0, -3, 0, 255
-};
+});
 
-s16 EauDy[14] = {0, -3, -6, -8, -9, -10, -9, -7, -5, -2, 2, 6, 7, 4}; //94CF4
-s16 DecEau[4] = {9, 0, 7, 5}; //94D10
+extern s16 EauDy[14] INIT(= {0, -3, -6, -8, -9, -10, -9, -7, -5, -2, 2, 6, 7, 4}); //94CF4
+extern s16 DecEau[4] INIT(= {9, 0, 7, 5}); //94D10
 
 //94D18
-u8 angletab[65] = {
+extern u8 angletab[65] INIT(= {
         128, 126, 125, 124, 122, 121, 120, 119, 117, 116, 115,
         114, 112, 111, 110, 109, 108, 106, 105, 104, 103, 102,
         101, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88,
         87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 78, 77, 76,
         75, 74, 73, 73, 72, 71, 70, 70, 69, 68, 68, 67, 66,
         65, 65, 64, 64
-};
+});
 
 //94D5C
-world_info_t t_world_info[24] = {
+extern world_info_t t_world_info[24] INIT(= {
         {29,  264, 18, 0,  0,  1,  1, 0, 1, 1,  2, 0, 0, 0, (char*)0xBFEA8}, // 0: Pink Plant Woods
         {100, 254, 2,  1,  0,  4,  0, 0, 1, 5,  0, 0, 0, 0, (char*)0xBFEA8}, // 1: Anguish Lagoon
         {90,  212, 2,  1,  3,  2,  0, 0, 1, 9,  2, 0, 0, 0, (char*)0xBFEA8}, // 2: Swamps of Forgetfulness
@@ -1453,32 +1471,32 @@ world_info_t t_world_info[24] = {
         {190, 45,  21, 9,  21, 21, 0, 0, 7, 20, 2, 0, 0, 0, (char*)0xBFEA8}, // 21: Save Game (Mountain)
         {276, 115, 22, 13, 22, 22, 0, 0, 7, 20, 1, 0, 0, 0, (char*)0xBFEA8}, // 22: Save Game (Picture)
         {306, 267, 15, 23, 23, 23, 0, 0, 7, 20, 1, 0, 0, 0, (char*)0xBFEA8}, // 23: Save Game (Cave)
-};
+});
 
 //94F3C
-u8 map_cd_tracks[128] = {
+extern u8 map_cd_tracks[128] INIT(= {
         14, 14, 9, 14, 14, 5, 14, 9, 14, 14, 14, 14, 14, 14, 14, 5, 9, 15, 15, 15, 15, 15,
         17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 9, 17, 17, 17, 7, 7, 15, 15, 0, 0, 0, 0,
         16, 16, 16, 16, 16, 16, 16, 16, 16, 6, 9, 15, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         13, 13, 13, 4, 13, 13, 13, 13, 13, 13, 4, 15, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         8, 8, 8, 8, 8, 8, 8, 8, 8, 3, 3, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         11, 11, 11, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
+});
 
 //94FBC
-s32 timeCd[132] = {
+extern s32 timeCd[132] INIT(= {
         0, 215, 215, 80, 215, 215, 74, 215, 80, 215, 215, 215, 215, 215, 215, 215, 74, 80, 68, 68, 68, 68,
         68, 238, 238, 238, 238, 238, 238, 238, 238, 238, 238, 80, 238, 238, 238, 84, 84, 68, 68, 0, 0, 0,
         0, 109, 109, 109, 109, 109, 109, 109, 109, 109, 82, 80, 68, 68, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 145, 145, 145, 118, 145, 145, 145, 145, 145, 145, 118, 68, 68, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 142, 142, 142, 142, 142, 142, 142, 142, 142, 81, 81, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 132, 132, 132, 83, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-};
+});
 
-u8 let_shadow = 0; //951D0
+extern u8 let_shadow INIT(= 0); //951D0
 
 //95828
-u8 DemoRecord[1500] = {
+extern u8 DemoRecord[1500] INIT(= {
         0, 41, 32, 8, 0, 19, 32, 27, 0, 30, 4, 2, 0, 60, 32, 11, 0, 16, 4, 12, 0, 69, 4, 7, 36, 20, 32, 27, 0, 74,
         128, 42, 160, 4, 32, 8, 36, 11, 32, 124, 36, 19, 32, 58, 0, 28, 16, 46, 0, 13, 128, 23, 144, 1, 16, 23, 144,
         1, 128, 31, 144, 2, 16, 52, 0, 33, 128, 3, 144, 1, 16, 23, 144, 1, 128, 27, 144, 3, 16, 74, 0, 68, 128, 31,
@@ -1528,128 +1546,128 @@ u8 DemoRecord[1500] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0,
-};
+});
 
-s16 DemoRecordSize[6] = {154, 192, 200, 172, 200, 120}; //95E04
-s16 DemoRecordWorld[6] = {2, 3, 4, 5, 1, 5}; //95E10
-s16 DemoRecordMap[6] = {7, 7, 1, 4, 9, 10}; //95E1C
-u8* DisplayBufferNormal = NULL; //95E28 // initialized to 0xA0000 (= VGA video memory)
-u8 ModeVideoActuel = MODE_TEXT; //95E2C
-u8 GameModeVideo = MODE_TEXT; //95E2D
-s32 JumAmpDefMul = 0; //95E30
-s32 JumAmpDefPlus = 0; //95E34
-u8 key_right = SC_RIGHT; //95E38
-u8 key_up = SC_UP; //95E39
-u8 key_left = SC_LEFT; //95E3A
-u8 key_down = SC_DOWN; //95E3B
-u8 key_fist = SC_ALT; //95E3C
-u8 key_jump = SC_CONTROL; //95E3D
-u8 key_action = SC_X; //95E3E
-u8* tab_key[7] = {&key_left, &key_up, &key_right, &key_down, &key_jump, &key_fist, &key_action}; //95E40
-u8 tab_key_sav[7] = {SC_LEFT, SC_UP, SC_RIGHT, SC_DOWN, SC_CONTROL, SC_ALT, SC_X}; //95E5C
-u8 OptionGame = 0; //95E63
-u8 GoMenu = 0; //95E64
-u16 fixon = 1; //95E66      // scores enabled
-u16 fixontemp = 0; //95E68
-u16 SizeScreen = 0; //95E6A
-u8 Frequence = 0; //95E6C
-u8 BackgroundOptionOn = 1; //95E6D
-u8 BackgroundOn = 1; //95E6E
+extern s16 DemoRecordSize[6] INIT(= {154, 192, 200, 172, 200, 120}); //95E04
+extern s16 DemoRecordWorld[6] INIT(= {2, 3, 4, 5, 1, 5}); //95E10
+extern s16 DemoRecordMap[6] INIT(= {7, 7, 1, 4, 9, 10}); //95E1C
+extern u8* DisplayBufferNormal INIT(= NULL); //95E28 // initialized to 0xA0000 (= VGA )video memory)
+extern u8 ModeVideoActuel INIT(= MODE_TEXT); //95E2C
+extern u8 GameModeVideo INIT(= MODE_TEXT); //95E2D
+extern s32 JumAmpDefMul INIT(= 0); //95E30
+extern s32 JumAmpDefPlus INIT(= 0); //95E34
+extern u8 key_right INIT(= SC_RIGHT); //95E38
+extern u8 key_up INIT(= SC_UP); //95E39
+extern u8 key_left INIT(= SC_LEFT); //95E3A
+extern u8 key_down INIT(= SC_DOWN); //95E3B
+extern u8 key_fist INIT(= SC_ALT); //95E3C
+extern u8 key_jump INIT(= SC_CONTROL); //95E3D
+extern u8 key_action INIT(= SC_X); //95E3E
+extern u8* tab_key[7] INIT(= {&key_left, &key_up, &key_right, &key_down, &key_jump, &key_fist, &key_action}); //95E40
+extern u8 tab_key_sav[7] INIT(= {SC_LEFT, SC_UP, SC_RIGHT, SC_DOWN, SC_CONTROL, SC_ALT, SC_X}); //95E5C
+extern u8 OptionGame INIT(= 0); //95E63
+extern u8 GoMenu INIT(= 0); //95E64
+extern u16 fixon INIT(= 1); //95E66      // scores enabled
+extern u16 fixontemp INIT(= 0); //95E68
+extern u16 SizeScreen INIT(= 0); //95E6A
+extern u8 Frequence INIT(= 0); //95E6C
+extern u8 BackgroundOptionOn INIT(= 1); //95E6D
+extern u8 BackgroundOn INIT(= 1); //95E6E
 
-u16 tRefRam2VramNormalFix[8] = {255, 255, 255, 255, 255, 255, 255, 255}; //95E70
-u16 tRefRam2VramNormal[8] = {255, 255, 255, 255, 255, 255, 255, 255}; //95E80
-u16 tRefTransFondNormal[8] = {255, 255, 255, 255, 255, 255, 255, 255}; //95E90
-u16 tRefSpriteNormal[2] = {255, 255}; //95EA0
-u16 tRefRam2VramX[2] = {255, 255}; //95EA4
-u16 tRefVram2VramX[2] = {255, 255}; //95EA8
-u16 tRefSpriteX[2] = {255, 255}; //95EAC
-u8 ExitMenu = 0; //95EB0
-u8 ReInitPlasma = 0; //95EB1
-u8 Main_Control = 0; //95EB2
-s16 During_The_Menu = 1; //95EB4
-u8 OptionMusicCdActive = 1; //95EB6
-u8 text_input_buffer[9]; //95EB7
-u8 PC_TingsToGet_Col = 0; //95EC0
-u8 PC_TingsToGet_ColAdd = 0; //95EC1
+extern u16 tRefRam2VramNormalFix[8] INIT(= {255, 255, 255, 255, 255, 255, 255, 255}); //95E70
+extern u16 tRefRam2VramNormal[8] INIT(= {255, 255, 255, 255, 255, 255, 255, 255}); //95E80
+extern u16 tRefTransFondNormal[8] INIT(= {255, 255, 255, 255, 255, 255, 255, 255}); //95E90
+extern u16 tRefSpriteNormal[2] INIT(= {255, 255}); //95EA0
+extern u16 tRefRam2VramX[2] INIT(= {255, 255}); //95EA4
+extern u16 tRefVram2VramX[2] INIT(= {255, 255}); //95EA8
+extern u16 tRefSpriteX[2] INIT(= {255, 255}); //95EAC
+extern u8 ExitMenu INIT(= 0); //95EB0
+extern u8 ReInitPlasma INIT(= 0); //95EB1
+extern u8 Main_Control INIT(= 0); //95EB2
+extern s16 During_The_Menu INIT(= 1); //95EB4
+extern u8 OptionMusicCdActive INIT(= 1); //95EB6
+extern u8 text_input_buffer[9]; //95EB7
+extern u8 PC_TingsToGet_Col INIT(= 0); //95EC0
+extern u8 PC_TingsToGet_ColAdd INIT(= 0); //95EC1
 
-s16 niveau = 0; //95EC4
+extern s16 niveau INIT(= 0); //95EC4
 
 //95EC6
-bb_attack_entry_t SerieAtakBB[6][7] = {
+extern bb_attack_entry_t SerieAtakBB[6][7] INIT(= {
         {{0, 2}, {255, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}},
         {{0, 2}, {1, 3}, {255, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}},
         {{6, 2}, {2, 2}, {0, 1}, {1, 1}, {0, 0}, {255, 0}, {0, 0}},
         {{3, 0}, {0, 1}, {1, 1}, {255, 0}, {0, 0}, {0, 0}, {0, 0}},
         {{5, 1}, {2, 3}, {0, 0}, {3, 1}, {4, 0}, {255, 0}, {0, 0}},
         {{7, 0}, {3, 0}, {6, 0}, {3, 0}, {0, 1}, {4, 0}, {255, 0}},
-};
+});
 
 //95F70
-rgb_t PalPlasma[16] = {
+extern rgb_t PalPlasma[16] INIT(= {
         {32, 7, 63}, {31, 7, 61}, {32, 7, 58}, {33, 7, 56},
         {36, 10, 53}, {37, 12, 51}, {45, 15, 48}, {52, 17, 46},
         {45, 15, 48}, {40, 15, 51}, {35, 12, 53}, {35, 10, 56},
         {32, 7, 58}, {30, 5, 61}, {27, 5, 61}, {32, 7, 63},
-};
-s16 word_95FA0 = 0; //95FA0
-s16 word_95FA2 = 0; //95FA2
-s16 word_95FA4 = 0; //95FA4
-s16 word_95FA6 = 0; //95FA6
-s16 word_95FA8 = 0; //95FA8
-s16 word_95FAA = 0; //95FAA
-s16 word_95FAC = 0; //95FAC
-s16 word_95FAE = 0; //95FAE
-s16 word_95FB0 = 0; //95FB0
+});
+extern s16 word_95FA0 INIT(= 0); //95FA0
+extern s16 word_95FA2 INIT(= 0); //95FA2
+extern s16 word_95FA4 INIT(= 0); //95FA4
+extern s16 word_95FA6 INIT(= 0); //95FA6
+extern s16 word_95FA8 INIT(= 0); //95FA8
+extern s16 word_95FAA INIT(= 0); //95FAA
+extern s16 word_95FAC INIT(= 0); //95FAC
+extern s16 word_95FAE INIT(= 0); //95FAE
+extern s16 word_95FB0 INIT(= 0); //95FB0
 
 //95FB2
-rgb_t PalFire[16] = {
+extern rgb_t PalFire[16] INIT(= {
         {0, 0, 9}, {15, 5, 19}, {20, 10, 21}, {25, 10, 34},
         {30, 10, 36}, {35, 10, 39}, {40, 10, 41}, {45, 10, 41},
         {50, 10, 46}, {55, 10, 49}, {60, 10, 51}, {60, 10, 54},
         {60, 10, 56}, {60, 10, 59}, {60, 10, 61}, {60, 10, 63},
-};
+});
 
-s16 no_sound = 0; //95FE4
-u8 InvadersMode = 0; //95FE6
-u8 BonusMode = 0; //95FE7
-u8 BonusBrik = 20; //95FE8
-u8 BonusBrikType = 0; //95FE9
-u8 NbClassicBrik = 0; //95FEA
-u8 NbBrikTouched = 0; //95FEB
-s16 CasseBriqueOffsetX[7] = {0, 0, 6, 2, 5, 4, 8}; //95FEC
-s16 CasseBriqueOffsetY[7] = {16, 16, 8, 8, 16, 16, 8}; //95FFA
-s16 LastTouched = 20; //96008
-s16 NoCB = 0; //9600A
-s16 NoCBInit = 0; //9600C
-s16 tempo = 500; //9600E
-s16 CBoffsetX = 0; //96010
-s16 CBoffsetY = 0; //96012
-s16 Xdir = 0; //96014
-s16 Ydir = 0; //96016
+extern s16 no_sound INIT(= 0); //95FE4
+extern u8 InvadersMode INIT(= 0); //95FE6
+extern u8 BonusMode INIT(= 0); //95FE7
+extern u8 BonusBrik INIT(= 20); //95FE8
+extern u8 BonusBrikType INIT(= 0); //95FE9
+extern u8 NbClassicBrik INIT(= 0); //95FEA
+extern u8 NbBrikTouched INIT(= 0); //95FEB
+extern s16 CasseBriqueOffsetX[7] INIT(= {0, 0, 6, 2, 5, 4, 8}); //95FEC
+extern s16 CasseBriqueOffsetY[7] INIT(= {16, 16, 8, 8, 16, 16, 8}); //95FFA
+extern s16 LastTouched INIT(= 20); //96008
+extern s16 NoCB INIT(= 0); //9600A
+extern s16 NoCBInit INIT(= 0); //9600C
+extern s16 tempo INIT(= 500); //9600E
+extern s16 CBoffsetX INIT(= 0); //96010
+extern s16 CBoffsetY INIT(= 0); //96012
+extern s16 Xdir INIT(= 0); //96014
+extern s16 Ydir INIT(= 0); //96016
 
-s16 speed_ball_angle = 18; //9629E
-s16 speed_ball_level = 0; //962A0
-s16 speed_ball_x = 0; //962A2
-s16 speed_ball_y = 0; //962A4
-s32 ball_x = 0; //962A8
-s32 ball_y = 0; //962AC
-s32 dword_962B0 = 441; //962B0
-u8 nb_max_collis = 0; //962B4
-u8 cbout = 0; //962B5
-u8 undestroy = 0; //962B6
-u8 upscreen = 0; //962B7
-u8 casse_brique_active = 0; //962B8
-u8 CasseBriqueON = 0; //962B9
-s16 Toon_Speeds_x[7] = {-3, -2, -1, 0, 1, 1, 3}; //962BC
-s16 Toon_Speeds_y[7] = {-3, -5, -4, -6, -5, -3, -3}; //962CA
+extern s16 speed_ball_angle INIT(= 18); //9629E
+extern s16 speed_ball_level INIT(= 0); //962A0
+extern s16 speed_ball_x INIT(= 0); //962A2
+extern s16 speed_ball_y INIT(= 0); //962A4
+extern s32 ball_x INIT(= 0); //962A8
+extern s32 ball_y INIT(= 0); //962AC
+extern s32 dword_962B0 INIT(= 441); //962B0
+extern u8 nb_max_collis INIT(= 0); //962B4
+extern u8 cbout INIT(= 0); //962B5
+extern u8 undestroy INIT(= 0); //962B6
+extern u8 upscreen INIT(= 0); //962B7
+extern u8 casse_brique_active INIT(= 0); //962B8
+extern u8 CasseBriqueON INIT(= 0); //962B9
+extern s16 Toon_Speeds_x[7] INIT(= {-3, -2, -1, 0, 1, 1, 3}); //962BC
+extern s16 Toon_Speeds_y[7] INIT(= {-3, -5, -4, -6, -5, -3, -3}); //962CA
 
-u8 dark_attaque = 0; //9637D
-u8 type_dark_attaque = 0; //9637E
-u8 ButtonReleasedSav3 = 0; //96380
+extern u8 dark_attaque INIT(= 0); //9637D
+extern u8 type_dark_attaque INIT(= 0); //9637E
+extern u8 ButtonReleasedSav3 INIT(= 0); //96380
 
 //96384
-u8 cheat_codes[327] = {
 #define _(x) x^0x96
+extern u8 cheat_codes[327] INIT(= {
         _(SC_BACKSPACE), _(SC_L), _(SC_Q), _(SC_Y), _(SC_Q), _(SC_R), _(SC_B), _(SC_C), _(SC_TAB),
         _(SC_BACKSPACE), _(SC_L), _(SC_A), _(SC_Y), _(SC_A), _(SC_R), _(SC_B), _(SC_C), _(SC_TAB), // [TAB]cbrayal[BACKSPACE] (enter breakout before defeating Mr Dark)
 
@@ -1720,20 +1738,20 @@ u8 cheat_codes[327] = {
         _(SC_M), _(SC_A), _(SC_R), _(SC_G), _(SC_O), _(SC_R), _(SC_P), _(SC_TAB), // [TAB]program (hidden message)
 
         0, 0, 1,
+});
 #undef _
-};
 
-u8 effect_choice; //964C9
-u8 byte_964CA; //964CA
-u8 effect_speed; //964CC
-u8 effect_pause_bloque; //964CE
+extern u8 effect_choice; //964C9
+extern u8 byte_964CA; //964CA
+extern u8 effect_speed; //964CC
+extern u8 effect_pause_bloque; //964CE
 
-u8 playing_intro_video = 0; //964DD
+extern u8 playing_intro_video INIT(= 0); //964DD
 
-s32 prev_Bloc_lim_W1; //9654C
+extern s32 prev_Bloc_lim_W1; //9654C
 
 //96550
-archive_header_t snd8b_header_infos[7] = {
+extern archive_header_t snd8b_header_infos[7] INIT(= {
         {0, 2048, 77, 195},
         {2048, 2048, 217, 193},
         {4096, 2048, 36, 142},
@@ -1741,10 +1759,10 @@ archive_header_t snd8b_header_infos[7] = {
         {8192, 2048, 103, 73},
         {10240, 2048, 171, 183},
         {12288, 2048, 99, 222},
-};
+});
 
 //965A4
-archive_header_t snd8b_data_infos[7] = {
+extern archive_header_t snd8b_data_infos[7] INIT(= {
         {0, 119104, 192, 60},
         {119104, 139852, 148, 104},
         {258956, 290280, 41, 149},
@@ -1752,10 +1770,10 @@ archive_header_t snd8b_data_infos[7] = {
         {752016, 200344, 36, 180},
         {952360, 193264, 243, 59},
         {1145624, 185736, 248, 51},
-};
+});
 
 //965F8
-archive_header_t sndvig_infos[9] = {
+extern archive_header_t sndvig_infos[9] INIT(= {
         {0, 83700, 77, 96},
         {83700, 134576, 217, 38},
         {218276, 118290, 36, 67},
@@ -1765,13 +1783,13 @@ archive_header_t sndvig_infos[9] = {
         {580710, 98378, 99, 219},
         {679088, 25472, 71, 84},
         {704560, 68350, 135, 79},
-};
+});
 
-u8* bnkDataFixe; //966B0
-u8* bnkDataWorld; //966B4 // original name: sound_buffer
+extern u8* bnkDataFixe; //966B0
+extern u8* bnkDataWorld; //966B4 // original name: sound_buffer
 
 //966B8
-u16 snd8b_offsets[128] = {
+extern u16 snd8b_offsets[128] INIT(= {
         11, 12, 13, 14, 15, 16, 16, 17, 19, 20, 21, 22, 23,
         25, 26, 28, 30, 32, 33, 35, 38, 40, 42, 45, 47, 50,
         53, 57, 60, 64, 67, 71, 76, 80, 85, 90, 96, 101, 107,
@@ -1785,104 +1803,104 @@ u16 snd8b_offsets[128] = {
         6501, 6888, 7298, 7732, 8192, 8679, 9195, 9741, 10321,
         10935, 11585, 12274, 13003, 13777, 14596, 15464, 16384,
         17358, 18390,
-};
+});
 
-u8* ptrTchatch = 0; //967B8
-u8 (*TEST_KEY_BUTTON0)(void) = TestKeyWeapon; //967BC
-u8 (*TEST_KEY_BUTTON1)(void) = TestKeyJump; //967C0
-u8 (*TEST_KEY_BUTTON2)(void) = TestKeyAction; //967C4
-u8 (*TEST_KEY_BUTTON3)(void) = TestKeyAction; //967C8
-u8 byte_967CC = 0; //967CC
-s32 XSpeedJumelle = 0; //967D0
-s32 YSpeedJumelle = 0; //967D4
+extern u8* ptrTchatch INIT(= 0); //967B8
+extern u8 (*TEST_KEY_BUTTON0)(void) INIT(= TestKeyWeapon); //967BC
+extern u8 (*TEST_KEY_BUTTON1)(void) INIT(= TestKeyJump); //967C0
+extern u8 (*TEST_KEY_BUTTON2)(void) INIT(= TestKeyAction); //967C4
+extern u8 (*TEST_KEY_BUTTON3)(void) INIT(= TestKeyAction); //967C8
+extern u8 byte_967CC INIT(= 0); //967CC
+extern s32 XSpeedJumelle INIT(= 0); //967D0
+extern s32 YSpeedJumelle INIT(= 0); //967D4
 
 #ifdef FIX_BLACK_BAR_ON_THE_LEFT
-s16 TabW1[4] = {0, 12, 20, 24}; //9684C
+extern s16 TabW1[4] INIT(= {0, 12, 20, 24}); //9684C
 #else
-s16 TabW1[4] = {4, 12, 20, 24}; //9684C
+extern s16 TabW1[4] INIT(= {4, 12, 20, 24}); //9684C
 #endif
-s16 TabW2[4] = {320, 312, 304, 300}; //96854
-s16 TabH1[4] = {0, 8, 16, 20}; //9685C
-s16 TabH2[4] = {200, 192, 184, 180}; //96864
+extern s16 TabW2[4] INIT(= {320, 312, 304, 300}); //96854
+extern s16 TabH1[4] INIT(= {0, 8, 16, 20}); //9685C
+extern s16 TabH2[4] INIT(= {200, 192, 184, 180}); //96864
 
-u8 msg_box_being_displayed = 0; //96880
-u8 first_option = 0; //96881
-u8 yesno_finished = 0; //96882
-u8 byte_96883 = 0; //96883
-u8 byte_96884 = 64; //96884
+extern u8 msg_box_being_displayed INIT(= 0); //96880
+extern u8 first_option INIT(= 0); //96881
+extern u8 yesno_finished INIT(= 0); //96882
+extern u8 byte_96883 INIT(= 0); //96883
+extern u8 byte_96884 INIT(= 64); //96884
 
 //96888
-const char* key_descriptions_azerty[128] = {
+extern const char* key_descriptions_azerty[128] INIT(= {
         0, 0/*escape*/, "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", 0/*minus*/, 0/*equals*/, 0/*backspace*/,
         0/*tab*/, "a", "z", "e", "r", "t", "y", "u", "i", "o", "p", 0/*leftbracket*/, 0/*rightbracket*/, 0/*enter*/,
         0/*control*/, "q", "s,", "d", "f", "g", "h", "j", "k", "l", "m", 0/*quote*/, 0/*tilde*/, 0/*lshift*/, 0/*backslash*/,
         "w", "x", "c", "v", "b", "n", "?", "."/*comma*/, ":", 0, 0/*slash*/, 0/*rshift*/,
-};
+});
 //96A88
-const char* key_descriptions_qwerty[128] = {
+extern const char* key_descriptions_qwerty[128] INIT(= {
         0, 0/*escape*/, "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", 0/*minus*/, 0/*equals*/, 0/*backspace*/,
         0/*tab*/, "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", 0/*leftbracket*/, 0/*rightbracket*/, 0/*enter*/,
         0/*control*/, "a", "s,", "d", "f", "g", "h", "j", "k", "l", ":", 0/*quote*/, 0/*tilde*/, 0/*lshift*/, 0/*backslash*/,
         "z", "x", "c", "v", "b", "n", "m", 0/*comma*/, ".", "?", 0/*slash*/, 0/*rshift*/,
-};
+});
 
-s16 droppedBombLine0[8] = {8, 8, 8, 8, 8, 8, 8, 8}; //96C88
-s16 droppedBombLine1[8] = {2, 8, 8, 8, 8, 8, 8, 6}; //96C98
-s16 droppedBombLine2[8] = {0, 0, 0, 0, 8, 0, 0, 0}; //96CA8
-s16 droppedBombLine3[8] = {7, 8, 8, 0, 0, 8, 8, 1}; //96CB8
-s16 droppedBombLine4[8] = {8, 8, 1, 8, 8, 7, 8, 8}; //96CC8
-s16 droppedBombLine5[8] = {0, 0, 0, 0, 0, 0, 0, 8}; //96CD8
-s16 droppedBombLine6[8] = {0, 0, 0, 0, 0, 8, 0, 0}; //96CE8
-s16 droppedBombLine7[8] = {8, 7, 8, 8, 8, 8, 1, 8}; //96CF8
-s16 droppedBombLine8[8] = {7, 8, 8, 8, 8, 8, 8, 1}; //96D08
-s16 droppedBombLine9[8] = {7, 8, 8, 8, 8, 8, 8, 8}; //96D18
-s16 droppedBombLineA[8] = {8, 7, 8, 8, 8, 8, 8, 8}; //96D28
-s16 droppedBombLineB[8] = {8, 8, 7, 8, 8, 8, 8, 8}; //96D38
+extern s16 droppedBombLine0[8] INIT(= {8, 8, 8, 8, 8, 8, 8, 8}); //96C88
+extern s16 droppedBombLine1[8] INIT(= {2, 8, 8, 8, 8, 8, 8, 6}); //96C98
+extern s16 droppedBombLine2[8] INIT(= {0, 0, 0, 0, 8, 0, 0, 0}); //96CA8
+extern s16 droppedBombLine3[8] INIT(= {7, 8, 8, 0, 0, 8, 8, 1}); //96CB8
+extern s16 droppedBombLine4[8] INIT(= {8, 8, 1, 8, 8, 7, 8, 8}); //96CC8
+extern s16 droppedBombLine5[8] INIT(= {0, 0, 0, 0, 0, 0, 0, 8}); //96CD8
+extern s16 droppedBombLine6[8] INIT(= {0, 0, 0, 0, 0, 8, 0, 0}); //96CE8
+extern s16 droppedBombLine7[8] INIT(= {8, 7, 8, 8, 8, 8, 1, 8}); //96CF8
+extern s16 droppedBombLine8[8] INIT(= {7, 8, 8, 8, 8, 8, 8, 1}); //96D08
+extern s16 droppedBombLine9[8] INIT(= {7, 8, 8, 8, 8, 8, 8, 8}); //96D18
+extern s16 droppedBombLineA[8] INIT(= {8, 7, 8, 8, 8, 8, 8, 8}); //96D28
+extern s16 droppedBombLineB[8] INIT(= {8, 8, 7, 8, 8, 8, 8, 8}); //96D38
 
-s16 *droppedBombSequence1[8] = {droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine1}; //96D48
-s16 *droppedBombSequence2[8] = {droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine6}; //96D68
-s16 *droppedBombSequence3[8] = {droppedBombLine0, droppedBombLineB, droppedBombLine0, droppedBombLineA, droppedBombLine0, droppedBombLine9, droppedBombLine0, droppedBombLine0}; //96D88
-s16 *droppedBombSequence4[8] = {droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine3, droppedBombLine0, droppedBombLine0, droppedBombLine0}; //96DA8
-s16 *droppedBombSequence5[8] = {droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine4, droppedBombLine0, droppedBombLine1, droppedBombLine0}; //96DC8
-s16 *droppedBombSequence6[8] = {droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine5, droppedBombLine0, droppedBombLine0, droppedBombLine0}; //96DE8
-s16 *droppedBombSequence7[8] = {droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine2, droppedBombLine0}; //96E08
+extern s16 *droppedBombSequence1[8] INIT(= {droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine1}); //96D48
+extern s16 *droppedBombSequence2[8] INIT(= {droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine6}); //96D68
+extern s16 *droppedBombSequence3[8] INIT(= {droppedBombLine0, droppedBombLineB, droppedBombLine0, droppedBombLineA, droppedBombLine0, droppedBombLine9, droppedBombLine0, droppedBombLine0}); //96D88
+extern s16 *droppedBombSequence4[8] INIT(= {droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine3, droppedBombLine0, droppedBombLine0, droppedBombLine0}); //96DA8
+extern s16 *droppedBombSequence5[8] INIT(= {droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine4, droppedBombLine0, droppedBombLine1, droppedBombLine0}); //96DC8
+extern s16 *droppedBombSequence6[8] INIT(= {droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine5, droppedBombLine0, droppedBombLine0, droppedBombLine0}); //96DE8
+extern s16 *droppedBombSequence7[8] INIT(= {droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine0, droppedBombLine2, droppedBombLine0}); //96E08
 
 //96E28
-s16 **bombSequences[7] = {
+extern s16 **bombSequences[7] INIT(= {
         droppedBombSequence1, droppedBombSequence2, droppedBombSequence3, droppedBombSequence4,
         droppedBombSequence5, droppedBombSequence6, droppedBombSequence7
-};
+});
 
-u8 mereDenisDyingSequence[3] = {42, 46, 5}; //96E44
-u8 mereDenisMachineHitSequence[2] = {44, 2}; //96E47
-u8 mereDenisHitSequence[2] = {40, 2}; //96E49
-u8 mereDenisArrivalSequence[7] = {7, 8, 12, 38, 13, 14, 0}; //96E4B
-u8 mereDenisEncounter1[8] = {41, 15, 16, 41, 26, 18, 19, 1}; //96E52
-u8 mereDenisEncounter2[9] = {21, 22, 45, 24, 41, 26, 18, 19, 1}; //96E5A
+extern u8 mereDenisDyingSequence[3] INIT(= {42, 46, 5}); //96E44
+extern u8 mereDenisMachineHitSequence[2] INIT(= {44, 2}); //96E47
+extern u8 mereDenisHitSequence[2] INIT(= {40, 2}); //96E49
+extern u8 mereDenisArrivalSequence[7] INIT(= {7, 8, 12, 38, 13, 14, 0}); //96E4B
+extern u8 mereDenisEncounter1[8] INIT(= {41, 15, 16, 41, 26, 18, 19, 1}); //96E52
+extern u8 mereDenisEncounter2[9] INIT(= {21, 22, 45, 24, 41, 26, 18, 19, 1}); //96E5A
 //96E63
-u8 mereDenisEncounter3[56] = {
+extern u8 mereDenisEncounter3[56] INIT(= {
         27, 28, 0, 0, 29, 28, 32, 254, 29, 28, 0, 1, 29, 28,
         32, 254, 29, 28, 16, 2, 29, 28, 16, 2, 29, 28, 48, 3,
         29, 28, 0, 4, 29, 28, 92, 5, 29, 28, 54, 5, 29, 28,
         16, 5, 29, 28, 0, 6, 29, 30, 24, 41, 26, 18, 19, 0
-};
-u8 mereDenisGoBehindMachine[5] = {21, 22, 25, 31, 0}; //96E9B
+});
+extern u8 mereDenisGoBehindMachine[5] INIT(= {21, 22, 25, 31, 0}); //96E9B
 //96EA0
-u8 mereDenisBehindMachine[58] = {
+extern u8 mereDenisBehindMachine[58] INIT(= {
         36, 35, 43, 1, 34, 36, 34, 33, 1, 35, 36, 35, 43, 1,
         34, 34, 33, 1, 35, 35, 43, 2, 34, 34, 33, 1, 35, 35,
         43, 2, 34, 32, 1, 34, 33, 3, 35, 35, 43, 1, 34, 34,
         33, 3, 35, 35, 43, 1, 34, 34, 33, 3, 35, 35, 43, 3,
         34, 1
-};
-u8 mereDenisMachineFlies[3] = {37, 39, 0}; //96EDA
+});
+extern u8 mereDenisMachineFlies[3] INIT(= {37, 39, 0}); //96EDA
 //96EDD
-u8 mereDenisMedley[27] = {
+extern u8 mereDenisMedley[27] INIT(= {
         45, 24, 41, 26, 18, 19, 27, 28, 16, 255, 29, 45, 24,
         41, 26, 18, 18, 19, 21, 22, 28, 32, 254, 29, 1, 0, 0
-};
+});
 //96EF8
-u8 *mereDenisActionSequences[] = {
+extern u8 *mereDenisActionSequences[] INIT(= {
         mereDenisArrivalSequence,
         mereDenisEncounter1,
         mereDenisEncounter2,
@@ -1894,26 +1912,26 @@ u8 *mereDenisActionSequences[] = {
         mereDenisHitSequence,
         mereDenisMachineHitSequence,
         mereDenisDyingSequence
-};
+});
 
-u8 dyingSequence[5] = {16, 23, 24, 22, 25}; //96F24
-u8 hitSequence[6] = {16, 17, 15, 26, 11, 5}; //96F29
-u8 arrivalSequence[4] = {13, 26, 14, 3}; //96F2F
+extern u8 dyingSequence[5] INIT(= {16, 23, 24, 22, 25}); //96F24
+extern u8 hitSequence[6] INIT(= {16, 17, 15, 26, 11, 5}); //96F29
+extern u8 arrivalSequence[4] INIT(= {13, 26, 14, 3}); //96F2F
 
 //96F33
-u8 firstEncounterSequence[40] = {
+extern u8 firstEncounterSequence[40] INIT(= {
         13, 26, 14, 4, 19, 21, 4, 20, 18, 21, 4, 20, 19, 21, 4, 20, 18, 21, 4, 20, 10, 26,
         14, 4, 18, 21, 4, 20, 10, 26, 14, 4, 19, 21, 4, 20, 10, 26, 14, 2
-};
+});
 
-u8 secondEncounterSequence1[13] = {13, 26, 14, 4, 7, 0, 7, 0, 10, 26, 14, 4, 3}; //96F5B
-u8 secondEncounterSequenceSuite[12] = {7, 4, 7, 8, 10, 26, 14, 13, 26, 14, 4, 2}; //96F68
-u8 secondEncounterSequence2[21] = {8, 0, 8, 0, 8, 0, 8, 4, 18, 21, 4, 20, 19, 21, 4, 20, 10, 26, 14, 4, 2}; //96F74
-u8 secondEncounterSequence3[19] = {9, 0, 18, 21, 4, 20, 9, 4, 18, 21, 4, 20, 10, 26, 14, 13, 14, 4, 2}; //96F89
-u8 secondEncounterSequence4[21] = {7, 8, 8, 8, 9, 0, 19, 21, 4, 20, 9, 8, 18, 21, 4, 20, 10, 26, 14, 4, 2}; //96F9C
+extern u8 secondEncounterSequence1[13] INIT(= {13, 26, 14, 4, 7, 0, 7, 0, 10, 26, 14, 4, 3}); //96F5B
+extern u8 secondEncounterSequenceSuite[12] INIT(= {7, 4, 7, 8, 10, 26, 14, 13, 26, 14, 4, 2}); //96F68
+extern u8 secondEncounterSequence2[21] INIT(= {8, 0, 8, 0, 8, 0, 8, 4, 18, 21, 4, 20, 19, 21, 4, 20, 10, 26, 14, 4, 2}); //96F74
+extern u8 secondEncounterSequence3[19] INIT(= {9, 0, 18, 21, 4, 20, 9, 4, 18, 21, 4, 20, 10, 26, 14, 13, 14, 4, 2}); //96F89
+extern u8 secondEncounterSequence4[21] INIT(= {7, 8, 8, 8, 9, 0, 19, 21, 4, 20, 9, 8, 18, 21, 4, 20, 10, 26, 14, 4, 2}); //96F9C
 
 //96FB4
-u8* moskitoActionSequences[10] = {
+extern u8* moskitoActionSequences[10] INIT(= {
         arrivalSequence,                // 0: Bzzit (arrival phase)
         firstEncounterSequence,         // 1: Bzzit fight
         arrivalSequence,                // 2: Moskito (arrival phase)
@@ -1924,12 +1942,12 @@ u8* moskitoActionSequences[10] = {
         secondEncounterSequence4,       // 7: Moskito phase 4
         hitSequence,                    // 8: animation sequence after each hit
         dyingSequence,                  // 9: animation sequence when dying
-};
+});
 
-s16 MsAnimIndex; //96FDC
+extern s16 MsAnimIndex; //96FDC
 
 //96FE0
-s16 costab[130] = {
+extern s16 costab[130] INIT(= {
         512, 512, 512, 512, 512, 512, 511, 511, 510, 509, 509,
         508, 507, 506, 505, 504, 503, 501, 500, 499, 497, 496,
         494, 492, 490, 489, 487, 485, 483, 480, 478, 476, 474,
@@ -1942,12 +1960,12 @@ s16 costab[130] = {
         179, 173, 167, 161, 155, 149, 143, 137, 131, 125, 119,
         113, 107, 100, 94, 88, 82, 76, 69, 63, 57, 51, 44, 38,
         32, 26, 19, 13, 7, 1, 0,
-};
+});
 
 
 
 //970E4
-cptr_t cptr_tab[] = {
+extern cptr_t cptr_tab[] INIT(= {
         {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 0
         {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 1
         {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 2
@@ -1982,26 +2000,26 @@ cptr_t cptr_tab[] = {
         {readOneArg, skipOneArg, handle_31_GO_SKIPTRUE}, // 31
         {readOneArg, skipOneArg, handle_32_GO_SKIPFALSE}, // 32
         {readInvalidArg, skipInvalidArg, handle_33_INVALID_CMD}, // 33
-};
+});
 
-u8 pma_couteaux[6] = {3, 5, 5, 3, 3, 4}; //9727C
-u8 pma_sequence[4][2] = {{0, 3}, {5, 0}, {5, 1}, {4, 2}}; //97282
-u8 place_sequence[5] = {3, 4, 2, 3, 2}; //9728A
-s16 pst2_sequence[13] = {1, 21, -100, 8, 1, 0, 18, 160, 8, 3, 42, 19, 14}; //97290
-s16 moust1_sequence[9] = {1, 21, -100, 8, 6, 15, 18, 330, 14}; //972AA
-s16 moust2_sequence[9] = {0, 21, 330, 8, 6, 16, 18, -120, 14}; //972BC
-s16 pst1_sequence[13] = {0, 21, 320, 8, 1, 0, 18, -8, 8, 3, 41, 19, 14}; //972CE
-s16 worry_sequence[12] = {0, 21, 100, 8, 3, 43, 19, 8, 3, 44, 19, 14}; //972E8
+extern u8 pma_couteaux[6] INIT(= {3, 5, 5, 3, 3, 4}); //9727C
+extern u8 pma_sequence[4][2] INIT(= {{0, 3}, {5, 0}, {5, 1}, {4, 2}}); //97282
+extern u8 place_sequence[5] INIT(= {3, 4, 2, 3, 2}); //9728A
+extern s16 pst2_sequence[13] INIT(= {1, 21, -100, 8, 1, 0, 18, 160, 8, 3, 42, 19, 14}); //97290
+extern s16 moust1_sequence[9] INIT(= {1, 21, -100, 8, 6, 15, 18, 330, 14}); //972AA
+extern s16 moust2_sequence[9] INIT(= {0, 21, 330, 8, 6, 16, 18, -120, 14}); //972BC
+extern s16 pst1_sequence[13] INIT(= {0, 21, 320, 8, 1, 0, 18, -8, 8, 3, 41, 19, 14}); //972CE
+extern s16 worry_sequence[12] INIT(= {0, 21, 100, 8, 3, 43, 19, 8, 3, 44, 19, 14}); //972E8
 
 //97300
-s16 car_sequence[33] = {
+extern s16 car_sequence[33] INIT(= {
         0, 21, 200, 8, 3, 47, 19, 8, 3, 48, 19, 17, 18, 20,
         -8, 17, 30, 20, -16, 17, 45, 20, -32, 17, 60, 20, -64,
         17, 65, 20, 0, 19, 14,
-};
+});
 
 //97344
-s16 RandArray[256] = {
+extern s16 RandArray[256] INIT(= {
         4, 343, 34, 364, 222, 549, 200, 717, 972, 281, 454,
         111, 714, 577, 42, 169, 835, 701, 782, 847, 982, 224,
         437, 975, 859, 945, 830, 461, 619, 677, 614, 562, 737,
@@ -2026,10 +2044,10 @@ s16 RandArray[256] = {
         747, 99, 697, 346, 118, 388, 258, 516, 20, 1020, 1,
         84, 253, 555, 432, 225, 470, 149, 209, 425, 9, 475,
         466, 186, 10,
-};
+});
 
 //97544
-u8 sound_table[256] = {
+extern u8 sound_table[256] INIT(= {
         0x07, 0x03, 0x1B, 0x07, 0x07, 0x03, 0x1B, 0x03, 0x03, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, // 0-15
         0x07, 0x03, 0x03, 0x07, 0x03, 0x03, 0x03, 0x0F, 0x07, 0x07, 0x07, 0x03, 0x03, 0x03, 0x03, 0x0F, // 16-31
         0x0B, 0x07, 0x03, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x03, 0x07, 0x03, 0x07, 0x07, // 32-47
@@ -2046,10 +2064,10 @@ u8 sound_table[256] = {
         0x03, 0x07, 0x07, 0x07, 0x03, 0x07, 0x07, 0x03, 0x07, 0x07, 0x07, 0x03, 0x07, 0x1B, 0x1F, 0x03, // 208-223
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x07, 0x03, 0x03, 0x03, 0x07, 0x07, 0x07, 0x0F, // 224-239
         0x03, 0x03, 0x07, 0x07, 0x04, 0x1B, 0x04, 0x07, 0x07, 0x07, 0x03, 0x03, 0x03, 0x03, 0x07, 0x07, // 240-255
-};
+});
 
 //97644
-u8 frame_snd[256] = {
+extern u8 frame_snd[256] INIT(= {
         0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, // 0-15
         28, 0, 1, 2, 0, 0, 0, 34, 0, 0, 0, 0, 0, 0, 0, 0, // 16-31
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 2, 0, 0, 0, // 32-47
@@ -2066,10 +2084,10 @@ u8 frame_snd[256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, // 208-223
         0, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 70, // 224-239
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 20, 0, 0, 0, 0, // 240-255
-};
+});
 
 //97744
-u8 frame_snd_bis[256] = {
+extern u8 frame_snd_bis[256] INIT(= {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0-15
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 16-31
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, // 32-47
@@ -2086,10 +2104,10 @@ u8 frame_snd_bis[256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 208-223
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 15, // 224-239
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, // 240-255
-};
+});
 
 //97844
-u16 snd_bis[256] = {
+extern u16 snd_bis[256] INIT(= {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0-15
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 16-31
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 0, 0, 0, // 32-47
@@ -2106,10 +2124,10 @@ u16 snd_bis[256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 208-223
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 238, 23, // 224-239
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 70, 0, 0, 0, 0, // 240-255
-};
+});
 
 //97A44
-sound_table_entry_t hard_sound_table[256] = {
+extern sound_table_entry_t hard_sound_table[256] INIT(= {
         {0, 255, 0, 127}, // 0
         {53, 15, 0, 80}, // 1
         {53, 0, 0, 90}, // 2
@@ -2366,10 +2384,10 @@ sound_table_entry_t hard_sound_table[256] = {
         {53, 19, 0, 80}, // 253
         {60, 255, 0, 127}, // 254
         {60, 255, 0, 127}, // 255
-};
+});
 
 //97E44
-u8 bank_to_use[256] = {
+extern u8 bank_to_use[256] INIT(= {
         0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1,
         1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -2378,17 +2396,17 @@ u8 bank_to_use[256] = {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1,
-};
+});
 
-u8 voice_is_working[32] = {0}; //97F44
-s16 Volume_Snd = 127; //97F64
-u8 not_snd_wiz[8] = {0, 2, 4, 5, 7, 9, 11, 12}; //97F6E
-s16 was_in_freeze = 0; //97F76
-u8 flagCDPlay; //97F78
-u8 phaseCd; //97F79
+extern u8 voice_is_working[32] INIT(= {0}); //97F44
+extern s16 Volume_Snd INIT(= 127); //97F64
+extern u8 not_snd_wiz[8] INIT(= {0, 2, 4, 5, 7, 9, 11, 12}); //97F6E
+extern s16 was_in_freeze INIT(= 0); //97F76
+extern u8 flagCDPlay; //97F78
+extern u8 phaseCd; //97F79
 
 //97F7C
-sax_note_entry_t atak[7] = {
+extern sax_note_entry_t atak[7] INIT(= {
         {0, 1, -1, 0, 0},  // 0
         {1, 1, -3, 60, 0}, // 1
         {2, 2, -2, 0, 0},  // 2
@@ -2396,45 +2414,45 @@ sax_note_entry_t atak[7] = {
         {1, 2, -4, 30, 0}, // 4
         {1, 2, -3, 42, 0}, // 5
         {1, 1, -4, 80, 0}, // 6
-};
+});
 
 //97FC2
-sax_attack_entry_t SerieDatak[4][11] = {
+extern sax_attack_entry_t SerieDatak[4][11] INIT(= {
         {{1, 1, 0}, {3, -1, 0}, {1, 1, 0}, {0, 0, 1}}, // 0
         {{9, 0, 0}, {1, 0, 0}, {3, -1, 0}, {5, 0, 0}, {0, 0, 1}}, // 1
         {{2, 1, 0}, {7, 0, 0}, {2, 0, 0}, {8, 0, 0}, {1, -1, 0}, {0, 0, 1}}, // 2
         {{3, -1, 0}, {4, -1, 0}, {6, 1, 0}, {9, 0, 0}, {2, 0, 0}, {2, 0, 0}, {9, 0, 0}, {0, 0, 0}, {9, 0, 1}}, // 3
-};
+});
 
 //98084
-u8 Type_Scroll[60] = {
+extern u8 Type_Scroll[60] INIT(= {
         0, 0, 1, 2, 2, 0, 1, 2, 2, 2,
         0, 0, 2, 0, 0, 0, 2, 2, 2, 2,
         0, 0, 1, 0, 0, 1, 2, 0, 2, 2,
         0, 0, 2, 2, 0, 0, 0, 0, 2, 2,
         0, 0, 0, 0, 2, 0, 2, 2, 2, 2,
         0, 0, 2, 0, 0, 2, 2, 2, 2, 2,
-};
+});
 
 //980C0
-u8 Tab_NbBande[60] = {
+extern u8 Tab_NbBande[60] INIT(= {
         1, 1, 1, 1, 1, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1,
         1, 1, 1, 1, 1, 1, 2, 10, 1, 2, 1, 1, 1, 1, 1, 1, 1,
         2, 4, 5, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1,
         2, 3, 1, 1, 1, 1, 1,
-};
+});
 
 // NB. this is originally a static array: def_bande_t Def_Bande[18000];
 // Initialization in init_def_bande()
-def_bande_t* Def_Bande; //980FC
+extern def_bande_t* Def_Bande; //980FC
 
 //BB37C
-u8 Tab_NbSprite[60] = {
+extern u8 Tab_NbSprite[60] INIT(= {
         0, 0, 0, 0, 0, 14, 9, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0,
         0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
         3, 10, 12, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0,
         0, 6, 13, 0, 0, 0, 0, 0,
-};
+});
 
 #define REPEAT_50(X) \
 X,X,X,X,X,X,X,X,X,X, X,X,X,X,X,X,X,X,X,X, X,X,X,X,X,X,X,X,X,X, X,X,X,X,X,X,X,X,X,X, X,X,X,X,X,X,X,X,X,X
@@ -2449,7 +2467,7 @@ X,X,X,X,X,X,X,X,X,X, X,X,X,X,X,X,X,X,X,X, X,X,X,X,X,X,X,X,X,X, X,X,X,X,X,X,X,X,X
 #define REPEAT_149(X) REPEAT_100(X), REPEAT_40(X), X,X,X,X,X,X,X,X,X
 
 //BB3B8
-def_sprite_t Def_Sprite[1200] = {
+extern def_sprite_t Def_Sprite[1200] INIT(= {
         REPEAT_100({0}),
         {0, 70, 1}, {53, 64, 1}, {89, 36, 1}, {121, 49, 1}, {149, 71, 1}, {195, 59, 1}, {239, 24, 1}, {279, 0, 1}, //100-107
         {328, 71, 1}, {299, 175, 2}, {175, 170, 2}, {38, 174, 2}, {262, 185, 3}, {364, 148, 3}, //108-113
@@ -2479,850 +2497,853 @@ def_sprite_t Def_Sprite[1200] = {
         {25, 105, 1}, {162, 182, 1}, {214, 168, 1}, {330, 173, 1}, {0, 266, 2}, {32, 227, 2}, {65, 131, 2}, {84, 251, 2}, //1080-1087
         {164, 234, 2}, {216, 256, 2}, {239, 173, 2}, {284, 272, 2}, {344, 254, 2}, //1088-1092
         REPEAT_100({0}), {0}, {0}, {0}, {0}, {0}, {0}, {0}, //1093-1199
-};
+});
 
-s32 dword_BD96C; //BD96C
+extern s32 dword_BD96C; //BD96C
 
-big_map_t BIG_MAP; //C21D8
-u8* Scroll_Masque[20]; //C21F8
-s32 VitesseYStageNameLevel[30]; //C2248
-s32 VitesseXStageNameWorld[30]; //C22C0
-s32 VitesseXStageNameLevel[30]; //C2338
-s32 PositionYStageNameWorld[50]; //C23B0
-s32 VitesseYStageNameWorld[30]; //C2478
-s32 PositionXStageNameLevel[50]; //C24F0
-s32 PositionXStageNameWorld[50]; //C25B8
-s32 PositionYStageNameLevel [50]; //C2680
-calcbloc_func_t* calcblocrecal[64]; //C2748
-calcbloc_func_t* calcbloc1[64]; //C2848
-calcbloc_func_t* calcbloc2[64]; //C2948
-calcbloc_func_t* calcblocfloor[64]; //C2A48
-char* language_txt[304]; //C2B48
+extern big_map_t BIG_MAP; //C21D8
+extern u8* Scroll_Masque[20]; //C21F8
+extern s32 VitesseYStageNameLevel[30]; //C2248
+extern s32 VitesseXStageNameWorld[30]; //C22C0
+extern s32 VitesseXStageNameLevel[30]; //C2338
+extern s32 PositionYStageNameWorld[50]; //C23B0
+extern s32 VitesseYStageNameWorld[30]; //C2478
+extern s32 PositionXStageNameLevel[50]; //C24F0
+extern s32 PositionXStageNameWorld[50]; //C25B8
+extern s32 PositionYStageNameLevel [50]; //C2680
+extern calcbloc_func_t* calcblocrecal[64]; //C2748
+extern calcbloc_func_t* calcbloc1[64]; //C2848
+extern calcbloc_func_t* calcbloc2[64]; //C2948
+extern calcbloc_func_t* calcblocfloor[64]; //C2A48
+extern char* language_txt[304]; //C2B48
 
-options_jeu_t options_jeu_save; //C2F58
-options_jeu_t options_jeu; //C2F78
+extern options_jeu_t options_jeu_save; //C2F58
+extern options_jeu_t options_jeu; //C2F78
 
-u32 gros_patai_src[1200]; //C2FA8
-s32 block_add[1200]; //C4268
-u8* PLANVIGBIT[8]; //C5528
-s32 planVigbit_length[8]; //C5548
-rgb_palette_t rvb_Vig[8]; //C5568
-s32 planVigbit_nb_bytes[8]; //C6D68
-rgb_palette_t rvb_save; //C6D88
-rgb_palette_t rvb_pres; //C7088
-u16 rvb_fade[256 * 3]; //C7388
-rgb_palette_t current_rvb; //C7988
-rgb_palette_t rvb_plan3; //C7C88
-rgb_palette_t rvb[3]; //C7F88
+extern u32 gros_patai_src[1200]; //C2FA8
+extern s32 block_add[1200]; //C4268
+extern u8* PLANVIGBIT[8]; //C5528
+extern s32 planVigbit_length[8]; //C5548
+extern rgb_palette_t rvb_Vig[8]; //C5568
+extern s32 planVigbit_nb_bytes[8]; //C6D68
+extern rgb_palette_t rvb_save; //C6D88
+extern rgb_palette_t rvb_pres; //C7088
+extern u16 rvb_fade[256 * 3]; //C7388
+extern rgb_palette_t current_rvb; //C7988
+extern rgb_palette_t rvb_plan3; //C7C88
+extern rgb_palette_t rvb[3]; //C7F88
 
-s16 notbut[4]; //C97F0
-s16 SNSEQ_list[256]; //C97F8
-grp_star_t grp_stars[30]; //C99F8
-s16 invpy0[8]; //C9A70
-pix_gerbe_t pix_gerbe[8]; //C9A80 // 2568 == 321*8
-s16 invpx0[8]; //CAE90
-s16 invpy200[8]; //CAEA0
-s16 nb_floc[8]; //CAEB0
-s16 invpx320[8]; //CAEC0
-s16 SNSEQ_len[64]; //CAED0
-record_t record; //CAF50
-s16 tot_nb_flocs[8]; //CAF68
-s16 floc_ind[8]; //CAF78
-u8 wi_save_zone[24]; //CAF88
-u8 save_zone[2592]; //CAFA0
-s16 allowed_time[192]; //CB9C0
-u8 bonus_perfect[24]; //CBB40
-display_item_t msg_to_display[2]; //CBB58
-display_item_t menu_to_display[10]; //CBD08
-display_item_t text_to_display[10]; //CC4A0
-level_obj_t level_alw; //CCDE8
-level_t level; //CCDF0
-level_obj_t level_obj; //CCDFC
-u8 ecroule_rubis_list[8]; //CCE00
-u32 saveobj[16]; //CCE08
-eta_t** loaded_eta[100]; //CCE48
-s32 MapTimePause; //CCFD8
-char CheminSauvegarde[100]; //CCFDC
-s32 Port; //CD040
-s32 DeviceID; //CD044
-s32 Irq; //CD048
-s32 Param; //CD04C
-s32 Dma; //CD050
-u32 nb_blocks_plein; //CD054
-u32 nb_total_blocks; //CD058
-u32 RaymanExeSize; //CD05C
-s32 Bloc_lim_W2_Aff; //CD060
-s32 Bloc_lim_W1_Aff; //CD064
-u32 RaymanExeCheckSum2; //CD068
-u32 RaymanExeCheckSum3; //CD06C
-u32 RaymanExeCheckSum1; //CD070
-s32 Bloc_lim_H2_Glob; //CD074
-s32 Bloc_lim_H1_Glob; //CD078
-s32 Bloc_lim_W2_Glob; //CD07C
-s32 Bloc_lim_W1_Glob; //CD080
-s32 Bloc_lim_H2_Aff; //CD084
-s32 Bloc_lim_H1_Aff; //CD088
-s32 TailleStageNameLevel; //CD08C
-s32 CouleurStageNameLevel; //CD090
-s32 TailleStageNameWorld; //CD094
-s32 Bloc_lim_W2; //CD098
-s32 Bloc_lim_W1; //CD09C
-s32 Bloc_lim_H2; //CD0A0
-s32 Bloc_lim_H1; //CD0A4
-s32 CouleurStageNameWorld; //CD0A8
-s32 HauteurJumelle; //CD0AC
-s32 LargeurJumelle; //CD0B0
-s32 JumelleZoomAmp; //CD0B4
-void_func_t* drawflocon6NormalETX; //CD0B8
-void_func_t* drawflocon7NormalETX; //CD0BC
-s32 JumellePosY; //CD0C0
-s32 JumellePosX; //CD0C4
-s32* JumelleZoomDef; //CD0C8
-s32 LongueurStageNameWorld; //CD0CC
-s32 LongueurStageNameLevel; //CD0D0
-void_func_t* drawpluie7NormalETX; //CD0D4
-void_func_t* drawpluie4NormalETX; //CD0D8
-s32 JumelleYMin; //CD0DC
-void_func_t* drawpluie5NormalETX; //CD0E0
-s32 JumelleXMin; //CD0E4
-void_func_t* drawflocon4NormalETX; //CD0E8
-s32 RayonJumelle; //CD0EC
-void_func_t* drawpluie6NormalETX; //CD0F0
-draw_func_t* DrawSpriteNoClipNormalEtX; //CD0F4
-draw_func_t* DrawSpriteColorNormalEtX; //CD0F8
-s32 BufferNormalDeplt; //CD0FC
-fplot_func_t* fplotNormalETX; //CD100
-void_func_t* drawflocon5NormalETX; //CD104
-void_func_t* drawflocon2NormalETX; //CD108
-draw_func_t* DrawSpriteNormalEtX; //CD10C
-void_func_t* drawflocon1NormalETX; //CD110
-draw_func_t* DrawSpriteFlipNoClipNormalEtX; //CD114
-draw_func_t* DrawSpriteFlipNormalEtX; //CD118
-draw_func_t* DrawSpriteColorFlipNormalEtX; //CD11C
-swap_func_t* Swap_And_Test_Joystick; //CD120
-void (*Copy_Plan0_To_Buf)(u8* source, u8* dest, s32 width, s32 height, s32 a5); //CD124
-u8* DrawBufferNormalIni; //CD128
-void_func_t* drawflocon3NormalETX; //CD12C
-u8* EffetBufferNormal; //CD130
-s32 TempsDemo; //CD134
-u8* DrawBufferNormal; //CD138
-void (*anim_func)(void); //CD13C
+extern s16 notbut[4]; //C97F0
+extern s16 SNSEQ_list[256]; //C97F8
+extern grp_star_t grp_stars[30]; //C99F8
+extern s16 invpy0[8]; //C9A70
+extern pix_gerbe_t pix_gerbe[8]; //C9A80 // 2568 == 321*8
+extern s16 invpx0[8]; //CAE90
+extern s16 invpy200[8]; //CAEA0
+extern s16 nb_floc[8]; //CAEB0
+extern s16 invpx320[8]; //CAEC0
+extern s16 SNSEQ_len[64]; //CAED0
+extern record_t record; //CAF50
+extern s16 tot_nb_flocs[8]; //CAF68
+extern s16 floc_ind[8]; //CAF78
+extern u8 wi_save_zone[24]; //CAF88
+extern u8 save_zone[2592]; //CAFA0
+extern s16 allowed_time[192]; //CB9C0
+extern u8 bonus_perfect[24]; //CBB40
+extern display_item_t msg_to_display[2]; //CBB58
+extern display_item_t menu_to_display[10]; //CBD08
+extern display_item_t text_to_display[10]; //CC4A0
+extern level_obj_t level_alw; //CCDE8
+extern level_t level; //CCDF0
+extern level_obj_t level_obj; //CCDFC
+extern u8 ecroule_rubis_list[8]; //CCE00
+extern u32 saveobj[16]; //CCE08
+extern eta_t** loaded_eta[100]; //CCE48
+extern s32 MapTimePause; //CCFD8
+extern char CheminSauvegarde[100]; //CCFDC
+extern s32 Port; //CD040
+extern s32 DeviceID; //CD044
+extern s32 Irq; //CD048
+extern s32 Param; //CD04C
+extern s32 Dma; //CD050
+extern u32 nb_blocks_plein; //CD054
+extern u32 nb_total_blocks; //CD058
+extern u32 RaymanExeSize; //CD05C
+extern s32 Bloc_lim_W2_Aff; //CD060
+extern s32 Bloc_lim_W1_Aff; //CD064
+extern u32 RaymanExeCheckSum2; //CD068
+extern u32 RaymanExeCheckSum3; //CD06C
+extern u32 RaymanExeCheckSum1; //CD070
+extern s32 Bloc_lim_H2_Glob; //CD074
+extern s32 Bloc_lim_H1_Glob; //CD078
+extern s32 Bloc_lim_W2_Glob; //CD07C
+extern s32 Bloc_lim_W1_Glob; //CD080
+extern s32 Bloc_lim_H2_Aff; //CD084
+extern s32 Bloc_lim_H1_Aff; //CD088
+extern s32 TailleStageNameLevel; //CD08C
+extern s32 CouleurStageNameLevel; //CD090
+extern s32 TailleStageNameWorld; //CD094
+extern s32 Bloc_lim_W2; //CD098
+extern s32 Bloc_lim_W1; //CD09C
+extern s32 Bloc_lim_H2; //CD0A0
+extern s32 Bloc_lim_H1; //CD0A4
+extern s32 CouleurStageNameWorld; //CD0A8
+extern s32 HauteurJumelle; //CD0AC
+extern s32 LargeurJumelle; //CD0B0
+extern s32 JumelleZoomAmp; //CD0B4
+extern void_func_t* drawflocon6NormalETX; //CD0B8
+extern void_func_t* drawflocon7NormalETX; //CD0BC
+extern s32 JumellePosY; //CD0C0
+extern s32 JumellePosX; //CD0C4
+extern s32* JumelleZoomDef; //CD0C8
+extern s32 LongueurStageNameWorld; //CD0CC
+extern s32 LongueurStageNameLevel; //CD0D0
+extern void_func_t* drawpluie7NormalETX; //CD0D4
+extern void_func_t* drawpluie4NormalETX; //CD0D8
+extern s32 JumelleYMin; //CD0DC
+extern void_func_t* drawpluie5NormalETX; //CD0E0
+extern s32 JumelleXMin; //CD0E4
+extern void_func_t* drawflocon4NormalETX; //CD0E8
+extern s32 RayonJumelle; //CD0EC
+extern void_func_t* drawpluie6NormalETX; //CD0F0
+extern draw_func_t* DrawSpriteNoClipNormalEtX; //CD0F4
+extern draw_func_t* DrawSpriteColorNormalEtX; //CD0F8
+extern s32 BufferNormalDeplt; //CD0FC
+extern fplot_func_t* fplotNormalETX; //CD100
+extern void_func_t* drawflocon5NormalETX; //CD104
+extern void_func_t* drawflocon2NormalETX; //CD108
+extern draw_func_t* DrawSpriteNormalEtX; //CD10C
+extern void_func_t* drawflocon1NormalETX; //CD110
+extern draw_func_t* DrawSpriteFlipNoClipNormalEtX; //CD114
+extern draw_func_t* DrawSpriteFlipNormalEtX; //CD118
+extern draw_func_t* DrawSpriteColorFlipNormalEtX; //CD11C
+extern swap_func_t* Swap_And_Test_Joystick; //CD120
+extern void (*Copy_Plan0_To_Buf)(u8* source, u8* dest, s32 width, s32 height, s32 a5); //CD124
+extern u8* DrawBufferNormalIni; //CD128
+extern void_func_t* drawflocon3NormalETX; //CD12C
+extern u8* EffetBufferNormal; //CD130
+extern s32 TempsDemo; //CD134
+extern u8* DrawBufferNormal; //CD138
+extern void (*anim_func)(void); //CD13C
 
-char save_ray_copy[4]; //CD794
-char save_ray[3][4]; //CD798
-options_t options; //CD7A4
-u8* draw_buffer; //CD7B8
-u32 new_sprite_deform; //CD7BC
-u8* PLANTMPBIT; //CD7C0
-u8* blocks_code; //CD7C4
-s32 plantmp_length; //CD7C8
-s32 plantmp_nb_bytes; //CD7CC
-u8* display_buffer; //CD7D0
-x_texture_t* gros_patai_block; //CD7D4
-char world_filename[20]; //CD7D8
-s32 plan2_width; //CD7EC
-s32 plan3bit_nb_bytes; //CD7F0
-u32 dword_CD7F4; //CD7F4
-s32 plan2bit_length; //CD7F8
-s32 plan2bit_nb_bytes; //CD7FC
-u8* PLAN0; //CD800
-u8* PLAN2; //CD804
-s32 plan0bit_length; //CD808
-char level_filename[20]; //CD80C
-s32 plan3bit_length; //CD820
-u8* PLAN0BIT; //CD824
-u8* PLAN2BIT; //CD828
-u8* PLAN3BIT; //CD82C
-u8* MAP_BLOCKS; //CD830
-u32 PLAN1_BUFFER_START_POINTER; //CD834
-u8* PLAN1_BUFFER; //CD838
-rgb_palette_t* rvb_special; //CD83C
+extern char save_ray_copy[4]; //CD794
+extern char save_ray[3][4]; //CD798
+extern options_t options; //CD7A4
+extern u8* draw_buffer; //CD7B8
+extern u32 new_sprite_deform; //CD7BC
+extern u8* PLANTMPBIT; //CD7C0
+extern u8* blocks_code; //CD7C4
+extern s32 plantmp_length; //CD7C8
+extern s32 plantmp_nb_bytes; //CD7CC
+extern u8* display_buffer; //CD7D0
+extern x_texture_t* gros_patai_block; //CD7D4
+extern char world_filename[20]; //CD7D8
+extern s32 plan2_width; //CD7EC
+extern s32 plan3bit_nb_bytes; //CD7F0
+extern u32 dword_CD7F4; //CD7F4
+extern s32 plan2bit_length; //CD7F8
+extern s32 plan2bit_nb_bytes; //CD7FC
+extern u8* PLAN0; //CD800
+extern u8* PLAN2; //CD804
+extern s32 plan0bit_length; //CD808
+extern char level_filename[20]; //CD80C
+extern s32 plan3bit_length; //CD820
+extern u8* PLAN0BIT; //CD824
+extern u8* PLAN2BIT; //CD828
+extern u8* PLAN3BIT; //CD82C
+extern u8* MAP_BLOCKS; //CD830
+extern u32 PLAN1_BUFFER_START_POINTER; //CD834
+extern u8* PLAN1_BUFFER; //CD838
+extern rgb_palette_t* rvb_special; //CD83C
 
-u32 TailleMainMemLevel; //CD844
-u32 TailleMainMemSprite; //CD848
-mem_t* main_mem_level; //CD84C
-s32 cdTimeStart; //CD858
-s32 cdTime; //CD85C
-mem_t* main_mem_sprite; //CD860
+extern u32 TailleMainMemLevel; //CD844
+extern u32 TailleMainMemSprite; //CD848
+extern mem_t* main_mem_level; //CD84C
+extern s32 cdTimeStart; //CD858
+extern s32 cdTime; //CD85C
+extern mem_t* main_mem_sprite; //CD860
 
-u32 TailleMainMemTmp; //CD86C
-s32 cdTimeEnd; //CD870
-mem_t* main_mem_fix; //CD874
+extern u32 TailleMainMemTmp; //CD86C
+extern s32 cdTimeEnd; //CD870
+extern mem_t* main_mem_fix; //CD874
 
-mem_t* main_mem_world; //CD880
-mem_t* temp_mem_buf; //CD88C
-u32 TailleMainMemFix; //CD898
-u32 TailleMainMemWorld; //CD89C
-mem_t* main_mem_tmp; //CD8A0
-s32 nb_wiz_save; //CD8AC
-loadinforay_t LoadInfoRay[3]; //CD8B0
-flocon_t* flocon_tab; //CD8BC
-s32 map_time; //CD8C0
-s32 left_time; //CD8C4
-obj_t* lidol_source_obj; //CD8C8
-obj_t mapobj[25]; //CD8CC
-s32 bossSpeedFactor; //CE5B0
-s32 alternateBossSpeedFactor; //CE5B4
-s16 pos_stack[10]; //CE5B8
-s16 cymbal_obj_id[2]; //CE5CC
-s16 scroll_obj_id[50]; //CE5D0
-obj_t* ScrollDiffSprites; //CE634
-map_data_t mp; //CE638
-obj_t* alpha_numbers; //CE644
-u32 dword_CE648; //CE648
-obj_t ray; //CE650
-obj_t* star_ray_dev; //CE6D4
-obj_t* star_ray_der; //CE6D8
-obj_t* poing_obj; //CE6DC
-obj_t* alpha; //CE6E0
-u8* alpha_image_atlas; //CE6E4
-s16 alpha_sprite_count; //CE6E8
-obj_t div_obj; //CE6EC
-poing_t poing; //CE770
-obj_t bigray; //CE784
-obj_t raylittle; //CE808
-save_state_t save1; //CE88C
-save_state_t save2; //CEAE8
-obj_t clockobj; //CED44
-obj_t* alpha2; //CEDC8
-u8* alpha2_image_atlas; //CEDCC
-s16 alpha2_sprite_count; //CEDD0
-obj_t rms; //CEDD4
-s16* link_init; //CEE58
-obj_t raytmp; //CEE5C
-u8 skops_lave_obj[20]; //CEEE0
-s32 pixels_enfonce; //CEEF4
+extern mem_t* main_mem_world; //CD880
+extern mem_t* temp_mem_buf; //CD88C
+extern u32 TailleMainMemFix; //CD898
+extern u32 TailleMainMemWorld; //CD89C
+extern mem_t* main_mem_tmp; //CD8A0
+extern s32 nb_wiz_save; //CD8AC
+extern loadinforay_t LoadInfoRay[3]; //CD8B0
+extern flocon_t* flocon_tab; //CD8BC
+extern s32 map_time; //CD8C0
+extern s32 left_time; //CD8C4
+extern obj_t* lidol_source_obj; //CD8C8
+extern obj_t mapobj[25]; //CD8CC
+extern s32 bossSpeedFactor; //CE5B0
+extern s32 alternateBossSpeedFactor; //CE5B4
+extern s16 pos_stack[10]; //CE5B8
+extern s16 cymbal_obj_id[2]; //CE5CC
+extern s16 scroll_obj_id[50]; //CE5D0
+extern obj_t* ScrollDiffSprites; //CE634
+extern map_data_t mp; //CE638
+extern obj_t* alpha_numbers; //CE644
+extern u32 dword_CE648; //CE648
+extern obj_t ray; //CE650
+extern obj_t* star_ray_dev; //CE6D4
+extern obj_t* star_ray_der; //CE6D8
+extern obj_t* poing_obj; //CE6DC
+extern obj_t* alpha; //CE6E0
+extern u8* alpha_image_atlas; //CE6E4
+extern s16 alpha_sprite_count; //CE6E8
+extern obj_t div_obj; //CE6EC
+extern poing_t poing; //CE770
+extern obj_t bigray; //CE784
+extern obj_t raylittle; //CE808
+extern save_state_t save1; //CE88C
+extern save_state_t save2; //CEAE8
+extern obj_t clockobj; //CED44
+extern obj_t* alpha2; //CEDC8
+extern u8* alpha2_image_atlas; //CEDCC
+extern s16 alpha2_sprite_count; //CEDD0
+extern obj_t rms; //CEDD4
+extern s16* link_init; //CEE58
+extern obj_t raytmp; //CEE5C
+extern u8 skops_lave_obj[20]; //CEEE0
+extern s32 pixels_enfonce; //CEEF4
 
-s8 Plan0NumPcx[10]; //CEF47
-status_bar_t status_bar; //CEF52
-active_objects_t actobj; //CEF5C
-ray_stack_t rayStack[101]; //CF026
-s16 numero_palette_special; //CF740
-s16 ProchainEclair; //CF742
-s16 joyy0; //CF744
-s16 joyx0; //CF746
-s16 xpadmax; //CF748
-s16 ypadmax; //CF74A
-s16 ypadcentre; //CF74C
-s16 xpadcentre; //CF74E
-s16 xpadmin; //CF750
-s16 ypadmin; //CF752
-s16 option_exit; //CF754
-s16 LEFT_MAP_BORDER; //CF756
-s16 xmapmaxini; //CF758
-s16 RIGHT_MAP_BORDER; //CF75A
-s16 ymapmaxini; //CF75C
-s16 HeightNworld; //CF75E
-s16 WidthNworld; //CF760
-u16 SauveRayEvtsDemo; //CF762
-s16 nb_credits_lines; //CF764
-s16 snd_flag_medaillon; //CF766
-s16 RunTimeDemo; //CF768
-s16 NumDemo; //CF76A
-s16 animation_attente; //CF76C
-s16 basex; //CF76E
-s16 compteur_clignote; //CF772
-s16 compteur_attente; //CF774
-s16 sortie_save; //CF776
-s16 realisation_effectuee; //CF778
-s16 delai_stereo; //CF77A
-s16 selection_effectuee; //CF77C
-s16 repetition; //CF77E
-s16 vignet_joe_affichee; //CF780
-s16 clignotement; //CF782
-s16 fin_saisie_nom; //CF784
-s16 joe_exp_probleme; //CF786
-s16 fichier_existant; //CF788
-s16 compteur; //CF78A
-s16 position; //CF78C
-s16 sortie_options; //CF78E
-s16 affiche_bon_ecran; //CF790
-s16 delai_barre; //CF792
-s16 max_compteur; //CF794
-s16 prise_branchee; //CF796
-s16 max_sound; //CF798
-s16 delai_repetition; //CF79A
-s16 ecart_barre; //CF79C
-s16 word_CF79E; //CF79E
-s16 action; //CF7A2
-s16 nbre_options; //CF7A4
-s16 positiony2; //CF7A6
-s16 old_x_luc; //CF7A8
-s16 positionx2; //CF7AA
-s16 debut_titre; //CF7AC
-s16 old_y_luc; //CF7AE
-s16 choix_menu; //CF7B0
-s16 ADDLUCLIP; //CF7B2
-s16 ecarty; //CF7B4
-s16 ecartx; //CF7B6
-s16 debut_sortie; //CF7B8
-s16 ecart_options; //CF7BA
-s16 fichier_selectionne; //CF7BC
-s16 positiony; //CF7BE
-s16 positionx; //CF7C0
-s16 fichier_a_copier; //CF7C2
-s16 debut_options; //CF7C4
-s16 rayon_luciole; //CF7C6
-s16 x_luc; //CF7C8
-s16 y_luc; //CF7CA
-s16 coeffktxt; //CF7CC
-s16 y_main_luc; //CF7CE
-s16 x_main_luc; //CF7D0
-s16 vx_luc; //CF7D2
-s16 n_ray; //CF7D4
-s16 vy_luc; //CF7D6
-s16 ktxtenx; //CF7D8
-s16 ktxteny; //CF7DA
-s16 rotationtxt; //CF7DC
-s16 plan0_width; //CF7DE
-s16 yp0; //CF7E0
-s16 plan2_height; //CF7E2
-s16 plan0_height; //CF7E4
-s16 word_CF7E6; //CF7E6
-s16 display_mode; //CF7E8
-s16 fade_speed; //CF7EA
-s16 word_CF7EE; //CF7EE
-s16 word_CF7F0; //CF7F0
-s16 joy_buttonB1; //CF7F2
-s16 joy_buttonB2; //CF7F4
-s16 joy_buttonA1; //CF7F6
-s16 joy_buttonA2; //CF7F8
-s16 SNSEQ_list_ptr; //CF7FA
-s16 current_star; //CF7FC
-s16 SNSEQ_ptr; //CF7FE
-s16 SNSEQ_no; //CF800
-s16 MapAvecPluieOuNeige; //CF802
-s16 skops_ecroule_plat; //CF804
-s16 bonus_map; //CF806
-s16 bateau_obj_id; //CF808
-s16 sko_nb_hit; //CF80A
-s16 mama_pirate_obj_id; //CF80C
-s16 sko_nb_frap; //CF80E
-s16 loop_time; //CF810
-s16 bat_nb_frap; //CF812
-s16 cb_ball_obj_id; //CF814
-s16 sko_phase; //CF816
-rayevts_t SauveRayEvts; //CF818
-rayevts_t RayEvts; //CF81A
-u16 ZDCPTR; //CF81C
-finbosslevel_t finBosslevel; //CF81E
-s16 floorLine; //CF820
-s16 png_or_fee_id; //CF822
-s16 loop_nb_trames; //CF824
-s16 loop_timing; //CF826
-s16 VENT_Y; //CF828
-s16 VENT_X; //CF82A
-s16 id_Cling_1up; //CF82C
-s16 num_level_choice; //CF82E
-s16 id_Cling_Old; //CF830
-s16 ywldmapsave; //CF832
-s16 xwldmapsave; //CF834
-s16 PROJ_CENTER_Y; //CF836
-s16 PROJ_CENTER_X; //CF838
-s16 num_world_choice; //CF83A
-s16 ray_speed_inv; //CF83C
-s16 ymapinit; //CF83E
-s16 ray_clic; //CF840
-s16 id_obj_grapped; //CF842
-s16 xmapinit; //CF844
-s16 id_Cling_Pow; //CF846
-s16 ray_between_clic; //CF848
-s16 bossYToReach; //CF84A
-s16 screen_trembling3; //CF84C
-s16 screen_trembling2; //CF84E
-s16 bossXToReach; //CF850
-s16 screen_trembling; //CF852
-s16 scroll_start_y; //CF854
-s16 bossScrollStartY; //CF856
-s16 bossScrollStartX; //CF858
-s16 bossScrollEndX; //CF85A
-s16 bossScrollEndY; //CF85C
-s16 scroll_end_y; //CF85E
-s16 ray_zdc_x; //CF860
-s16 ray_zdc_h; //CF862
-s16 ray_zdc_w; //CF864
-s16 decalage_en_cours; //CF866
-s16 ray_mode; //CF868
-s16 remoteRayXToReach; //CF86A
-s16 scroll_start_x; //CF86E
-s16 ray_wind_force; //CF870
-s16 scroll_end_x; //CF872
-s16 weather_wind; //CF874
-s16 ray_zdc_y; //CF876
-s16 mst_scroll_obj_id; //CF878
-s16 NumScrollObj; //CF87A
-s16 num_level; //CF87C
-s16 sbar_obj_id; //CF87E
-s16 new_level; //CF880
-s16 eau_obj_id; //CF882
-s16 ymapmax; //CF884
-s16 reduced_rayman_id; //CF886
-s16 fee_obj_id; //CF888
-s16 poing_obj_id; //CF88A
-s16 num_world; // 0xCF88C
-s16 pierreAcorde_obj_id; // CF88E
-s16 xmapmax; //CF890
-s16 new_world; // 0xCF892
-s16 rayman_obj_id; //CF894
-s16 Mus_obj_id; //CF896
-s16 helico_time; //CF898
-u16 saveRMjumpY; //CF89A
-u16 saveRMjumpX; //CF89C
-s16 xmap; //CF89E
-s16 departlevel; //CF8A0
-s16 ray_Y_main_pos_init; //CF8A2
-s16 jump_time; //CF8A4
-s16 ymap; //CF8A6
-s16 special_ray_mov_win_x_left; //CF8A8
-s16 ray_X_main_pos_init; //CF8AA
-s16 ymap_old; //CF8AC
-s16 special_ray_mov_win_x_right; //CF8AE
-s16 xmap_old; //CF8B0
-s16 h_scroll_speed; //CF8B2
-s16 v_scroll_speed; //CF8B4
-s16 xmapsave; //CF8B6
-s16 ymapsave; //CF8B8
-s16 scroll_y; //CF8BA
-s16 black_ray_obj_id; //CF8BC
-u16 black_fist_obj_id; //CF8BE
-u16 final_pass_n; //CF8C0
-u16 final_pass_a; //CF8C2
-u16 ray_old_main_etat; //CF8C4
-u16 final_pass_f; //CF8C6
-s16 moskitomama_gauche_obj_id; //CF8C8
-u16 final_pass_x; //CF8CA
-s16 rideau_obj_id; //CF8CC
-s16 corde_dark_obj_id; //CF8CE
-s16 stosko_obj_id; //CF8D0
-s16 scroll_x; //CF8D2
-u16 ray_old_sub_etat; //CF8D4
-s16 moskitosaxo_obj_id; //CF8D6
-s16 moskitomama_droite_obj_id; //CF8D8
-u16 nb_fade; //CF8DA
-u16 sko_last_action; //CF8DC
-u16 sko_rayon_on; //CF8DE
-s16 skops_final_y; //CF8E0
-s16 skops_final_x; //CF8E2
-u16 word_CF8E4; //CF8E4
-s16 skops_beam_speed; //CF8E6
-s16 skops_beam_ds; //CF8E8
-s16 skops_beam_dy; //CF8EA
-u16 rubis_list_calculated; //CF8EC
-s16 sko_rayon_x; //CF8EE
-s16 sko_rayon_y; //CF8F0
-u16 path_has_changed; //CF8F2
-u16 inter_select; //CF8F4
-u8 saved_argv[255]; //CF8F6
-u8 horloge[25]; //CF9F5
-u8 HVersionWindows; //CFA0E
-u8 NVersionWindows; //CFA0F
-u8 MessageProgram; //CFA10
-u8 DosDetect; //CFA11
-u8 WindowsLance; //CFA12
-u8 SonLimite; //CFA13
-u8 byte_CFA14; //CFA14
-u8 need_check_cheats; //CFA15
-u8 HVerDos; //CFA16
-u8 CarteSonAutorisee; //CFA17
-u8 ToutSpriteAutorise; //CFA18 // is background clearing needed
-u8 MenuCredits; //CFA19
-u8 FondAutorise; //CFA1A // background available
-u8 LVerDos; //CFA1B
-u8 Mode_Pad; //CFA1C // see also CFA23?
-u8 something_with_cfg_25_default_00_joy; //CFA1D (?)
-u8 Port_Pad; //CFA1E
-u8 ScrollDiffOn; //CFA1F
-u8 P486; //CFA20
-u8 type_fnd; //CFA21
-u8 no_fnd; //CFA22
-u8 is_joypad_mode; //CFA23 //? may be Mode_Pad instead
-u8 type_fndscrX; //CFA24
-u8 NumCard; //CFA25
-u8 TheProcesseur; //CFA26
-u8 drm_byte_CFA27; //CFA27
-u8 VideoBiosCheckSum; //CFA28
-u8 byte_CFA29; //CFA29
-u8 byte_CFA2A; //CFA2A
-u8 BiosCheckSum; //CFA2B
-u8 JeuCracker; //CFA2C
-u8 PositionStageNameCalcule; //CFA2D
-u8 ModeAutoJumelle; //CFA2E
-u8 ChangeJumelleSizeOK; //CFA2F
-u8 JumelleZoomActif; //CFA30
-u8 ParamZoomChange; //CFA31
-u8 JumelleEffetAutorise; //CFA32 // zoom effect available
-u8 ModeNormalAutorise; //CFA33    // normal mode available
-u8 first_credit; //CFA34
-u8 language; //CFA35
-u8 ModeDemo; //CFA36
-u8 menuEtape; //CFA37
-u8 MENU_SUITE; //CFA38
-u8 MENU_RETURN; //CFA39
-u8 last_credit; //CFA3A
-u8 nb_continue; //CFA3B
-u8 fin_dark; //CFA3C
-u8 NBRE_SAVE; //CFA3D
-u8 byte_CFA3E; //CFA3E
-u8 nouvelle_partie; //CFA3F
-u8 PROC_EXIT; //CFA40
-u8 First_Hist; //CFA41
-u8 First_Menu; //CFA42
-u8 dontdoit; //CFA43
-u8 Vignet_To_Display; //CFA44
-u8 chemin_percent; //CFA45
-u8 You_Win; //CFA46 (?)
-u8 display_Vignet; //CFA47
-u8 colour; //CFA48
-u8 rayOnMsWasThere; //CFA49
-u8 freeze; //CFA4A (?)
-u8 need_timer; //CFA4B (?)
-u8 VGA_FREQ; //CFA4C
-u8 save_current_pal; //CFA4D
-u8 use_sync; //CFA4E
-u8 pos_YN; //CFA4F
-u8 MusicCdActive; //CFA50
-u8 input_mode; //CFA51
-u8 in_pause; //CFA52
-u8 dans_la_map_monde; //CFA53
-u8 ray_on_poelle; //CFA54
-u8 nb_wiz_collected; //CFA55
-u8 nb_wiz; //CFA56
-u8 is_fee; //CFA57
-u8 new_txt_fee; //CFA58
-u8 old_txt_fee; //CFA59
-u8 dir_on_wldmap; //CFA5A
-u8 Nb_total_cages; //CFA5B
-u8 fin_continue; //CFA5C
-u8 display_txt_fee; //CFA5D
-u8 ray_inertie; //CFA5E
-u8 old_num_world; //CFA5F
-u8 world_index; // 0xCFA60
-u8 ALL_WORLD; // 0xCFA61
-u8 gele; // 0xCFA62
-u8 zoom_mode; // 0xCFA63
-u8 bossReachingAccuracyX; // CFA64
-u8 bossReachingAccuracyY; // CFA65
-u8 lidol_to_allocate; // CFA66
-u8 saveCurrentBossAction; //CFA67
-u8 scrollLocked; //CFA68
-u8 saveBossEncounter; //CFA69
-u8 bossReachingTimer; //CFA6A
-u8 bossSafeTimer; //CFA6B
-u8 currentBossActionIsOver; //CFA6C
-s8 laserSourceSprNumInAnim; //CFA6D
-u8 bossEncounter; //CFA6E
-u8 currentBossAction; //CFA6F
-u8 gerbe; //CFA70
-u8 first_boss_meet; //CFA71
-u8 ray_last_ground_btyp; //CFA72
-u8 RAY_MODE_SPEED; //CFA73
-u8 fin_de_rayman; //CFA74
-u8 ray_Suphelico_bis; //CFA75
-u8 fin_boss; //CFA76
-u8 ray_in_fee_zone; //CFA77
-u8 boss_mort; //CFA78
-u8 no_ray_landing_smoke; //CFA79
-u8 fin_du_jeu; //CFA7A
-u8 ray_se_noie; //CFA7B
-u8 hand_btyp; //CFA7C
-u8 button_released; //CFA7D
-u8 dead_time; //CFA7E
-u8 hand_btypg; //CFA7F
-u8 hand_btypd; //CFA80
-u8 nb_cymbal_in_map; //CFA81
-u8 current_pal_id; //CFA82
-u8 last_plan1_palette; //CFA83
-u8 pal_id_at_wizard; //CFA84
-u8 save_save; //CFA85
-u8 NewMs; //CFA86
-u8 fade; //CFA87
-u8 ray_stack_is_full; // (?) CFA88
-u8 TextDark2_Affiche; //CFA89
-u8 black_pos_in_stack; //CFA8A
-u8 ray_pos_in_stack; //CFA8B
-u8 in_air_because_hit; //CFA8C
-u8 dark_phase; //CFA8D
-u8 IsBossThere; //CFA8E
-u8 sko_enfonce_enable; //CFA8F
-u8 WaitForAnim; //CFA90
-u8 ecroule_plat_index; //CFA91
-u8 NiveauDansPhase; //CFA92
-u8 FinAnim; //CFA93
-u8 Phase; // (?) CFA94
-u8 WaitForFinAtan; //CFA95
-u8 skops_nb_lave; //CFA96
-u8 NbTramesEcrase; //CFA97
-u8 RaymanDansUneMapDuJeu; //CFA98
-u8 life_becoz_wiz; //CFA99
-u8 nb_fix_eta; //CFA9A
-u8 nb_loaded_eta; //CFA9B
-u8 position_ray; //CFA9C
-s32 CompteurTrameAudio; //CFAA0
-bb_data_t bb1; //CFAA4
-s16 IndAtak; //CFAB4
-s16 YaDesChiens; //CFAB6
-s16 horlogeDog; //CFAB8
-s16 PierreDoitExploser; //CFABA
-s16 NextAtak; //CFABC
-s16 IndSerie; //CFABE
-s16 RMrepere; //CFAC0
-s16 PosPierre; //CFAC2
-s32 SpeedYLine[10]; //CFAC4
-s32 PosXLine[10]; //CFAEC
-s32 PosYLine[320]; //CFB14
-char bonus_time_display_text[20]; //D0014
-obj_t* dword_D0028; //D0028
+extern s8 Plan0NumPcx[10]; //CEF47
+extern status_bar_t status_bar; //CEF52
+extern active_objects_t actobj; //CEF5C
+extern ray_stack_t rayStack[101]; //CF026
+extern s16 numero_palette_special; //CF740
+extern s16 ProchainEclair; //CF742
+extern s16 joyy0; //CF744
+extern s16 joyx0; //CF746
+extern s16 xpadmax; //CF748
+extern s16 ypadmax; //CF74A
+extern s16 ypadcentre; //CF74C
+extern s16 xpadcentre; //CF74E
+extern s16 xpadmin; //CF750
+extern s16 ypadmin; //CF752
+extern s16 option_exit; //CF754
+extern s16 LEFT_MAP_BORDER; //CF756
+extern s16 xmapmaxini; //CF758
+extern s16 RIGHT_MAP_BORDER; //CF75A
+extern s16 ymapmaxini; //CF75C
+extern s16 HeightNworld; //CF75E
+extern s16 WidthNworld; //CF760
+extern u16 SauveRayEvtsDemo; //CF762
+extern s16 nb_credits_lines; //CF764
+extern s16 snd_flag_medaillon; //CF766
+extern s16 RunTimeDemo; //CF768
+extern s16 NumDemo; //CF76A
+extern s16 animation_attente; //CF76C
+extern s16 basex; //CF76E
+extern s16 compteur_clignote; //CF772
+extern s16 compteur_attente; //CF774
+extern s16 sortie_save; //CF776
+extern s16 realisation_effectuee; //CF778
+extern s16 delai_stereo; //CF77A
+extern s16 selection_effectuee; //CF77C
+extern s16 repetition; //CF77E
+extern s16 vignet_joe_affichee; //CF780
+extern s16 clignotement; //CF782
+extern s16 fin_saisie_nom; //CF784
+extern s16 joe_exp_probleme; //CF786
+extern s16 fichier_existant; //CF788
+extern s16 compteur; //CF78A
+extern s16 position; //CF78C
+extern s16 sortie_options; //CF78E
+extern s16 affiche_bon_ecran; //CF790
+extern s16 delai_barre; //CF792
+extern s16 max_compteur; //CF794
+extern s16 prise_branchee; //CF796
+extern s16 max_sound; //CF798
+extern s16 delai_repetition; //CF79A
+extern s16 ecart_barre; //CF79C
+extern s16 word_CF79E; //CF79E
+extern s16 action; //CF7A2
+extern s16 nbre_options; //CF7A4
+extern s16 positiony2; //CF7A6
+extern s16 old_x_luc; //CF7A8
+extern s16 positionx2; //CF7AA
+extern s16 debut_titre; //CF7AC
+extern s16 old_y_luc; //CF7AE
+extern s16 choix_menu; //CF7B0
+extern s16 ADDLUCLIP; //CF7B2
+extern s16 ecarty; //CF7B4
+extern s16 ecartx; //CF7B6
+extern s16 debut_sortie; //CF7B8
+extern s16 ecart_options; //CF7BA
+extern s16 fichier_selectionne; //CF7BC
+extern s16 positiony; //CF7BE
+extern s16 positionx; //CF7C0
+extern s16 fichier_a_copier; //CF7C2
+extern s16 debut_options; //CF7C4
+extern s16 rayon_luciole; //CF7C6
+extern s16 x_luc; //CF7C8
+extern s16 y_luc; //CF7CA
+extern s16 coeffktxt; //CF7CC
+extern s16 y_main_luc; //CF7CE
+extern s16 x_main_luc; //CF7D0
+extern s16 vx_luc; //CF7D2
+extern s16 n_ray; //CF7D4
+extern s16 vy_luc; //CF7D6
+extern s16 ktxtenx; //CF7D8
+extern s16 ktxteny; //CF7DA
+extern s16 rotationtxt; //CF7DC
+extern s16 plan0_width; //CF7DE
+extern s16 yp0; //CF7E0
+extern s16 plan2_height; //CF7E2
+extern s16 plan0_height; //CF7E4
+extern s16 word_CF7E6; //CF7E6
+extern s16 display_mode; //CF7E8
+extern s16 fade_speed; //CF7EA
+extern s16 word_CF7EE; //CF7EE
+extern s16 word_CF7F0; //CF7F0
+extern s16 joy_buttonB1; //CF7F2
+extern s16 joy_buttonB2; //CF7F4
+extern s16 joy_buttonA1; //CF7F6
+extern s16 joy_buttonA2; //CF7F8
+extern s16 SNSEQ_list_ptr; //CF7FA
+extern s16 current_star; //CF7FC
+extern s16 SNSEQ_ptr; //CF7FE
+extern s16 SNSEQ_no; //CF800
+extern s16 MapAvecPluieOuNeige; //CF802
+extern s16 skops_ecroule_plat; //CF804
+extern s16 bonus_map; //CF806
+extern s16 bateau_obj_id; //CF808
+extern s16 sko_nb_hit; //CF80A
+extern s16 mama_pirate_obj_id; //CF80C
+extern s16 sko_nb_frap; //CF80E
+extern s16 loop_time; //CF810
+extern s16 bat_nb_frap; //CF812
+extern s16 cb_ball_obj_id; //CF814
+extern s16 sko_phase; //CF816
+extern rayevts_t SauveRayEvts; //CF818
+extern rayevts_t RayEvts; //CF81A
+extern u16 ZDCPTR; //CF81C
+extern finbosslevel_t finBosslevel; //CF81E
+extern s16 floorLine; //CF820
+extern s16 png_or_fee_id; //CF822
+extern s16 loop_nb_trames; //CF824
+extern s16 loop_timing; //CF826
+extern s16 VENT_Y; //CF828
+extern s16 VENT_X; //CF82A
+extern s16 id_Cling_1up; //CF82C
+extern s16 num_level_choice; //CF82E
+extern s16 id_Cling_Old; //CF830
+extern s16 ywldmapsave; //CF832
+extern s16 xwldmapsave; //CF834
+extern s16 PROJ_CENTER_Y; //CF836
+extern s16 PROJ_CENTER_X; //CF838
+extern s16 num_world_choice; //CF83A
+extern s16 ray_speed_inv; //CF83C
+extern s16 ymapinit; //CF83E
+extern s16 ray_clic; //CF840
+extern s16 id_obj_grapped; //CF842
+extern s16 xmapinit; //CF844
+extern s16 id_Cling_Pow; //CF846
+extern s16 ray_between_clic; //CF848
+extern s16 bossYToReach; //CF84A
+extern s16 screen_trembling3; //CF84C
+extern s16 screen_trembling2; //CF84E
+extern s16 bossXToReach; //CF850
+extern s16 screen_trembling; //CF852
+extern s16 scroll_start_y; //CF854
+extern s16 bossScrollStartY; //CF856
+extern s16 bossScrollStartX; //CF858
+extern s16 bossScrollEndX; //CF85A
+extern s16 bossScrollEndY; //CF85C
+extern s16 scroll_end_y; //CF85E
+extern s16 ray_zdc_x; //CF860
+extern s16 ray_zdc_h; //CF862
+extern s16 ray_zdc_w; //CF864
+extern s16 decalage_en_cours; //CF866
+extern s16 ray_mode; //CF868
+extern s16 remoteRayXToReach; //CF86A
+extern s16 scroll_start_x; //CF86E
+extern s16 ray_wind_force; //CF870
+extern s16 scroll_end_x; //CF872
+extern s16 weather_wind; //CF874
+extern s16 ray_zdc_y; //CF876
+extern s16 mst_scroll_obj_id; //CF878
+extern s16 NumScrollObj; //CF87A
+extern s16 num_level; //CF87C
+extern s16 sbar_obj_id; //CF87E
+extern s16 new_level; //CF880
+extern s16 eau_obj_id; //CF882
+extern s16 ymapmax; //CF884
+extern s16 reduced_rayman_id; //CF886
+extern s16 fee_obj_id; //CF888
+extern s16 poing_obj_id; //CF88A
+extern s16 num_world; // 0xCF88C
+extern s16 pierreAcorde_obj_id; // CF88E
+extern s16 xmapmax; //CF890
+extern s16 new_world; // 0xCF892
+extern s16 rayman_obj_id; //CF894
+extern s16 Mus_obj_id; //CF896
+extern s16 helico_time; //CF898
+extern u16 saveRMjumpY; //CF89A
+extern u16 saveRMjumpX; //CF89C
+extern s16 xmap; //CF89E
+extern s16 departlevel; //CF8A0
+extern s16 ray_Y_main_pos_init; //CF8A2
+extern s16 jump_time; //CF8A4
+extern s16 ymap; //CF8A6
+extern s16 special_ray_mov_win_x_left; //CF8A8
+extern s16 ray_X_main_pos_init; //CF8AA
+extern s16 ymap_old; //CF8AC
+extern s16 special_ray_mov_win_x_right; //CF8AE
+extern s16 xmap_old; //CF8B0
+extern s16 h_scroll_speed; //CF8B2
+extern s16 v_scroll_speed; //CF8B4
+extern s16 xmapsave; //CF8B6
+extern s16 ymapsave; //CF8B8
+extern s16 scroll_y; //CF8BA
+extern s16 black_ray_obj_id; //CF8BC
+extern u16 black_fist_obj_id; //CF8BE
+extern u16 final_pass_n; //CF8C0
+extern u16 final_pass_a; //CF8C2
+extern u16 ray_old_main_etat; //CF8C4
+extern u16 final_pass_f; //CF8C6
+extern s16 moskitomama_gauche_obj_id; //CF8C8
+extern u16 final_pass_x; //CF8CA
+extern s16 rideau_obj_id; //CF8CC
+extern s16 corde_dark_obj_id; //CF8CE
+extern s16 stosko_obj_id; //CF8D0
+extern s16 scroll_x; //CF8D2
+extern u16 ray_old_sub_etat; //CF8D4
+extern s16 moskitosaxo_obj_id; //CF8D6
+extern s16 moskitomama_droite_obj_id; //CF8D8
+extern u16 nb_fade; //CF8DA
+extern u16 sko_last_action; //CF8DC
+extern u16 sko_rayon_on; //CF8DE
+extern s16 skops_final_y; //CF8E0
+extern s16 skops_final_x; //CF8E2
+extern u16 word_CF8E4; //CF8E4
+extern s16 skops_beam_speed; //CF8E6
+extern s16 skops_beam_ds; //CF8E8
+extern s16 skops_beam_dy; //CF8EA
+extern u16 rubis_list_calculated; //CF8EC
+extern s16 sko_rayon_x; //CF8EE
+extern s16 sko_rayon_y; //CF8F0
+extern u16 path_has_changed; //CF8F2
+extern u16 inter_select; //CF8F4
+extern u8 saved_argv[255]; //CF8F6
+extern u8 horloge[25]; //CF9F5
+extern u8 HVersionWindows; //CFA0E
+extern u8 NVersionWindows; //CFA0F
+extern u8 MessageProgram; //CFA10
+extern u8 DosDetect; //CFA11
+extern u8 WindowsLance; //CFA12
+extern u8 SonLimite; //CFA13
+extern u8 byte_CFA14; //CFA14
+extern u8 need_check_cheats; //CFA15
+extern u8 HVerDos; //CFA16
+extern u8 CarteSonAutorisee; //CFA17
+extern u8 ToutSpriteAutorise; //CFA18 // is background clearing needed
+extern u8 MenuCredits; //CFA19
+extern u8 FondAutorise; //CFA1A // background available
+extern u8 LVerDos; //CFA1B
+extern u8 Mode_Pad; //CFA1C // see also CFA23?
+extern u8 something_with_cfg_25_default_00_joy; //CFA1D (?)
+extern u8 Port_Pad; //CFA1E
+extern u8 ScrollDiffOn; //CFA1F
+extern u8 P486; //CFA20
+extern u8 type_fnd; //CFA21
+extern u8 no_fnd; //CFA22
+extern u8 is_joypad_mode; //CFA23 //? may be Mode_Pad instead
+extern u8 type_fndscrX; //CFA24
+extern u8 NumCard; //CFA25
+extern u8 TheProcesseur; //CFA26
+extern u8 drm_byte_CFA27; //CFA27
+extern u8 VideoBiosCheckSum; //CFA28
+extern u8 byte_CFA29; //CFA29
+extern u8 byte_CFA2A; //CFA2A
+extern u8 BiosCheckSum; //CFA2B
+extern u8 JeuCracker; //CFA2C
+extern u8 PositionStageNameCalcule; //CFA2D
+extern u8 ModeAutoJumelle; //CFA2E
+extern u8 ChangeJumelleSizeOK; //CFA2F
+extern u8 JumelleZoomActif; //CFA30
+extern u8 ParamZoomChange; //CFA31
+extern u8 JumelleEffetAutorise; //CFA32 // zoom effect available
+extern u8 ModeNormalAutorise; //CFA33    // normal mode available
+extern u8 first_credit; //CFA34
+extern u8 language; //CFA35
+extern u8 ModeDemo; //CFA36
+extern u8 menuEtape; //CFA37
+extern u8 MENU_SUITE; //CFA38
+extern u8 MENU_RETURN; //CFA39
+extern u8 last_credit; //CFA3A
+extern u8 nb_continue; //CFA3B
+extern u8 fin_dark; //CFA3C
+extern u8 NBRE_SAVE; //CFA3D
+extern u8 byte_CFA3E; //CFA3E
+extern u8 nouvelle_partie; //CFA3F
+extern u8 PROC_EXIT; //CFA40
+extern u8 First_Hist; //CFA41
+extern u8 First_Menu; //CFA42
+extern u8 dontdoit; //CFA43
+extern u8 Vignet_To_Display; //CFA44
+extern u8 chemin_percent; //CFA45
+extern u8 You_Win; //CFA46 (?)
+extern u8 display_Vignet; //CFA47
+extern u8 colour; //CFA48
+extern u8 rayOnMsWasThere; //CFA49
+extern u8 freeze; //CFA4A (?)
+extern u8 need_timer; //CFA4B (?)
+extern u8 VGA_FREQ; //CFA4C
+extern u8 save_current_pal; //CFA4D
+extern u8 use_sync; //CFA4E
+extern u8 pos_YN; //CFA4F
+extern u8 MusicCdActive; //CFA50
+extern u8 input_mode; //CFA51
+extern u8 in_pause; //CFA52
+extern u8 dans_la_map_monde; //CFA53
+extern u8 ray_on_poelle; //CFA54
+extern u8 nb_wiz_collected; //CFA55
+extern u8 nb_wiz; //CFA56
+extern u8 is_fee; //CFA57
+extern u8 new_txt_fee; //CFA58
+extern u8 old_txt_fee; //CFA59
+extern u8 dir_on_wldmap; //CFA5A
+extern u8 Nb_total_cages; //CFA5B
+extern u8 fin_continue; //CFA5C
+extern u8 display_txt_fee; //CFA5D
+extern u8 ray_inertie; //CFA5E
+extern u8 old_num_world; //CFA5F
+extern u8 world_index; // 0xCFA60
+extern u8 ALL_WORLD; // 0xCFA61
+extern u8 gele; // 0xCFA62
+extern u8 zoom_mode; // 0xCFA63
+extern u8 bossReachingAccuracyX; // CFA64
+extern u8 bossReachingAccuracyY; // CFA65
+extern u8 lidol_to_allocate; // CFA66
+extern u8 saveCurrentBossAction; //CFA67
+extern u8 scrollLocked; //CFA68
+extern u8 saveBossEncounter; //CFA69
+extern u8 bossReachingTimer; //CFA6A
+extern u8 bossSafeTimer; //CFA6B
+extern u8 currentBossActionIsOver; //CFA6C
+extern s8 laserSourceSprNumInAnim; //CFA6D
+extern u8 bossEncounter; //CFA6E
+extern u8 currentBossAction; //CFA6F
+extern u8 gerbe; //CFA70
+extern u8 first_boss_meet; //CFA71
+extern u8 ray_last_ground_btyp; //CFA72
+extern u8 RAY_MODE_SPEED; //CFA73
+extern u8 fin_de_rayman; //CFA74
+extern u8 ray_Suphelico_bis; //CFA75
+extern u8 fin_boss; //CFA76
+extern u8 ray_in_fee_zone; //CFA77
+extern u8 boss_mort; //CFA78
+extern u8 no_ray_landing_smoke; //CFA79
+extern u8 fin_du_jeu; //CFA7A
+extern u8 ray_se_noie; //CFA7B
+extern u8 hand_btyp; //CFA7C
+extern u8 button_released; //CFA7D
+extern u8 dead_time; //CFA7E
+extern u8 hand_btypg; //CFA7F
+extern u8 hand_btypd; //CFA80
+extern u8 nb_cymbal_in_map; //CFA81
+extern u8 current_pal_id; //CFA82
+extern u8 last_plan1_palette; //CFA83
+extern u8 pal_id_at_wizard; //CFA84
+extern u8 save_save; //CFA85
+extern u8 NewMs; //CFA86
+extern u8 fade; //CFA87
+extern u8 ray_stack_is_full; // (?) CFA88
+extern u8 TextDark2_Affiche; //CFA89
+extern u8 black_pos_in_stack; //CFA8A
+extern u8 ray_pos_in_stack; //CFA8B
+extern u8 in_air_because_hit; //CFA8C
+extern u8 dark_phase; //CFA8D
+extern u8 IsBossThere; //CFA8E
+extern u8 sko_enfonce_enable; //CFA8F
+extern u8 WaitForAnim; //CFA90
+extern u8 ecroule_plat_index; //CFA91
+extern u8 NiveauDansPhase; //CFA92
+extern u8 FinAnim; //CFA93
+extern u8 Phase; // (?) CFA94
+extern u8 WaitForFinAtan; //CFA95
+extern u8 skops_nb_lave; //CFA96
+extern u8 NbTramesEcrase; //CFA97
+extern u8 RaymanDansUneMapDuJeu; //CFA98
+extern u8 life_becoz_wiz; //CFA99
+extern u8 nb_fix_eta; //CFA9A
+extern u8 nb_loaded_eta; //CFA9B
+extern u8 position_ray; //CFA9C
+extern s32 CompteurTrameAudio; //CFAA0
+extern bb_data_t bb1; //CFAA4
+extern s16 IndAtak; //CFAB4
+extern s16 YaDesChiens; //CFAB6
+extern s16 horlogeDog; //CFAB8
+extern s16 PierreDoitExploser; //CFABA
+extern s16 NextAtak; //CFABC
+extern s16 IndSerie; //CFABE
+extern s16 RMrepere; //CFAC0
+extern s16 PosPierre; //CFAC2
+extern s32 SpeedYLine[10]; //CFAC4
+extern s32 PosXLine[10]; //CFAEC
+extern s32 PosYLine[320]; //CFB14
+extern char bonus_time_display_text[20]; //D0014
+extern obj_t* dword_D0028; //D0028
 
-s16 p1[21000]; //D002C
-u8 byte_DA43C[128*128]; //DA43C
-rgb_palette_t MenuPalette; //DE43C
-u8 plasma_palette_color_index; //DE73C
+extern s16 p1[21000]; //D002C
+extern u8 byte_DA43C[128*128]; //DA43C
+extern rgb_palette_t MenuPalette; //DE43C
+extern u8 plasma_palette_color_index; //DE73C
 
-u16 word_DE73E; //DE73E
-u16 word_DE740; //DE740
-u16 word_DE742; //DE742
-u16 word_DE744; //DE744
-u16 word_DE746; //DE746
-u16 word_DE748; //DE748
-u16 word_DE74A; //DE74A
-u16 word_DE74C; //DE74C
+extern u16 word_DE73E; //DE73E
+extern u16 word_DE740; //DE740
+extern u16 word_DE742; //DE742
+extern u16 word_DE744; //DE744
+extern u16 word_DE746; //DE746
+extern u16 word_DE748; //DE748
+extern u16 word_DE74A; //DE74A
+extern u16 word_DE74C; //DE74C
 
-s16 old_num_world_choice; //DE80C
-s16 old_num_level_choice; //DE80E
-s16 CBoffsetXMin; //DE810
-s16 CBoffsetYMin; //DE812
-s16 CBoffsetYMax; //DE814
-s16 CBoffsetXMax; //DE816
-s16 LIMITE_GAUCHE; //DE818
-s16 XOFFSETCBRIGHT; //DE81A
-s16 XOFFSETRAY; //DE81C
-s16 LIMITE_DROITE; //DE81E
-s16 YOFFSETCB; //DE820
-s16 XOFFSETCBLEFT; //DE822
-u8 nb_collis; //DE824
+extern s16 old_num_world_choice; //DE80C
+extern s16 old_num_level_choice; //DE80E
+extern s16 CBoffsetXMin; //DE810
+extern s16 CBoffsetYMin; //DE812
+extern s16 CBoffsetYMax; //DE814
+extern s16 CBoffsetXMax; //DE816
+extern s16 LIMITE_GAUCHE; //DE818
+extern s16 XOFFSETCBRIGHT; //DE81A
+extern s16 XOFFSETRAY; //DE81C
+extern s16 LIMITE_DROITE; //DE81E
+extern s16 YOFFSETCB; //DE820
+extern s16 XOFFSETCBLEFT; //DE822
+extern u8 nb_collis; //DE824
 
-s16 word_DE8BC; //DE8BC
-u8 byte_DEEFB; //DEEFB
+extern s16 word_DE8BC; //DE8BC
+extern u8 byte_DEEFB; //DEEFB
 
-u8 sav_checksum; //DF70C
-vitraux_info_t VitrauxInfos[5];
-s16 dark_rayon_dy; //DF742
-s16 dark_rayon_dx; //DF744
-s16 corde_x; //DF746
-s16 corde_y_haut; //DF748
-s16 corde_y_bas; //DF74A
-u8 byte_DF74C; //DF74C
+extern u8 sav_checksum; //DF70C
+extern vitraux_info_t VitrauxInfos[5];
+extern s16 dark_rayon_dy; //DF742
+extern s16 dark_rayon_dx; //DF744
+extern s16 corde_x; //DF746
+extern s16 corde_y_haut; //DF748
+extern s16 corde_y_bas; //DF74A
+extern u8 byte_DF74C; //DF74C
 
-s16 level_select; //DF750
+extern s16 level_select; //DF750
 
-u8 ButtonReleasedSav2; //DF756
-u8 ButtonReleasedSav1; //DF757
+extern u8 ButtonReleasedSav2; //DF756
+extern u8 ButtonReleasedSav1; //DF757
 
-u8* cheat_code_programmer_message; //DF760
-u8* cheat_code_win_map_alt; //DF764
-u8* cheat_code_10_wiz_alt; //DF768
-u8* cheat_code_all_powers_alt; //DF76C
-u8* cheat_code_breakout_alt; //DF770
-u8* cheat_code_golden_fist_alt; //DF774
-u8* cheat_code_10_wiz; //DF778
-u8* cheat_code_win_map; //DF77C
-u8* cheat_code_unlock_all_levels_alt; //DF780
-u8* cheat_code_99_lives_alt; //DF784
-u8* cheat_code_5hp_alt; //DF788
-u8* cheat_code_golden_fist; //DF78C
-u8* cheat_code_unlock_all_levels; //DF790
-u8* cheat_code_breakout; //DF794
-u8* cheat_code_all_powers; //DF798
-u8* cheat_code_99_lives; //DF79C
-u8* cheat_code_free_movement; //DF7A0
-u8* cheat_code_5hp; //DF7A4
-u8* cheat_code_freq80; //DF7A8
-u8* cheat_code_lens; //DF7AC
-u8* cheat_code_breakout_before_victory; //DF7B0
-u8* cheat_code_level_select; //DF7B4
-s32 saved_frequence; //DF7B8
-u8* cheat_code_freq100; //DF7BC
+extern u8* cheat_code_programmer_message; //DF760
+extern u8* cheat_code_win_map_alt; //DF764
+extern u8* cheat_code_10_wiz_alt; //DF768
+extern u8* cheat_code_all_powers_alt; //DF76C
+extern u8* cheat_code_breakout_alt; //DF770
+extern u8* cheat_code_golden_fist_alt; //DF774
+extern u8* cheat_code_10_wiz; //DF778
+extern u8* cheat_code_win_map; //DF77C
+extern u8* cheat_code_unlock_all_levels_alt; //DF780
+extern u8* cheat_code_99_lives_alt; //DF784
+extern u8* cheat_code_5hp_alt; //DF788
+extern u8* cheat_code_golden_fist; //DF78C
+extern u8* cheat_code_unlock_all_levels; //DF790
+extern u8* cheat_code_breakout; //DF794
+extern u8* cheat_code_all_powers; //DF798
+extern u8* cheat_code_99_lives; //DF79C
+extern u8* cheat_code_free_movement; //DF7A0
+extern u8* cheat_code_5hp; //DF7A4
+extern u8* cheat_code_freq80; //DF7A8
+extern u8* cheat_code_lens; //DF7AC
+extern u8* cheat_code_breakout_before_victory; //DF7B0
+extern u8* cheat_code_level_select; //DF7B4
+extern s32 saved_frequence; //DF7B8
+extern u8* cheat_code_freq100; //DF7BC
 
-s32 CompteurEclair; //DFAE0
-u8* smap; //DFAE4
+extern s32 CompteurEclair; //DFAE0
+extern u8* smap; //DFAE4
 
-bnk_header_t bnkHeaderFixe[128]; //DFAF0
-bnk_header_t bnkHeaderWorld[128]; //E02F0
-s32 current_port; //E0AF0
-s32 current_irq; //E0AF4
-s32 current_dma; //E0AF8
-s32 current_param; //E0AFC
-u8* TchachPerduPtr; //E0B00
-s32 TchachPerduSize; //E0B04
-char current_device_name[100]; //E0B0A
-s32 current_device_id; //E0B6E
+extern bnk_header_t bnkHeaderFixe[128]; //DFAF0
+extern bnk_header_t bnkHeaderWorld[128]; //E02F0
+extern s32 current_port; //E0AF0
+extern s32 current_irq; //E0AF4
+extern s32 current_dma; //E0AF8
+extern s32 current_param; //E0AFC
+extern u8* TchachPerduPtr; //E0B00
+extern s32 TchachPerduSize; //E0B04
+extern char current_device_name[100]; //E0B0A
+extern s32 current_device_id; //E0B6E
 
-obj_t* dark_obj; //E0B84
-char txt_dark2[100]; //E0B88
-u32 dword_E0BEC; //E0BEC
-u32 dword_E0BF0; //E0BF0
-s16 PosArYToon2; //E0BF4
-s16 PosArXToon2; //E0BF6
-s16 PosArYToon1; //E0BF8
-s16 PosArXToon1; //E0BFA
-s16 flamme_droite_id; //E0BFC
-s16 XText; //E0BFE
-s16 dark2_rayon_dx_1; //E0C00
-s16 dark2_rayon_dx_2; //E0C02
-s16 YText; //E0C04
-s16 dark2_rayon_dy_1; //E0C06
-s16 dark2_rayon_dy_2; //E0C08
-s16 flamme_gauche_id; //E0C0A
-s16 phase_dark2; //E0C0C
-s16 dark2_rayon_2_pos_x; //E0C0E
-s16 dark2_rayon_1_pos_x; //E0C10
-s16 VitesseYText; //E0C12
-s16 temps_text; //E0C14
-s16 dark2_rayon_2_pos_y; //E0C16
-s16 dark2_rayon_1_pos_y; //E0C18
-s16 YPosBBF2D; //E0C1C
-s16 YPosBBF2G; //E0C1E
-s16 NiveauSol; //E0C20
-u8 ToonJustGivePoing; //E0C22
-u8 sinus_actif; //E0C23
-u8 num_dark2_phrase; //E0C24
-u8 sens_sinus_1; //E0C25
-u8 sens_sinus_2; //E0C26
-u8 flammes_actives; //E0C27
-u8 BBF2DEsk; //E0C28
-u8 BBF2GEsk; //E0C29
-u8 Touche_Enfoncee[128]; //E0C30
-void_func_t* Read_Input_Func; //E0CB0
-void* saved_keyboard_interrupt_handler; //E0CB4
+extern obj_t* dark_obj; //E0B84
+extern char txt_dark2[100]; //E0B88
+extern u32 dword_E0BEC; //E0BEC
+extern u32 dword_E0BF0; //E0BF0
+extern s16 PosArYToon2; //E0BF4
+extern s16 PosArXToon2; //E0BF6
+extern s16 PosArYToon1; //E0BF8
+extern s16 PosArXToon1; //E0BFA
+extern s16 flamme_droite_id; //E0BFC
+extern s16 XText; //E0BFE
+extern s16 dark2_rayon_dx_1; //E0C00
+extern s16 dark2_rayon_dx_2; //E0C02
+extern s16 YText; //E0C04
+extern s16 dark2_rayon_dy_1; //E0C06
+extern s16 dark2_rayon_dy_2; //E0C08
+extern s16 flamme_gauche_id; //E0C0A
+extern s16 phase_dark2; //E0C0C
+extern s16 dark2_rayon_2_pos_x; //E0C0E
+extern s16 dark2_rayon_1_pos_x; //E0C10
+extern s16 VitesseYText; //E0C12
+extern s16 temps_text; //E0C14
+extern s16 dark2_rayon_2_pos_y; //E0C16
+extern s16 dark2_rayon_1_pos_y; //E0C18
+extern s16 YPosBBF2D; //E0C1C
+extern s16 YPosBBF2G; //E0C1E
+extern s16 NiveauSol; //E0C20
+extern u8 ToonJustGivePoing; //E0C22
+extern u8 sinus_actif; //E0C23
+extern u8 num_dark2_phrase; //E0C24
+extern u8 sens_sinus_1; //E0C25
+extern u8 sens_sinus_2; //E0C26
+extern u8 flammes_actives; //E0C27
+extern u8 BBF2DEsk; //E0C28
+extern u8 BBF2GEsk; //E0C29
+extern u8 Touche_Enfoncee[128]; //E0C30
+extern void_func_t* Read_Input_Func; //E0CB0
+extern void* saved_keyboard_interrupt_handler; //E0CB4
 
-s16 joy_rec_up; //E0CBC
-s16 bux11; //E0CBE
-s16 joy_rec_right; //E0CC0
-s16 bux10; //E0CC2
-s16 bux01; //E0CC4
-s16 bux00; //E0CC6
-s16 joy_rec_down; //E0CC8
-s16 auto_joy_left; //E0CCA (?)
-s16 auto_joy_up; //E0CCC (?)
-s16 joy_rec_left; //E0CCE
-s16 word_E0CD0; //E0CD0
-s16 auto_joy_down; //E0CD2 (?)
-s16 word_E0CD4; //E0CD4
-s16 auto_joy_right; //E0CD6 (?)
-s16 word_E0CD8; //E0CD8
-s32 PositionJumelleDemandeY; //E0CDC
-s32 PositionJumelleDemandeX; //E0CE0
-s32 PositionJumelleY16; //E0CE4
-s32 PositionJumelleX16; //E0CE8
-s32 Xmap16; //E0CEC
-s32 Ymap16; //E0CF0
-s32 ModeAutoPosXJumelle; //E0CF4
-s32 ModeAutoPosYJumelle; //E0CF8
-s32 ModeAutoJumelleZoomAmp; //E0CFC
-s32 ModeAutoRayonJumelle; //E0D00
-s32* DistPointY; //E0D04
-s32* DistPointX; //E0D08
-s32 CompteurJumelle; //E0D0C
-s32* ExpPoint; //E0D10
-s32 dword_E0D14; //E0D14
-obj_t wldobj[100]; //E0D18
-u8 sp_y; //E40A9
+extern s16 joy_rec_up; //E0CBC
+extern s16 bux11; //E0CBE
+extern s16 joy_rec_right; //E0CC0
+extern s16 bux10; //E0CC2
+extern s16 bux01; //E0CC4
+extern s16 bux00; //E0CC6
+extern s16 joy_rec_down; //E0CC8
+extern s16 auto_joy_left; //E0CCA (?)
+extern s16 auto_joy_up; //E0CCC (?)
+extern s16 joy_rec_left; //E0CCE
+extern s16 word_E0CD0; //E0CD0
+extern s16 auto_joy_down; //E0CD2 (?)
+extern s16 word_E0CD4; //E0CD4
+extern s16 auto_joy_right; //E0CD6 (?)
+extern s16 word_E0CD8; //E0CD8
+extern s32 PositionJumelleDemandeY; //E0CDC
+extern s32 PositionJumelleDemandeX; //E0CE0
+extern s32 PositionJumelleY16; //E0CE4
+extern s32 PositionJumelleX16; //E0CE8
+extern s32 Xmap16; //E0CEC
+extern s32 Ymap16; //E0CF0
+extern s32 ModeAutoPosXJumelle; //E0CF4
+extern s32 ModeAutoPosYJumelle; //E0CF8
+extern s32 ModeAutoJumelleZoomAmp; //E0CFC
+extern s32 ModeAutoRayonJumelle; //E0D00
+extern s32* DistPointY; //E0D04
+extern s32* DistPointX; //E0D08
+extern s32 CompteurJumelle; //E0D0C
+extern s32* ExpPoint; //E0D10
+extern s32 dword_E0D14; //E0D14
+extern obj_t wldobj[100]; //E0D18
+extern u8 sp_y; //E40A9
 
-rgb_palette_t menu_rvb; //E43AC (?)
-rgb_palette_t rvb_options_in_game; //E46AC (?)
-rgb_palette_t rvb_menu_save; //E49AC (?)
-display_item_t* dialog_display_item_ptr; // E4CAC (?)
-const char** key_descriptions; //E4CB0
-void (*pINIT_SCROLL)(void); //E4CB4
-void (*pINIT_AFFICHE_SCREEN)(void); //E4CB8
-void (*pINIT_SCREEN)(void); //E4CBC
-void (*sEND_SCREEN)(void); //E4CC0
-void (*pDO_COMMANDE)(void); //E4CC4
-void (*pAFFICHE_SCREEN)(void); //E4CC8
-void (*pEND_SCREEN)(void); //E4CCC
-void (*pLOAD_SCREEN)(void); //E4CD0
-void (*pCOMMANDE_BOX)(void); //E4CD4
-u8 byte_E4CD8; //E4CD8
-u8 byte_E4CD9; //E4CD9
+extern rgb_palette_t menu_rvb; //E43AC (?)
+extern rgb_palette_t rvb_options_in_game; //E46AC (?)
+extern rgb_palette_t rvb_menu_save; //E49AC (?)
+extern display_item_t* dialog_display_item_ptr; // E4CAC (?)
+extern const char** key_descriptions; //E4CB0
+extern void (*pINIT_SCROLL)(void); //E4CB4
+extern void (*pINIT_AFFICHE_SCREEN)(void); //E4CB8
+extern void (*pINIT_SCREEN)(void); //E4CBC
+extern void (*sEND_SCREEN)(void); //E4CC0
+extern void (*pDO_COMMANDE)(void); //E4CC4
+extern void (*pAFFICHE_SCREEN)(void); //E4CC8
+extern void (*pEND_SCREEN)(void); //E4CCC
+extern void (*pLOAD_SCREEN)(void); //E4CD0
+extern void (*pCOMMANDE_BOX)(void); //E4CD4
+extern u8 byte_E4CD8; //E4CD8
+extern u8 byte_E4CD9; //E4CD9
 
-s16 word_E4CE0; //E4CE0
-s16 hFondu; //E4CE2
-s16 xFondu; //E4CE4
-s16 yFondu; //E4CE6
-s16 wFondu; //E4CE8
-s16 EtapeFondu; //E4CEA
-s16 word_E4CEC_x; //E4CEC
-s16 word_E4CEE_h; //E4CEE
-s16 word_E4CF0_y; //E4CF0
-s16 VideoSpeed; //E4CF2
-s16 word_E4CF4_w; //E4CF4
-u8 but_options[4]; //E4CF6
-u8 InOut; //E4CFB
-u8 byte_E4CFC; //E4CFC
-u8 byte_E4CFD; //E4CFD
-u8 byte_E4CFE; //E4CFE
+extern s16 word_E4CE0; //E4CE0
+extern s16 hFondu; //E4CE2
+extern s16 xFondu; //E4CE4
+extern s16 yFondu; //E4CE6
+extern s16 wFondu; //E4CE8
+extern s16 EtapeFondu; //E4CEA
+extern s16 word_E4CEC_x; //E4CEC
+extern s16 word_E4CEE_h; //E4CEE
+extern s16 word_E4CF0_y; //E4CF0
+extern s16 VideoSpeed; //E4CF2
+extern s16 word_E4CF4_w; //E4CF4
+extern u8 but_options[4]; //E4CF6
+extern u8 InOut; //E4CFB
+extern u8 byte_E4CFC; //E4CFC
+extern u8 byte_E4CFD; //E4CFD
+extern u8 byte_E4CFE; //E4CFE
 
-s16 droppedBombIds[64]; //E4D00
-u8 lastDroppedBombIdInSequence[8]; //E4D80
-u32 mere_denis_wait_time; //E4D88
-s16 mereDenis_weapon_id; //E4D8C
-s16 lastDroppedBombXCenterPos; //E4D8E
-s16 machine_obj_id; //E4D90
-s16 circle_x; //E4D92
-s16 circle_y; //E4D94
-s16 circle_index; //E4D96
-u8 timerBeforeFirstBomb; //E4D98
-u8 currentLaserSize; //E4D99
-u8 stepsForward; //E4D9A
-u8 currentPhaseHitCounter; //E4D9B
-u8 currentBombSequence; //E4D9C
-u8 curAct; //E4DA0
-u8 fistAvoided; //E4DA1
-u8 mstMustLeaveScreenToProceed; //E4DA2
-s16 ot; //E4DA4
-u8 oldPrio; //E4DA6
-u32 dword_E4DA8; //E4DA8
-couteaux_info_t CouteauxInfos[5]; //E4DAC
-s16 cou_tempo; //E4E10
-s16 pma_tempo; //E4E12
-s16 pma_touched; //E4E14
-s16 pma_nb_couteau; //E4E15
-s16 pma_phase; //E4E16
-s16 pma_attaque; //E4E17
-s16 cou_place; //E4E18
-s16 pma_groupe; //E4E19
-s16 pma_type_attaque; //E4E1A
+extern s16 droppedBombIds[64]; //E4D00
+extern u8 lastDroppedBombIdInSequence[8]; //E4D80
+extern u32 mere_denis_wait_time; //E4D88
+extern s16 mereDenis_weapon_id; //E4D8C
+extern s16 lastDroppedBombXCenterPos; //E4D8E
+extern s16 machine_obj_id; //E4D90
+extern s16 circle_x; //E4D92
+extern s16 circle_y; //E4D94
+extern s16 circle_index; //E4D96
+extern u8 timerBeforeFirstBomb; //E4D98
+extern u8 currentLaserSize; //E4D99
+extern u8 stepsForward; //E4D9A
+extern u8 currentPhaseHitCounter; //E4D9B
+extern u8 currentBombSequence; //E4D9C
+extern u8 curAct; //E4DA0
+extern u8 fistAvoided; //E4DA1
+extern u8 mstMustLeaveScreenToProceed; //E4DA2
+extern s16 ot; //E4DA4
+extern u8 oldPrio; //E4DA6
+extern u32 dword_E4DA8; //E4DA8
+extern couteaux_info_t CouteauxInfos[5]; //E4DAC
+extern s16 cou_tempo; //E4E10
+extern s16 pma_tempo; //E4E12
+extern s16 pma_touched; //E4E14
+extern s16 pma_nb_couteau; //E4E15
+extern s16 pma_phase; //E4E16
+extern s16 pma_attaque; //E4E17
+extern s16 cou_place; //E4E18
+extern s16 pma_groupe; //E4E19
+extern s16 pma_type_attaque; //E4E1A
 
-s16* anim_sequence; //E4E78
+extern s16* anim_sequence; //E4E78
 
-s32 RandomIndex; //E548C
-s16 stk_obj[20]; //E5490
-s16 stk_snd[20]; //E54B8
-pile_snd_t pile_snd[9]; //E5490
+extern s32 RandomIndex; //E548C
+extern s16 stk_obj[20]; //E5490
+extern s16 stk_snd[20]; //E54B8
+extern pile_snd_t pile_snd[9]; //E5490
 
-voice_t voice_table[32]; //E55D0
+extern voice_t voice_table[32]; //E55D0
 
-s16 indice_ray_wait; //E5750
-s16 indice_trz_wait; //E5754
-s16 pt_pile_snd; //E5756
-s16 indice_snd_wiz; //E575A
+extern s16 indice_ray_wait; //E5750
+extern s16 indice_trz_wait; //E5754
+extern s16 pt_pile_snd; //E5756
+extern s16 indice_snd_wiz; //E575A
 
-sax_attack_entry_t attaque; //E5764
-sax_data_t Sax; //E5768
+extern sax_attack_entry_t attaque; //E5764
+extern sax_data_t Sax; //E5768
 
-s16 IndexSerie; //E577A
-s16 IndexAtak; //E577C
-s16 SaxMarche; //E577E
-u8 NextNote; //E5780
-bande_t Bande[300]; //E5784
-def_sprite_t Sprite[20]; //E73A4
-s16 Val_Div_Scroll_Y; //E7444
-s16 NbSprite; //E7446
-s16 Val_Add_Scroll_Y; //E7448
-s16 NbBande; //E744A
-s16 Num_Fond; //E744C
-s32 skops_screen_tremble; //E7450
-s16 PosLave_Y; //E7454
+extern s16 IndexSerie; //E577A
+extern s16 IndexAtak; //E577C
+extern s16 SaxMarche; //E577E
+extern u8 NextNote; //E5780
+extern bande_t Bande[300]; //E5784
+extern def_sprite_t Sprite[20]; //E73A4
+extern s16 Val_Div_Scroll_Y; //E7444
+extern s16 NbSprite; //E7446
+extern s16 Val_Add_Scroll_Y; //E7448
+extern s16 NbBande; //E744A
+extern s16 Num_Fond; //E744C
+extern s32 skops_screen_tremble; //E7450
+extern s16 PosLave_Y; //E7454
 
-s32 OffsetSpriteWorld; //E7470
-s32 OffsetSpriteFixe; //E7474
+extern s32 OffsetSpriteWorld; //E7470
+extern s32 OffsetSpriteFixe; //E7474
+
+#undef INIT
+#undef extern

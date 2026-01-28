@@ -102,22 +102,28 @@ void surface_clear(surface_t* surface) {
 	memset(surface->memory, 0, surface->memory_size);
 }
 
-void surface_resize(surface_t* surface, int width, int height) {
+void surface_resize(surface_t* surface, int width, int height, bool use_power_of_2_texture) {
 	surface->width = width;
 	surface->height = height;
 	surface->bytes_per_pixel = 4;
     // NOTE: we use OpenGL textures with a power-of-2 size here. This is for compatibility with old GPUs.
     // (On Windows, you might want to run on old GPUs paired with Win9x.)
-	if (is_power_of_2((u32)width)) {
-		surface->width_pow2 = width;
-	} else {
-		surface->width_pow2 = next_power_of_2((u32)width);
-	}
-	if (is_power_of_2((u32)height)) {
-		surface->height_pow2 = height;
-	} else {
-		surface->height_pow2 = next_power_of_2((u32)height);
-	}
+    if (use_power_of_2_texture) {
+        if (is_power_of_2((u32)width)) {
+            surface->width_pow2 = width;
+        } else {
+            surface->width_pow2 = next_power_of_2((u32)width);
+        }
+        if (is_power_of_2((u32)height)) {
+            surface->height_pow2 = height;
+        } else {
+            surface->height_pow2 = next_power_of_2((u32)height);
+        }
+    } else {
+        surface->width_pow2 = width;
+        surface->height_pow2 = height;
+    }
+
 	surface->pitch = surface->width_pow2 * surface->bytes_per_pixel;
 
 	u32 memory_needed = surface->width_pow2 * surface->height_pow2 * surface->bytes_per_pixel;

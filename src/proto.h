@@ -1,11 +1,21 @@
 #ifndef PROTO_H
 #define PROTO_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // (win32/linux)_main.cpp
 #ifdef _WIN32
+// win32_main.c
+void win32_get_window_dimension(HWND window, int* client_width, int* client_height);
+LRESULT CALLBACK win32_main_window_callback(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+void win32_init_game(void);
 void win32_advance_frame(app_state_t* app_state);
 void win32_prepare_frame(app_state_t* app_state);
 void win32_end_frame(app_state_t* app_state);
+// win32_sound.c
+void win32_produce_sound_for_frame(app_state_t* app_state, win32_sound_output_t* sound, game_sound_buffer_t* game_sound_buffer, s64 flip_clock);
 #else
 void linux_advance_frame(app_state_t* app_state);
 void linux_prepare_frame(app_state_t* app_state);
@@ -1650,5 +1660,9 @@ void SetPalette(rgb_palette_t* palette, u8 first_color, s32 num_colors);
 void set_special_key_descriptions(const char** descriptions);
 image_t load_vignet_pcx(u32 resource_id);
 void detect_and_remove_invalid_link_cycles();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //PROTO_H

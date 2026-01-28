@@ -1,8 +1,5 @@
 
 
-s64 performance_counter_frequency;
-s32 monitor_refresh_hz;
-
 s64 get_clock(void) {
 	LARGE_INTEGER result;
 	QueryPerformanceCounter(&result);
@@ -65,60 +62,11 @@ void toggle_fullscreen(HWND window) {
 	}
 }
 
-
-static void win32_get_window_dimension(HWND window, int* client_width, int* client_height) {
+void win32_get_window_dimension(HWND window, int* client_width, int* client_height) {
 	RECT rect;
 	GetClientRect(window, &rect);
 	if (client_width) *client_width = rect.right - rect.left;
 	if (client_height) *client_height = rect.bottom - rect.top;
-}
-
-
-LRESULT CALLBACK main_window_callback(HWND window, UINT message, WPARAM wparam, LPARAM lparam) {
-
-	LRESULT result = 0;
-	switch(message) {
-	default: {
-		result = DefWindowProc(window, message, wparam, lparam);
-			 } break;
-	case WM_CLOSE:
-    case WM_DESTROY: {
-		global_app_state.running = false;
-	} break;
-	case WM_SETCURSOR: {
-		u16 hit_test_result = LOWORD(lparam);
-//		printf("hit_test_result = %d\n", hit_test_result);
-		if (hit_test_result >= HTLEFT && hit_test_result <= HTBOTTOMRIGHT) {
-			result = DefWindowProc(window, message, wparam, lparam);
-		} else {
-			SetCursor(global_app_state.win32.cursor);
-		}
-	} break;
-	case WM_SIZE: {
-		int client_width, client_height;
-		win32_get_window_dimension(window, &client_width, &client_height);
-		surface_resize(&global_app_state.offscreen_surface, client_width, client_height);
-	} break;
-    case WM_SYSCOMMAND: {
-        if (wparam == SC_KEYMENU && (lparam>>16) <=0) {
-            // do nothing
-        } else {
-            result = DefWindowProc(window, message, wparam, lparam);
-        }
-    } break;
-    case WM_KILLFOCUS: {
-        memset(Touche_Enfoncee, 0, sizeof(Touche_Enfoncee)); // Window loses focus -> release all keys
-    } break;
-	//case WM_ERASEBKGND: {
-	//	result = TRUE; // prevent flickering
-//						} break;
-	/*case WM_PAINT: {
-		result = TRUE;
-				   } break;*/
-	}
-
-
-	return result;
 }
 
 void win32_process_keyboard_event(u32 vk_code, bool is_down) {
@@ -151,79 +99,105 @@ void win32_process_keyboard_event(u32 vk_code, bool is_down) {
     }
 }
 
-void process_message(HWND window, MSG message) {
-	if (message.message == WM_QUIT) {
+LRESULT CALLBACK win32_main_window_callback(HWND window, UINT message, WPARAM wparam, LPARAM lparam) {
+
+	LRESULT result = 0;
+	switch(message) {
+	default: {
+		result = DefWindowProc(window, message, wparam, lparam);
+			 } break;
+	case WM_CLOSE:
+    case WM_DESTROY: {
 		global_app_state.running = false;
-	}
-
-	switch(message.message) {
-		default: {
-//			printf("Window message: %x\n", message.message);
-			TranslateMessage(&message);
-			DispatchMessage(&message);
-		} break;
-		case WM_ERASEBKGND:
-		case WM_MOUSEMOVE: break;
-		case WM_KEYDOWN:
-		case WM_KEYUP:
-		case WM_SYSKEYDOWN:
-		case WM_SYSKEYUP: {
-			TranslateMessage(&message);
-			DispatchMessageA(&message);
-
-			//https://stackoverflow.com/questions/8737566/rolling-ones-own-keyboard-input-system-in-c-c
-			u32 vk_code = (u32) message.wParam;
-			u32 lparam = message.lParam;
-			u32 scancode = ((lparam >> 16) & 0x7f) | ((lparam & (1 << 24)) != 0 ? 0x80 : 0);
-            //https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input?redirectedfrom=MSDN#extended-key-flag
-            bool is_extended_key = (message.lParam & KF_EXTENDED) == KF_EXTENDED;
-            if (is_extended_key) {
-                scancode = MAKEWORD(scancode, 0xE0);
-            }
-            u32 vk_code_ext = vk_code;
-            // NOTE: MAPVK_VSC_TO_VK_EX is not available on Win9x
+	} break;
+	case WM_SETCURSOR: {
+		u16 hit_test_result = LOWORD(lparam);
+//		printf("hit_test_result = %d\n", hit_test_result);
+		if (hit_test_result >= HTLEFT && hit_test_result <= HTBOTTOMRIGHT) {
+			result = DefWindowProc(window, message, wparam, lparam);
+		} else {
+			SetCursor(global_app_state.win32.cursor);
+		}
+	} break;
+	case WM_SIZE: {
+		int client_width, client_height;
+		win32_get_window_dimension(window, &client_width, &client_height);
+		surface_resize(&global_app_state.offscreen_surface, client_width, client_height, USE_POWER_OF_2_TEXTURES_ON_WINDOWS);
+	} break;
+    case WM_SYSCOMMAND: {
+        if (wparam == SC_KEYMENU && (lparam>>16) <=0) {
+            // do nothing
+        } else {
+            result = DefWindowProc(window, message, wparam, lparam);
+        }
+    } break;
+    case WM_KILLFOCUS: {
+        memset(Touche_Enfoncee, 0, sizeof(Touche_Enfoncee)); // Window loses focus -> release all keys
+    } break;
+    case WM_ERASEBKGND:
+    case WM_MOUSEMOVE: break;
+    case WM_KEYDOWN:
+    case WM_KEYUP:
+    case WM_SYSKEYDOWN:
+    case WM_SYSKEYUP: {
+        //https://stackoverflow.com/questions/8737566/rolling-ones-own-keyboard-input-system-in-c-c
+        u32 vk_code = (u32) wparam;
+        u32 scancode = ((lparam >> 16) & 0x7f) | ((lparam & (1 << 24)) != 0 ? 0x80 : 0);
+        //https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input?redirectedfrom=MSDN#extended-key-flag
+        bool is_extended_key = (lparam & KF_EXTENDED) == KF_EXTENDED;
+        if (is_extended_key) {
+            scancode = MAKEWORD(scancode, 0xE0);
+        }
+        u32 vk_code_ext = vk_code;
+        // NOTE: MAPVK_VSC_TO_VK_EX is not available on Win9x
 #ifdef MAPVK_VSC_TO_VK_EX
-            switch(vk_code) {
-                default: break;
-                case VK_SHIFT:   // converts to VK_LSHIFT or VK_RSHIFT
-                case VK_CONTROL: // converts to VK_LCONTROL or VK_RCONTROL
-                case VK_MENU:    // converts to VK_LMENU or VK_RMENU
-                    vk_code_ext = LOWORD(MapVirtualKeyW(scancode, MAPVK_VSC_TO_VK_EX));
-                    break;
-            }
+        switch(vk_code) {
+            default: break;
+            case VK_SHIFT:   // converts to VK_LSHIFT or VK_RSHIFT
+            case VK_CONTROL: // converts to VK_LCONTROL or VK_RCONTROL
+            case VK_MENU:    // converts to VK_LMENU or VK_RMENU
+                vk_code_ext = LOWORD(MapVirtualKeyW(scancode, MAPVK_VSC_TO_VK_EX));
+                break;
+        }
 #endif
-//			u32 hid_code = keycode_windows_to_hid(scancode);
-//			if (vk_code == VK_SPACE) {
-//				hid_code = KEY_Space; // NOTE: for some reason, Space is missing from the table in keycode_windows_to_hid()
-//			}
-			bool alt_down = ((message.lParam & (1 << 29)) != 0);
-			bool is_down = ((message.lParam & (1 << 31)) == 0);
-			bool was_down = ((message.lParam & (1 << 30)) != 0);
-			int repeat_count = message.lParam & 0xFFFF;
-			s16 ctrl_state = GetKeyState(VK_CONTROL);
-			bool32 ctrl_down = (ctrl_state < 0); // 'down' determined by high order bit == sign bit
-			if (was_down && is_down) break; // uninteresting: repeated key
+//        u32 hid_code = keycode_windows_to_hid(scancode);
+//        if (vk_code == VK_SPACE) {
+//            hid_code = KEY_Space; // NOTE: for some reason, Space is missing from the table in keycode_windows_to_hid()
+//        }
+        bool alt_down = ((lparam & (1 << 29)) != 0);
+        bool is_down = ((lparam & (1 << 31)) == 0);
+        bool was_down = ((lparam & (1 << 30)) != 0);
+        int repeat_count = lparam & 0xFFFF;
+        s16 ctrl_state = GetKeyState(VK_CONTROL);
+        bool32 ctrl_down = (ctrl_state < 0); // 'down' determined by high order bit == sign bit
+        if (was_down && is_down) break; // uninteresting: repeated key
 
-            win32_process_keyboard_event(vk_code_ext, is_down);
+        win32_process_keyboard_event(vk_code_ext, is_down);
 
-			switch (vk_code) {
-				default: break;
-				case VK_F4: {
-					if (is_down && alt_down) {
-						global_app_state.running = false;
-					}
-				} break;
-			}
-            break;
-		} break;
-        case WM_LBUTTONDOWN: {
-            TranslateMessage(&message);
-            DispatchMessageA(&message);
-            global_app_state.was_client_leftclicked = true;
-            global_app_state.click_x = (s16)(message.lParam & 0xFFFF);
-            global_app_state.click_y = (s16)(message.lParam >> 16);
-        } break;
+        switch (vk_code) {
+            default: break;
+            case VK_F4: {
+                if (is_down && alt_down) {
+                    global_app_state.running = false;
+                }
+            } break;
+        }
+    } break;
+    case WM_LBUTTONDOWN: {
+        global_app_state.was_client_leftclicked = true;
+        global_app_state.click_x = (s16)(lparam & 0xFFFF);
+        global_app_state.click_y = (s16)(lparam >> 16);
+    } break;
+	//case WM_ERASEBKGND: {
+	//	result = TRUE; // prevent flickering
+//						} break;
+	/*case WM_PAINT: {
+		result = TRUE;
+				   } break;*/
 	}
+
+
+	return result;
 }
 
 bool process_input(HWND window) {
@@ -251,9 +225,63 @@ bool process_input(HWND window) {
 	}
 
 	do {
-		process_message(window, message);
+        TranslateMessage(&message);
+        DispatchMessage(&message);
+        if (message.message == WM_QUIT) {
+            global_app_state.running = false;
+        }
 	} while (PeekMessage(&message, 0, 0, 0, PM_REMOVE));
 	return true;
+}
+
+void win32_init_game(void) {
+    app_state_t* app_state = &global_app_state;
+
+    // Initialize the game surface
+    memset(&app_state->game_surface, 0, sizeof(app_state->game_surface));
+    surface_resize(&app_state->game_surface, 320, 200, USE_POWER_OF_2_TEXTURES_ON_WINDOWS);
+    app_state->active_surface = &app_state->game_surface;
+
+    // Initialize timing-related stuff.
+    LARGE_INTEGER perf_counter_frequency_result;
+    QueryPerformanceFrequency(&perf_counter_frequency_result);
+    performance_counter_frequency = perf_counter_frequency_result.QuadPart;
+    // Make Sleep() more granular
+    UINT desired_scheduler_granularity_ms = 1;
+    bool sleep_is_granular = (timeBeginPeriod(desired_scheduler_granularity_ms) == TIMERR_NOERROR);
+
+    HDC monitor_refresh_dc = GetDC(app_state->win32.window);
+    s32 refresh_rate = GetDeviceCaps(monitor_refresh_dc, VREFRESH);
+    ReleaseDC(app_state->win32.window, monitor_refresh_dc);
+
+    if (refresh_rate > 1) {
+        monitor_refresh_hz = refresh_rate;
+    } else {
+        monitor_refresh_hz = 60;
+    }
+
+    app_state->target_game_hz = 60;
+    app_state->target_seconds_per_frame = 1.0f / (float)app_state->target_game_hz;
+
+    // Initialize DirectSound.
+    win32_sound_output_t* sound_output = &app_state->win32.sound_output;
+    sound_output->samples_per_second = 44100;
+    sound_output->bytes_per_sample = sizeof(s16) * 2;
+    sound_output->secondary_buffer_size = sound_output->samples_per_second * sound_output->bytes_per_sample; // 1 second
+    sound_output->safety_bytes = (u32)((float)(sound_output->samples_per_second * sound_output->bytes_per_sample) * app_state->target_seconds_per_frame * 0.3333f);
+    win32_init_dsound(app_state->win32.window, sound_output);
+    win32_clear_sound_buffer(sound_output);
+    VFUNC(sound_output->secondary_buffer, Play) (SELF(sound_output->secondary_buffer) 0, 0, DSBPLAY_LOOPING);
+
+    game_init_sound(&app_state->game.sound_buffer, (s32)sound_output->samples_per_second);
+
+    if (!app_state->game.initialized) {
+        game_init(&app_state->game);
+    }
+
+    app_state->flip_clock = get_clock();
+
+    global_app_state.running = true;
 }
 
 #ifndef WITH_IMGUI
@@ -300,10 +328,10 @@ int main(int argc, char** argv) {
 
 	// Initialize the offscreen buffer
 	memset(&app_state->offscreen_surface, 0, sizeof(app_state->offscreen_surface));
-	surface_resize(&app_state->offscreen_surface, desired_width, desired_height);
+	surface_resize(&app_state->offscreen_surface, desired_width, desired_height, USE_POWER_OF_2_TEXTURES_ON_WINDOWS);
 
 	memset(&app_state->game_surface, 0, sizeof(app_state->game_surface));
-	surface_resize(&app_state->game_surface, 320, 200);
+	surface_resize(&app_state->game_surface, 320, 200, USE_POWER_OF_2_TEXTURES_ON_WINDOWS);
 	app_state->active_surface = &app_state->game_surface;
 
 
@@ -354,7 +382,6 @@ int main(int argc, char** argv) {
 	global_app_state.running = true;
 	return main_Ray(argc, argv); // run the game!
 }
-#endif //WITH_IMGUI
 
 void win32_prepare_frame(app_state_t* app_state) {
 	process_input(app_state->win32.window);
@@ -389,6 +416,8 @@ void win32_advance_frame(app_state_t* app_state) {
 		exit(0);
 	}
 }
+#endif //WITH_IMGUI
+
 
 void win32_input_func(void) {
 

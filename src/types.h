@@ -109,7 +109,7 @@ typedef struct win32_sound_output_t {
 	u32 secondary_buffer_size;
 	u32 running_sample_index;
 	u32 safety_bytes;
-	IDirectSound* dsound;
+	IDirectSound* dsound; // NOTE: need to #include <mmsystem.h> and <dsound.h>
 	IDirectSoundBuffer* secondary_buffer;
 	bool is_valid;
 } win32_sound_output_t;
@@ -127,7 +127,7 @@ typedef struct sdl_sound_output_t {
 #endif
 
 typedef struct ogg_t {
-	stb_vorbis* decoder;
+	stb_vorbis* decoder; // NOTE: need to #include "stb_vorbis.c" (preceded by #define STB_VORBIS_HEADER_ONLY for header-only)
 	mem_t* file;
 	u32 sample_count;
     bool looping;
