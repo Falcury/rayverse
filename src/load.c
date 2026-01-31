@@ -124,10 +124,22 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
         for (s32 i = nb_fix_eta; i < nb_loaded_eta + nb_fix_eta; ++i) {
             u8 num_eta_groups = 0;
             mem_read(&num_eta_groups, mem, 1);
+            // Store the ETA counts before the ETA data itself so we can use it in imgui
+#if WITH_IMGUI
+            u8* eta_counts = block_malloc(mem_world, num_eta_groups + 1);
+            eta_counts[0] = num_eta_groups;
+            u8** eta_mem = (u8**)block_malloc(mem_world, num_eta_groups * sizeof(eta_t*) + sizeof(u8**));
+            *eta_mem = eta_counts;
+            loaded_eta[i] = (eta_t**)&eta_mem[1];
+#elif 
             loaded_eta[i] = (eta_t**)block_malloc(mem_world, num_eta_groups * sizeof(eta_t*));
+#endif
             for (s32 j = 0; j < num_eta_groups; ++j) {
                 u8 num_eta_entries = 0;
                 mem_read(&num_eta_entries, mem, 1);
+#if WITH_IMGUI
+                eta_counts[j + 1] = num_eta_entries;
+#endif
                 loaded_eta[i][j] = (eta_t*)block_malloc(mem_world, num_eta_entries * sizeof(eta_t));
                 mem_read(loaded_eta[i][j], mem, sizeof(eta_t) * num_eta_entries);
             }
@@ -541,10 +553,22 @@ void LOAD_ALL_FIX(void) {
         for (s32 i = 0; i < nb_loaded_eta; ++i) {
             u8 num_eta_groups = 0;
             mem_read(&num_eta_groups, mem, 1);
+            // Store the ETA counts before the ETA data itself so we can use it in imgui
+#if WITH_IMGUI
+            u8* eta_counts = block_malloc(main_mem_fix, num_eta_groups + 1);
+            eta_counts[0] = num_eta_groups;
+            u8** eta_mem = (u8**)block_malloc(main_mem_fix, num_eta_groups * sizeof(eta_t*) + sizeof(u8**));
+            *eta_mem = eta_counts;
+            loaded_eta[i] = (eta_t**)&eta_mem[1];
+#elif 
             loaded_eta[i] = (eta_t**)block_malloc(main_mem_fix, num_eta_groups * sizeof(eta_t*));
+#endif
             for (s32 j = 0; j < num_eta_groups; ++j) {
                 u8 num_eta_entries = 0;
                 mem_read(&num_eta_entries, mem, 1);
+#if WITH_IMGUI
+                eta_counts[j + 1] = num_eta_entries;
+#endif
                 loaded_eta[i][j] = (eta_t*)block_malloc(main_mem_fix, num_eta_entries * sizeof(eta_t));
                 mem_read(loaded_eta[i][j], mem, sizeof(eta_t) * num_eta_entries);
             }

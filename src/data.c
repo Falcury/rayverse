@@ -15,8 +15,319 @@ extern "C" {
 // ================================
 
 #if WITH_IMGUI
-extern bool show_demo_window INIT(= true);
-extern bool show_game_window INIT(= true);
+extern bool imgui_show_demo_window INIT(= true);
+extern bool imgui_show_game_window INIT(= true);
+extern bool imgui_show_rendering_info_window INIT(= true);
+extern bool imgui_show_sounds_window INIT(= true);
+extern bool imgui_show_game_info_window INIT(= true);
+extern bool imgui_show_level_window INIT(= true);
+extern bool imgui_show_object_properties_window INIT(= true);
+extern s32 imgui_selected_object_id INIT(= -2);
+
+extern char* imgui_obj_type_names[] INIT(=
+{
+    "BADGUY1",
+    "PLATFORM",
+    "POWERUP",
+    "LIDOLPINK",
+    "NEUTRAL",
+    "WIZARD1",
+    "FALLING_YING_OUYE",
+    "MORNINGSTAR",
+    "FALLING_OBJ",
+    "BADGUY2",
+    "FISH",
+    "BOUM",
+    "CHASSEUR1",
+    "BALLE1",
+    "CHASSEUR2",
+    "BALLE2",
+    "FALLPLAT",
+    "LIFTPLAT",
+    "BTBPLAT",
+    "SPLASH",
+    "GENEBADGUY",
+    "PHOTOGRAPHE",
+    "MOVE_PLAT",
+    "RAYMAN",
+    "INTERACTPLT",
+    "INST_PLAT",
+    "CRUMBLE_PLAT",
+    "BOING_PLAT",
+    "ONOFF_PLAT",
+    "AUTOJUMP_PLAT",
+    "AUDIOSTART",
+    "ONEUP_ALWAYS",
+    "DARK_PHASE2",
+    "DARK2_SORT",
+    "MOVE_AUTOJUMP_PLAT",
+    "STONEMAN1",
+    "STONEBOMB",
+    "TARZAN",
+    "GRAINE",
+    "NEN_GRAINE",
+    "STONEDOG",
+    "OUYE",
+    "SIGNPOST",
+    "STONEMAN2",
+    "CLASH",
+    "MOVE_OUYE",
+    "BB1",
+    "STONEBOMB2",
+    "FLAMME2",
+    "MOVE_START_PLAT",
+    "MOSKITO",
+    "MST_FRUIT1",
+    "MST_FRUIT2",
+    "MST_SHAKY_FRUIT",
+    "MEDAILLON",
+    "MUS_WAIT",
+    "STONEWOMAN2",
+    "STALAG",
+    "CAGE",
+    "CAGE2",
+    "BIG_CLOWN",
+    "WAT_CLOWN",
+    "DROP",
+    "MOVE_START_NUA",
+    "SCROLL",
+    "SPIDER",
+    "DARD",
+    "SWING_PLAT",
+    "BIG_BOING_PLAT",
+    "STONEBOMB3",
+    "TROMPETTE",
+    "NOTE",
+    "PIRATE_NGAWE",
+    "RING",
+    "SAXO",
+    "PAILLETTE",
+    "DESTROYING_DOOR",
+    "PIRATE_GUETTEUR",
+    "PIRATE_BOMB",
+    "STONECHIP",
+    "BIGSTONE",
+    "CYMBALE",
+    "JAUGEUP",
+    "EXPLOSION",
+    "TIBETAIN",
+    "ROLLING_EYES",
+    "MARACAS",
+    "TAMBOUR1",
+    "TAMBOUR2",
+    "JOE",
+    "NOTE0",
+    "NOTE1",
+    "NOTE2",
+    "BONNE_NOTE",
+    "POING",
+    "POING_POWERUP",
+    "TOTEM",
+    "BBL",
+    "SPACE_MAMA",
+    "RAY_POS",
+    "MITE",
+    "MORNINGSTAR_MOUNTAI",
+    "BNOTE",
+    "POI1",
+    "POI2",
+    "MARTEAU",
+    "MOVE_MARTEAU",
+    "GROSPIC",
+    "DARK2_PINK_FLY",
+    "PI",
+    "PI_BOUM",
+    "PI_MUS",
+    "WASHING_MACHINE",
+    "BAG1",
+    "UNUSED_114",
+    "BB1_PLAT",
+    "CLOWN_TNT",
+    "CLOWN_TNT2",
+    "CLOWN_TNT3",
+    "TNT_BOMB",
+    "BATTEUR_FOU",
+    "ECLAIR",
+    "STONEDOG2",
+    "BLACKTOON1",
+    "PANCARTE",
+    "BON3",
+    "FOURCHETTE",
+    "COUTEAU_SUISSE",
+    "TIRE_BOUCHON",
+    "PETIT_COUTEAU",
+    "BLACKTOON_EYES",
+    "BAG3",
+    "POI3",
+    "SUPERHELICO",
+    "FALLING_OBJ2",
+    "ETINC",
+    "DEMI_RAYMAN",
+    "REDUCTEUR",
+    "ROULETTE",
+    "MARACAS_BAS",
+    "PT_GRAPPIN",
+    "NEIGE",
+    "ONEUP",
+    "NOVA2",
+    "LIDOLPINK2",
+    "KILLING_EYES",
+    "FLASH",
+    "MST_SCROLL",
+    "GRAP_BONUS",
+    "CLE_SOL",
+    "SCORPION",
+    "BULLET",
+    "CAISSE_CLAIRE",
+    "FEE",
+    "ROULETTE2",
+    "ROULETTE3",
+    "WALK_NOTE_1",
+    "EAU",
+    "PALETTE_SWAPPER",
+    "TIBETAIN_6",
+    "TIBETAIN_2",
+    "WIZ",
+    "UFO_IDC",
+    "INDICATOR",
+    "GENERATING_DOOR",
+    "BADGUY3",
+    "LEVIER",
+    "FALLING_OBJ3",
+    "CYMBAL1",
+    "CYMBAL2",
+    "RAYON",
+    "MST_COPAIN",
+    "STONEWOMAN",
+    "BATEAU",
+    "PIRATE_POELLE",
+    "PUNAISE1",
+    "CRAYON_BAS",
+    "FALLING_YING",
+    "HERSE_BAS",
+    "HERSE_BAS_NEXT",
+    "SAXO2",
+    "SCROLL_SAX",
+    "NOTE3",
+    "SAXO3",
+    "PIRATE_POELLE_D",
+    "WALK_NOTE_2",
+    "POELLE_ALWAYS",
+    "MAMA_PIRATE",
+    "RUBIS",
+    "MOVE_RUBIS",
+    "COUTEAU",
+    "FALLING_CRAYON",
+    "SMA_GRAND_LASER",
+    "SMA_BOMB",
+    "SMA_BOMB_CHIP",
+    "SPIDER_PLAFOND",
+    "DARD_PLAFOND",
+    "MEDAILLON_TOON",
+    "BB12",
+    "BB1_VIT",
+    "BB13",
+    "BB14",
+    "RAY_ETOILES",
+    "SMA_WEAPON",
+    "BLACK_RAY",
+    "BLACK_FIST",
+    "PIEDS_RAYMAN",
+    "POELLE",
+    "LANDING_SMOKE",
+    "FIRE_LEFT",
+    "FIRE_RIGHT",
+    "BOUT_TOTEM",
+    "DARK",
+    "SPACE_MAMA2",
+    "BOUEE_JOE",
+    "DARK_SORT",
+    "ENS",
+    "MITE2",
+    "HYBRIDE_MOSAMS",
+    "CORDE",
+    "PIERREACORDE",
+    "CFUMEE",
+    "CORDEBAS",
+    "HYBRIDE_STOSKO",
+    "STOSKO_PINCE",
+    "PIRATE_P_45",
+    "PIRATE_P_D_45",
+    "MOSKITO2",
+    "PRI",
+    "PUNAISE2",
+    "PUNAISE3",
+    "HYB_BBF2_D",
+    "HYB_BBF2_G",
+    "HYB_BBF2_LAS",
+    "LAVE",
+    "PUNAISE4",
+    "ANNULE_SORT_DARK",
+    "GOMME",
+    "POING_FEE",
+    "PIRATE_GUETTEUR2",
+    "CRAYON_HAUT",
+    "HERSE_HAUT",
+    "HERSE_HAUT_NEXT",
+    "MARK_AUTOJUMP_PLAT",
+    "SMA_PETIT_LASER",
+    "DUNE",
+    "CORDE_DARK",
+    "VITRAIL",
+    "SKO_PINCE",
+    "RIDEAU",
+    "PUNAISE5",
+    "VAGUE_DEVANT",
+    "VAGUE_DERRIERE",
+    "PLANCHES",
+    "SLOPEY_PLAT",
+    "INVALID",
+    "CB_BRIK",
+    "CB_BALL",
+    "BONBON_PLAT",
+    "EDU_LETTRE",
+    "EDU_CHIFFRE",
+    "EDU_DIRECTION",
+});
+
+extern char* imgui_cmd_names[] INIT(=
+{
+    "LEFT",
+    "RIGHT",
+    "WAIT",
+    "UP",
+    "DOWN",
+    "SUBSTATE",
+    "SKIP",
+    "ADD",
+    "STATE",
+    "PREPARELOOP",
+    "DOLOOP",
+    "LABEL",
+    "GOTO",
+    "GOSUB",
+    "RETURN",
+    "BRANCHTRUE",
+    "BRANCHFALSE",
+    "TEST",
+    "SETTEST",
+    "WAITSTATE",
+    "SPEED",
+    "X",
+    "Y",
+    "RESERVED_SKIP",
+    "RESERVED_GOTO",
+    "RESERVED_GOSUB",
+    "RESERVED_GOTOT",
+    "RESERVED_GOTOF",
+    "RESERVED_SKIPT",
+    "RESERVED_SKIPF",
+    "NOP",
+    "SKIPTRUE",
+    "SKIPFALSE",
+    "INVALID_CMD",
+});
+
 #endif
 
 #ifdef _WIN32
@@ -1451,30 +1762,30 @@ extern u8 angletab[65] INIT(= {
 
 //94D5C
 extern world_info_t t_world_info[24] INIT(= {
-        {29,  264, 18, 0,  0,  1,  1, 0, 1, 1,  2, 0, 0, 0, (char*)0xBFEA8}, // 0: Pink Plant Woods
-        {100, 254, 2,  1,  0,  4,  0, 0, 1, 5,  0, 0, 0, 0, (char*)0xBFEA8}, // 1: Anguish Lagoon
-        {90,  212, 2,  1,  3,  2,  0, 0, 1, 9,  2, 0, 0, 0, (char*)0xBFEA8}, // 2: Swamps of Forgetfulness
-        {47,  200, 3,  3,  3,  2,  0, 0, 1, 12, 1, 0, 0, 0, (char*)0xBFEA8}, // 3: Moskito's Nest
-        {180, 215, 5,  19, 1,  4,  0, 0, 2, 1,  2, 0, 0, 0, (char*)0xBFEA8}, // 4: Bongo Hills
-        {185, 175, 8,  4,  6,  8,  0, 0, 2, 7,  0, 0, 0, 0, (char*)0xBFEA8}, // 5: Allegro Presto
-        {135, 160, 20, 6,  7,  5,  0, 0, 2, 12, 2, 0, 0, 0, (char*)0xBFEA8}, // 6: Gong Heights
-        {91,  143, 7,  7,  7,  6,  0, 0, 2, 14, 3, 0, 0, 0, (char*)0xBFEA8}, // 7: Mr Sax's Hullaballoo
-        {212, 133, 9,  5,  5,  8,  0, 0, 3, 1,  1, 0, 0, 0, (char*)0xBFEA8}, // 8: Twilight Gulch
-        {209, 92,  21, 8,  9,  10, 0, 0, 3, 3,  0, 0, 0, 0, (char*)0xBFEA8}, // 9: The Hard Rocks
-        {257, 80,  10, 11,  9, 10, 0, 0, 3, 6,  1, 0, 0, 0, (char*)0xBFEA8}, // 10: Mr Stone's Peaks
-        {234, 235, 10, 11, 11, 12, 0, 0, 4, 1,  1, 0, 0, 0, (char*)0xBFEA8}, // 11: Eraser Plains
-        {278, 190, 13, 11, 11, 12, 0, 0, 4, 5,  5, 0, 0, 0, (char*)0xBFEA8}, // 12: Pencil Pentathlon
-        {290, 145, 22, 12, 13, 14, 0, 0, 4, 8,  1, 0, 0, 0, (char*)0xBFEA8}, // 13: Space Mama's Crater
-        {335, 180, 13, 15, 13, 14, 0, 0, 5, 1,  0, 0, 0, 0, (char*)0xBFEA8}, // 14: Crystal Palace
-        {312, 228, 14, 23, 15, 16, 0, 0, 5, 3,  5, 0, 0, 0, (char*)0xBFEA8}, // 15: Eat at Joe's
-        {360, 220, 17, 16, 15, 16, 0, 0, 5, 9,  2, 0, 0, 0, (char*)0xBFEA8}, // 16: Mr Skops' Stalactites
-        {357, 80,  17, 16, 17, 17, 0, 0, 6, 1,  2, 0, 0, 0, (char*)0xBFEA8}, // 17: Mr Dark's Dare
-        {10,  212, 18, 0,  18, 18, 0, 0, 7, 20, 5, 0, 0, 0, (char*)0xBFEA8}, // 18: Save Game (Jungle)
-        {182, 266, 4,  19, 19, 19, 0, 0, 7, 20, 3, 0, 0, 0, (char*)0xBFEA8}, // 19: Save Game (Music 1)
-        {145, 97,  20, 6,  20, 20, 0, 0, 7, 20, 0, 0, 0, 0, (char*)0xBFEA8}, // 20: Save Game (Music 2)
-        {190, 45,  21, 9,  21, 21, 0, 0, 7, 20, 2, 0, 0, 0, (char*)0xBFEA8}, // 21: Save Game (Mountain)
-        {276, 115, 22, 13, 22, 22, 0, 0, 7, 20, 1, 0, 0, 0, (char*)0xBFEA8}, // 22: Save Game (Picture)
-        {306, 267, 15, 23, 23, 23, 0, 0, 7, 20, 1, 0, 0, 0, (char*)0xBFEA8}, // 23: Save Game (Cave)
+        {29,  264, 18, 0,  0,  1,  1, 0, 1, 1,  2, 0, 0, 0, NULL}, // 0: Pink Plant Woods
+        {100, 254, 2,  1,  0,  4,  0, 0, 1, 5,  0, 0, 0, 0, NULL}, // 1: Anguish Lagoon
+        {90,  212, 2,  1,  3,  2,  0, 0, 1, 9,  2, 0, 0, 0, NULL}, // 2: Swamps of Forgetfulness
+        {47,  200, 3,  3,  3,  2,  0, 0, 1, 12, 1, 0, 0, 0, NULL}, // 3: Moskito's Nest
+        {180, 215, 5,  19, 1,  4,  0, 0, 2, 1,  2, 0, 0, 0, NULL}, // 4: Bongo Hills
+        {185, 175, 8,  4,  6,  8,  0, 0, 2, 7,  0, 0, 0, 0, NULL}, // 5: Allegro Presto
+        {135, 160, 20, 6,  7,  5,  0, 0, 2, 12, 2, 0, 0, 0, NULL}, // 6: Gong Heights
+        {91,  143, 7,  7,  7,  6,  0, 0, 2, 14, 3, 0, 0, 0, NULL}, // 7: Mr Sax's Hullaballoo
+        {212, 133, 9,  5,  5,  8,  0, 0, 3, 1,  1, 0, 0, 0, NULL}, // 8: Twilight Gulch
+        {209, 92,  21, 8,  9,  10, 0, 0, 3, 3,  0, 0, 0, 0, NULL}, // 9: The Hard Rocks
+        {257, 80,  10, 11,  9, 10, 0, 0, 3, 6,  1, 0, 0, 0, NULL}, // 10: Mr Stone's Peaks
+        {234, 235, 10, 11, 11, 12, 0, 0, 4, 1,  1, 0, 0, 0, NULL}, // 11: Eraser Plains
+        {278, 190, 13, 11, 11, 12, 0, 0, 4, 5,  5, 0, 0, 0, NULL}, // 12: Pencil Pentathlon
+        {290, 145, 22, 12, 13, 14, 0, 0, 4, 8,  1, 0, 0, 0, NULL}, // 13: Space Mama's Crater
+        {335, 180, 13, 15, 13, 14, 0, 0, 5, 1,  0, 0, 0, 0, NULL}, // 14: Crystal Palace
+        {312, 228, 14, 23, 15, 16, 0, 0, 5, 3,  5, 0, 0, 0, NULL}, // 15: Eat at Joe's
+        {360, 220, 17, 16, 15, 16, 0, 0, 5, 9,  2, 0, 0, 0, NULL}, // 16: Mr Skops' Stalactites
+        {357, 80,  17, 16, 17, 17, 0, 0, 6, 1,  2, 0, 0, 0, NULL}, // 17: Mr Dark's Dare
+        {10,  212, 18, 0,  18, 18, 0, 0, 7, 20, 5, 0, 0, 0, NULL}, // 18: Save Game (Jungle)
+        {182, 266, 4,  19, 19, 19, 0, 0, 7, 20, 3, 0, 0, 0, NULL}, // 19: Save Game (Music 1)
+        {145, 97,  20, 6,  20, 20, 0, 0, 7, 20, 0, 0, 0, 0, NULL}, // 20: Save Game (Music 2)
+        {190, 45,  21, 9,  21, 21, 0, 0, 7, 20, 2, 0, 0, 0, NULL}, // 21: Save Game (Mountain)
+        {276, 115, 22, 13, 22, 22, 0, 0, 7, 20, 1, 0, 0, 0, NULL}, // 22: Save Game (Picture)
+        {306, 267, 15, 23, 23, 23, 0, 0, 7, 20, 1, 0, 0, 0, NULL}, // 23: Save Game (Cave)
 });
 
 //94F3C
