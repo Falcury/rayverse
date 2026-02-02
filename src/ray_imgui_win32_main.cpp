@@ -275,10 +275,6 @@ extern "C" void win32_prepare_frame(app_state_t* app_state) {
 
     ImGui::DockSpaceOverViewport();
 
-    // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-    //if (imgui_show_demo_window)
-    //    ImGui::ShowDemoWindow(&imgui_show_demo_window);
-
     if (imgui_show_game_window) {
         show_game_window(&imgui_show_game_window);
     }

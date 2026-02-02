@@ -15,7 +15,6 @@ extern "C" {
 // ================================
 
 #if WITH_IMGUI
-extern bool imgui_show_demo_window INIT(= true);
 extern bool imgui_show_game_window INIT(= true);
 extern bool imgui_show_rendering_info_window INIT(= true);
 extern bool imgui_show_sounds_window INIT(= true);

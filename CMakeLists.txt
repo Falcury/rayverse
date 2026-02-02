@@ -32,7 +32,6 @@ if (WITH_IMGUI AND WIN32)
             src/ray_imgui_win32_main.cpp
             src/ray_imgui.cpp
             src/imgui/imgui.cpp
-            src/imgui/imgui_demo.cpp
             src/imgui/imgui_draw.cpp
             src/imgui/imgui_tables.cpp
             src/imgui/imgui_widgets.cpp
