@@ -284,7 +284,7 @@ void win32_init_game(void) {
     global_app_state.running = true;
 }
 
-#ifndef WITH_IMGUI
+#if !WITH_IMGUI
 int main(int argc, char** argv) {
 	app_state_t* app_state = &global_app_state;
 
@@ -295,7 +295,7 @@ int main(int argc, char** argv) {
 	memset(&window_class, 0, sizeof(window_class));
 
 	window_class.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-	window_class.lpfnWndProc = main_window_callback;
+	window_class.lpfnWndProc = win32_main_window_callback;
 	window_class.hInstance = app_state->win32.instance;
 	window_class.lpszClassName = "Rayverse";
 	window_class.hbrBackground = NULL;

@@ -1,53 +1,5 @@
-#ifdef _WIN32
-// Headers specific to Windows
-#include <malloc.h>
-#include <windows.h>
-#include <mmsystem.h>
-#include <dsound.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#else
-// Headers specific to Linux / macOS
-#include <SDL.h>
-#include <SDL_syswm.h>
-#ifdef __APPLE__
-#define GL_SILENCE_DEPRECATION // silence OpenGL deprecation warning on macOS
-#include <OpenGL/gl3.h>
-#else
-#include <GL/glew.h>
-#endif
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <math.h>
-#include <time.h>
-
-
-#ifdef _MSC_VER
-#if _MSC_VER < 1900
-#define snprintf _snprintf
-#define for if(0); else for // prevent error C2374: multiple initialization in for loops
-#endif
-#define strncasecmp _strnicmp
-#define strcasecmp _stricmp
-#endif
-
-#define STB_VORBIS_HEADER_ONLY
-#include "stb_vorbis.c"
-
-#include "common.h"
-
-#include "config.h"
-
-#define FIX_BLACK_BAR_ON_THE_LEFT // Remove the 4-pixel-wide black bar on the left of the screen.
-
-#include "types.h"
-#include "proto.h"
-
-#define DATA_IMPLEMENTATION
-#include "data.c"
+#define DATA_IMPLEMENTATION // for data.c --> global variables will be defined in this translation unit
+#include "rayverse.h"
 
 #include "intrinsics.c"
 #include "mathutil.c"

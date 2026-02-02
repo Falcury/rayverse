@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 project(rayverse)
 
 set(CMAKE_C_STANDARD 11)
@@ -19,7 +19,8 @@ add_executable(rayverse
 if (NOT DEFINED WITH_IMGUI)
     set(WITH_IMGUI 1)
 endif()
-if (WITH_IMGUI)
+#TODO: make ImGui layout work with platforms other than Windows
+if (WITH_IMGUI AND WIN32)
     target_compile_definitions(rayverse PRIVATE
             WITH_IMGUI=1
     )
@@ -28,7 +29,8 @@ if (WITH_IMGUI)
             src/imgui/backends
     )
     target_sources(rayverse PRIVATE
-            src/rayverse_imgui.cpp
+            src/ray_imgui_win32_main.cpp
+            src/ray_imgui.cpp
             src/imgui/imgui.cpp
             src/imgui/imgui_demo.cpp
             src/imgui/imgui_draw.cpp

@@ -131,7 +131,7 @@ void load_world(mem_t* mem_world, mem_t* mem_sprite, const char* filename) {
             u8** eta_mem = (u8**)block_malloc(mem_world, num_eta_groups * sizeof(eta_t*) + sizeof(u8**));
             *eta_mem = eta_counts;
             loaded_eta[i] = (eta_t**)&eta_mem[1];
-#elif 
+#else
             loaded_eta[i] = (eta_t**)block_malloc(mem_world, num_eta_groups * sizeof(eta_t*));
 #endif
             for (s32 j = 0; j < num_eta_groups; ++j) {
@@ -560,7 +560,7 @@ void LOAD_ALL_FIX(void) {
             u8** eta_mem = (u8**)block_malloc(main_mem_fix, num_eta_groups * sizeof(eta_t*) + sizeof(u8**));
             *eta_mem = eta_counts;
             loaded_eta[i] = (eta_t**)&eta_mem[1];
-#elif 
+#else
             loaded_eta[i] = (eta_t**)block_malloc(main_mem_fix, num_eta_groups * sizeof(eta_t*));
 #endif
             for (s32 j = 0; j < num_eta_groups; ++j) {
