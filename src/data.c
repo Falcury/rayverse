@@ -22,6 +22,8 @@ extern bool imgui_show_sounds_window INIT(= true);
 extern bool imgui_show_game_info_window INIT(= true);
 extern bool imgui_show_level_window INIT(= true);
 extern bool imgui_show_object_properties_window INIT(= true);
+extern bool imgui_filter_alive_objects INIT(= false);
+extern bool imgui_filter_active_objects INIT(= false);
 extern s32 imgui_selected_object_id INIT(= -2);
 
 extern char* imgui_obj_type_names[] INIT(=

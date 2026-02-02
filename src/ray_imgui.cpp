@@ -185,6 +185,14 @@ void show_objects_table(bool is_always, float height)
                 (is_always && !(flags[level.objects[i].type] & flags0_1_always)))
                 continue;
 
+            if (imgui_filter_active_objects && !obj->is_active) {
+                continue;
+            }
+
+            if (imgui_filter_alive_objects && !obj->flags.alive) {
+                continue;
+            }
+
             ImGui::TableNextRow();
             ImGui::PushID(i);
 
@@ -260,6 +268,15 @@ void show_level_window(bool* p_open)
                 if (ImGui::Button("Select Rayman"))
                     imgui_selected_object_id = -1;
                 ImGui::EndDisabled();
+
+                ImGui::SameLine();
+                ImGui::TextUnformatted("Filter:");
+
+                ImGui::SameLine();
+                ImGui::Checkbox("Alive", &imgui_filter_alive_objects);
+
+                ImGui::SameLine();
+                ImGui::Checkbox("Active", &imgui_filter_active_objects);
 
                 if (level.objects)
                 {
