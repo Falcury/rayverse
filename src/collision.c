@@ -2978,8 +2978,26 @@ void doShipCommand(obj_t* obj) {
 }
 
 //31400
-void DO_PROP_COMMAND(obj_t* obj) {
-    print_once("Not implemented: DO_PROP_COMMAND"); //stub
+void DO_DROP_COMMAND(obj_t* obj) {
+    // NOTE(Falcury): PS1 and PC versions seem functionally identical.
+    if (obj->speed_y > 2)
+        set_main_and_sub_etat(obj, 2, 2);
+    else if (obj->speed_y > 1)
+        set_main_and_sub_etat(obj, 2, 1);
+
+    if (Abs(obj->speed_x) > 1 && !(obj->main_etat == 2 && obj->sub_etat == 0)) {
+        if (!obj->flags.flip_x)
+            obj->speed_x++;
+        else
+            obj->speed_x--;
+    }
+
+    if (obj->main_etat == 2 && obj->sub_etat == 3) {
+        if (EOA(obj)) {
+            obj->is_active = 0;
+            obj->flags.alive = 0;
+        }
+    }
 }
 
 //314A4
