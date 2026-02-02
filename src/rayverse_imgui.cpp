@@ -237,6 +237,35 @@ void rayverse_imgui_init_opengl(app_state_t* app_state) {
 
 }
 
+void show_game_window(bool* p_open)
+{
+    const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(640, 400), ImGuiCond_FirstUseEver);
+
+    if (!ImGui::Begin("Game", p_open, ImGuiWindowFlags_NoScrollbar))
+    {
+        ImGui::End();
+        return;
+    }
+
+    float desired_aspect_ratio = 320.0f / 200.0f;
+    const ImVec2 size_avail = ImGui::GetContentRegionAvail();
+    float width = size_avail.x;
+    float height = size_avail.y;
+    float aspect_ratio = width / height;
+    if (aspect_ratio != desired_aspect_ratio) {
+        if (aspect_ratio > desired_aspect_ratio) {
+            width = height * desired_aspect_ratio;
+        } else {
+            height = width / desired_aspect_ratio;
+        }
+    }
+    ImGui::Image((ImTextureID)(intptr_t)global_app_state.opengl.screen_texture, ImVec2(width, height));
+
+    ImGui::End();
+}
+
 void show_rendering_info_window(bool* p_open)
 {
     if (!ImGui::Begin("Rendering Info", p_open))
@@ -353,10 +382,18 @@ void show_game_info_window(bool* p_open)
     }
 
     ImGui::SameLine();
+    ImGui::BeginDisabled(!dans_la_map_monde);
     if (ImGui::Button("All cages"))
     {
-        // TODO: Implement
+        for (s32 i = 0; i < COUNT(t_world_info); ++i) {
+            world_info_t* wi = t_world_info + i;
+            wi->nb_cages = 6;
+            wi->state = 1;
+            DISPLAY_PTS_WAY();
+            set_sub_etat(mapobj + i, 46 + wi->nb_cages);
+        }
     }
+    ImGui::EndDisabled();
 
     ImGui::Text("chemin_percent: %d", chemin_percent);
 
@@ -934,24 +971,7 @@ extern "C" void win32_prepare_frame(app_state_t* app_state) {
     //    ImGui::ShowDemoWindow(&imgui_show_demo_window);
 
     if (imgui_show_game_window) {
-        const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 650, main_viewport->WorkPos.y + 20), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(640, 400), ImGuiCond_FirstUseEver);
-
-        ImGui::Begin("Game", NULL, ImGuiWindowFlags_NoScrollbar);
-        float desired_aspect_ratio = 320.0f / 200.0f;
-        float width = ImGui::GetWindowWidth();
-        float height = ImGui::GetWindowHeight();
-        float aspect_ratio = width / height;
-        if (aspect_ratio != desired_aspect_ratio) {
-            if (aspect_ratio > desired_aspect_ratio) {
-                width = height * desired_aspect_ratio;
-            } else {
-                height = width / desired_aspect_ratio;
-            }
-        }
-        ImGui::Image((ImTextureID)(intptr_t)app_state->opengl.screen_texture, ImVec2(width, height));
-        ImGui::End();
+        show_game_window(&imgui_show_game_window);
     }
 
     if (imgui_show_rendering_info_window)
@@ -1060,7 +1080,7 @@ int main(int argc, char** argv) {
     wglMakeCurrent(g_MainWindow.hDC, g_hRC);
 
     // Show the window
-    ::ShowWindow(app_state->win32.window, SW_SHOWDEFAULT);
+    ::ShowWindow(app_state->win32.window, SW_MAXIMIZE);
     ::UpdateWindow(app_state->win32.window);
 
     // Setup Dear ImGui context
