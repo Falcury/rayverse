@@ -891,7 +891,7 @@ void INIT_FND(void);
 void calc_off_fnd(void);
 void check_key_table(void);
 void LOAD_CONFIG(void);
-void NewFrequency(u8 a1);
+void NewFrequency(u8 new_frequency);
 void InitClipping(void);
 bool IsBackgroundOn(void);
 void init_key2txt(void);

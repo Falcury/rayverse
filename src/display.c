@@ -617,6 +617,7 @@ void FIRST_INIT(void) {
         VGA_FREQ = Frequence;
     } else {
         VGA_FREQ = 60;
+        Frequence = 60; // added - where does this get set initially? (it starts out as 0)
     }
     InitModeNormalWithFrequency(VGA_FREQ);
     use_sync = 1;

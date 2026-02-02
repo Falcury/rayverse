@@ -37,6 +37,11 @@ void show_rendering_info_window(bool* p_open)
         return;
     }
 
+    s32 frequency = VGA_FREQ;
+    if (ImGui::SliderInt("Frequency", &frequency, 0, 100)) {
+        NewFrequency(frequency);
+    }
+
     // TODO: Add fields
 
     ImGui::End();

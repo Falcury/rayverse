@@ -201,7 +201,11 @@ void LOAD_CONFIG(void) {
 }
 
 //49638
-void NewFrequency(u8 a1) {
+void NewFrequency(u8 new_frequency) {
+    use_sync = 1;
+    display_mode = 0;
+    Frequence = new_frequency;
+    set_vga_frequency(new_frequency);
     print_once("Not implemented: NewFrequency"); //stub
 }
 
