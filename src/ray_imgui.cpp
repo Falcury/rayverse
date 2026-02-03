@@ -1,10 +1,79 @@
 #include "ray_imgui.h"
+#include "imgui_internal.h"
+
+
+void build_docking_layout()
+{
+    /* Build a default docking layout. (NOTE: If already present in imgui.ini, the ini setting will overrule this.)
+
+    |  Col 1           | Col 2       | Col 3     | Col 4              |
+
+    |------------------+-------------+-----------+--------------------|
+    | Game             | Game Info   | Level     | Object Properties  |
+    |                  |             |           |                    |
+    |------------------+             |           |                    |
+    | Rendering Info   |             |           |                    |
+    |------------------+             |           |                    |
+    | Sounds           |             |           |                    |
+    |------------------+-------------+-----------+--------------------| */
+
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGuiID dockspace_id = ImGui::GetID("MainDockspace");
+
+    if (ImGui::DockBuilderGetNode(dockspace_id)) {
+        return; // In this case, probably we will have loaded the dockspace alreaddy from imgui.ini (--> use that instead)
+    }
+
+    ImGui::DockBuilderRemoveNode(dockspace_id);
+    ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_PassthruCentralNode);
+    ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
+
+    // Column splits (left → right)
+    ImGuiID dock_col1;
+    ImGuiID dock_rest;
+
+    // Left column (Game / Rendering / Sounds)
+    ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.30f, &dock_col1, &dock_rest);
+
+    ImGuiID dock_col2;
+    ImGuiID dock_rest2;
+
+    // Game Info column
+    ImGui::DockBuilderSplitNode(dock_rest, ImGuiDir_Left, 0.33f, &dock_col2, &dock_rest2);
+
+    ImGuiID dock_col3;
+    ImGuiID dock_col4;
+
+    // Level / Object Properties columns
+    ImGui::DockBuilderSplitNode(dock_rest2, ImGuiDir_Left, 0.5f, &dock_col3, &dock_col4);
+
+    // Split left column vertically
+    ImGuiID dock_game;
+    ImGuiID dock_left_bottom;
+
+    ImGui::DockBuilderSplitNode(dock_col1, ImGuiDir_Up, 0.45f, &dock_game, &dock_left_bottom);
+
+    ImGuiID dock_rendering;
+    ImGuiID dock_sounds;
+
+    ImGui::DockBuilderSplitNode(dock_left_bottom, ImGuiDir_Up, 0.33f, &dock_rendering, &dock_sounds);
+
+    // Dock windows
+    ImGui::DockBuilderDockWindow("Game", dock_game);
+    ImGui::DockBuilderDockWindow("Rendering Info", dock_rendering);
+    ImGui::DockBuilderDockWindow("Sounds", dock_sounds);
+
+    ImGui::DockBuilderDockWindow("Game Info", dock_col2);
+    ImGui::DockBuilderDockWindow("Level", dock_col3);
+    ImGui::DockBuilderDockWindow("Object Properties", dock_col4);
+
+    ImGui::DockBuilderFinish(dockspace_id);
+}
+
 
 void show_game_window(bool* p_open)
 {
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(640, 400), ImGuiCond_FirstUseEver);
 
     if (!ImGui::Begin("Game", p_open, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoNavInputs))
     {

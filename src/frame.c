@@ -118,8 +118,8 @@ void set_vga_frequency(u8 freq) {
         case 50:
         default: break; //stub
     }
-    VGA_FREQ = freq;
     if (freq != 0) {
+        VGA_FREQ = freq;
         global_app_state.target_game_hz = freq; // added
         global_app_state.target_seconds_per_frame = 1.0f / (float)global_app_state.target_game_hz;
     }

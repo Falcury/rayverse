@@ -273,26 +273,28 @@ extern "C" void win32_prepare_frame(app_state_t* app_state) {
     // Output sound
     win32_produce_sound_for_frame(app_state, &app_state->win32.sound_output, &app_state->game.sound_buffer, app_state->flip_clock);
 
-    ImGui::DockSpaceOverViewport();
+    // Build the ImGui layout
+    build_docking_layout();
+    ImGui::DockSpaceOverViewport(ImGui::GetID("MainDockspace"), ImGui::GetMainViewport());
 
     if (imgui_show_game_window) {
-        show_game_window(&imgui_show_game_window);
+        show_game_window(NULL);
     }
 
     if (imgui_show_rendering_info_window)
-        show_rendering_info_window(&imgui_show_rendering_info_window);
+        show_rendering_info_window(NULL);
     
     if (imgui_show_sounds_window)
-        show_sounds_window(&imgui_show_sounds_window);
+        show_sounds_window(NULL);
 
     if (imgui_show_game_info_window)
-        show_game_info_window(&imgui_show_game_info_window);
+        show_game_info_window(NULL);
 
     if (imgui_show_level_window)
-        show_level_window(&imgui_show_level_window);
+        show_level_window(NULL);
 
     if (imgui_show_object_properties_window)
-        show_object_properties_window(&imgui_show_object_properties_window);
+        show_object_properties_window(NULL);
 
     // Rendering
     ImGui::Render();
