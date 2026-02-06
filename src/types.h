@@ -383,8 +383,8 @@ typedef struct obj_t {
 	u8 change_anim_mode; // etat updated (?) // 73
 	s8 offset_hy;
 	u8 follow_sprite; // the sprite index which uses the obj collision
-	s8 hit_points;
-	s8 init_hit_points;
+	u8 hit_points;
+	u8 init_hit_points;
 	u8 init_flag; // 78
 	u8 hit_sprite; // 79
 	u8 detect_zone; // 7A

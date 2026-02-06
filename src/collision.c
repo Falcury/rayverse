@@ -1641,17 +1641,21 @@ void DO_COLLISIONS(void) {
 
 //2ED74
 void DoRaymanCollisionDefault(obj_t* obj) {
+    // NOTE(Falcury): PS1 implementation is located in PS1_DoRaymanCollision(). Seems to be functionally identical.
     if ((flags[obj->type] & flags2_0x10_do_not_check_ray_collision) && get_eta(obj)->flags & 0x20) {
         if (!(ray.main_etat == 3 && ray.sub_etat == 32)) {
-            s16 command_par3 = ray.iframes_timer;
-            if (command_par3 >= 60 || command_par3 == -1) {
-                RAY_HIT(0, obj);
-                ray.iframes_timer = command_par3;
-            } else {
-                RAY_HIT(1, obj);
+            s16 ray_iframes = ray.iframes_timer;
+            if (ray_iframes >= 60) {
+                RAY_HIT(false, obj);
+                ray.iframes_timer = ray_iframes;
+            } else if (ray_iframes == -1) {
+                RAY_HIT(true, obj);
                 if (!(ray_mode == MODE_3_MORT_DE_RAYMAN || ray_mode == MODE_4_MORT_DE_RAYMAN_ON_MS)) {
                     ray.iframes_timer = 60;
                 }
+            } else {
+                RAY_HIT(false, obj);
+                ray.iframes_timer = ray_iframes;
             }
         }
     }
@@ -2619,8 +2623,93 @@ void doHerseCommand(obj_t* obj) {
 }
 
 //30908
-void doBlackRaymanCommand(obj_t* obj) {
-    print_once("Not implemented: doBlackRaymanCommand"); //stub
+void doBlackRaymanCommand(obj_t* br_obj) {
+    obj_t *fist_obj;
+    ray_stack_t *br_stack;
+
+    if (br_obj->main_etat == 0 && br_obj->sub_etat == 54) {
+        if (EOA(br_obj)) {
+            br_obj->is_active = 0;
+            br_obj->flags.alive = 0;
+        } else if (br_obj->anim_frame == 0) {
+            DO_NOVA(br_obj);
+        }
+        DO_ANIM(br_obj);
+        return;
+    }
+
+    if (
+        (ray.main_etat == 3 && ray.sub_etat == 23) ||
+        (ray_mode == MODE_3_MORT_DE_RAYMAN && !(ray.main_etat == 2 && ray.sub_etat == 31))
+    ) {
+        if (firstFloorBelow(br_obj) - br_obj->offset_by - br_obj->y <= 32) {
+            br_obj->y = firstFloorBelow(br_obj) - br_obj->offset_by;
+            set_main_and_sub_etat(br_obj, 0, 54);
+            br_obj->anim_index = 107;
+            br_obj->anim_frame = 0;
+        } else {
+            br_obj->is_active = 0;
+            br_obj->flags.alive = 0;
+        }
+        br_obj->speed_x = 0;
+        br_obj->speed_y = 0;
+        DO_NOVA(br_obj);
+        fist_obj = &level.objects[black_fist_obj_id];
+        fist_obj->is_active = 0;
+        fist_obj->flags.alive = 0;
+        return;
+    }
+
+    if (ray_stack_is_full) {
+        if (black_pos_in_stack == ray_pos_in_stack - 1) {
+            fist_obj = &level.objects[black_fist_obj_id];
+            br_obj->flags.alive = 0;
+            fist_obj->flags.alive = 0;
+            DO_NOVA(br_obj);
+            if (fist_obj->is_active) {
+                DO_NOVA(fist_obj);
+            }
+        } else {
+            br_stack = &rayStack[black_pos_in_stack];
+            br_obj->x = br_stack->x_pos;
+            br_obj->y = br_stack->y_pos;
+            br_obj->main_etat = br_stack->main_etat;
+            br_obj->sub_etat = br_stack->sub_etat;
+            br_obj->anim_index = br_stack->anim_index;
+            br_obj->anim_frame = br_stack->anim_frame;
+            br_obj->flags.flip_x = br_stack->flip_x;
+            br_obj->scale = br_stack->scale;
+            br_obj->speed_x = 0;
+            br_obj->speed_y = 0;
+            if (br_obj->display_prio == 0) {
+                DO_NOVA(br_obj);
+            }
+
+            br_obj->display_prio = 4;
+            fist_obj = &level.objects[black_fist_obj_id];
+            if (br_stack->poing_is_active) {
+                fist_obj->display_prio = 4;
+                fist_obj->flags.alive = 1;
+                fist_obj->x = br_stack->poing_x_pos;
+                fist_obj->y = br_stack->poing_y_pos;
+                fist_obj->anim_index = br_stack->poing_anim_index;
+                fist_obj->anim_frame = br_stack->poing_anim_frame;
+                fist_obj->flags.flip_x = br_stack->poing_flip_x;
+                fist_obj->speed_x = 0;
+                fist_obj->speed_y = 0;
+            } else {
+                fist_obj->flags.alive = 0;
+            }
+
+            black_pos_in_stack++;
+            if (black_pos_in_stack > LEN(rayStack) - 1) {
+                black_pos_in_stack = 0;
+            }
+        }
+    } else {
+        br_obj->display_prio = 0;
+        level.objects[black_fist_obj_id].flags.alive = 0;
+    }
 }
 
 //30BE4

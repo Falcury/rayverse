@@ -334,7 +334,7 @@ void DISPLAY_FIXE(s32 time) {
                 display_sprite_NoClip(obj, 56, 244, draw_y + 5, 1);
                 display_sprite_NoClip(obj, 28 + status_bar.lives_digits[0], 55, draw_y + 5, 1);
                 display_sprite_NoClip(obj, 28 + status_bar.lives_digits[1], 70, draw_y + 5, 1);
-                if (ray.hit_points != -1 && !fin_du_jeu) {
+                if (ray.hit_points != (u8)-1 && !fin_du_jeu) {
                     display_sprite_NoClip(obj, 17 + status_bar.hp_sprites[1], 35, draw_y + 27, 1);
                     if (status_bar.max_hitp == 4) {
                         display_sprite_NoClip(obj, 20 + status_bar.hp_sprites[0], 59, draw_y + 27, 1);

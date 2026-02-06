@@ -1341,10 +1341,10 @@ void OBJ_IN_THE_AIR(obj_t* obj) {
                 DO_SAXO_ATTER(obj);
                 break;
             case TYPE_MAMA_PIRATE:
-                DO_PMA_ATTER(obj); //TODO
+                DO_PMA_ATTER(obj);
                 break;
             case TYPE_COUTEAU:
-                DO_COU_ATTER(obj); //TODO
+                DO_COU_ATTER(obj);
                 break;
             case TYPE_BOUT_TOTEM:
                 DO_TOTBT_REBOND(obj);
@@ -1510,7 +1510,7 @@ void DO_ONE_OBJECT(obj_t* obj) {
     }
     ObjectsFonctions[ot].command(obj);
     if (obj->main_etat == 2) {
-        OBJ_IN_THE_AIR(obj); //TODO
+        OBJ_IN_THE_AIR(obj);
     }
     if (obj->flags.follow_enabled) {
         SET_RAY_DIST(obj);
@@ -1645,7 +1645,7 @@ void DO_OBJECTS(void) {
             switchOff(obj);
         }
         if (ot != TYPE_161_WIZ && obj->is_active) {
-            DO_ONE_OBJECT(obj); //TODO
+            DO_ONE_OBJECT(obj);
             if (!(flags[ot] & flags0_0x80_boss) && obj->hit_points == 0 && (get_eta(obj)->flags & 8)) {
                 ++obj->hit_points;
             }
@@ -2169,12 +2169,12 @@ void INIT_RAY(u8 new_lvl) {
     if (save1.rayevts_reverse && save1.save_obj_id != -1) {
         RayEvts.reverse = 0;
         if (num_world == world_6_cake && num_level == 3) {
-            RAY_REVERSE_COMMANDS(); //TODO
+            RAY_REVERSE_COMMANDS();
         }
     } else {
         //TODO: figure out what is happening here (seems to be wrong right now)
 //        RayEvts.reverse = 1;
-//        RAY_REVERSE_COMMANDS(); //TODO
+//        RAY_REVERSE_COMMANDS();
     }
 
     if (level.objects && level.nb_objects > 0) {
@@ -2493,7 +2493,7 @@ void INIT_MOTEUR(u8 new_lvl) {
     if (RayEvts.firefly) {
         INIT_LUCIOLE(); //TODO
     }
-    DO_OBJECTS(); //TODO
+    DO_OBJECTS();
     if (mp.width <= 20 && (SizeScreen == 0 || GameModeVideo == MODE_X)) {
         scroll_start_x = scroll_end_x;
         xmap = scroll_end_x;
@@ -2664,7 +2664,7 @@ void DONE_MOTEUR_LEVEL(void) {
 //5A9D8
 void INIT_MOTEUR_DEAD(void) {
     if (dead_time == 0) {
-        restore_gendoor_link(); //TODO
+        restore_gendoor_link();
         INIT_MOTEUR(false);
         correct_gendoor_link(0);
     }
@@ -2878,7 +2878,32 @@ void DO_MOTEUR2(void) {
 
 //5B0A4
 void RAY_REVERSE_COMMANDS(void) {
-    print_once("Not implemented: RAY_REVERSE_COMMANDS"); //stub
+    // NOTE(Falcury): the PS1 and PC versions seem functionally identical.
+    if (RayEvts.reverse == 0) {
+        RayEvts.reverse = 1;
+        if (star_ray_der != NULL) {
+            star_ray_der->flags.alive = 1;
+            star_ray_der->is_active = 1;
+            star_ray_der->display_prio = 3;
+        }
+        if (star_ray_dev != NULL) {
+            star_ray_dev->flags.alive = 1;
+            star_ray_dev->is_active = 1;
+            star_ray_dev->display_prio = 1;
+        }
+    } else {
+        RayEvts.reverse = 0;
+        if (star_ray_der != NULL) {
+            star_ray_der->is_active = 0;
+            star_ray_der->flags.alive = 0;
+            star_ray_der->display_prio = 3;
+        }
+        if (star_ray_dev != NULL) {
+            star_ray_dev->is_active = 0;
+            star_ray_der->flags.alive = 0;
+            star_ray_dev->display_prio = 3;
+        }
+    }
 }
 
 //5B154
