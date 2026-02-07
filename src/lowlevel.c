@@ -17,22 +17,22 @@ void display_anypicture(void) {
 
 //145F1
 void select_display_buffer(u8* buffer) {
-    print_once("Not implemented: select_display_buffer");
+    print_once_dos("Not implemented: select_display_buffer");
 }
 
 //145FC
 void InitFirstModeVideo(void) {
-    print_once("Not implemented: InitFirstModeVideo");
+    print_once_dos("Not implemented: InitFirstModeVideo");
 }
 
 //1465F
 void InitModeNormal(void) {
-    print_once("Not implemented: InitModeNormal");
+    print_once_dos("Not implemented: InitModeNormal");
 }
 
 //146B8
 void InitModeX(void) {
-    print_once("Not implemented: InitModeX");
+    print_once_dos("Not implemented: InitModeX");
 }
 
 //1471D

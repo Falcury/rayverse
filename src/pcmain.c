@@ -239,6 +239,10 @@ void InitMemoryVariable(void) {
 //18228
 void AllocVariablesAutorisee(void) {
     MessageProgram = 0;
+    rvb_special = (rgb_palette_t*)calloc(16, sizeof(rgb_palette_t));
+    if (!rvb_special) {
+        fatal_error();
+    }
     flocon_tab = (flocon_t*)calloc(512, sizeof(flocon_t));
     if (!flocon_tab) {
         fatal_error();

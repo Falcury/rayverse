@@ -429,27 +429,168 @@ void DISPLAY_FOND_MENU(void) {
     }
 }
 
+// NOTE: ChatGPT (GPT-5.2) was used to clean up InitPaletteSpecialPC() and DoFadePaletteSpecialPC()
+
+// Helpers for InitPaletteSpecialPC
+static inline u8 clamp_u8_255(s32 x) {
+    // NOTE: In the original PC version the palettes are 6-bit (0..63).
+    // However, in Rayverse we're instead working with 8-bit palettes (0..255). -> adjust the clamp accordingly
+    if (x < 0)  return 0;
+    if (x > 255) return 255;
+    return (u8)x;
+}
+
+static inline u8 scale_div_clamp(u8 v, s32 mul, s32 div) {
+    // assembly does signed division, but inputs are u8 so this is equivalent
+    return clamp_u8_255((mul * v) / div);
+}
+
 //3CF70
 void InitPaletteSpecialPC(void) {
-    print_once("Not implemented: InitPaletteSpecialPC");
     CompteurEclair = 0;
-    if ((num_world == 1 && num_level == 9) || (num_world == 2 && num_level == 4) || (num_world == 4 && num_level == 9)) {
-        printf("InitPaletteSpecialPC(): not implemented\n");
-    } else if (num_world == 5 && num_level == 4) {
-        printf("InitPaletteSpecialPC(): not implemented\n");
-    }
+    bool lightning_level = (num_world == 1 && num_level == 9) || (num_world == 2 && num_level == 4) || (num_world == 4 && num_level == 9);
+    if (lightning_level) {
+        for (s32 i = 0; i < 256; ++i) {
+            rgb_t src = rvb[0].colors[i];
 
-    //stub
+            // pal15 = original (raw copy)
+            rvb_special[15].colors[i] = src;
+
+            // pal0: r,g = (4*v)/8 = v/2 ; b = (4*v)/5
+            rvb_special[0].colors[i].r  = scale_div_clamp(src.r, 4, 8);
+            rvb_special[0].colors[i].g  = scale_div_clamp(src.g, 4, 8);
+            rvb_special[0].colors[i].b  = scale_div_clamp(src.b, 4, 5);
+
+            // pal5: (4*v)/3
+            rvb_special[5].colors[i].r  = scale_div_clamp(src.r, 4, 3);
+            rvb_special[5].colors[i].g  = scale_div_clamp(src.g, 4, 3);
+            rvb_special[5].colors[i].b  = scale_div_clamp(src.b, 4, 3);
+
+            // pal7: r,g = (4*v)/6 ; b = (4*v)/4 = v
+            rvb_special[7].colors[i].r  = scale_div_clamp(src.r, 4, 6);
+            rvb_special[7].colors[i].g  = scale_div_clamp(src.g, 4, 6);
+            rvb_special[7].colors[i].b  = scale_div_clamp(src.b, 4, 4);
+
+            // pal10: (8*v)/4 = 2*v
+            rvb_special[10].colors[i].r = scale_div_clamp(src.r, 8, 4);
+            rvb_special[10].colors[i].g = scale_div_clamp(src.g, 8, 4);
+            rvb_special[10].colors[i].b = scale_div_clamp(src.b, 8, 4);
+
+            // pal14: same formula as pal0 in this branch
+            rvb_special[14].colors[i].r = scale_div_clamp(src.r, 4, 8);
+            rvb_special[14].colors[i].g = scale_div_clamp(src.g, 4, 8);
+            rvb_special[14].colors[i].b = scale_div_clamp(src.b, 4, 5);
+
+            rvb[0].colors[i] = rvb_special[0].colors[i];
+        }
+
+        // Fill intermediate palettes
+        DoFadePaletteSpecialPC(0, 5);
+        DoFadePaletteSpecialPC(5, 7);
+        DoFadePaletteSpecialPC(7, 10);
+        DoFadePaletteSpecialPC(10, 14);
+
+        numero_palette_special = 0;
+        ProchainEclair = (s16)(myRand(200) + 1);
+    } else if (num_world == 5 && num_level == 4) {
+        // First loop runs for 255 colors (0..254) -> 0x2FD bytes copied
+        for (int i = 0; i < 255; ++i) {
+            rgb_t src = rvb[0].colors[i];
+
+            rvb_special[15].colors[i] = src;
+
+            // pal0: r=min(r,63), g=min(77*g/100,63), b=min(12*b/100,63)
+            rvb_special[0].colors[i].r = clamp_u8_255((int)src.r);
+            rvb_special[0].colors[i].g = clamp_u8_255((77 * (int)src.g) / 100);
+            rvb_special[0].colors[i].b = clamp_u8_255((12 * (int)src.b) / 100);
+
+            // pal14 initially same as pal0 (asm writes to +0x2A00 block too)
+            rvb_special[14].colors[i] = rvb_special[0].colors[i];
+
+            rvb[0].colors[i] = rvb_special[0].colors[i];
+
+        }
+
+        DoFadePaletteSpecialPC(0, 14);
+
+        // Second pass: modify palette 9 for color indices 128..174 (ecx=0x180..0x20D step 3)
+        for (int i = 128; i <= 174; ++i) {
+            rgb_t src = rvb[0].colors[i];
+
+            rvb_special[9].colors[i].r = clamp_u8_255((84 * (int)src.r) / 100);
+            rvb_special[9].colors[i].g = clamp_u8_255((62 * (int)src.g) / 100);
+            rvb_special[9].colors[i].b = clamp_u8_255((12 * (int)src.b) / 100);
+
+            rvb[0].colors[i] = rvb_special[9].colors[i];
+        }
+
+        DoFadePaletteSpecialPC(0, 9);
+        DoFadePaletteSpecialPC(9, 14);
+    }
 }
 
 //3D54C
-void DoFadePaletteSpecialPC(s16 a1, s16 a2) {
-    print_once("Not implemented: DoFadePaletteSpecialPC"); //stub
+void DoFadePaletteSpecialPC(s16 start, s16 end) {
+    if (start + 1 >= end)
+        return;
+
+    s32 denom = end - start;
+
+    for (s32 p = start + 1; p < end; ++p) {
+        s32 w0 = end - p;     // weight for start
+        s32 w1 = p - start;   // weight for end
+
+        for (s32 i = 0; i < 256; ++i) {
+            rgb_t a = rvb_special[start].colors[i];
+            rgb_t b = rvb_special[end].colors[i];
+
+            rvb_special[p].colors[i].r = clamp_u8_255((a.r * w0 + b.r * w1) / denom);
+            rvb_special[p].colors[i].g = clamp_u8_255((a.g * w0 + b.g * w1) / denom);
+            rvb_special[p].colors[i].b = clamp_u8_255((a.b * w0 + b.b * w1) / denom);
+        }
+    }
 }
 
 //3D704
 void DoPaletteSpecialPC(void) {
-    print_once("Not implemented: DoPaletteSpecialPC"); //stub
+    if (fade & 0x40) {
+        if (num_world == 5 && num_level == 4) {
+            if (horloge[5] != 0) {
+                if (numero_palette_special == 0) {
+                    numero_palette_special = 1;
+                }
+            } else {
+                SetPalette(&rvb_special[numero_palette_special], 0, 255);
+                ++numero_palette_special;
+            }
+            if (numero_palette_special == 15) {
+                numero_palette_special = 0;
+            }
+        } else if ((num_world == 1 && num_level == 9) || (num_world == 2 && num_level == 4) || (num_world == 4 && num_level == 9)) {
+            ++CompteurEclair;
+            if (CompteurEclair >= ProchainEclair || numero_palette_special != 0) {
+                SetPalette(&rvb_special[numero_palette_special], 0, 255);
+                if (numero_palette_special == 0) {
+                    PlaySnd_old(195);
+                    ++numero_palette_special;
+                } else {
+                    if (CompteurEclair % 2 != 0) {
+                        // NOTE: the code below is unreachable (statement is always false); seems to be a minor bug in the original game?
+                        if (numero_palette_special == 0) {
+                            numero_palette_special = 1;
+                        }
+                    } else {
+                        ++numero_palette_special;
+                    }
+                }
+                if (numero_palette_special == 15) {
+                    CompteurEclair = 0;
+                    numero_palette_special = 0;
+                    ProchainEclair = (s16)(myRand(400) + 1);
+                }
+            }
+        }
+    }
 }
 
 //3D8AC
