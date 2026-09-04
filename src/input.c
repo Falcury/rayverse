@@ -274,23 +274,138 @@ void sub_4225C(void) {
 }
 
 //422C8
-void read_record(const char* filename) {
-    print_once("Not implemented: read_record"); //stub
+bool read_record(const char* filename, record_t* rec) {
+    if (!filename || !rec || !temp_mem_buf) {
+        return false;
+    }
+
+    FILE* file = open_data_file(filename, false);
+    if (!file) {
+        printf("FILE NOT FOUND: %s\n", filename);
+        return false;
+    }
+
+    bool loaded = false;
+    if (fseek(file, 0, SEEK_END) == 0) {
+        long file_size = ftell(file);
+        if (file_size >= 2 && file_size <= 0x7fffffffL &&
+            (file_size & 1) == 0 && fseek(file, 0, SEEK_SET) == 0) {
+            u8* data = block_malloc(temp_mem_buf, (u32) file_size);
+            if (fread(data, 1, (size_t) file_size, file) == (size_t) file_size) {
+                rec->current_offset = 0;
+                rec->repeat_length = 0;
+                rec->repeat_index = 0;
+                rec->length = (s32) file_size;
+                rec->data = data;
+                rec->is_finished = 0;
+                loaded = true;
+            }
+        }
+    }
+    fclose(file);
+    return loaded;
 }
 
 //42328
-void load_record(void) {
-    print_once("Not implemented: load_record"); //stub
+bool load_record(record_t* rec) {
+    /*
+     * The PC developer path switches to text mode, asks for a name, appends
+     * ".REC", and defaults to DANY.REC.  The normal menu demos do not use it:
+     * they point directly into DemoRecord.  Keep the default-file path useful
+     * without reproducing a blocking DOS console prompt in the modern port.
+     */
+    return read_record("DANY.REC", rec);
 }
 
 //42408
 void sub_42408(u8 a1) {
-    print_once("Not implemented: sub_42408"); //stub
+    joy_buttonB2 = 0;
+    joy_buttonB1 = 0;
+    joy_buttonA1 = 0;
+
+    if (a1 & 0x01) {
+        joy_buttonA1 = 1;
+    }
+    if (a1 & 0x02) {
+        joy_buttonB1 = 1;
+    }
+
+    /* Both of the original middle bits feed the same logical A2 button. */
+    joy_buttonA2 = (a1 & 0x0c) != 0;
+    joy_rec_left = (a1 & 0x10) != 0;
+    joy_rec_right = (a1 & 0x20) != 0;
+    joy_rec_up = (a1 & 0x40) != 0;
+    joy_rec_down = (a1 & 0x80) != 0;
 }
 
 //42490
 void do_record(record_t* rec) {
-    print_once("Not implemented: do_record"); //stub
+    /* Preserve the physical-button snapshot used by the two extended tests. */
+    bux00 = joy_buttonA1;
+    bux01 = joy_buttonA2;
+    bux10 = joy_buttonB1;
+    bux11 = joy_buttonB2;
+
+    if (!rec || !rec->is_playing) {
+        return;
+    }
+
+    if (rec->current_offset == 0 && fee_obj_id == -1 && ModeDemo == 0) {
+        load_record(rec);
+    }
+
+    /* A stream is a sequence of [input mask, duration] byte pairs. */
+    if (!rec->data || rec->length < 2 || (rec->length & 1) != 0) {
+        rec->repeat_index = rec->repeat_length;
+        rec->is_playing = 0;
+        sub_42408(0);
+        if (ModeDemo == 1) {
+            ModeDemo = 2;
+            new_world = 1;
+            DO_FADE_OUT();
+        }
+        return;
+    }
+
+    if (rec->current_offset == 0) {
+        rec->repeat_index = 0;
+        rec->current_offset = 1;
+        rec->repeat_length = rec->data[1];
+        rec->is_finished = 0;
+        sub_42408(rec->data[0]);
+        return;
+    }
+
+    if (rec->current_offset < 1 || rec->current_offset >= rec->length) {
+        rec->repeat_index = rec->repeat_length;
+        rec->is_playing = 0;
+        sub_42408(0);
+        if (ModeDemo == 1) {
+            ModeDemo = 2;
+            new_world = 1;
+            DO_FADE_OUT();
+        }
+        return;
+    }
+
+    ++rec->repeat_index;
+    if (rec->repeat_index >= rec->repeat_length) {
+        if (rec->is_finished || rec->current_offset + 1 >= rec->length) {
+            rec->is_playing = 0;
+            if (ModeDemo == 1) {
+                ModeDemo = 2;
+                new_world = 1;
+                DO_FADE_OUT();
+            }
+        } else {
+            rec->current_offset += 2;
+            rec->repeat_index = 0;
+            rec->repeat_length = rec->data[rec->current_offset];
+        }
+    }
+
+    /* PC reapplies the current pair even on the tick that ends playback. */
+    sub_42408(rec->data[rec->current_offset - 1]);
 }
 
 //4259C

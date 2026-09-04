@@ -3200,7 +3200,7 @@ extern s16 RIGHT_MAP_BORDER; //CF75A
 extern s16 ymapmaxini; //CF75C
 extern s16 HeightNworld; //CF75E
 extern s16 WidthNworld; //CF760
-extern u16 SauveRayEvtsDemo; //CF762
+extern rayevts_t SauveRayEvtsDemo; //CF762
 extern s16 nb_credits_lines; //CF764
 extern s16 snd_flag_medaillon; //CF766
 extern s16 RunTimeDemo; //CF768

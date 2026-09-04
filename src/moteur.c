@@ -563,9 +563,9 @@ void DO_ANIM(obj_t* obj) {
         // leftovers from removed sub_etats that were present in the PS1 version.
         // Arriving here is a bug! We'll throw a FatalError now, to avoid out-of-bounds reading elsewhere in the code.
         char error_msg[512];
-        printf(error_msg, sizeof(error_msg),
-               "DO_ANIM(): invalid anim_index 255; id=%d, type=%d, x=%d, y=%d, main_etat=%d, sub_etat=%d\n",
-               obj->id, obj->type, obj->x, obj->y, obj->main_etat, obj->sub_etat);
+        snprintf(error_msg, sizeof(error_msg),
+                 "DO_ANIM(): invalid anim_index 255; id=%d, type=%d, x=%d, y=%d, main_etat=%d, sub_etat=%d\n",
+                 obj->id, obj->type, obj->x, obj->y, obj->main_etat, obj->sub_etat);
         FatalError(error_msg);
     }
 
@@ -1951,14 +1951,11 @@ void RAY_TO_THE_LEFT(void) {
     ray.x += ray.speed_x;
     if (scroll_x == -1 && ray.x < LEFT_MAP_BORDER) {
         ray.x = LEFT_MAP_BORDER;
-        ray.speed_x = 0;
         decalage_en_cours = 0;
         if (ray.main_etat != 2) {
             ray.speed_y = 0;
         }
     }
-
-    calc_obj_pos(&ray); //NOTE: missing in all versions? A bug, or not needed?
 }
 
 //59518
@@ -2512,6 +2509,7 @@ void INIT_MOTEUR(u8 new_lvl) {
 void INIT_MOTEUR_BEGIN(void) {
     init_allowed_time();
     init_bonus_perfect();
+    init_finBossLevel();
     init_calcbloc_func();
     new_level = 1;
     new_world = 1;

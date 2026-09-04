@@ -174,20 +174,21 @@ void DO_BLKTOON_COMMAND(obj_t* obj) {
 //234FC
 void DoBlackToonPoingCollision(obj_t* obj, s16 sprite) {
     obj_hurt(obj);
-    set_main_and_sub_etat(obj, 0, 4);
-    obj->speed_y = 0;
-    if (poing_obj->speed_x >= 0 && (poing_obj->speed_x != 0 || poing_obj->flags.flip_x)) {
-        obj->flags.flip_x = 0;
-    } else {
-        obj->flags.flip_x = 1;
+    if (obj->hit_points == 0) {
+        set_main_and_sub_etat(obj, 0, 4);
+        obj->speed_y = 0;
+        if (poing_obj->speed_x >= 0 && (poing_obj->speed_x != 0 || poing_obj->flags.flip_x)) {
+            obj->flags.flip_x = 0;
+        } else {
+            obj->flags.flip_x = 1;
+        }
+        allocateBlacktoonEyes(obj);
+        if (obj->flags.flip_x) {
+            skipToLabel(obj, 2, 1);
+        } else {
+            skipToLabel(obj, 3, 1);
+        }
     }
-    allocateBlacktoonEyes(obj);
-    if (obj->flags.flip_x) {
-        skipToLabel(obj, 2, 1);
-    } else {
-        skipToLabel(obj, 3, 1);
-    }
-
 }
 
 //235A0

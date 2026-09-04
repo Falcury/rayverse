@@ -714,12 +714,114 @@ void DO_VICTOIRE(void) {
 
 //35908
 void InitDemoJeu(void) {
-    print_once("Not implemented: InitDemoJeu"); //stub
+    DO_FADE_OUT();
+
+    if (NumDemo < 0 || NumDemo >= COUNT(DemoRecordSize)) {
+        NumDemo = 0;
+    }
+
+    /* These recordings are incompatible with the indicated PC render mode. */
+    if ((GameModeVideo == MODE_X &&
+         DemoRecordWorld[NumDemo] == world_5_cave && DemoRecordMap[NumDemo] == 10) ||
+        (GameModeVideo == MODE_NORMAL && SizeScreen != 0 &&
+         DemoRecordWorld[NumDemo] == world_1_jungle && DemoRecordMap[NumDemo] == 9)) {
+        ++NumDemo;
+        if (NumDemo >= COUNT(DemoRecordSize)) {
+            NumDemo = 0;
+        }
+    }
+
+    ModeDemo = 1;
+    TempsDemo = 0;
+    SauveRayEvtsDemo = RayEvts;
+
+    RayEvts.poing = 1;
+    RayEvts.hang = 1;
+    RayEvts.helico = 1;
+    RayEvts.super_helico = 1;
+    RayEvts.handstand_dash = 0;
+    RayEvts.handstand = 0;
+    RayEvts.magicseed = DemoRecordWorld[NumDemo] == world_1_jungle &&
+                        DemoRecordMap[NumDemo] == 9;
+    RayEvts.grap = 1;
+    RayEvts.run = 1;
+    RayEvts.tiny = 0;
+    /* PC tests the current level here, before installing the demo choice. */
+    RayEvts.firefly = num_world == world_5_cave && num_level == 4;
+    RayEvts.force_run = 0;
+    RayEvts.reverse = 0;
+
+    /* A structure assignment is the portable equivalent of PC's 32-byte copy. */
+    options_jeu_save = options_jeu;
+    options_jeu.jump = 1;
+    options_jeu.fist = 0;
+    options_jeu.field_14 = 2;
+    options_jeu.action = 2;
+    POINTEUR_BOUTONS_OPTIONS_BIS();
+
+    new_world = 1;
+    new_level = 1;
+    num_world = 0;
+    num_level = 0;
+    finBosslevel.helped_joe_1 = 1;
+    finBosslevel.helped_musician = 1;
+    status_bar.num_wiz = 0;
+
+    num_world_choice = DemoRecordWorld[NumDemo];
+    num_level_choice = DemoRecordMap[NumDemo];
+    ray.hit_points = 2;
+    status_bar.max_hitp = 2;
+    poing.sub_etat = 1;
+    status_bar.lives = 3;
+
+    record.current_offset = 0;
+    record.repeat_length = 0;
+    record.repeat_index = 0;
+    record.length = DemoRecordSize[NumDemo];
+    record.data = DemoRecord + NumDemo * 250;
+    record.is_playing = 1;
+    record.is_finished = 0;
+
+    memset(save_zone, 0, sizeof(save_zone));
+    if (num_world_choice >= 0 && num_world_choice < COUNT(t_world_info)) {
+        t_world_info[num_world_choice].nb_cages = 0;
+    }
+    INIT_HORLOGES();
+    /* Android additionally calls updateRaymanPowers(); PC 1.21 does not. */
 }
 
 //35B78
 void FinDemoJeu(void) {
-    print_once("Not implemented: FinDemoJeu"); //stub
+    DO_FADE_OUT();
+    RunTimeDemo = record.repeat_index == record.repeat_length ? 180 : 1800;
+    ModeDemo = 0;
+    TempsDemo = 0;
+
+    INIT_RAY(1);
+    RayEvts = SauveRayEvtsDemo;
+
+    record.is_playing = 0;
+    record.current_offset = 0;
+    record.length = 0;
+    record.data = NULL;
+    sub_42408(0);
+
+    new_world = 0;
+    new_level = 0;
+    num_world = 0;
+    num_level = 0;
+    num_world_choice = 0;
+    num_level_choice = 0;
+
+    options_jeu = options_jeu_save;
+    finBosslevel.helped_joe_1 = 0;
+    finBosslevel.helped_musician = 0;
+    POINTEUR_BOUTONS_OPTIONS_BIS();
+
+    ++NumDemo;
+    if (NumDemo >= COUNT(DemoRecordSize)) {
+        NumDemo = 0;
+    }
 }
 
 //35C64
@@ -844,10 +946,13 @@ void init_divers_level_PC(u8* a1) {
     }
     *a1 = 255;
     readinput();
-    if (record.current_offset != 0 || record.is_playing || record.is_recording) {
+    if (record.current_offset != 0) {
         return;
     }
-    do_record(&record); //TODO
+    if (record.is_playing || record.is_recording) {
+        /* Prime the first run before the first simulated gameplay tick. */
+        do_record(&record);
+    }
 }
 
 //3631C

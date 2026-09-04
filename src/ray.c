@@ -490,7 +490,11 @@ void ray_inertia_speed(s16 a1, s16 a2, s16 prev_speed_x, s16 a4) {
     s16 unk_2;
     s16 unk_3;
     s16 unk_4;
-    s16 unk_5 = 0;
+    /* The PC executable leaves this stack slot unwritten in world 5.  That is
+     * undefined C and makes slope acceleration depend on stale stack data;
+     * the Android port makes the intended default explicit as 6 (only world
+     * 3 overrides it with 3).  This matters to deterministic demo playback. */
+    s16 unk_5 = 6;
     s16 unk_6;
 
     if (a1 == 0) {
@@ -507,14 +511,10 @@ void ray_inertia_speed(s16 a1, s16 a2, s16 prev_speed_x, s16 a4) {
 
         switch ((s16) (num_world - 1))
         {
-            case 0:
-            case 1:
-            case 3:
-            case 5:
-                unk_5 = 6;
-                break;
             case 2:
                 unk_5 = 3;
+                break;
+            default:
                 break;
         }
 
@@ -1280,6 +1280,10 @@ void RAY_RESPOND_TO_DIR(s16 flip_x) {
             if (!ray_on_poelle) {
                 ray.flags.flip_x = flip_x;
             }
+            /* PC checks again after applying the requested direction.  The
+             * earlier in-air check happens before this input response and is
+             * not a substitute when Ray turns toward a hangable edge. */
+            CAN_RAY_HANG_BLOC();
             break;
         case 4: // liane
             /* TODO: ctrl flow? */
@@ -2376,12 +2380,12 @@ void RAY_FOLLOW(void) {
     if (flags[other_obj->type] & flags1_0x10_move_x)
         other_spd_x = instantSpeed(other_obj->speed_x);
     else
-        other_spd_x = (u16) other_obj->speed_x;
+        other_spd_x = other_obj->speed_x;
 
     if (flags[other_obj->type] & flags1_0x20_move_y)
         other_spd_y = instantSpeed(other_obj->speed_y);
     else
-        other_spd_y = (u16) other_obj->speed_y;
+        other_spd_y = other_obj->speed_y;
 
     ray.speed_x = other_spd_x + ray.speed_x;
     ray.speed_x += other_obj->follow_x; /* a little strange */
@@ -2591,7 +2595,7 @@ void DO_RAYMAN(void) {
     if (RAY_DEAD()) {
         ray.ray_dist = ((ray.y + ray.offset_by) >> 4) * mp.width + ((ray.x + ray.offset_bx) >> 4);
         COLL_RAY_BLK_MORTEL();
-        if (scroll_y != -1 && ray.screen_y + ray.offset_bx < 0) {
+        if (scroll_y != -1 && ray.screen_y + ray.offset_by < 0) {
             ray.speed_y = 0;
         }
         if (ray.iframes_timer == -1 && get_eta(&ray)->flags & 8) {

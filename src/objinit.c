@@ -170,7 +170,7 @@ void first_obj_init(obj_t* obj) {
         case TYPE_225_PIRATE_P_45: {
             obj->detect_zone = 150;
             obj->link = 0;
-        }
+        } break;
         case TYPE_35_STONEMAN1:
         case TYPE_40_STONEDOG:
         case TYPE_43_STONEMAN2:

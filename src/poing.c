@@ -118,7 +118,7 @@ void RAY_PREPARE_FIST(void) {
     if (get_eta(&ray)->flags & 2) {
         if (ray.main_etat == 2) {
             eta_t* eta = ray.eta[ray.main_etat];
-            u8 anim_speed = (ray.speed_y > 0) ? eta[2].anim_index : eta[0].anim_speed;
+            u8 anim_speed = (ray.speed_y > 0) ? eta[2].anim_speed : eta[0].anim_speed;
             eta[13].anim_speed = (eta[13].anim_speed & 0xF) | (anim_speed & 0xF0);
             poing.charge = 32;
             RAY_THROW_FIST();

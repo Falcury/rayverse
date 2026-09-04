@@ -1002,6 +1002,7 @@ void LoadPcxOptions(u8* buffer, s32 resource_id, s16* width, s16* height, rgb_pa
 
         u8* pcx_buf = (u8*) malloc(info->size);
         fread(pcx_buf, info->size, 1, fp);
+        fclose(fp);
         u8* p = (u8*)pcx_buf;
         u8 checksum = info->checksum_byte;
         for (s32 i = 0; i < info->size; ++i) {

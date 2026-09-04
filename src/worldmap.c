@@ -996,12 +996,14 @@ void DO_COMMANDE_SAVE(void) {
         PlaySnd_old(68);
     }
 
-    if (upjoy() && !leftjoy() && !rightjoy() && !fichier_a_copier && (button_released || (delai_repetition < compteur && (compteur % repetition == 0)))) {
+    /* PC keeps the action column locked while a copy source is armed, but the
+     * slot cursor remains movable so the player can choose the destination. */
+    if (upjoy() && !leftjoy() && !rightjoy() && (button_released || (delai_repetition < compteur && (compteur % repetition == 0)))) {
         positiony = (positiony <= 1) ? NBRE_SAVE : positiony - 1;
         TempsDemo = 0;
         PlaySnd_old(68);
     }
-    if (downjoy() && !leftjoy() && !rightjoy() && !fichier_a_copier && (button_released || (delai_repetition < compteur && (compteur % repetition == 0)))) {
+    if (downjoy() && !leftjoy() && !rightjoy() && (button_released || (delai_repetition < compteur && (compteur % repetition == 0)))) {
         positiony = (positiony == NBRE_SAVE) ? 1 : positiony + 1;
         TempsDemo = 0;
         PlaySnd_old(68);
@@ -1154,8 +1156,36 @@ void REALISATION_ACTION(void) {
         case 1: {
             // Copy
             if (!fichier_a_copier) {
-                print_once("Not implemented: REALISATION_ACTION (copy action)"); //stub
+                /* The first press selects a non-empty source slot. */
+                if (save_ray[positiony - 1][0] != '\0') {
+                    fichier_a_copier = positiony;
+                }
+                break;
             }
+
+            s16 source_index = fichier_a_copier - 1;
+            s16 destination_index = positiony - 1;
+            bool perform_copy = false;
+
+            if (save_ray[source_index][0] != '\0') {
+                perform_copy = save_ray[destination_index][0] == '\0' ||
+                               confirmation_msg(2);
+            }
+
+            if (perform_copy) {
+                fichier_selectionne = positiony;
+
+                /* Keep the old destination name so cancelling name entry can
+                 * restore it, then install the source state for SaveGameOnDisk.
+                 * PC copies the four adjacent summary bytes individually. */
+                memcpy(save_ray_copy, save_ray[destination_index], sizeof(save_ray_copy));
+                memcpy(save_ray[destination_index], save_ray[source_index],
+                       sizeof(save_ray[destination_index]));
+                LoadInfoRay[destination_index] = LoadInfoRay[source_index];
+                LoadGameOnDisk(fichier_a_copier);
+            }
+
+            realisation_effectuee = 1;
         } break;
         case 2: {
             // Erase
