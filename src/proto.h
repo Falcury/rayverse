@@ -712,7 +712,7 @@ void start_fade_out(s16 speed);
 void do_fade(rgb_palette_t* source_pal, rgb_palette_t* dest_pal);
 void fade_out(s16 speed, rgb_palette_t* palette);
 void actualize_palette(u8 new_pal_id);
-void cyclage_palette(s16 a1, s16 a2, s16 a3);
+void cyclage_palette(s16 palette_index, s16 first_color, s16 last_color);
 void DO_SWAP_PALETTE(void);
 void DO_FADE(void);
 void INIT_FADE_IN(void);

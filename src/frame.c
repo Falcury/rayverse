@@ -812,8 +812,25 @@ void actualize_palette(u8 new_pal_id) {
 }
 
 //3C770
-void cyclage_palette(s16 a1, s16 a2, s16 a3) {
-    print_once("Not implemented: cyclage_palette"); //stub
+void cyclage_palette(s16 palette_index, s16 first_color, s16 last_color) {
+    if (palette_index < 0 || palette_index >= (s16)LEN(rvb) ||
+        first_color < 0 || last_color >= (s16)LEN(rvb[0].colors) ||
+        first_color > last_color) {
+        return;
+    }
+
+    rgb_palette_t* palette = &rvb[palette_index];
+    rgb_t wrapped_color = palette->colors[first_color];
+    for (s16 color = first_color; color < last_color; ++color) {
+        palette->colors[color] = palette->colors[color + 1];
+    }
+    palette->colors[last_color] = wrapped_color;
+
+    current_rvb = *palette;
+    set_fade_palette(&current_rvb);
+    if (nb_fade == 0) {
+        nb_fade = 1;
+    }
 }
 
 //3C8C8
