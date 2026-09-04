@@ -132,6 +132,16 @@ void DO_MEDAILLONS(void) {
     }
 }
 
+static void make_save_slot_stage_name(char* dest, const char* save_name) {
+    s32 dest_index = 0;
+    dest[dest_index++] = '/';
+    for (s32 i = 0; i < 3 && save_name[i] != '\0'; ++i) {
+        dest[dest_index++] = save_name[i];
+    }
+    dest[dest_index++] = '/';
+    dest[dest_index] = '\0';
+}
+
 //67D50
 void INIT_LEVEL_STAGE_NAME(void) {
     memcpy(text_to_display[0].text, t_world_info[num_world_choice].text, 48);
@@ -182,13 +192,13 @@ void INIT_WORLD_STAGE_NAME(void) {
                     strcpy(text_to_display[2].text, language_txt[161]); // /password/
                 } break;
                 case 1: {
-                    strncpy(text_to_display[2].text, save_ray[0], 4);
+                    make_save_slot_stage_name(text_to_display[2].text, save_ray[0]);
                 } break;
                 case 2: {
-                    strncpy(text_to_display[2].text, save_ray[1], 4);
+                    make_save_slot_stage_name(text_to_display[2].text, save_ray[1]);
                 } break;
                 case 3: {
-                    strncpy(text_to_display[2].text, save_ray[2], 4);
+                    make_save_slot_stage_name(text_to_display[2].text, save_ray[2]);
                 } break;
                 default: break;
             }
@@ -215,7 +225,7 @@ void INIT_STAGE_NAME(void) {
     text_to_display[1].ypos = 250;
     text_to_display[1].field_D5 = 0;
     text_to_display[1].is_fond = 0;
-    text_to_display[3].xpos = 150;
+    text_to_display[3].xpos = 160;
     text_to_display[3].ypos = -50;
     text_to_display[3].field_D5 = 0;
     text_to_display[3].is_fond = 0;
@@ -231,12 +241,217 @@ void CHANGE_STAGE_NAMES(void) {
     }
 }
 
+static s32 capture_stage_name(
+    char* dest,
+    s32 dest_capacity,
+    const char* source,
+    s32 position_capacity
+) {
+    s32 length = 0;
+    const s32 max_length = MIN(dest_capacity - 1, position_capacity);
+    while (length < max_length && source[length] != '\0') {
+        dest[length] = source[length];
+        ++length;
+    }
+    dest[length] = '\0';
+    return length;
+}
+
+static s32 stage_name_glyph_advance(u8 font_size, s32 num_let, s32 char_spacing) {
+    s32 sprite_index = num_let;
+    obj_t* font = NULL;
+    s32 sprite_count = 0;
+
+    if (num_let <= 0 || num_let >= 1000) {
+        return 0;
+    }
+    if (font_size <= 1) {
+        if (font_size == 1) {
+            sprite_index += 41;
+        }
+        font = alpha2;
+        sprite_count = alpha2_sprite_count;
+    } else if (font_size == 2) {
+        font = alpha;
+        sprite_count = alpha_sprite_count;
+    }
+
+    if (font == NULL || font->sprites == NULL ||
+        sprite_index < 0 || sprite_index >= sprite_count) {
+        return 0;
+    }
+
+    sprite_t* sprite = &font->sprites[sprite_index];
+    return (sprite->sprite_pos & 0x0f) + sprite->inner_width - char_spacing;
+}
+
+static s32 init_stage_name_animation(
+    const display_item_t* source,
+    char* captured_text,
+    s32 captured_capacity,
+    s32* positions_x,
+    s32* positions_y,
+    s32* speeds_x,
+    s32* speeds_y,
+    s32 position_capacity,
+    s32 space_width,
+    s32 char_spacing
+) {
+    const s32 length = capture_stage_name(
+        captured_text,
+        captured_capacity,
+        source->text,
+        position_capacity
+    );
+    const s32 half_length = length / 2;
+    s32 current_x = source->xpos;
+
+    for (s32 i = 0; i < length; ++i) {
+        const u8 c = (u8)captured_text[i];
+        const s32 num_let = deter_num_let(c, captured_text + i + 1);
+
+        if (c == '/') {
+            current_x = source->xpos -
+                calc_largmax_text(source->text, (s16)i, (s16)space_width, (s16)char_spacing, source->font_size) / 2;
+            continue;
+        }
+        if (c == ' ') {
+            current_x += space_width;
+            continue;
+        }
+        if (num_let == 0) {
+            continue;
+        }
+
+        positions_x[i] = current_x * 16;
+        positions_y[i] = source->ypos * 16;
+
+        /* The original divides by half the complete wrapped string length.
+         * Normal stage names always contain at least the two '/' delimiters;
+         * retain a safe fallback for malformed one-character text. */
+        do {
+            const s32 spread = half_length != 0
+                ? ((i - half_length) * 32) / half_length
+                : 0;
+            speeds_x[i] = spread + (s16)myRand(32) - 16;
+        } while (speeds_x[i] == 0);
+
+        speeds_y[i] = -16 - (s16)myRand(32);
+        current_x += stage_name_glyph_advance(source->font_size, num_let, char_spacing);
+    }
+
+    return length;
+}
+
+static bool stage_name_is_moving_glyph(char c) {
+    return c != '/' && c != ' ';
+}
+
+static void update_bouncing_stage_name(
+    const char* text,
+    s32 length,
+    s32* positions_x,
+    s32* positions_y,
+    s32* speeds_x,
+    s32* speeds_y,
+    s32 bounce_right,
+    bool* all_outside
+) {
+    const s32 floor_y = SCREEN_HEIGHT * 16;
+    const s32 visible_left = -20 * 16;
+    const s32 visible_right = SCREEN_WIDTH * 16;
+
+    for (s32 i = 0; i < length; ++i) {
+        if (!stage_name_is_moving_glyph(text[i])) {
+            continue;
+        }
+
+        const s32 old_speed_y = speeds_y[i];
+        positions_y[i] += old_speed_y;
+        if (positions_y[i] >= floor_y) {
+            const s32 speed_magnitude = Abs(old_speed_y);
+            positions_y[i] = floor_y;
+            if (speed_magnitude < 8) {
+                speeds_y[i] = -64 - (s16)myRand(32);
+            } else {
+                speeds_y[i] = -old_speed_y;
+            }
+        }
+        ++speeds_y[i];
+        positions_x[i] += speeds_x[i];
+
+        if (positions_x[i] <= 0 || positions_x[i] >= bounce_right) {
+            speeds_x[i] = -speeds_x[i];
+            continue;
+        }
+        if (positions_x[i] > visible_left && positions_x[i] < visible_right) {
+            *all_outside = false;
+        }
+    }
+}
+
+static void launch_stage_name_outward(
+    const char* text,
+    s32 length,
+    const s32* positions_x,
+    const s32* positions_y,
+    s32* speeds_x,
+    s32* speeds_y
+) {
+    const s32 center_x = (SCREEN_WIDTH / 2) * 16;
+    const s32 center_y = (SCREEN_HEIGHT / 2) * 16;
+
+    for (s32 i = 0; i < length; ++i) {
+        if (!stage_name_is_moving_glyph(text[i])) {
+            continue;
+        }
+
+        s32 delta_x = positions_x[i] - center_x;
+        const s32 delta_y = positions_y[i] - center_y;
+        s32 divisor = MAX(Abs(delta_x), Abs(delta_y));
+        if (divisor == 0) {
+            /* The PC routine would divide by zero here.  Its real names do
+             * not place a glyph exactly at the screen center, but malformed
+             * or localized data should still leave the map recoverable. */
+            delta_x = 1;
+            divisor = 1;
+        }
+        const s32 magnitude = (s16)myRand(64) + 32;
+        speeds_x[i] = delta_x * magnitude / divisor;
+        speeds_y[i] = delta_y * magnitude / divisor;
+    }
+}
+
+static void update_departing_stage_name(
+    const char* text,
+    s32 length,
+    s32* positions_x,
+    s32* positions_y,
+    const s32* speeds_x,
+    const s32* speeds_y,
+    bool* all_outside
+) {
+    const s32 offscreen_margin = 20 * 16;
+    const s32 right = SCREEN_WIDTH * 16;
+    const s32 bottom = SCREEN_HEIGHT * 16;
+
+    for (s32 i = 0; i < length; ++i) {
+        if (!stage_name_is_moving_glyph(text[i])) {
+            continue;
+        }
+
+        positions_x[i] += speeds_x[i];
+        positions_y[i] += speeds_y[i];
+        if (positions_x[i] > -offscreen_margin && positions_x[i] < right &&
+            positions_y[i] > -offscreen_margin && positions_y[i] < bottom) {
+            *all_outside = false;
+        }
+    }
+}
+
 //68208
 void DO_STAGE_NAMES(void) {
-    if (ModeAutoJumelle) {
-        // World map idle animation with letters bouncing everywhere
-        //stub
-    } else {
+    if (!ModeAutoJumelle) {
         if (text_to_display[0].xpos > 160) {
             text_to_display[0].xpos -= 6;
             text_to_display[0].centered_x_pos -= 6;
@@ -253,16 +468,124 @@ void DO_STAGE_NAMES(void) {
             text_to_display[3].ypos -= 2;
             text_to_display[3].centered_y_pos -= 2;
         }
+    } else if (PositionStageNameCalcule == 0) {
+        CouleurStageNameLevel = (u8)text_to_display[0].color;
+        TailleStageNameLevel = text_to_display[0].font_size;
+        LongueurStageNameLevel = init_stage_name_animation(
+            &text_to_display[0],
+            TexteStageNameLevel,
+            COUNT(TexteStageNameLevel),
+            PositionXStageNameLevel,
+            PositionYStageNameLevel,
+            VitesseXStageNameLevel,
+            VitesseYStageNameLevel,
+            COUNT(VitesseXStageNameLevel),
+            8,
+            1
+        );
+
+        CouleurStageNameWorld = (u8)text_to_display[2].color;
+        TailleStageNameWorld = text_to_display[2].font_size;
+        LongueurStageNameWorld = init_stage_name_animation(
+            &text_to_display[2],
+            TexteStageNameWorld,
+            COUNT(TexteStageNameWorld),
+            PositionXStageNameWorld,
+            PositionYStageNameWorld,
+            VitesseXStageNameWorld,
+            VitesseYStageNameWorld,
+            COUNT(VitesseXStageNameWorld),
+            10,
+            3
+        );
+
+        PositionStageNameCalcule = 1;
+        strcpy(text_to_display[3].text, text_to_display[2].text);
+        text_to_display[3].color = text_to_display[2].color;
+        text_to_display[2].xpos = 450;
+        text_to_display[2].ypos = 30;
+        strcpy(text_to_display[1].text, text_to_display[0].text);
+        text_to_display[1].color = text_to_display[0].color;
+        text_to_display[0].xpos = 450;
+        text_to_display[0].ypos = 193;
     }
 
-    switch(PositionStageNameCalcule) {
+    switch (PositionStageNameCalcule) {
         case 1: {
-            //stub
+            bool all_outside = true;
+            /* The 15/10-pixel right insets are the PC glyph extents encoded
+             * by 0x1310 and 0x1360, not general viewport margins.  PS1 uses
+             * a 240-line layout and omits this exploded-letter presentation. */
+            update_bouncing_stage_name(
+                TexteStageNameWorld,
+                LongueurStageNameWorld,
+                PositionXStageNameWorld,
+                PositionYStageNameWorld,
+                VitesseXStageNameWorld,
+                VitesseYStageNameWorld,
+                (SCREEN_WIDTH - 15) * 16,
+                &all_outside
+            );
+            update_bouncing_stage_name(
+                TexteStageNameLevel,
+                LongueurStageNameLevel,
+                PositionXStageNameLevel,
+                PositionYStageNameLevel,
+                VitesseXStageNameLevel,
+                VitesseYStageNameLevel,
+                (SCREEN_WIDTH - 10) * 16,
+                &all_outside
+            );
+            if (all_outside) {
+                PositionStageNameCalcule = 0;
+            }
         } break;
-
+        case 2:
+            launch_stage_name_outward(
+                TexteStageNameWorld,
+                LongueurStageNameWorld,
+                PositionXStageNameWorld,
+                PositionYStageNameWorld,
+                VitesseXStageNameWorld,
+                VitesseYStageNameWorld
+            );
+            launch_stage_name_outward(
+                TexteStageNameLevel,
+                LongueurStageNameLevel,
+                PositionXStageNameLevel,
+                PositionYStageNameLevel,
+                VitesseXStageNameLevel,
+                VitesseYStageNameLevel
+            );
+            PositionStageNameCalcule = 3;
+            break;
+        case 3: {
+            bool all_outside = true;
+            update_departing_stage_name(
+                TexteStageNameWorld,
+                LongueurStageNameWorld,
+                PositionXStageNameWorld,
+                PositionYStageNameWorld,
+                VitesseXStageNameWorld,
+                VitesseYStageNameWorld,
+                &all_outside
+            );
+            update_departing_stage_name(
+                TexteStageNameLevel,
+                LongueurStageNameLevel,
+                PositionXStageNameLevel,
+                PositionYStageNameLevel,
+                VitesseXStageNameLevel,
+                VitesseYStageNameLevel,
+                &all_outside
+            );
+            if (all_outside) {
+                PositionStageNameCalcule = 0;
+            }
+        } break;
+        default:
+            break;
     }
-
-    print_once("Not implemented: DO_STAGE_NAMES"); //stub
 }
 
 //68BC0
@@ -379,16 +702,12 @@ void INIT_CHEMIN(void) {
 
     INIT_PASTILLES_SAUVE();
     INIT_STAGE_NAME();
-
-    // Added: unlock first world if flag is set incorrectly
-    if (!(t_world_info[17].state & 1)) {
-        t_world_info[17].state |= 1;
-    }
 }
 
 //68F38
 void RESPOND_TO_UP(void) {
     num_world_choice = t_world_info[num_world_choice].index_up;
+    ModeAutoJumelle = 0;
     ChangeJumelleSizeOK &= ~4;
     if (PositionStageNameCalcule == 1) {
         PositionStageNameCalcule = 2;
@@ -398,6 +717,7 @@ void RESPOND_TO_UP(void) {
 //68F88
 void RESPOND_TO_DOWN(void) {
     num_world_choice = t_world_info[num_world_choice].index_down;
+    ModeAutoJumelle = 0;
     ChangeJumelleSizeOK &= ~4;
     if (PositionStageNameCalcule == 1) {
         PositionStageNameCalcule = 2;
@@ -407,6 +727,7 @@ void RESPOND_TO_DOWN(void) {
 //68FD8
 void RESPOND_TO_RIGHT(void) {
     num_world_choice = t_world_info[num_world_choice].index_right;
+    ModeAutoJumelle = 0;
     ChangeJumelleSizeOK &= ~4;
     if (PositionStageNameCalcule == 1) {
         PositionStageNameCalcule = 2;
@@ -416,6 +737,7 @@ void RESPOND_TO_RIGHT(void) {
 //69028
 void RESPOND_TO_LEFT(void) {
     num_world_choice = t_world_info[num_world_choice].index_left;
+    ModeAutoJumelle = 0;
     ChangeJumelleSizeOK &= ~4;
     if (PositionStageNameCalcule == 1) {
         PositionStageNameCalcule = 2;
@@ -589,19 +911,24 @@ void INIT_NEW_GAME(void) {
     memset(save_zone, 0, sizeof(save_zone));
     memset(&RayEvts, 0, sizeof(RayEvts)); // added; TODO: figure out why RayEvts doesn't 'leak' into a new game?
     INIT_RAY_BEGIN();
-    u8 first_world_is_accessible_flag = (t_world_info[0].state | 1);
-    for (s32 i = 0; i < 24; ++i) {
-        world_info_t* world_info = t_world_info + 1;
+
+    /* Preserve non-progression flags on the first medallion, make it
+     * accessible, and clear accessibility/unlocking/completion everywhere
+     * else.  The old C loop accidentally cleared index 1 twenty-four times. */
+    t_world_info[0].nb_cages = 0;
+    t_world_info[0].state = (t_world_info[0].state | 1) & ~6;
+    for (s32 i = 1; i < COUNT(t_world_info); ++i) {
+        world_info_t* world_info = &t_world_info[i];
         world_info->nb_cages = 0;
         world_info->state &= ~7;
     }
-    t_world_info[0].state |= first_world_is_accessible_flag;
+
     s32 save_index = positiony - 1;
     loadinforay_t* loadinfo = LoadInfoRay + save_index;
     loadinfo->lives = 3;
     loadinfo->tings = 0;
     loadinfo->cages = 0;
-    loadinfo->continues = 0;
+    loadinfo->continues = 9;
     for (s32 i = 0; i < 23; ++i) { // NOTE: the loop only goes up to 23 here, not 24
         bonus_perfect[i] = 0;
     }

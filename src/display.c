@@ -270,12 +270,94 @@ s16 SELECT_LEVEL(s16 original_level_choice) {
 
 //34C00
 void CLEAR_STAGE_NAMES(void) {
-    //stub
+    if (map_time == 1) {
+        text_to_display[1].text[0] = '\0';
+        text_to_display[3].text[0] = '\0';
+        map_time = 2;
+        return;
+    }
+
+    const u8 clear_order[] = {1, 0, 3, 2};
+    for (s32 i = 0; i < COUNT(clear_order); ++i) {
+        display_item_t* item = &text_to_display[clear_order[i]];
+        if (item->text[0] != '\0') {
+            DISPLAY_BLACKBOX(
+                item->centered_x_pos,
+                item->centered_y_pos - 2,
+                item->width,
+                item->height + 2,
+                -1,
+                0
+            );
+        }
+    }
+}
+
+static void display_stage_name_letters(
+    const char* text,
+    s32 length,
+    const s32* positions_x,
+    const s32* positions_y,
+    u8 font_size,
+    s32 color
+) {
+    for (s32 i = 0; i < length; ++i) {
+        const u8 c = (u8)text[i];
+        if (c == '/' || c == ' ') {
+            continue;
+        }
+
+        const s32 num_let = deter_num_let(c, text + i + 1);
+        s32 sprite_index = num_let;
+        obj_t* font = NULL;
+        s32 sprite_count = 0;
+
+        /* Stage names only use the ordinary alpha atlases in the PC data.
+         * Reject numeric-image escape tokens rather than indexing either
+         * atlas with their 1000-based sentinel value. */
+        if (num_let <= 0 || num_let >= 1000) {
+            continue;
+        }
+        if (font_size <= 1) {
+            if (font_size == 1) {
+                sprite_index += 41;
+            }
+            font = alpha2;
+            sprite_count = alpha2_sprite_count;
+        } else if (font_size == 2) {
+            font = alpha;
+            sprite_count = alpha_sprite_count;
+        }
+
+        if (font == NULL || font->sprites == NULL || font->img_buffer == NULL ||
+            sprite_index < 0 || sprite_index >= sprite_count) {
+            continue;
+        }
+
+        sprite_t* sprite = &font->sprites[sprite_index];
+        vec2b_t size = {sprite->outer_width, sprite->outer_height};
+        /* A portable floor conversion preserves the PC sar instruction for
+         * negative fixed-point positions while avoiding signed-shift rules. */
+        const s32 x = positions_x[i] >= 0
+            ? positions_x[i] / 16
+            : -((-positions_x[i] + 15) / 16);
+        const s32 baseline_y = positions_y[i] >= 0
+            ? positions_y[i] / 16
+            : -((-positions_y[i] + 15) / 16);
+        DrawSpriteColorNormalEtX(
+            x,
+            color,
+            baseline_y - sprite->outer_height,
+            size,
+            draw_buffer,
+            font->img_buffer + sprite->offset_in_atlas
+        );
+    }
 }
 
 //34D2C
 void DISPLAY_STAGE_NAMES(void) {
-    DO_STAGE_NAMES(); //TODO
+    DO_STAGE_NAMES();
     sprite_clipping(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT);
     if (PositionStageNameCalcule != 1) {
         if (text_to_display[1].text[0] != '\0') {
@@ -292,9 +374,23 @@ void DISPLAY_STAGE_NAMES(void) {
         }
     }
     if (PositionStageNameCalcule) {
-
+        display_stage_name_letters(
+            TexteStageNameWorld,
+            LongueurStageNameWorld,
+            PositionXStageNameWorld,
+            PositionYStageNameWorld,
+            (u8)TailleStageNameWorld,
+            CouleurStageNameWorld
+        );
+        display_stage_name_letters(
+            TexteStageNameLevel,
+            LongueurStageNameLevel,
+            PositionXStageNameLevel,
+            PositionYStageNameLevel,
+            (u8)TailleStageNameLevel,
+            CouleurStageNameLevel
+        );
     }
-    //stub
 }
 
 //35028

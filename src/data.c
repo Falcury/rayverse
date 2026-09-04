@@ -3176,8 +3176,10 @@ extern s16* link_init; //CEE58
 extern obj_t raytmp; //CEE5C
 extern u8 skops_lave_obj[20]; //CEEE0
 extern s32 pixels_enfonce; //CEEF4
+extern char TexteStageNameWorld[30]; //CEEF8
+extern char TexteStageNameLevel[47]; //CEF16
 
-extern s8 Plan0NumPcx[10]; //CEF47
+extern s8 Plan0NumPcx[10]; //CEF48
 extern status_bar_t status_bar; //CEF52
 extern active_objects_t actobj; //CEF5C
 extern ray_stack_t rayStack[101]; //CF026
