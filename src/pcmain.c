@@ -214,7 +214,8 @@ void PrintDosInfo(void) {
 void InitMemoryVariable(void) {
     P486 = 0;
     ModeNormalAutorise = 1;
-    JumelleEffetAutorise = 0; // TODO: re-enable once implemented
+    /* The original enables the world-map binocular zoom in normal-memory mode. */
+    JumelleEffetAutorise = 1;
     CarteSonAutorisee = 1;
     SonLimite = 0;
     ToutSpriteAutorise = 1;

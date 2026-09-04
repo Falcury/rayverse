@@ -1,10 +1,71 @@
 
+enum {
+    JUMELLE_MIN_RADIUS = 25,
+    JUMELLE_MAX_RADIUS = 64,
+    JUMELLE_ZOOM_CENTER_Y = 64,
+    JUMELLE_ZOOM_LEFT_CENTER_X = 64,
+    JUMELLE_ZOOM_RIGHT_CENTER_X = 159,
+    JUMELLE_ZOOM_MATRIX_STRIDE = 224,
+    JUMELLE_ZOOM_MATRIX_HEIGHT = 129,
+    JUMELLE_ZOOM_MATRIX_CAPACITY = 29025
+};
+
+static void add_jumelle_zoom_offset(s32 x, s32 y, s32 offset) {
+    if (x >= 0 && x < JUMELLE_ZOOM_MATRIX_STRIDE &&
+        y >= 0 && y < JUMELLE_ZOOM_MATRIX_HEIGHT) {
+        JumelleZoomDef[y * JUMELLE_ZOOM_MATRIX_STRIDE + x] += offset;
+    }
+}
+
+/* Canonical Android name for the helper corresponding to the PC rep-stos
+ * clear. The Android port extracts it because its table layout is larger. */
+static void ClearJumelles(s32* zoom_def, size_t count) {
+    memset(zoom_def, 0, count * sizeof(*zoom_def));
+}
+
+/* Android extracts this distorted copy loop under the canonical name
+ * MoveWithZoom; the PC executable inlines it at all six scanline sites. */
+static void MoveWithZoom(s32 source_offset, s32 dest_offset, s32 matrix_x, s32 matrix_y,
+                         s32 width, const u8* effet_buf, u8* draw_buf) {
+    /* The PC renderer stores a byte displacement for every pixel in a
+     * 224-by-129 lookup grid around the maximum-size binocular mask. */
+    for (s32 i = 0; i < width; ++i) {
+        s32 source_pixel = source_offset + i;
+        s32 lookup_x = matrix_x + i;
+        if (matrix_y >= 0 && matrix_y < JUMELLE_ZOOM_MATRIX_HEIGHT &&
+            lookup_x >= 0 && lookup_x < JUMELLE_ZOOM_MATRIX_STRIDE) {
+            source_pixel += JumelleZoomDef[matrix_y * JUMELLE_ZOOM_MATRIX_STRIDE + lookup_x];
+        }
+
+        /* The original relies on the circle geometry to keep these accesses
+         * inside the 320x200 scratch image. Keep that invariant explicit in
+         * the portable renderer so a malformed state cannot corrupt memory. */
+        if (source_pixel >= 0 && source_pixel < SCREEN_WIDTH * SCREEN_HEIGHT) {
+            draw_buf[dest_offset + i] = effet_buf[source_pixel];
+        }
+    }
+}
+
+static void copy_jumelle_scanline(s32 jumelle_x, s32 jumelle_y, s32 screen_x, s32 screen_y,
+                                  s32 width, const u8* effet_buf, u8* draw_buf) {
+    if (width <= 0) {
+        return;
+    }
+
+    s32 dest_offset = screen_y * SCREEN_WIDTH + screen_x;
+    s32 source_offset = dest_offset - (JumelleYMin * SCREEN_WIDTH + JumelleXMin);
+    if (JumelleZoomActif && JumelleZoomDef) {
+        s32 matrix_y = screen_y - (jumelle_y - JUMELLE_ZOOM_CENTER_Y);
+        s32 matrix_x = screen_x - (jumelle_x - 112);
+        MoveWithZoom(source_offset, dest_offset, matrix_x, matrix_y, width, effet_buf, draw_buf);
+    } else {
+        memcpy(draw_buf + dest_offset, effet_buf + source_offset, (size_t)width);
+    }
+}
+
 //42930
 void plot2linejumelle(s32 jumelle_x, s32 jumelle_y, s32 plot_x, s32 plot_y, s32 circle2_offset, u8* effet_buf, u8* draw_buf) {
-    s32 v55 = SCREEN_WIDTH * JumelleYMin + JumelleXMin;
-    s32 v56 = jumelle_x - 112;
     s32 v7 = jumelle_x - plot_x - circle2_offset;
-    s32 v53 = jumelle_y - 64;
     if (plot_x <= circle2_offset) {
         s32 v60 = 2 * plot_x;
         if (v7 < 0) {
@@ -31,26 +92,12 @@ void plot2linejumelle(s32 jumelle_x, s32 jumelle_y, s32 plot_x, s32 plot_y, s32 
         if (jumelle_y - plot_y >= 0 && v26 < SCREEN_HEIGHT) {
             // Top segment of left circle
             if (v60 > 0) {
-                s32 v27 = SCREEN_WIDTH * v26 + v7;
-                s32 v28 = v27 - v55;
-                u8* v29 = draw_buf + v27;
-                u8* v30 = effet_buf + v28;
-                if (JumelleZoomActif) {
-                    print_once("Not implemented: plot2linejumelle (JumelleZoomActif)"); //stub
-                } else {
-                    memcpy(v29, v30, v60);
-                }
+                copy_jumelle_scanline(jumelle_x, jumelle_y, v7, v26, v60, effet_buf, draw_buf);
             }
 
             // Top segment of right circle
             if (v59 > 0) {
-                u8* v35 = effet_buf + SCREEN_WIDTH * v54 + v57 - v55;
-                u8* v36 = draw_buf + SCREEN_WIDTH * v54 + v57;
-                if (JumelleZoomActif) {
-                    //stub
-                } else {
-                    memcpy(v36, v35, v59);
-                }
+                copy_jumelle_scanline(jumelle_x, jumelle_y, v57, v54, v59, effet_buf, draw_buf);
             }
         }
 
@@ -60,23 +107,11 @@ void plot2linejumelle(s32 jumelle_x, s32 jumelle_y, s32 plot_x, s32 plot_y, s32 
         if (v8 >= 0 && v8 < SCREEN_HEIGHT) {
             // Bottom segment of left circle
             if (v60 > 0) {
-                u8* v41 = draw_buf + SCREEN_WIDTH * v52 + v7;
-                u8* v42 = effet_buf + SCREEN_WIDTH * v52 + v7 - v55;
-                if (JumelleZoomActif) {
-                    //stub
-                } else {
-                    memcpy(v41, v42, v60);
-                }
+                copy_jumelle_scanline(jumelle_x, jumelle_y, v7, v52, v60, effet_buf, draw_buf);
             }
 
             if (v59 > 0) {
-                u8* v18 = draw_buf + SCREEN_WIDTH * v52 + v57;
-                u8* v24 = effet_buf + SCREEN_WIDTH * v52 + v57 - v55;
-                if (JumelleZoomActif) {
-                    //stub
-                } else {
-                    memcpy(v18, v24, v59);
-                }
+                copy_jumelle_scanline(jumelle_x, jumelle_y, v57, v52, v59, effet_buf, draw_buf);
             }
         }
     } else {
@@ -92,24 +127,12 @@ void plot2linejumelle(s32 jumelle_x, s32 jumelle_y, s32 plot_x, s32 plot_y, s32 
         if (v58 > 0) {
             s32 v9 = jumelle_y - plot_y;
             if (v9 >= 0 && v9 < SCREEN_HEIGHT) {
-                u8* v10 = draw_buf + SCREEN_WIDTH * v9 + v7;
-                u8* v11 = effet_buf + SCREEN_WIDTH * v9 + v7 - v55;
-                if (JumelleZoomActif) {
-                    //stub
-                } else {
-                    memcpy(v10, v11, v58);
-                }
+                copy_jumelle_scanline(jumelle_x, jumelle_y, v7, v9, v58, effet_buf, draw_buf);
             }
 
             s32 v16 = jumelle_y + plot_y;
             if (v16 >= 0 && v16 < SCREEN_HEIGHT) {
-                u8* v10 = draw_buf + SCREEN_WIDTH * v16 + v7;
-                u8* v11 = effet_buf + SCREEN_WIDTH * v16 + v7 - v55;
-                if (JumelleZoomActif) {
-                    //stub
-                } else {
-                    memcpy(v10, v11, v58);
-                }
+                copy_jumelle_scanline(jumelle_x, jumelle_y, v7, v16, v58, effet_buf, draw_buf);
             }
         }
     }
@@ -124,7 +147,7 @@ void DisplayJumellesNormal(s32 x, s32 y, s32 rayon, s32 a4, u8* effet_buf, u8* d
     if (skip_jumelle) {
 #if 1
         for (s32 i = 0; i < HauteurJumelle; ++i) {
-            if (JumelleYMin + i >= 0 && JumelleYMin + i < 200) {
+            if (JumelleYMin + i >= 0 && JumelleYMin + i < SCREEN_HEIGHT) {
                 s32 width = LargeurJumelle;
                 s32 draw_x = JumelleXMin;
                 s32 source_x = 0;
@@ -133,10 +156,11 @@ void DisplayJumellesNormal(s32 x, s32 y, s32 rayon, s32 a4, u8* effet_buf, u8* d
                     width += JumelleXMin;
                     draw_x = 0;
                 }
-                if (JumelleXMin + LargeurJumelle > 320) {
-                    width -= (JumelleXMin + LargeurJumelle) - 320;
+                if (JumelleXMin + LargeurJumelle > SCREEN_WIDTH) {
+                    width -= (JumelleXMin + LargeurJumelle) - SCREEN_WIDTH;
                 }
-                memcpy(draw_buf + 320 * (JumelleYMin + i) + draw_x, effet_buf + 320 * i + source_x, width);
+                memcpy(draw_buf + SCREEN_WIDTH * (JumelleYMin + i) + draw_x,
+                       effet_buf + SCREEN_WIDTH * i + source_x, (size_t)width);
             } else {
                 continue;
             }
@@ -167,11 +191,11 @@ void DisplayJumellesNormal(s32 x, s32 y, s32 rayon, s32 a4, u8* effet_buf, u8* d
 
 //42EC4
 void InitMatriceJumelle(void) {
-    DistPointX = (s32*)calloc(161, sizeof(s32));
-    DistPointY = (s32*)calloc(65, sizeof(s32));
-    ExpPoint = (s32*)calloc(5120, sizeof(s32));
-    JumelleZoomDef = (s32*)calloc(29025, sizeof(s32));
     if (JumelleEffetAutorise) {
+        DistPointX = (s32*)calloc(161, sizeof(s32));
+        DistPointY = (s32*)calloc(65, sizeof(s32));
+        ExpPoint = (s32*)calloc(5120, sizeof(s32));
+        JumelleZoomDef = (s32*)calloc(JUMELLE_ZOOM_MATRIX_CAPACITY, sizeof(s32));
         if (DistPointX && DistPointY && ExpPoint && JumelleZoomDef) {
             for (s32 y = 0; y < 65; ++y) {
                 DistPointY[y] = y * y;
@@ -181,20 +205,24 @@ void InitMatriceJumelle(void) {
                 DistPointX[x] = x * x;
             }
             for (s32 i = 0; i < 5120; ++i) {
-                ExpPoint[i] = (s32)(expf((float)(-i) / 1024.0f ) * 65536.0f);
+                ExpPoint[i] = (s32)(exp((double)-i / 1024.0) * 65536.0);
             }
         } else {
             if (DistPointX) {
                 free(DistPointX);
+                DistPointX = NULL;
             }
             if (DistPointY) {
                 free(DistPointY);
+                DistPointY = NULL;
             }
             if (ExpPoint) {
                 free(ExpPoint);
+                ExpPoint = NULL;
             }
             if (JumelleZoomDef) {
                 free(JumelleZoomDef);
+                JumelleZoomDef = NULL;
             }
             JumelleEffetAutorise = 0;
             fatal_error();
@@ -211,7 +239,7 @@ void DefaultJumelleVariable(void) {
         JumelleZoomActif = 0;
     }
     ChangeJumelleSizeOK = 3;
-    RayonJumelle = 25;
+    RayonJumelle = JUMELLE_MIN_RADIUS;
     LargeurJumelle = 87;
     HauteurJumelle = 50;
     JumellePosX = 160;
@@ -229,7 +257,9 @@ void DefaultJumelleVariable(void) {
 
 //430FC
 void ChangeDeltaSizeJumelle(s32 delta_size) {
-    RayonJumelle = MAX(30, MIN(69, RayonJumelle + delta_size));
+    /* Android deliberately widened this range to 30..69 and uses a larger
+     * lookup layout. The PC world-map state machine requires 25..64. */
+    RayonJumelle = MAX(JUMELLE_MIN_RADIUS, MIN(JUMELLE_MAX_RADIUS, RayonJumelle + delta_size));
     ChangeJumelleVariable();
     if (JumelleZoomActif) {
         ChangeDeltaZoomAmpJumelle(delta_size <= 0 ? 65 : -65);
@@ -291,7 +321,7 @@ s32 ChangeDeltaPosXJumelleWithLimit(s32 delta_pos_x) {
     if (((xmap != scroll_start_x && xmap != scroll_end_x) ||
         (xmap == scroll_start_x && delta_pos_x > 0) ||
         (xmap == scroll_end_x && delta_pos_x < 0)) &&
-        JumellePosX > RayonJumelle / 3 && JumellePosX < 320 - RayonJumelle / 3
+        JumellePosX > RayonJumelle / 3 && JumellePosX < SCREEN_WIDTH - RayonJumelle / 3
     ) {
         if (ModeAutoJumelle & 1) {
             Xmap16 = (PositionJumelleX16 & 0xF) | (Xmap16 & ~0xF);
@@ -318,7 +348,7 @@ s32 ChangeDeltaPosYJumelleWithLimit(s32 delta_pos_y) {
     if (((ymap != scroll_start_y && ymap != scroll_end_y) ||
          (ymap == scroll_start_y && delta_pos_y > 0) ||
          (ymap == scroll_end_y && delta_pos_y < 0)) &&
-        JumellePosY > RayonJumelle / 3 && JumellePosY < 320 - RayonJumelle / 3
+        JumellePosY > RayonJumelle / 3 && JumellePosY < SCREEN_HEIGHT - RayonJumelle / 3
             ) {
         if (ModeAutoJumelle & 1) {
             Ymap16 = (PositionJumelleY16 & 0xF) | (Ymap16 & ~0xF);
@@ -378,10 +408,63 @@ void ChangeDeltaZoomAmpJumelle(s32 a1) {
 
 //437FC
 void PrepareJumelleZoom(void) {
-    if (JumelleEffetAutorise) {
-
+    if (!JumelleEffetAutorise || !DistPointX || !DistPointY || !ExpPoint ||
+        !JumelleZoomDef || RayonJumelle <= 0 || RayonJumelle > JUMELLE_MAX_RADIUS ||
+        LargeurJumelle < RayonJumelle || LargeurJumelle - RayonJumelle > 161) {
+        return;
     }
-    print_once("Not implemented: PrepareJumelleZoom"); //stub
+
+    s32 radius_scale = 0x200000 / (RayonJumelle * RayonJumelle);
+    s32 center_margin = (3 * (JUMELLE_MAX_RADIUS - RayonJumelle)) >> 2;
+    s32 left_center_x = JUMELLE_ZOOM_LEFT_CENTER_X + center_margin;
+    s32 right_center_x = JUMELLE_ZOOM_RIGHT_CENTER_X - center_margin;
+
+    ClearJumelles(JumelleZoomDef, JUMELLE_ZOOM_MATRIX_CAPACITY);
+    ParamZoomChange = 0;
+
+    for (s32 y = 0; y <= RayonJumelle; ++y) {
+        for (s32 x = 0; x < LargeurJumelle - RayonJumelle; ++x) {
+            s32 scaled_distance = (DistPointX[x] + DistPointY[y]) * radius_scale;
+            if ((u32)scaled_distance >= 0x500000) {
+                continue;
+            }
+
+            s32 exponential = ExpPoint[(u32)scaled_distance >> 10];
+            s32 displacement_scale = (JumelleZoomAmp * exponential) >> 16;
+            s32 horizontal = (x * displacement_scale + 0x8000) >> 16;
+            s32 vertical = ((y * displacement_scale + 0x8000) >> 16) * SCREEN_WIDTH;
+
+            if (x != 0) {
+                add_jumelle_zoom_offset(left_center_x + x, JUMELLE_ZOOM_CENTER_Y - y,
+                                         vertical - horizontal);
+                add_jumelle_zoom_offset(right_center_x - x, JUMELLE_ZOOM_CENTER_Y + y,
+                                         horizontal - vertical);
+            }
+            if (y != 0) {
+                add_jumelle_zoom_offset(left_center_x + x, JUMELLE_ZOOM_CENTER_Y + y,
+                                         -horizontal - vertical);
+                add_jumelle_zoom_offset(right_center_x - x, JUMELLE_ZOOM_CENTER_Y - y,
+                                         horizontal + vertical);
+            }
+            if (x <= RayonJumelle) {
+                if (y != 0) {
+                    add_jumelle_zoom_offset(left_center_x - x, JUMELLE_ZOOM_CENTER_Y - y,
+                                             horizontal + vertical);
+                    add_jumelle_zoom_offset(right_center_x + x, JUMELLE_ZOOM_CENTER_Y + y,
+                                             -horizontal - vertical);
+                }
+                if (x != 0) {
+                    add_jumelle_zoom_offset(left_center_x - x, JUMELLE_ZOOM_CENTER_Y + y,
+                                             horizontal - vertical);
+                    add_jumelle_zoom_offset(right_center_x + x, JUMELLE_ZOOM_CENTER_Y - y,
+                                             vertical - horizontal);
+                }
+            }
+        }
+    }
+
+    /* PS1 draws a fixed sprite-and-black-box binocular frame in its 240-line
+     * world-map renderer. This moving, radially sampled lookup is PC-specific. */
 }
 
 //43A50
@@ -550,8 +633,11 @@ void DoScrollInWorldMap(s16 h_speed, s16 v_speed) {
         ChangeJumelleSizeOK &= ~2;
     }
 
-    if (delta_pos_x == 0 && delta_pos_y == 0 && ray.speed_y == 0 && ray.speed_x == 0 && ChangeJumelleSizeOK != 4) {
-        if (RayonJumelle < 64 && !ModeAutoJumelle) {
+    /* Bit 4 marks the idle/countdown state; bits 0 and 1 still mean that
+     * vertical or horizontal scrolling has not settled. */
+    if (delta_pos_x == 0 && delta_pos_y == 0 && ray.speed_y == 0 && ray.speed_x == 0 &&
+        (ChangeJumelleSizeOK & ~4) == 0) {
+        if (RayonJumelle < JUMELLE_MAX_RADIUS && !ModeAutoJumelle) {
             ChangeDeltaSizeJumelle(1);
         }
 
@@ -563,7 +649,8 @@ void DoScrollInWorldMap(s16 h_speed, s16 v_speed) {
             ChangeDeltaZoomAmpJumelle(-300);
         }
 
-        if (JumAmpDefPlus + JumAmpDefMul * -RayonJumelle == JumelleZoomAmp && RayonJumelle == 64 && ChangeJumelleSizeOK == 0) {
+        if (JumAmpDefPlus + JumAmpDefMul * -RayonJumelle == JumelleZoomAmp &&
+            RayonJumelle == JUMELLE_MAX_RADIUS && ChangeJumelleSizeOK == 0) {
             ModeAutoJumelle = 0;
             CompteurJumelle = 0;
             ChangeJumelleSizeOK = 4;
@@ -576,17 +663,17 @@ void DoScrollInWorldMap(s16 h_speed, s16 v_speed) {
     if (ChangeJumelleSizeOK == 4) {
         ++CompteurJumelle;
         if (CompteurJumelle == 1830) {
-            ModeAutoRayonJumelle = 25;
+            ModeAutoRayonJumelle = JUMELLE_MIN_RADIUS;
             ModeAutoJumelle |= ChangeJumelleSizeOK;
         } else if (CompteurJumelle == 1800) {
             ModeAutoJumelle |= 2;
             ModeAutoJumelleZoomAmp = -26 * RayonJumelle + 32150;
         } else if (ModeAutoJumelle != 0) {
-            if (!(ModeAutoJumelle & 1) && RayonJumelle == 25) {
-                if (JumelleZoomAmp == 31500) {
+            if (!(ModeAutoJumelle & 1) && RayonJumelle == JUMELLE_MIN_RADIUS) {
+                if (JumelleZoomAmp == -26 * JUMELLE_MIN_RADIUS + 32150) {
                     ModeAutoJumelle |= 1;
-                    RayonJumelle = 25;
-                    ModeAutoPosXJumelle = myRand(SCREEN_WIDTH) + 8;
+                    RayonJumelle = JUMELLE_MIN_RADIUS;
+                    ModeAutoPosXJumelle = myRand(SCREEN_WIDTH) + RayonJumelle / 3;
                     ModeAutoPosYJumelle = myRand(SCREEN_HEIGHT) + RayonJumelle / 3;
                     PositionJumelleDemandeX = ModeAutoPosXJumelle;
                     PositionJumelleDemandeY = ModeAutoPosYJumelle;
