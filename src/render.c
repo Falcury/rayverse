@@ -27,6 +27,7 @@ void render_clear(surface_t* surface, rgb_t color) {
 
 void surface_blit_palettized_image(image_t* source, rgb_palette_t* palette, rect_t* source_rect, surface_t* target,
                                    rect_t* target_rect) {
+	// Presentation API: palette is RGB8, not a native game/asset DAC palette.
 	if (!source || !target) {
 		// error
 		return;

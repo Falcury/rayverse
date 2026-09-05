@@ -47,7 +47,7 @@ typedef struct movie_decoder_t {
     u8* frame_data;
     size_t frame_data_capacity;
     u32 delay_tick_remainder;
-    rgb_palette_t palette;
+    rgb_palette_t palette; // Explicit RGB8, including full-precision FLC type 4
 } movie_decoder_t;
 
 static u16 movie_read_le16(const u8* data) {
@@ -410,7 +410,7 @@ static bool movie_present_frame(movie_decoder_t* movie) {
         memcpy(DrawBufferNormal + (movie->screen_y + y) * SCREEN_WIDTH + movie->screen_x,
                movie->pixels + y * movie->width, movie->width);
     }
-    SetPalette(&movie->palette, 0, 256);
+    SetPaletteRGB8(&movie->palette, 0, 256);
 
     /* The shortened header is assigned 30 ms, but that is not the encoded
        frame period seen by the PC player: one timing path waits about 60 ms
@@ -548,8 +548,8 @@ void MovieFadeOutPalette(void) {
 
     rgb_palette_t faded_palette = global_game->draw_palette;
     for (u32 step = 0; step < 32; ++step) {
-        /* The VGA routine subtracts two from each 6-bit component.  Rayverse
-           uses 8-bit palettes, so the corresponding step is eight.  Color
+        /* The VGA routine subtracts two from each 6-bit component.  Movies
+           use an explicit RGB8 palette, so the corresponding step is eight. Color
            zero is intentionally preserved, matching the PC's 1..255 upload. */
         for (u32 color = 1; color < 256; ++color) {
             rgb_t* rgb = &faded_palette.colors[color];
@@ -557,7 +557,7 @@ void MovieFadeOutPalette(void) {
             rgb->g = rgb->g > 8 ? (u8)(rgb->g - 8) : 0;
             rgb->b = rgb->b > 8 ? (u8)(rgb->b - 8) : 0;
         }
-        SetPalette(&faded_palette, 1, 255);
+        SetPaletteRGB8(&faded_palette, 1, 255);
         advance_frame();
     }
 }
@@ -590,7 +590,7 @@ s32 MoviePlayInternal(const char* path, const char* filename, s32 cd_track, u8 l
     draw_buffer = DrawBufferNormal;
     memset(DrawBufferNormal, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
     memset(&movie.palette, 0, sizeof(movie.palette));
-    SetPalette(&movie.palette, 0, 256);
+    SetPaletteRGB8(&movie.palette, 0, 256);
 
     if (music_enabled && cd_track > 0) {
         play_cd_track(cd_track, false);
@@ -1011,44 +1011,43 @@ void DISPLAY_FOND3(void) {
 
 //3CE20
 void DISPLAY_FOND_MENU(void) {
-    s32 v1 = 320 - Bloc_lim_W2 + Bloc_lim_W1;
     if (OptionGame) {
         if (prev_Bloc_lim_W1 != Bloc_lim_W1) {
             if (prev_Bloc_lim_W1 < Bloc_lim_W1) {
                 ClearBorder((s16)Bloc_lim_H1, (s16)Bloc_lim_H2, (s16)Bloc_lim_W1, (s16)Bloc_lim_W2);
             }
-            Bloc_lim_W1 = prev_Bloc_lim_W1;
+            prev_Bloc_lim_W1 = Bloc_lim_W1;
         }
-        memset(draw_buffer, 0, Bloc_lim_H1 * 320);
-        s32 buffer_offset = Bloc_lim_H1 * 320 + Bloc_lim_W1;
+        memset(draw_buffer, 0, Bloc_lim_H1 * SCREEN_WIDTH);
+        s32 buffer_offset = Bloc_lim_H1 * SCREEN_WIDTH + Bloc_lim_W1;
         for (s32 y = Bloc_lim_H1; y < Bloc_lim_H2; ++y) {
             u8* dest_pos = draw_buffer + buffer_offset;
             u8* source_pos = EffetBufferNormal + buffer_offset;
             for (s32 x = Bloc_lim_W1; x < Bloc_lim_W2; ++x) {
                 *dest_pos++ = *source_pos++;
             }
-            buffer_offset += 320;
+            buffer_offset += SCREEN_WIDTH;
         }
-        memset(draw_buffer, 0, (200 - Bloc_lim_H2) * 320);
+        memset(draw_buffer + Bloc_lim_H2 * SCREEN_WIDTH, 0, (SCREEN_HEIGHT - Bloc_lim_H2) * SCREEN_WIDTH);
     } else {
-        memcpy(draw_buffer, EffetBufferNormal, 320*200);
+        memcpy(draw_buffer, EffetBufferNormal, SCREEN_WIDTH * SCREEN_HEIGHT);
     }
 }
 
-// NOTE: ChatGPT (GPT-5.2) was used to clean up InitPaletteSpecialPC() and DoFadePaletteSpecialPC()
-
 // Helpers for InitPaletteSpecialPC
-static inline u8 clamp_u8_255(s32 x) {
-    // NOTE: In the original PC version the palettes are 6-bit (0..63).
-    // However, in Rayverse we're instead working with 8-bit palettes (0..255). -> adjust the clamp accordingly
+static inline u8 clamp_palette_dac(s32 x) {
+    // PC saturates at 63. RGB8 scales that limit to 252 (not 255), while
+    // allowing finer rounding between steps. This is an effect limit, not a
+    // blanket clamp on RGB8 assets or on presentation.
+    const s32 maximum = use_rgb8_palettes ? 252 : 63;
     if (x < 0)  return 0;
-    if (x > 255) return 255;
+    if (x > maximum) return (u8)maximum;
     return (u8)x;
 }
 
 static inline u8 scale_div_clamp(u8 v, s32 mul, s32 div) {
     // assembly does signed division, but inputs are u8 so this is equivalent
-    return clamp_u8_255((mul * v) / div);
+    return clamp_palette_dac((mul * v) / div);
 }
 
 //3CF70
@@ -1106,9 +1105,9 @@ void InitPaletteSpecialPC(void) {
             rvb_special[15].colors[i] = src;
 
             // pal0: r=min(r,63), g=min(77*g/100,63), b=min(12*b/100,63)
-            rvb_special[0].colors[i].r = clamp_u8_255((int)src.r);
-            rvb_special[0].colors[i].g = clamp_u8_255((77 * (int)src.g) / 100);
-            rvb_special[0].colors[i].b = clamp_u8_255((12 * (int)src.b) / 100);
+            rvb_special[0].colors[i].r = clamp_palette_dac((int)src.r);
+            rvb_special[0].colors[i].g = clamp_palette_dac((77 * (int)src.g) / 100);
+            rvb_special[0].colors[i].b = clamp_palette_dac((12 * (int)src.b) / 100);
 
             // pal14 initially same as pal0 (asm writes to +0x2A00 block too)
             rvb_special[14].colors[i] = rvb_special[0].colors[i];
@@ -1123,9 +1122,9 @@ void InitPaletteSpecialPC(void) {
         for (int i = 128; i <= 174; ++i) {
             rgb_t src = rvb[0].colors[i];
 
-            rvb_special[9].colors[i].r = clamp_u8_255((84 * (int)src.r) / 100);
-            rvb_special[9].colors[i].g = clamp_u8_255((62 * (int)src.g) / 100);
-            rvb_special[9].colors[i].b = clamp_u8_255((12 * (int)src.b) / 100);
+            rvb_special[9].colors[i].r = clamp_palette_dac((84 * (int)src.r) / 100);
+            rvb_special[9].colors[i].g = clamp_palette_dac((62 * (int)src.g) / 100);
+            rvb_special[9].colors[i].b = clamp_palette_dac((12 * (int)src.b) / 100);
 
             rvb[0].colors[i] = rvb_special[9].colors[i];
         }
@@ -1150,9 +1149,9 @@ void DoFadePaletteSpecialPC(s16 start, s16 end) {
             rgb_t a = rvb_special[start].colors[i];
             rgb_t b = rvb_special[end].colors[i];
 
-            rvb_special[p].colors[i].r = clamp_u8_255((a.r * w0 + b.r * w1) / denom);
-            rvb_special[p].colors[i].g = clamp_u8_255((a.g * w0 + b.g * w1) / denom);
-            rvb_special[p].colors[i].b = clamp_u8_255((a.b * w0 + b.b * w1) / denom);
+            rvb_special[p].colors[i].r = clamp_palette_dac((a.r * w0 + b.r * w1) / denom);
+            rvb_special[p].colors[i].g = clamp_palette_dac((a.g * w0 + b.g * w1) / denom);
+            rvb_special[p].colors[i].b = clamp_palette_dac((a.b * w0 + b.b * w1) / denom);
         }
     }
 }

@@ -14,6 +14,11 @@ extern "C" {
 // Global data specific to Rayverse
 // ================================
 
+// Startup setting: true preserves RGB8 asset precision; false uses PC DAC bytes.
+// Set before any palettes are loaded. Changing it live would mix representations
+// in cached palettes and fade state; no runtime toggle/config-file wiring yet.
+extern bool use_rgb8_palettes INIT(= true);
+
 #if WITH_IMGUI
 extern bool imgui_show_game_window INIT(= true);
 extern bool imgui_show_rendering_info_window INIT(= true);

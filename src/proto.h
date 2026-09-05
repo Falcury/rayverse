@@ -343,7 +343,7 @@ void CaptureVideo(u8* source_buf, u8* dest_buf, u8 grayscale);
 void CadreTrans(s16 x, s16 y, s16 w, s16 h);
 void DrawBlackBorderBox(s16 x, s16 y, s16 height, s16 width, u8 a5);
 void InitGauge(void);
-void gauge(s16 a1, s16 a2, s16 a3, s16 a4, s16 a5, s16 a6, s16 a7);
+void gauge(s16 x, s16 y, s16 width, s16 height, s16 minimum, s16 maximum, s16 value);
 void ClearBorder(s16 lim_H1, s16 lim_H2, s16 lim_W1, s16 lim_W2);
 
 // blocs.c
@@ -1654,7 +1654,11 @@ void SpriteWorldOffset(mem_t* mem);
 void SpriteFixeBlocksFree(mem_t* mem);
 void SpriteWorldBlocksFree(mem_t* mem);
 u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte);
-void SetPalette(rgb_palette_t* palette, u8 first_color, s32 num_colors);
+void SetPalette(const rgb_palette_t* palette, u8 first_color, s32 num_colors);
+void SetPaletteRGB8(const rgb_palette_t* palette, u8 first_color, s32 num_colors);
+void palette_from_rgb8(rgb_palette_t* palette, const u8* rgb8);
+u8 palette_dac_value(u8 value);
+u8 palette_gray_index(rgb_t color);
 void set_special_key_descriptions(const char** descriptions);
 image_t load_vignet_pcx(u32 resource_id);
 void detect_and_remove_invalid_link_cycles();

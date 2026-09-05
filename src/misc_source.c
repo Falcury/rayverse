@@ -45,10 +45,54 @@ u8 decode_xor(u8* data, u32 size, u8 encoding_byte, u8 checksum_byte) {
 
 
 //inlined
-void SetPalette(rgb_palette_t* palette, u8 first_color, s32 num_colors) {
+void SetPalette(const rgb_palette_t* palette, u8 first_color, s32 num_colors) {
+    ASSERT(num_colors >= 0 && num_colors <= 256 - first_color);
+    if (use_rgb8_palettes) {
+        SetPaletteRGB8(palette, first_color, num_colors);
+        return;
+    }
+    // Emulate the PC VGA DAC write. Game palettes retain the original bytes
+    // (including occasional values above 63) until this presentation boundary.
+    for (s32 i = first_color; i < first_color + num_colors; ++i) {
+        rgb_t src = palette->colors[i];
+        rgb_t* dest = &global_game->draw_palette.colors[i];
+        dest->r = (src.r & 63) << 2;
+        dest->g = (src.g & 63) << 2;
+        dest->b = (src.b & 63) << 2;
+    }
+}
+
+// Port helper: movies keep full eight-bit FLC colors, bypassing the VGA DAC.
+void SetPaletteRGB8(const rgb_palette_t* palette, u8 first_color, s32 num_colors) {
+    ASSERT(num_colors >= 0 && num_colors <= 256 - first_color);
     memcpy(global_game->draw_palette.colors + first_color, palette->colors + first_color, num_colors * sizeof(rgb_t));
 }
 
+// PCX stores RGB8; only the PC path performs the original divide by four.
+void palette_from_rgb8(rgb_palette_t* palette, const u8* rgb8) {
+    if (use_rgb8_palettes) {
+        memcpy(palette, rgb8, sizeof(*palette));
+        return;
+    }
+    for (s32 i = 0; i < 256; ++i) {
+        palette->colors[i].r = rgb8[3 * i] >> 2;
+        palette->colors[i].g = rgb8[3 * i + 1] >> 2;
+        palette->colors[i].b = rgb8[3 * i + 2] >> 2;
+    }
+}
+
+// Port helpers: translate native constants and grayscale indices into the
+// selected game-palette representation. RGB8 masks exceptional PC bytes early;
+// native mode retains them until the DAC write (see InitMenuPalette).
+u8 palette_dac_value(u8 value) {
+    return use_rgb8_palettes ? (u8)((value & 63) << 2) : value;
+}
+
+u8 palette_gray_index(rgb_t color) {
+    s32 sum = color.r + color.g + color.b;
+    // RGB8 still addresses the same 64-entry grayscale ramp at 128..191.
+    return (u8)(128 + sum / (use_rgb8_palettes ? 12 : 3));
+}
 
 
 //38400
@@ -156,7 +200,7 @@ image_t load_vignet_pcx(u32 resource_id) {
             s32 pal_offset = info->size - 768;
             image.pal = (rgb_palette_t*)malloc(sizeof(rgb_palette_t));
             image.pal_needs_free = true;
-            memcpy(image.pal, pcx_buf + pal_offset, sizeof(rgb_palette_t));
+            palette_from_rgb8(image.pal, pcx_buf + pal_offset);
             image.is_valid = true;
         }
 

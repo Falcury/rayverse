@@ -14,6 +14,8 @@ typedef struct rgb_t {
 } rgb_t;
 
 typedef struct rgb_palette_t {
+	// Game/asset units follow use_rgb8_palettes: RGB8 or PC DAC bytes.
+	// The presentation palette and movie decoder are always RGB8.
 	rgb_t colors[256];
 } rgb_palette_t;
 #pragma pack(pop)
@@ -102,7 +104,7 @@ typedef struct game_state_t {
 	bool initialized;
 	image_t draw_buffer; // draw_buffer
 	image_t prev_frame; // saved previous frame for CaptureVideo()
-    rgb_palette_t draw_palette;
+    rgb_palette_t draw_palette; // RGB8 output; never copy back into game palettes
 	game_sound_buffer_t sound_buffer;
 } game_state_t;
 

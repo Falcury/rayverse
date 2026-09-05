@@ -1375,25 +1375,23 @@ void DO_MENU(void) {
     if (pLOAD_SCREEN) {
         pLOAD_SCREEN();
     }
-    rgb_palette_t* palette;
     if ((num_world == world_1_jungle && num_level == 9) ||
             (num_world == world_2_music && num_level == 4) ||
-            (num_world == world_4_image && num_level == 4) ||
+            (num_world == world_4_image && num_level == 9) ||
             (num_world == world_5_cave && num_level == 4)
     ) {
-        palette = rvb_special + numero_palette_special;
+        menu_rvb = rvb_special[numero_palette_special];
     } else {
-        palette = rvb + current_pal_id;
+        menu_rvb = rvb[current_pal_id];
         rvb[current_pal_id] = rvb_plan3;
     }
-    menu_rvb = *palette;
-    InitGauge(); // TODO
-    InitPlasma(0); // TODO
+    InitGauge();
+    InitPlasma(0);
     SYNCHRO_LOOP(menu_prg);
     if (pEND_SCREEN) {
         pEND_SCREEN();
     }
-    menu_rvb = rvb[current_pal_id];
+    rvb[current_pal_id] = menu_rvb;
 }
 
 //4F488
@@ -1755,6 +1753,9 @@ s16 fondu_prg(u32 a1) {
 
 //501E8
 s16 change_couleur_prg(void) {
+    // Preserve PC timing for expanded colors; RGB8 can also retain fractional
+    // DAC units from assets, with a final shorter step to the exact target.
+    const s32 step = use_rgb8_palettes ? 8 : 2;
     s16 done = 1;
     for (s32 i = 0; i < 256; ++i) {
         rgb_t* rgb_cur = rvb_E40AC.colors + i;
@@ -1766,10 +1767,10 @@ s16 change_couleur_prg(void) {
                 continue;
             }
             done = 0;
-            if (*cur > goal + 2) {
-                *cur -= 2;
-            } else if (*cur + 2 < goal) {
-                *cur += 2;
+            if (*cur > goal + step) {
+                *cur -= step;
+            } else if (*cur + step < goal) {
+                *cur += step;
             } else {
                 *cur = goal;
             }
@@ -1831,7 +1832,7 @@ void FonduOption(s16 x, s16 y, s16 w, s16 h, u8 mode) {
     } else if (mode == 1) {
         for (s32 i = 0; i < 256; ++i) {
             rgb_t rgb = MenuPalette.colors[i];
-            u8 gray = ((rgb.r + rgb.g + rgb.b) >> 2) / 3 + 128;
+            u8 gray = palette_gray_index(rgb);
             rvb_menu_save.colors[i] = MenuPalette.colors[gray];
         }
         rvb_E40AC = MenuPalette;
@@ -1844,7 +1845,7 @@ void FonduOption(s16 x, s16 y, s16 w, s16 h, u8 mode) {
             for (s32 i = 0; i < wFondu; ++i) {
                 u8 src = *pos;
                 rgb_t rgb = MenuPalette.colors[src];
-                u8 gray = ((rgb.r + rgb.g + rgb.b) >> 2) / 3 + 128;
+                u8 gray = palette_gray_index(rgb);
                 *pos++ = gray;
             }
             row += SCREEN_WIDTH;
@@ -1865,7 +1866,7 @@ void FonduOption(s16 x, s16 y, s16 w, s16 h, u8 mode) {
             for (s32 i = 0; i < wFondu; ++i) {
                 u8 src = *pos;
                 rgb_t rgb = MenuPalette.colors[src];
-                u8 gray = ((rgb.r + rgb.g + rgb.b) >> 2) / 3 + 128;
+                u8 gray = palette_gray_index(rgb);
                 *pos++ = gray;
             }
             row += SCREEN_WIDTH;
@@ -1882,7 +1883,7 @@ void FonduOption(s16 x, s16 y, s16 w, s16 h, u8 mode) {
         SYNCHRO_LOOP(fondu_prg);
         for (s32 i = 0; i < 256; ++i) {
             rgb_t rgb = MenuPalette.colors[i];
-            u8 gray = ((rgb.r + rgb.g + rgb.b) >> 2) / 3 + 128;
+            u8 gray = palette_gray_index(rgb);
             rvb_E40AC.colors[i] = MenuPalette.colors[gray];
         }
         rvb_menu_save = MenuPalette;
@@ -1890,9 +1891,8 @@ void FonduOption(s16 x, s16 y, s16 w, s16 h, u8 mode) {
         SYNCHRO_LOOP_PALETTE(change_couleur_prg);
 
     } else if (mode == 2) {
-        // NOTE: disabled this, because the palette seems to get messed up in DO_MENU(). I don't know why that does not
-        // happen in the original game? Anyway, it still seems to work fine with the line disabled.
-//        rvb_menu_save = rvb[current_pal_id];
+        // DO_MENU restores this palette before the outgoing transition.
+        rvb_menu_save = rvb[current_pal_id];
 
         rvb[current_pal_id] = MenuPalette;
         SYNCHRO_LOOP(apparition_prg);

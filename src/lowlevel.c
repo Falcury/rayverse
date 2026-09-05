@@ -776,12 +776,15 @@ void DrawSpriteColorNormal(s32 x /*eax*/, s32 color /*edx*/, s32 y /*ebx*/, vec2
         u8* sprite_pos = image_data;
         u8 current_color = saved_sprite_color;
         while (draw_pos < draw_end) {
-            for (s32 i = 0; i < size.x; ++i) {
+            for (s32 i = 0; i < size.x;) {
                 u8 c = sprite_pos[i];
                 if (c < 160) {
                     draw_pos[i] = c | current_color;
+                    ++i;
                 } else {
-                    i += (c - 160);
+                    // PC advances by the encoded run only, without an extra pixel.
+                    // Treat a malformed zero-length run as one transparent pixel.
+                    i += MAX(1, (s32)c - 160);
                 }
             }
             sprite_pos += sprite_width;
@@ -800,12 +803,13 @@ void DrawSpriteColorFlipNormal(s32 x, s32 color, s32 y, vec2b_t size, u8* draw_b
         u8* sprite_pos = image_data;
         u8 current_color = saved_sprite_color;
         while (draw_pos < draw_end) {
-            for (s32 i = 0; i < size.x; ++i) {
+            for (s32 i = 0; i < size.x;) {
                 u8 c = sprite_pos[i];
                 if (c < 160) {
                     draw_pos[size.x - i - 1] = c | current_color; // reverse order (flipped)
+                    ++i;
                 } else {
-                    i += (c - 160);
+                    i += MAX(1, (s32)c - 160);
                 }
             }
             sprite_pos += sprite_width;

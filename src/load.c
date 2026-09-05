@@ -191,11 +191,13 @@ void load_level(mem_t* mem_level, s32 world_id, const char* filename) {
         mem_read(&mp.width, mem, 2);
         mem_read(&mp.height, mem, 2);
         mem_read(rvb, mem, sizeof(rvb));
-        // Convert 6-bit colors into 8-bit colors by multiplying by 4
-        for (s32 i = 0; i < COUNT(rvb); ++i) {
-            u8* colors = (u8*)&rvb[i].colors;
-            for (s32 j = 0; j < 256 * 3; ++j) {
-                colors[j] <<= 2;
+        // Level palettes already contain native PC DAC values.
+        if (use_rgb8_palettes) {
+            for (s32 i = 0; i < COUNT(rvb); ++i) {
+                u8* colors = (u8*)rvb[i].colors;
+                for (s32 j = 0; j < 256 * 3; ++j) {
+                    colors[j] = palette_dac_value(colors[j]);
+                }
             }
         }
         mem_read(&last_plan1_palette, mem, 1);
@@ -768,7 +770,7 @@ image_t LoadPcxInVignet(mem_t* buffer, s32 resource_id, s16* width, s16* height,
                 s32 pal_offset = info->size - 768;
                 image.pal = pal_to_save;
                 image.pal_needs_free = false;
-                memcpy(pal_to_save, pcx_buf + pal_offset, sizeof(rgb_palette_t));
+                palette_from_rgb8(pal_to_save, pcx_buf + pal_offset);
             }
             image.is_valid = true;
 
@@ -814,7 +816,7 @@ void LoadPcxPaletteInVignet(s32 resource_id, rgb_palette_t* palette) {
             // in case you want to use the palette (otherwise you will need to read the file twice...)
 
             s32 pal_offset = info->size - 768;
-            memcpy(palette, pcx_buf + pal_offset, sizeof(rgb_palette_t));
+            palette_from_rgb8(palette, pcx_buf + pal_offset);
 
         }
         free(pcx_buf);
@@ -1067,7 +1069,7 @@ void LoadPcxOptions(u8* buffer, s32 resource_id, s16* width, s16* height, rgb_pa
                 s32 pal_offset = info->size - 768;
                 image.pal = pal_to_save;
                 image.pal_needs_free = false;
-                memcpy(pal_to_save, pcx_buf + pal_offset, sizeof(rgb_palette_t));
+                palette_from_rgb8(pal_to_save, pcx_buf + pal_offset);
             }
             image.is_valid = true;
 
