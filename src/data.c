@@ -3750,6 +3750,7 @@ extern u8 InOut; //E4CFB
 extern u8 byte_E4CFC; //E4CFC
 extern u8 byte_E4CFD; //E4CFD
 extern u8 byte_E4CFE; //E4CFE
+extern u8 key_select; //E4CFF
 
 extern s16 droppedBombIds[64]; //E4D00
 extern u8 lastDroppedBombIdInSequence[8]; //E4D80

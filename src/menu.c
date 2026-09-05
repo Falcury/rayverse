@@ -102,6 +102,15 @@ void calc_off_fnd(void) {
 
 s8 byte_49290[4] = {0, 0, 0, 0}; //49290
 
+/*
+ * The PC executable reuses the first seven words of `options` while the key
+ * screen is open.  Keep an explicit edit buffer here instead: those words are
+ * otherwise the live sound/video options in this translation, and aliasing
+ * them makes the submenu unnecessarily fragile.
+ */
+static u8 key_screen_bindings[7];
+static char key_screen_title[200];
+
 //49308
 void check_key_table(void) {
     bool valid = true;
@@ -238,7 +247,7 @@ bool IsBackgroundOn(void) {
 
 //498A4
 void init_key2txt(void) {
-    print_once("Not implemented: init_key2txt"); //stub
+    set_special_key_descriptions(key_descriptions);
 }
 
 //49998
@@ -360,9 +369,12 @@ void DO_OPTIONS_IN_GAME(void) {
             SizeScreen = 0;
         }
         rvb_options_in_game = rvb[0];
+        Keyflush();
         default_key();
         GoMenu = 0;
         OptionGame = 1;
+        stop_cd();
+        cdTime = 0;
         if (CarteSonAutorisee) {
             start_freeze_snd();
         }
@@ -406,27 +418,29 @@ void DO_OPTIONS_IN_GAME(void) {
                 } break;
                 default: break;
             }
-            OptionGame = 0;
-            new_key();
-            if (GameModeVideo == MODE_NORMAL) {
-                set_xywhmap(TabW1[SizeScreen], TabW2[SizeScreen], TabH1[SizeScreen], TabH2[SizeScreen]);
-                sprite_clipping(Bloc_lim_W1, Bloc_lim_W2, Bloc_lim_H1, Bloc_lim_H2);
-                N_CLRSCR(DrawBufferNormal);
-            } else {
-                if (P486 == 1) {
-                    //sub_1268A(plan0bit_length >> 2);
-                }
+            /* Keep the in-game overlay alive across its nested PC menu screens. */
+            MENU_RETURN = 0;
+        }
+        OptionGame = 0;
+        new_key();
+        if (GameModeVideo == MODE_NORMAL) {
+            set_xywhmap(TabW1[SizeScreen], TabW2[SizeScreen], TabH1[SizeScreen], TabH2[SizeScreen]);
+            sprite_clipping(Bloc_lim_W1, Bloc_lim_W2, Bloc_lim_H1, Bloc_lim_H2);
+            N_CLRSCR(DrawBufferNormal);
+        } else {
+            if (P486 == 1) {
+                //sub_1268A(plan0bit_length >> 2);
             }
-            if (CarteSonAutorisee) {
-                stop_freeze_snd();
-            }
-            in_pause = 0;
-            ProchainEclair = 1;
-            numero_palette_special = 0;
-            MapTimePause = 0;
-            if ((num_world == 6 && num_level == 4) || is_fee) {
-                SizeScreen = SizeScreen_saved;
-            }
+        }
+        if (CarteSonAutorisee) {
+            stop_freeze_snd();
+        }
+        in_pause = 0;
+        ProchainEclair = 1;
+        numero_palette_special = 0;
+        MapTimePause = 0;
+        if ((num_world == 6 && num_level == 4) || is_fee) {
+            SizeScreen = SizeScreen_saved;
         }
         byte_96884 = dead_time;
         button_released = button_released_saved;
@@ -920,27 +934,241 @@ void END_OPTIONS_SCREEN(void) {
 
 //4B3EC
 void INIT_KEY_SCREEN(void) {
-    print_once("Not implemented: INIT_KEY_SCREEN"); //stub
+    key_descriptions = language == 1 ? key_descriptions_azerty : key_descriptions_qwerty;
+    init_key2txt();
+
+    pINIT_AFFICHE_SCREEN = INIT_AFFICHE_KEY_SCREEN;
+    pAFFICHE_SCREEN = AFFICHE_KEY_SCREEN;
+    pDO_COMMANDE = DO_COMMANDE_KEY;
+    pEND_SCREEN = END_KEY_SCREEN;
+
+    position = 8;
+    nbre_options = 8;
+    option_exit = 8;
+    for (s32 i = 0; i < 7; ++i) {
+        key_screen_bindings[i] = tab_key_sav[i];
+    }
+
+    key_select = 0;
+    compteur = 0;
+    max_compteur = 100;
+    delai_repetition = 12;
+    button_released = 1;
+    repetition = 6;
+
+    switch (language) {
+        case 1:
+            byte_E4CFC = 105;
+            break;
+        case 2:
+            byte_E4CFC = 120;
+            break;
+        case 0:
+        default:
+            /* The PC routine only has layouts for the three shipped languages. */
+            byte_E4CFC = 90;
+            break;
+    }
+    basex = (SCREEN_WIDTH / 2) - byte_E4CFC;
+    general_init_screen(15, 68, 5);
 }
 
 //4B514
 void INIT_AFFICHE_KEY_SCREEN(void) {
-    print_once("Not implemented: INIT_AFFICHE_KEY_SCREEN"); //stub
+    static const u8 colors[9] = {5, 5, 5, 5, 5, 5, 5, 5, 3};
+    s16 label_offset;
+
+    switch (language) {
+        case 1:
+            label_offset = 25;
+            break;
+        case 2:
+            label_offset = 45;
+            break;
+        case 0:
+        default:
+            label_offset = 20;
+            break;
+    }
+
+    /* PC surrounds the localized title with an additional pair of line marks. */
+    snprintf(key_screen_title, sizeof(key_screen_title), "/%s/", language_txt[233]);
+
+    for (s32 i = 0; i <= nbre_options; ++i) {
+        display_item_t* item = &menu_to_display[i];
+        item->color = colors[i];
+        item->font_size = 2;
+        item->field_D5 = 0;
+        item->is_fond = 1;
+
+        if (i == option_exit) {
+            strcpy(item->text, language_txt[232]); /* /exit/ */
+            item->xpos = SCREEN_WIDTH / 2;
+            item->ypos = debut_sortie;
+        } else {
+            strcpy(item->text, language_txt[182 + i]);
+            item->xpos = i == 7 ? SCREEN_WIDTH / 2 : basex + label_offset;
+            item->ypos = debut_options + i * (ecart_options + 15);
+        }
+        INIT_TXT_BOX(item);
+    }
+
+    text_to_display[0].is_fond = 1;
+    text_to_display[0].xpos = basex + 80;
+    text_to_display[0].field_D5 = 0;
+    text_to_display[0].font_size = 2;
+
+    strcpy(msg_to_display[0].text, language_txt[222]);
+    msg_to_display[0].xpos = SCREEN_WIDTH / 2;
+    msg_to_display[0].ypos = SCREEN_HEIGHT / 2;
+    msg_to_display[0].font_size = 2;
+    msg_to_display[0].is_fond = 2;
+    msg_to_display[0].field_D5 = 0;
+    INIT_TXT_BOX(&msg_to_display[0]);
+
+    const s16 new_x = basex - 2;
+    const s16 new_y = debut_titre - 25;
+    const s16 new_w = 2 * byte_E4CFC;
+    const s16 new_h = menu_to_display[option_exit].ypos - debut_titre + 35;
+    const s16 fade_x = MIN(new_x, word_E4CEC_x);
+    const s16 fade_y = MIN(new_y, word_E4CF0_y);
+    const s16 fade_right = MAX(new_x + new_w, word_E4CEC_x + word_E4CF4_w);
+    const s16 fade_bottom = MAX(new_y + new_h, word_E4CF0_y + word_E4CEE_h);
+
+    word_E4CEC_x = new_x;
+    word_E4CF0_y = new_y;
+    word_E4CF4_w = new_w;
+    word_E4CEE_h = new_h;
+    if (OptionGame) {
+        FonduOption(fade_x, fade_y, fade_right - fade_x, fade_bottom - fade_y, 1);
+    } else {
+        FonduPixel(fade_x, fade_y, fade_right - fade_x, fade_bottom - fade_y);
+    }
 }
 
 //4B8A4
 void AFFICHE_KEY_SCREEN(void) {
-    print_once("Not implemented: AFFICHE_KEY_SCREEN"); //stub
+    s16 key_offset;
+
+    switch (language) {
+        case 1:
+            key_offset = 70;
+            break;
+        case 2:
+            key_offset = 75;
+            break;
+        case 0:
+        default:
+            key_offset = 62;
+            break;
+    }
+
+    DISPLAY_FOND_MENU();
+    if (OptionGame) {
+        CadreTrans(word_E4CEC_x, word_E4CF0_y, word_E4CF4_w, word_E4CEE_h);
+    }
+    display_text(key_screen_title, SCREEN_WIDTH / 2, debut_titre, 1, 1); /* /setup keys/ */
+
+    for (s32 i = 0; i <= nbre_options; ++i) {
+        display_item_t* item = &menu_to_display[i];
+        if (i == position) {
+            display_box_text_plasma(item, 1);
+        } else {
+            display_text(item->text, item->xpos, item->ypos, item->font_size, item->color);
+        }
+
+        if (i >= 7) {
+            continue;
+        }
+
+        const char* key_name = key_descriptions[key_screen_bindings[i]];
+        if (key_select && i == position) {
+            display_item_t* selected_key = &text_to_display[0];
+            strcpy(selected_key->text, key_name);
+            selected_key->color = item->color;
+            selected_key->xpos = item->xpos + key_offset;
+            selected_key->ypos = item->ypos;
+            INIT_TXT_BOX(selected_key);
+            display_box_text_plasma(selected_key, 0);
+        } else {
+            display_text(key_name, item->xpos + key_offset, item->ypos, 2, item->color);
+        }
+    }
 }
 
 //4BACC
 void DO_COMMANDE_KEY(void) {
-    print_once("Not implemented: DO_COMMANDE_KEY"); //stub
+    TestCompteur();
+
+    if (key_select) {
+        for (s32 key = 0; key < 128; ++key) {
+            if (TOUCHE((u8)key) && key_descriptions[key] != NULL) {
+                key_screen_bindings[position] = (u8)key;
+                key_select = 0;
+                RESET_ALL_TOUCHE();
+            }
+        }
+        TestButtonReleased();
+        return;
+    }
+
+    if (SelectButPressed()) {
+        MENU_RETURN = 1;
+    }
+
+    if (!rightjoy() && !leftjoy() &&
+        (button_released || (compteur > delai_repetition && (compteur % repetition) == 0))) {
+        if (upjoy()) {
+            PlaySnd_old(68);
+            position = position == 0 ? option_exit : position - 1;
+        } else if (downjoy()) {
+            PlaySnd_old(68);
+            position = position == option_exit ? 0 : position + 1;
+        }
+    }
+
+    if (position == 7 && ValidButPressed() && button_released) {
+        static const u8 default_bindings[7] = {
+            SC_LEFT, SC_UP, SC_RIGHT, SC_DOWN, SC_CONTROL, SC_ALT, SC_X
+        };
+        memcpy(key_screen_bindings, default_bindings, sizeof(key_screen_bindings));
+    } else if (position >= 0 && position < 7 && ValidButPressed() && button_released) {
+        key_select = 1;
+        RESET_ALL_TOUCHE();
+        TestButtonReleased();
+        return;
+    } else if (position == option_exit && ValidButPressed()) {
+        bool duplicate = false;
+        for (s32 i = 0; i < 6 && !duplicate; ++i) {
+            for (s32 j = i + 1; j < 7; ++j) {
+                if (key_screen_bindings[i] == key_screen_bindings[j]) {
+                    duplicate = true;
+                    break;
+                }
+            }
+        }
+        if (duplicate) {
+            display_box_msg(&msg_to_display[0]);
+            TestButtonReleased();
+            return;
+        }
+    }
+
+    TestButtonReleased();
 }
 
 //4BD50
 void END_KEY_SCREEN(void) {
-    print_once("Not implemented: END_KEY_SCREEN"); //stub
+    menuEtape = 4;
+    key_select = 0;
+    if (!MENU_RETURN) {
+        memcpy(tab_key_sav, key_screen_bindings, sizeof(key_screen_bindings));
+    } else {
+        byte_96883 = 0;
+        if (!OptionGame) {
+            DO_FADE_OUT();
+        }
+    }
 }
 
 //4BDA4
@@ -1694,8 +1922,35 @@ void FonduOption(s16 x, s16 y, s16 w, s16 h, u8 mode) {
 
 //50A38
 s16 FonduPixel_prg(u32 a1) {
-    print_once("Not implemented: FonduPixel_prg");
-    return false; //stub
+    (void)a1;
+    const s32 step = EtapeFondu;
+    if (step <= 0) {
+        return 1;
+    }
+
+    const s32 left = MAX(0, xFondu);
+    const s32 top = MAX(0, yFondu);
+    const s32 right = MIN(SCREEN_WIDTH, (s32)xFondu + wFondu);
+    const s32 bottom = MIN(SCREEN_HEIGHT, (s32)yFondu + hFondu);
+    const u8* source = EffetBufferNormal + SCREEN_WIDTH * SCREEN_HEIGHT;
+
+    for (s32 y = top; y < bottom; ++y) {
+        /* PC carries the sample counter across rows, excluding scanline padding.
+         * Keep that phase relative to the requested rectangle even when clipped.
+         * It tests before incrementing, so pixel zero is deliberately untouched;
+         * the ordinary menu redraw supplies that corner after the transition.
+         */
+        s32 pixel_index = (y - yFondu) * wFondu + left - xFondu;
+        for (s32 x = left; x < right; ++x, ++pixel_index) {
+            if (pixel_index != 0 && pixel_index % step == 0) {
+                const s32 offset = y * SCREEN_WIDTH + x;
+                DrawBufferNormal[offset] = source[offset];
+            }
+        }
+    }
+
+    --EtapeFondu;
+    return EtapeFondu == 0;
 }
 
 //50B0C
@@ -1704,8 +1959,12 @@ void FonduPixel(s16 x, s16 y, s16 w, s16 h) {
     yFondu = y;
     wFondu = w;
     hFondu = h;
-    draw_buffer = EffetBufferNormal + 64000;
+    EtapeFondu = 16;
+    draw_buffer = EffetBufferNormal + SCREEN_WIDTH * SCREEN_HEIGHT;
     pAFFICHE_SCREEN();
     draw_buffer = DrawBufferNormal;
-    SYNCHRO_LOOP(FonduPixel_prg); //TODO: implement FonduPixel_prg
+    /* PC runs all 16 display ticks here. Android retains the preparation and
+     * callback, but its FonduPixel wrapper omits this blocking loop.
+     */
+    SYNCHRO_LOOP(FonduPixel_prg);
 }
