@@ -1035,7 +1035,8 @@ void do_boum(void) {
     allocatePoingBoum();
     poing.is_boum = true;
     if (!poing.is_returning) {
-        poing.is_returning = true;
+        // PC defers the return flag/animation to DO_POING's next zero-speed tick.
+        // PS1 performs that transition here instead.
         poing.charge = 0;
         poing_obj->speed_x = 0;
     }

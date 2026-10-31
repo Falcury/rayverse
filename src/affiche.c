@@ -403,7 +403,7 @@ void DISPLAY_CYMBALE(obj_t* obj, u8* draw_buf, u8 a3) {
             s32 proj_width = get_proj_dist(obj->scale, sprite->outer_width);
             vec2b_t proj_size = {(u8)proj_width, (u8)proj_height};
             u8* image_data = obj->img_buffer + sprite->offset_in_atlas;
-            DrawSpriteNormalEtX(proj_x, sprite->color, proj_y, proj_size, draw_buffer, image_data);
+            DrawSpriteNormalEtX(proj_x, sprite->color, proj_y, proj_size, draw_buf, image_data);
         }
     }
 }
@@ -514,7 +514,8 @@ void DISPLAY_ALL_OBJECTS(void) {
             for (s32 j = 0; j < nb_cymbal_in_map; ++j) {
                 obj_t* cymbale = level.objects + cymbal_obj_id[j];
                 if (cymbale->is_active) {
-                    DISPLAY_CYMBALE(cymbale, draw_buffer, 1);
+                    // Layers 3..5 are drawn here, after Rayman; the first pass draws 0..2.
+                    DISPLAY_CYMBALE(cymbale, draw_buffer, 0);
                 }
             }
         }

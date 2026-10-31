@@ -277,6 +277,13 @@ void DO_POING(obj_t* obj) {
         }
         else
         {
+            if (poing.is_boum && !poing.is_returning) {
+                /* PC switches to the impact-return animation here (PS1 does
+                   this in do_boum). Select its index immediately so DO_ANIM's
+                   RESET_IF_NEW does not discard fist_U_turn's frame 7. */
+                fist_U_turn(true);
+                obj->anim_index = get_eta(obj)->anim_index;
+            }
             poing.is_returning = true;
             if (obj->flags.flip_x)
                 obj->speed_x--;

@@ -89,6 +89,7 @@ void start_cd_gameover(void) {
 
 //1D028
 void stop_cd(void) {
+    cdTime = 0; // Re-arm TestCdLoop so gameplay restarts its level track after speech.
     SetCompteurTrameAudio();
     is_ogg_playing = false;
 }

@@ -327,7 +327,7 @@ void Display_Sprite_On_Front(s16 plan_width, s16 plan_height, s16 w1, s16 h1, s1
 }
 
 //787E8
-void Calcul_Deplacement_Bande(s16 x, s16 plan_width, s16 plan_height) {
+void CalCul_Deplacement_Bande(s16 x, s16 plan_width, s16 plan_height) {
     s32 v17 = 0; // y something?
     u8 type_scroll = Type_Scroll[10 * (num_world - 1) + Num_Fond];
     if (type_scroll != 0) {
