@@ -21,7 +21,7 @@ void INIT_TXT_FEE(void) {
 }
 
 //392AC
-void allocate_poing_or_free(void) {
+void allocate_poing_or_fee(void) {
     obj_t* obj = NULL;
     for (s32 i = 0; i < level.nb_objects; ++i) {
         obj = level.objects + i;
@@ -123,7 +123,7 @@ void init_fee(void) {
     }
     if (is_fee) {
         INIT_TXT_FEE();
-        allocate_poing_or_free();
+        allocate_poing_or_fee();
     }
 }
 

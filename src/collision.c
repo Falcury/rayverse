@@ -2726,7 +2726,7 @@ void doBlackRaymanCommand(obj_t* br_obj) {
 }
 
 //30BE4
-void doBlKRayRaymanCollision(obj_t* obj) {
+void DoBlKRayRaymanCollision(obj_t* obj) {
     if (ray_stack_is_full == 1) {
         ray.hit_points = 0;
     }

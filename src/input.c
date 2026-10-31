@@ -269,8 +269,8 @@ void update_pad_limits(s16* xmax, s16* xmin, s16* ymax, s16* ymin, s16* xcentre,
 }
 
 //4225C
-void sub_4225C(void) {
-    print_once("Not implemented: sub_4225C"); //stub
+void DemoUpdateRemainingPercent(void) {
+    print_once("Not implemented: DemoUpdateRemainingPercent"); //stub
 }
 
 //422C8

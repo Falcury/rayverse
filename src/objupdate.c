@@ -42,7 +42,7 @@ u8 readTestArgs(obj_t* obj) {
 }
 
 //60B5C
-u8 readGoXYargs(obj_t* obj) {
+u8 readGoXYArgs(obj_t* obj) {
     ++obj->cmd_offset;
     obj->nb_cmd = char2short(obj->cmds[obj->cmd_offset]);
 
@@ -110,12 +110,12 @@ u8 skipInvalidArg(obj_t* obj) {
 }
 
 //60C6C
-u8 handle_11_GO_LABEL(obj_t* obj) {
+u8 handle_GO_LABEL(obj_t* obj) {
     return 1;
 }
 
 //60C70
-u8 handle_19_GO_WAITSTATE(obj_t* obj) {
+u8 handle_GO_WAITSTATE(obj_t* obj) {
     obj->change_anim_mode = ANIMMODE_RESET_IF_NEW;
     obj->cmd = GO_WAIT;
     obj->nb_cmd = vblToEOA(obj, obj->nb_cmd) - 1;
@@ -123,7 +123,7 @@ u8 handle_19_GO_WAITSTATE(obj_t* obj) {
 }
 
 //60C90
-u8 handle_25_RESERVED_GO_GOSUB(obj_t* obj) {
+u8 handle_RESERVED_GO_GOSUB(obj_t* obj) {
     pushCmdContext(obj, 1);
     obj->cmd_offset = obj->cmd_labels[obj->nb_cmd];
     return 1;
@@ -136,7 +136,7 @@ u8 handle_RESERVED_GO_SKIP_and_RESERVED_GO_GOTO(obj_t* obj) {
 }
 
 //60CDC
-u8 handle_26_RESERVED_GO_BRANCHTRUE(obj_t* obj) {
+u8 handle_RESERVED_GO_BRANCHTRUE(obj_t* obj) {
     if (obj->flags.command_test) {
         obj->cmd_offset = obj->cmd_labels[obj->nb_cmd];
     }
@@ -144,7 +144,7 @@ u8 handle_26_RESERVED_GO_BRANCHTRUE(obj_t* obj) {
 }
 
 //60D04
-u8 handle_27_RESERVED_GO_BRANCHFALSE(obj_t* obj) {
+u8 handle_RESERVED_GO_BRANCHFALSE(obj_t* obj) {
     if (!obj->flags.command_test) {
         obj->cmd_offset = obj->cmd_labels[obj->nb_cmd];
     }
@@ -152,7 +152,7 @@ u8 handle_27_RESERVED_GO_BRANCHFALSE(obj_t* obj) {
 }
 
 //60D2C
-u8 handle_28_RESERVED_GO_SKIPTRUE(obj_t* obj) {
+u8 handle_RESERVED_GO_SKIPTRUE(obj_t* obj) {
     if (obj->flags.command_test) {
         obj->cmd_offset = obj->cmd_labels[obj->nb_cmd];
     }
@@ -160,7 +160,7 @@ u8 handle_28_RESERVED_GO_SKIPTRUE(obj_t* obj) {
 }
 
 //60D54
-u8 handle_29_RESERVED_GO_SKIPFALSE(obj_t* obj) {
+u8 handle_RESERVED_GO_SKIPFALSE(obj_t* obj) {
     if (!obj->flags.command_test) {
         obj->cmd_offset = obj->cmd_labels[obj->nb_cmd];
     }
@@ -168,25 +168,25 @@ u8 handle_29_RESERVED_GO_SKIPFALSE(obj_t* obj) {
 }
 
 //60D7C
-u8 handle_21_GO_X(obj_t* obj) {
+u8 handle_GO_X(obj_t* obj) {
     obj->x = obj->nb_cmd * 100 + obj->link;
     return 1;
 }
 
 //60DA8
-u8 handle_22_GO_Y(obj_t* obj) {
+u8 handle_GO_Y(obj_t* obj) {
     obj->y = obj->nb_cmd * 100 + obj->link;
     return 1;
 }
 
 //60DD4
-u8 handle_12_GO_GOTO(obj_t* obj) {
+u8 handle_GO_GOTO(obj_t* obj) {
     skipToLabel(obj, obj->nb_cmd, true);
     return 0;
 }
 
 //60DEC
-u8 handle_8_GO_STATE(obj_t* obj) {
+u8 handle_GO_STATE(obj_t* obj) {
     set_main_etat(obj, obj->nb_cmd);
     obj->speed_x = 0;
     obj->speed_y = 0;
@@ -194,7 +194,7 @@ u8 handle_8_GO_STATE(obj_t* obj) {
 }
 
 //60E0C
-u8 handle_5_GO_SUBSTATE(obj_t* obj) {
+u8 handle_GO_SUBSTATE(obj_t* obj) {
     set_sub_etat(obj, obj->nb_cmd);
     obj->speed_x = 0;
     obj->speed_y = 0;
@@ -202,7 +202,7 @@ u8 handle_5_GO_SUBSTATE(obj_t* obj) {
 }
 
 //60E2C
-u8 handle_6_GO_SKIP(obj_t* obj) {
+u8 handle_GO_SKIP(obj_t* obj) {
     for (s32 i = 0; i < obj->nb_cmd; ++i) {
         skipOneCommand(obj);
     }
@@ -210,26 +210,26 @@ u8 handle_6_GO_SKIP(obj_t* obj) {
 }
 
 //60E50
-u8 handle_9_GO_PREPARELOOP(obj_t* obj) {
+u8 handle_GO_PREPARELOOP(obj_t* obj) {
     pushCmdContext(obj, obj->nb_cmd);
     return 1;
 }
 
 //60E60
-u8 handle_13_GO_GOSUB(obj_t* obj) {
+u8 handle_GO_GOSUB(obj_t* obj) {
     pushCmdContext(obj, 1);
     skipToLabel(obj, obj->nb_cmd, true);
     return 0;
 }
 
 //60E88
-u8 handle_14_GO_RETURN(obj_t* obj) {
+u8 handle_GO_RETURN(obj_t* obj) {
     popCmdContext(obj);
     return 1;
 }
 
 //60E90
-u8 handle_10_GO_DOLOOP(obj_t* obj) {
+u8 handle_GO_DOLOOP(obj_t* obj) {
     ASSERT(obj->cmd_contexts);
     cmd_context_t* cmd_context = obj->cmd_contexts + obj->cmd_context_depth;
     --cmd_context->count;
@@ -243,13 +243,13 @@ u8 handle_10_GO_DOLOOP(obj_t* obj) {
 }
 
 //60EC4
-u8 handle_33_INVALID_CMD(obj_t* obj) {
+u8 handle_INVALID_CMD(obj_t* obj) {
     obj->cmd_offset = -1;
     return 1;
 }
 
 //60ED0
-u8 handle_15_GO_BRANCHTRUE(obj_t* obj) {
+u8 handle_GO_BRANCHTRUE(obj_t* obj) {
     if (obj->flags.command_test) {
         skipToLabel(obj, obj->nb_cmd, true);
         return 0;
@@ -259,7 +259,7 @@ u8 handle_15_GO_BRANCHTRUE(obj_t* obj) {
 }
 
 //60EF4
-u8 handle_16_GO_BRANCHFALSE(obj_t* obj) {
+u8 handle_GO_BRANCHFALSE(obj_t* obj) {
     if (!obj->flags.command_test) {
         skipToLabel(obj, obj->nb_cmd, true);
         return 0;
@@ -269,7 +269,7 @@ u8 handle_16_GO_BRANCHFALSE(obj_t* obj) {
 }
 
 //60F18
-u8 handle_31_GO_SKIPTRUE(obj_t* obj) {
+u8 handle_GO_SKIPTRUE(obj_t* obj) {
     if (obj->flags.command_test) {
         for (s32 i = 0; i < obj->nb_cmd; ++i) {
             skipOneCommand(obj);
@@ -279,7 +279,7 @@ u8 handle_31_GO_SKIPTRUE(obj_t* obj) {
 }
 
 //60F44
-u8 handle_32_GO_SKIPFALSE(obj_t* obj) {
+u8 handle_GO_SKIPFALSE(obj_t* obj) {
     if (!obj->flags.command_test) {
         for (s32 i = 0; i < obj->nb_cmd; ++i) {
             skipOneCommand(obj);
@@ -289,14 +289,14 @@ u8 handle_32_GO_SKIPFALSE(obj_t* obj) {
 }
 
 //60F70
-u8 handle_18_GO_SETTEST(obj_t* obj) {
+u8 handle_GO_SETTEST(obj_t* obj) {
     // NOTE: this doesn't make sense to me (?), the flag gets set only if obj->nb_cmd is uneven? (did they intend > 0?)
     obj->flags.command_test = obj->nb_cmd & 1;
     return 1;
 }
 
 //60F98
-u8 handle_17_GO_TEST(obj_t* obj) {
+u8 handle_GO_TEST(obj_t* obj) {
     switch(obj->nb_cmd) {
         case 0: {
             obj->flags.command_test = (obj->flags.flip_x == obj->param);

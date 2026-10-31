@@ -1651,8 +1651,8 @@ extern obj_procs_t ObjectsFonctions[262] INIT(= {
         {DO_BBMONT4_COMMAND,               DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 201: BB14
         {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 202: stars on Rayman
         {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 203: washing machine 2
-        {doBlackRaymanCommand,             DoPoingCollisionDefault,          doBlKRayRaymanCollision,         DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 204: dark Rayman
-        {DO_ONE_CMD,                       DoPoingCollisionDefault,          doBlKRayRaymanCollision,         DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 205: dark Rayman fist
+        {doBlackRaymanCommand,             DoPoingCollisionDefault,          DoBlKRayRaymanCollision,         DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 204: dark Rayman
+        {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoBlKRayRaymanCollision,         DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 205: dark Rayman fist
         {DO_PIEDS_RAYMAN,                  DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 206: Rayman's feet
         {DO_POELLE_COMMAND,                DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 207: frying pan
         {DO_ONE_CMD,                       DoPoingCollisionDefault,          DoRaymanCollisionDefault,        DoRaymanInZDDDefault,      ObjectUTurnDefault}, // 208: dust circle
@@ -2432,35 +2432,35 @@ extern cptr_t cptr_tab[] INIT(= {
         {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 2
         {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 3
         {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 4
-        {readOneArg, skipOneArg, handle_5_GO_SUBSTATE}, // 5
-        {readOneArg, skipOneArg, handle_6_GO_SKIP}, // 6
+        {readOneArg, skipOneArg, handle_GO_SUBSTATE}, // 5
+        {readOneArg, skipOneArg, handle_GO_SKIP}, // 6
         {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 7
-        {readOneArg, skipOneArg, handle_8_GO_STATE}, // 8
-        {readOneArg, skipOneArg, handle_9_GO_PREPARELOOP}, // 9
-        {readNoArg, skipNoArg, handle_10_GO_DOLOOP}, // 10
-        {readOneArg, skipOneArg, handle_11_GO_LABEL}, // 11
-        {readOneArg, skipOneArg, handle_12_GO_GOTO}, // 12
-        {readOneArg, skipOneArg, handle_13_GO_GOSUB}, // 13
-        {readNoArg, skipNoArg, handle_14_GO_RETURN}, // 14
-        {readOneArg, skipOneArg, handle_15_GO_BRANCHTRUE}, // 15
-        {readOneArg, skipOneArg, handle_16_GO_BRANCHFALSE}, // 16
-        {readTestArgs, skipTestArgs, handle_17_GO_TEST}, // 17
-        {readOneArg, skipOneArg, handle_18_GO_SETTEST}, // 18
-        {readOneArg, skipOneArg, handle_19_GO_WAITSTATE}, // 19
+        {readOneArg, skipOneArg, handle_GO_STATE}, // 8
+        {readOneArg, skipOneArg, handle_GO_PREPARELOOP}, // 9
+        {readNoArg, skipNoArg, handle_GO_DOLOOP}, // 10
+        {readOneArg, skipOneArg, handle_GO_LABEL}, // 11
+        {readOneArg, skipOneArg, handle_GO_GOTO}, // 12
+        {readOneArg, skipOneArg, handle_GO_GOSUB}, // 13
+        {readNoArg, skipNoArg, handle_GO_RETURN}, // 14
+        {readOneArg, skipOneArg, handle_GO_BRANCHTRUE}, // 15
+        {readOneArg, skipOneArg, handle_GO_BRANCHFALSE}, // 16
+        {readTestArgs, skipTestArgs, handle_GO_TEST}, // 17
+        {readOneArg, skipOneArg, handle_GO_SETTEST}, // 18
+        {readOneArg, skipOneArg, handle_GO_WAITSTATE}, // 19
         {readSpeedArgs, skipSpeedArgs, handle_SELF_HANDLED}, // 20
-        {readGoXYargs, skipGoXYArgs, handle_21_GO_X}, // 21
-        {readGoXYargs, skipGoXYArgs, handle_22_GO_Y}, // 22
+        {readGoXYArgs, skipGoXYArgs, handle_GO_X}, // 21
+        {readGoXYArgs, skipGoXYArgs, handle_GO_Y}, // 22
         {readOneArg, skipOneArg, handle_RESERVED_GO_SKIP_and_RESERVED_GO_GOTO}, // 23
         {readOneArg, skipOneArg, handle_RESERVED_GO_SKIP_and_RESERVED_GO_GOTO}, // 24
-        {readOneArg, skipOneArg, handle_25_RESERVED_GO_GOSUB}, // 25
-        {readOneArg, skipOneArg, handle_26_RESERVED_GO_BRANCHTRUE}, // 26
-        {readOneArg, skipOneArg, handle_27_RESERVED_GO_BRANCHFALSE}, // 27
-        {readOneArg, skipOneArg, handle_28_RESERVED_GO_SKIPTRUE}, // 28
-        {readOneArg, skipOneArg, handle_29_RESERVED_GO_SKIPFALSE}, // 29
+        {readOneArg, skipOneArg, handle_RESERVED_GO_GOSUB}, // 25
+        {readOneArg, skipOneArg, handle_RESERVED_GO_BRANCHTRUE}, // 26
+        {readOneArg, skipOneArg, handle_RESERVED_GO_BRANCHFALSE}, // 27
+        {readOneArg, skipOneArg, handle_RESERVED_GO_SKIPTRUE}, // 28
+        {readOneArg, skipOneArg, handle_RESERVED_GO_SKIPFALSE}, // 29
         {readOneArg, skipOneArg, handle_SELF_HANDLED}, // 30
-        {readOneArg, skipOneArg, handle_31_GO_SKIPTRUE}, // 31
-        {readOneArg, skipOneArg, handle_32_GO_SKIPFALSE}, // 32
-        {readInvalidArg, skipInvalidArg, handle_33_INVALID_CMD}, // 33
+        {readOneArg, skipOneArg, handle_GO_SKIPTRUE}, // 31
+        {readOneArg, skipOneArg, handle_GO_SKIPFALSE}, // 32
+        {readInvalidArg, skipInvalidArg, handle_INVALID_CMD}, // 33
 });
 
 extern u8 pma_couteaux[6] INIT(= {3, 5, 5, 3, 3, 4}); //9727C

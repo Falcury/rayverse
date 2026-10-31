@@ -322,7 +322,7 @@ void mereDenisDropBomb(obj_t *smama_obj)
 
 
 //51470
-void swapWeaponAnimState(obj_t* obj, u8 new_sub_etat) {
+void snapWeaponAnimState(obj_t* obj, u8 new_sub_etat) {
         set_main_and_sub_etat(obj, 0, new_sub_etat);
         obj->anim_frame = 0;
         obj->anim_index = obj->eta[obj->main_etat][obj->sub_etat].anim_index;
@@ -396,7 +396,7 @@ void prepareNewMereDenisAttack(obj_t* smama_obj) {
                     case 40:
                     case 41:
                         set_main_and_sub_etat(smama_obj, 0, 16);
-                        swapWeaponAnimState(wep_obj, 43);
+                        snapWeaponAnimState(wep_obj, 43);
                         set_main_and_sub_etat(mach_obj, mach_obj->main_etat, mach_obj->sub_etat + 1);
                         skipToLabel(smama_obj, 0, true);
                         mach_obj->x = smama_obj->x;
@@ -558,7 +558,7 @@ void prepareNewMereDenisAttack(obj_t* smama_obj) {
                         add_alwobj(wep_obj);
                     wep_obj->flags.alive = 1;
                     wep_obj->is_active = 1;
-                    swapWeaponAnimState(wep_obj, 36);
+                    snapWeaponAnimState(wep_obj, 36);
                 }
                 set_main_and_sub_etat(smama_obj, 0, 19);
                 skipToLabel(smama_obj, 0, true);
@@ -615,14 +615,14 @@ void prepareNewMereDenisAttack(obj_t* smama_obj) {
                 case 34:
                     set_main_and_sub_etat(smama_obj, smama_obj->main_etat, 31);
                     if (wep_obj)
-                        swapWeaponAnimState(wep_obj, 33);
+                        snapWeaponAnimState(wep_obj, 33);
                     break;
                 case 21:
                 case 31:
                 case 19:
                     set_main_and_sub_etat(smama_obj, smama_obj->main_etat, 24);
                     if (wep_obj)
-                        swapWeaponAnimState(wep_obj, 25);
+                        snapWeaponAnimState(wep_obj, 25);
                     break;
                 }
                 goto block_123;
@@ -632,14 +632,14 @@ void prepareNewMereDenisAttack(obj_t* smama_obj) {
                 case 22:
                     set_main_and_sub_etat(smama_obj, smama_obj->main_etat, 23);
                     if (wep_obj)
-                        swapWeaponAnimState(wep_obj, 26);
+                        snapWeaponAnimState(wep_obj, 26);
                     break;
                 case 21:
                 case 23:
                 case 19:
                     set_main_and_sub_etat(smama_obj, smama_obj->main_etat, 30);
                     if (wep_obj)
-                        swapWeaponAnimState(wep_obj, 32);
+                        snapWeaponAnimState(wep_obj, 32);
                     break;
                 }
 block_123:
@@ -660,17 +660,17 @@ block_123:
                 case 33:
                     set_main_and_sub_etat(smama_obj, 0, 22);
                     if (wep_obj)
-                        swapWeaponAnimState(wep_obj, 18);
+                        snapWeaponAnimState(wep_obj, 18);
                     break;
                 case 32:
                     set_main_and_sub_etat(smama_obj, 0, 21);
                     if (wep_obj)
-                        swapWeaponAnimState(wep_obj, 17);
+                        snapWeaponAnimState(wep_obj, 17);
                     break;
                 case 43:
                     set_main_and_sub_etat(smama_obj, 0, 34);
                     if (wep_obj)
-                        swapWeaponAnimState(wep_obj, 35);
+                        snapWeaponAnimState(wep_obj, 35);
                     break;
                 }
                 if (wep_obj)

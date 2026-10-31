@@ -491,7 +491,7 @@ void restoreGameState(save_state_t* save_state) {
 }
 
 //741C8
-s32 get_offset_in_safe_zone(s16 obj_id) {
+s32 get_offset_in_save_zone(s16 obj_id) {
     s32 offset = 0;
     if (num_world > 1) {
         for (s32 w = 1; w < num_world; ++w) {
@@ -509,17 +509,17 @@ s32 get_offset_in_safe_zone(s16 obj_id) {
 
 //74250
 void reset_save_zone_level(void) {
-    memset(save_zone + get_offset_in_safe_zone(0), 0, 32);
+    memset(save_zone + get_offset_in_save_zone(0), 0, 32);
 }
 
 //74270
 void take_bonus(s16 obj_id) {
-    save_zone[get_offset_in_safe_zone(obj_id)] |= (0x80 >> (obj_id & 7));
+    save_zone[get_offset_in_save_zone(obj_id)] |= (0x80 >> (obj_id & 7));
 }
 
 //742A8
 u8 bonus_taken(s16 obj_id) {
-    u8 result = save_zone[get_offset_in_safe_zone(obj_id)] & (0x80 >> (obj_id & 7));
+    u8 result = save_zone[get_offset_in_save_zone(obj_id)] & (0x80 >> (obj_id & 7));
     return result;
 }
 

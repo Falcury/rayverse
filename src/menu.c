@@ -1222,8 +1222,8 @@ void END_PAD_SCREEN(void) {
 }
 
 //4CD94
-void InitParamGraphicsScreen(void) {
-    print_once("Not implemented: InitParamGraphicsScreen"); //stub
+void InitParamGraphicScreen(void) {
+    print_once("Not implemented: InitParamGraphicScreen"); //stub
 }
 
 //4D094
