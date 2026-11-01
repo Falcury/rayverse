@@ -476,9 +476,12 @@ typedef struct big_map_t {
 #define BLOCK_SIZE 16
 
 typedef struct options_t {
-	s16 music_enabled;
-	s16 sound_volume;
-	s16 SizeScreen;
+    // PC menu scratch words are reused by each screen. These provisional
+    // aliases describe the graphics selection / video radio-button views;
+    // they share storage, not additional persistent configuration fields.
+    union { s16 music_enabled; s16 video_pci1; };
+    union { s16 sound_volume; s16 video_mode; s16 video_pci2; };
+    union { s16 SizeScreen; s16 video_vesa; };
 	s16 Frequence;
 	s16 fixon;
 	s16 BackgroundOn;

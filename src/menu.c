@@ -211,11 +211,33 @@ void LOAD_CONFIG(void) {
 
 //49638
 void NewFrequency(u8 new_frequency) {
-    use_sync = 1;
-    display_mode = 0;
-    Frequence = new_frequency;
-    set_vga_frequency(new_frequency);
-    print_once("Not implemented: NewFrequency"); //stub
+    // PC menu values are selectors, not Hz. Do not overwrite Frequence here:
+    // the graphics screen previews changes and needs it to restore on cancel.
+    switch (new_frequency) {
+        case 0:
+        case 1:
+            use_sync = 1;
+            display_mode = 0;
+            set_vga_frequency(new_frequency == 0 ? 60 : 50);
+            break;
+        case 2:
+            use_sync = 0;
+            set_vga_frequency(60);
+            // PC "max" omits VGA retrace waits. The portable backend retains
+            // its 60 Hz frame limiter, so gameplay cannot run at CPU speed.
+            break;
+        case 70:
+        case 80:
+        case 100:
+            use_sync = 1;
+            display_mode = 0;
+            set_vga_frequency(new_frequency);
+            break;
+        default:
+            break;
+    }
+    // The PC also recalibrates DOS sound-card timing here; host audio does not
+    // require (or support) that hardware reinitialization.
 }
 
 //49720
@@ -1221,59 +1243,426 @@ void END_PAD_SCREEN(void) {
     print_once("Not implemented: END_PAD_SCREEN"); //stub
 }
 
+// Keep the PC state machine below, including its dormant Mode-X branches.
+// Restrict only transitions into unsupported backends (both the video selector
+// and the automatic switch when disabling backgrounds).
+static bool graphics_mode_supported(s16 mode) {
+    return mode == 0;
+}
+
+static void graphics_screen_transition(void) {
+    s16 x = basex;
+    s16 y = debut_titre - 25;
+    s16 w = 2 * byte_E4CFC;
+    s16 h = menu_to_display[option_exit].ypos - debut_titre + 35;
+    s16 fade_x = MIN(x, word_E4CEC_x);
+    s16 fade_y = MIN(y, word_E4CF0_y);
+    s16 right = MAX(x + w, word_E4CEC_x + word_E4CF4_w);
+    s16 bottom = MAX(y + h, word_E4CF0_y + word_E4CEE_h);
+    word_E4CEC_x = x;
+    word_E4CF0_y = y;
+    word_E4CF4_w = w;
+    word_E4CEE_h = h;
+    if (OptionGame) {
+        FonduOption(fade_x, fade_y, right - fade_x, bottom - fade_y, 1);
+    } else {
+        FonduPixel(fade_x, fade_y, right - fade_x, bottom - fade_y);
+    }
+}
+
+static void graphics_screen_value(const char* text, s16 row, s16 x, bool active) {
+    display_item_t* item = &text_to_display[0];
+    if (active && position == row) {
+        strcpy(item->text, text);
+        item->xpos = x;
+        item->ypos = menu_to_display[row].ypos;
+        item->font_size = 2;
+        item->color = 1;
+        item->is_fond = 1;
+        item->field_D5 = 0;
+        INIT_TXT_BOX(item);
+        display_box_text_plasma(item, 0);
+    } else {
+        display_text(text, x, menu_to_display[row].ypos, 2, active ? 1 : 5);
+    }
+}
+
+static void graphics_screen_navigation(bool skip_viewport) {
+    if (button_released || (compteur > delai_repetition && compteur % repetition == 0)) {
+        if (upjoy()) {
+            if (position == first_option) {
+                position = option_exit;
+            } else {
+                position -= skip_viewport && position == 3 ? 2 : 1;
+            }
+            PlaySnd_old(68);
+        } else if (downjoy()) {
+            if (position == option_exit) {
+                position = first_option;
+            } else {
+                position += skip_viewport && position == 1 ? 2 : 1;
+            }
+            PlaySnd_old(68);
+        }
+    }
+}
+
 //4CD94
 void InitParamGraphicScreen(void) {
-    print_once("Not implemented: InitParamGraphicScreen"); //stub
+    button_released = 1;
+    compteur = 0;
+    max_compteur = 100;
+    delai_repetition = 12;
+    repetition = 6;
+    if (options.video_mode == 0 && ModeNormalAutorise) {
+        if (OptionGame) {
+            bool fixed_size = is_fee || (num_world == world_6_cake && num_level == 4);
+            position = fixed_size ? 4 : 5;
+            first_option = fixed_size ? 3 : 2;
+            nbre_options = fixed_size ? 3 : 4;
+            option_exit = 5;
+            byte_E4CFC = language == 2 ? 120 : 110;
+            basex = SCREEN_WIDTH / 2 - byte_E4CFC;
+            general_init_screen(20, 60, 5);
+        } else {
+            position = 7;
+            first_option = 1;
+            nbre_options = 7;
+            option_exit = 7;
+            byte_E4CFC = language == 2 ? 125 : 120;
+            basex = SCREEN_WIDTH / 2 - byte_E4CFC;
+            general_init_screen(15, 70, 5);
+        }
+        --nbre_options; // PC reserves the first row for the performance indicator.
+    } else if (FondAutorise == 1 || FondAutorise == 2) {
+        position = 5;
+        option_exit = 6;
+        first_option = OptionGame || FondAutorise == 2 ? 3 : 1;
+        nbre_options = OptionGame || FondAutorise == 2 ? 4 : 5;
+        byte_E4CFC = language == 2 ? 120 : 110;
+        basex = SCREEN_WIDTH / 2 - byte_E4CFC;
+        general_init_screen(20, 60, 5);
+    }
 }
 
 //4D094
 void INIT_GRAPHIC_SCREEN(void) {
-    print_once("Not implemented: INIT_GRAPHIC_SCREEN"); //stub
+    pINIT_SCREEN = INIT_GRAPHIC_SCREEN;
+    pINIT_AFFICHE_SCREEN = INIT_AFFICHE_GRAPHIC_SCREEN;
+    pAFFICHE_SCREEN = AFFICHE_GRAPHIC_SCREEN;
+    pDO_COMMANDE = DO_COMMANDE_GRAPHIC;
+    pEND_SCREEN = END_GRAPHIC_SCREEN;
+    if (GameModeVideo == MODE_NORMAL) {
+        options.video_mode = 0;
+        byte_E4CFE = 2;
+    } else {
+        options.video_mode = GameModeVideo == MODE_X && !P486 ? 1 : 2;
+        byte_E4CFE = 1;
+    }
+    // DO_COMMANDE_OPTIONS saves pending music/volume in byte_E4CD8/9 before
+    // entering this screen; INIT_OPTIONS_CHOICE restores them on return.
+    options.SizeScreen = SizeScreen;
+    options.Frequence = Frequence;
+    options.fixon = fixon;
+    options.BackgroundOn = BackgroundOptionOn;
+    options.ScrollDiffOn = ScrollDiffOn;
+    InitParamGraphicScreen();
 }
 
 //4D178
 void INIT_AFFICHE_GRAPHIC_SCREEN(void) {
-    print_once("Not implemented: INIT_AFFICHE_GRAPHIC_SCREEN"); //stub
+    menu_to_display[0].ypos = debut_options;
+    for (s32 i = first_option; i <= first_option + nbre_options; ++i) {
+        display_item_t* item = &menu_to_display[i];
+        item->font_size = 2;
+        item->is_fond = 1;
+        item->field_D5 = 0;
+        item->color = i == option_exit || i == 7 ? 3 : 5;
+        strcpy(item->text, language_txt[i == option_exit ? 232 : 196 + i]);
+        item->xpos = i == option_exit ? SCREEN_WIDTH / 2 : basex + 10;
+        s32 row = i - first_option;
+        if (options.video_mode == 0 || i == 1 || OptionGame || FondAutorise == 2) {
+            ++row;
+        }
+        item->ypos = i == option_exit ? debut_sortie : debut_options + row * (ecart_options + 15);
+        INIT_TXT_BOX(item);
+    }
+    graphics_screen_transition();
 }
 
 //4D55C
 void AFFICHE_GRAPHIC_SCREEN(void) {
-    print_once("Not implemented: AFFICHE_GRAPHIC_SCREEN"); //stub
+    DISPLAY_FOND_MENU();
+    if (OptionGame) {
+        CadreTrans(word_E4CEC_x, word_E4CF0_y, word_E4CF4_w, word_E4CEE_h);
+    }
+    display_text(language_txt[235], SCREEN_WIDTH / 2, debut_titre, 1, 1);
+    display_text(language_txt[196], basex + 10, debut_options, 2, 5);
+    // PC CalcSpeed estimates VGA transfer cost using DOS benchmark tables.
+    // Those tables are not measurements of our renderer: show no estimate
+    // rather than a misleading gauge derived from their default 255 values.
+    display_text("--", byte_E4CFC + 102, debut_options, 2, 5);
+
+    for (s32 i = first_option; i <= option_exit; ++i) {
+        if ((options.video_mode != 0 && i == 2) ||
+            (OptionGame && options.video_mode == 0 && i == 6)) {
+            continue;
+        }
+        display_item_t* item = &menu_to_display[i];
+        if (i == position) {
+            display_box_text_plasma(item, 1);
+        } else {
+            display_text(item->text, item->xpos, item->ypos, 2, item->color);
+        }
+        switch (i) {
+            case 1:
+                display_text(options.video_mode == 0 ? "pci1" : options.video_mode == 1 ? "pci2" : "vesa",
+                             byte_E4CFC + 118, item->ypos, 2, item->color);
+                break;
+            case 2:
+                gauge(byte_E4CFC + 70, item->ypos - 12, 80, 12, 0, 3,
+                      3 - options.SizeScreen);
+                break;
+            case 3: {
+                bool rate60 = (options.Frequence == 0 && GameModeVideo == MODE_NORMAL) ||
+                    (GameModeVideo == MODE_X && (options.Frequence == 0 || options.Frequence == 70 ||
+                                               options.Frequence == 80 || options.Frequence == 100));
+                bool rate50 = !rate60 && options.Frequence == 1;
+                bool maximum = !rate60 && !rate50;
+                // PC always draws the selected value and one alternative; the
+                // second alternative is only shown in normal mode.
+                if (maximum || options.video_mode == 0) {
+                    graphics_screen_value("max", i, byte_E4CFC + 54, maximum);
+                }
+                if (!maximum || options.video_mode == 0) {
+                    graphics_screen_value("60", i, byte_E4CFC + 102, rate60);
+                }
+                graphics_screen_value("50", i, byte_E4CFC + 134, rate50);
+            } break;
+            case 4:
+            case 5:
+            case 6: {
+                if ((i == 5 && (!FondAutorise || (OptionGame && options.video_mode == 0))) ||
+                    (i == 6 && (OptionGame || !FondAutorise || !options.BackgroundOn || options.video_mode != 0))) {
+                    break;
+                }
+                bool on = i == 4 ? options.fixon : i == 5 ? options.BackgroundOn : options.ScrollDiffOn;
+                graphics_screen_value("on", i, byte_E4CFC + 102, on);
+                graphics_screen_value("off", i, byte_E4CFC + 134, !on);
+            } break;
+        }
+    }
 }
 
 //4DA8C
 void DO_COMMANDE_GRAPHIC(void) {
-    print_once("Not implemented: DO_COMMANDE_GRAPHIC"); //stub
+    TestCompteur();
+    menuEtape = 4;
+    if (SelectButPressed()) {
+        MENU_RETURN = 1;
+        TestButtonReleased();
+        return;
+    }
+    graphics_screen_navigation(options.video_mode != 0);
+    bool action = ValidButPressed() || rightjoy() || leftjoy();
+    if (options.video_mode == 0) {
+        if (position == 2 && !upjoy() && !downjoy() && button_released) {
+            bool resized = false;
+            if (leftjoy()) {
+                options.SizeScreen = options.SizeScreen < 3 ? options.SizeScreen + 1 : 0;
+                resized = true;
+            } else if (rightjoy()) {
+                options.SizeScreen = options.SizeScreen > 0 ? options.SizeScreen - 1 : 3;
+                resized = true;
+            }
+            if (resized) {
+                s32 size = options.SizeScreen;
+                set_xywhmap(TabW1[size], TabW2[size], TabH1[size], TabH2[size]);
+            }
+        } else if (position == 6 && !OptionGame && button_released && action) {
+            options.ScrollDiffOn = !options.ScrollDiffOn;
+        }
+    }
+    if (position == 3 && !upjoy() && !downjoy() && button_released) {
+        if (GameModeVideo == MODE_X && options.Frequence > byte_E4CFE) {
+            options.Frequence = byte_E4CFE - 1;
+        }
+        if (ValidButPressed() || rightjoy()) {
+            options.Frequence = options.Frequence < byte_E4CFE ? options.Frequence + 1 : 0;
+            NewFrequency(options.Frequence);
+        } else if (leftjoy()) {
+            options.Frequence = options.Frequence > 0 ? options.Frequence - 1 : byte_E4CFE;
+            NewFrequency(options.Frequence);
+        }
+    } else if (position >= 4 && position < option_exit && position != 6 && button_released && action) {
+        if (position == 4) {
+            options.fixon = !options.fixon;
+        } else if (position == 5) {
+            options.BackgroundOn = !options.BackgroundOn;
+        }
+        if (position == 5 && !OptionGame && !options.BackgroundOn && options.video_mode == 0 && graphics_mode_supported(1)) {
+            // PC automatically selects PCI2 here. Keep its state/layout path,
+            // but gate entry until the planar renderer is available. Normal
+            // mode can already draw a black background in the portable port.
+            options.video_mode = 1;
+            byte_E4CFE = 1;
+            P486 = 0;
+            if (options.Frequence == 2) {
+                options.Frequence = 0;
+            }
+            InitParamGraphicScreen();
+            position = 5;
+            INIT_AFFICHE_GRAPHIC_SCREEN();
+            FonduPixel(18, debut_titre + 14, 270, menu_to_display[option_exit].ypos - debut_titre - 36);
+        }
+    } else if (position == 1 && ValidButPressed() && button_released) {
+        menuEtape = 10;
+        sortie_options = 1;
+    }
+    TestButtonReleased();
 }
 
 //4DF88
 void END_GRAPHIC_SCREEN(void) {
-    print_once("Not implemented: END_GRAPHIC_SCREEN"); //stub
+    if (!MENU_RETURN) {
+        SizeScreen = options.SizeScreen;
+        Frequence = options.Frequence;
+        fixon = options.fixon;
+        BackgroundOptionOn = options.BackgroundOn;
+        BackgroundOn = IsBackgroundOn();
+        ScrollDiffOn = options.ScrollDiffOn;
+        switch (options.video_mode) {
+            case 0: GameModeVideo = MODE_NORMAL; P486 = 0; break;
+            case 1: GameModeVideo = MODE_X; P486 = 0; break;
+            case 2: GameModeVideo = MODE_X; P486 = 1; break;
+        }
+    } else {
+        byte_96883 = 0;
+        if (GameModeVideo == MODE_NORMAL) {
+            set_xywhmap(TabW1[SizeScreen], TabW2[SizeScreen], TabH1[SizeScreen], TabH2[SizeScreen]);
+        }
+        WaitNSynchro(25);
+        NewFrequency(Frequence);
+        if (!OptionGame) {
+            DO_FADE_OUT();
+        }
+    }
 }
 
 //4E0A0
 void INIT_VIDEOMODE_SCREEN(void) {
-    print_once("Not implemented: INIT_VIDEOMODE_SCREEN"); //stub
+    pINIT_SCREEN = INIT_VIDEOMODE_SCREEN;
+    pINIT_AFFICHE_SCREEN = INIT_AFFICHE_VIDEOMODE_SCREEN;
+    pAFFICHE_SCREEN = AFFICHE_VIDEOMODE_SCREEN;
+    pDO_COMMANDE = DO_COMMANDE_VIDEOMODE;
+    pEND_SCREEN = END_VIDEOMODE_SCREEN;
+    button_released = 1;
+    compteur = 0;
+    max_compteur = 100;
+    delai_repetition = 12;
+    repetition = 6;
+    position = option_exit = nbre_options = 3;
+    first_option = 0;
+    byte_E4CFC = 140;
+    basex = SCREEN_WIDTH / 2 - byte_E4CFC;
+    general_init_screen(15, 68, 5);
+    options.video_pci1 = 0;
+    options.video_pci2 = 0;
+    options.video_vesa = 0;
+    if (GameModeVideo == MODE_NORMAL) {
+        options.video_pci1 = 1;
+    } else if (GameModeVideo == MODE_X && !P486) {
+        options.video_pci2 = 1;
+    } else {
+        options.video_vesa = 1;
+    }
 }
 
 //4E1CC
 void INIT_AFFICHE_VIDEOMODE_SCREEN(void) {
-    print_once("Not implemented: INIT_AFFICHE_VIDEOMODE_SCREEN"); //stub
+    for (s32 i = 0; i <= option_exit; ++i) {
+        display_item_t* item = &menu_to_display[i];
+        strcpy(item->text, language_txt[i == option_exit ? 232 : 223 + i]);
+        item->xpos = SCREEN_WIDTH / 2;
+        item->ypos = i == option_exit ? debut_sortie : debut_options + i * (ecart_options + 15);
+        item->font_size = 2;
+        item->is_fond = 1;
+        item->field_D5 = 0;
+        item->color = i == option_exit ? 3 : 5;
+        INIT_TXT_BOX(item);
+    }
+    graphics_screen_transition();
 }
 
 //4E470
 void AFFICHE_VIDEOMODE_SCREEN(void) {
-    print_once("Not implemented: AFFICHE_VIDEOMODE_SCREEN"); //stub
+    const s16 selected[3] = {options.video_pci1, options.video_pci2, options.video_vesa};
+    DISPLAY_FOND_MENU();
+    display_text(language_txt[203], SCREEN_WIDTH / 2, debut_titre, 1, 1);
+    for (s32 i = 0; i <= option_exit; ++i) {
+        display_item_t* item = &menu_to_display[i];
+        item->color = i == option_exit ? 3 : selected[i] ? 1 : 5;
+        if (i == position) {
+            display_box_text_plasma(item, 1);
+        } else {
+            display_text(item->text, item->xpos, item->ypos, 2, item->color);
+        }
+    }
 }
 
 //4E574
 void DO_COMMANDE_VIDEOMODE(void) {
-    print_once("Not implemented: DO_COMMANDE_VIDEOMODE"); //stub
+    TestCompteur();
+    if (SelectButPressed()) {
+        MENU_RETURN = 1;
+        TestButtonReleased();
+        return;
+    }
+    graphics_screen_navigation(false);
+    if (button_released && position >= 0 && position < option_exit &&
+        (ValidButPressed() || leftjoy() || rightjoy())) {
+        s16* choices[3] = {&options.video_pci1, &options.video_pci2, &options.video_vesa};
+        if (graphics_mode_supported(position)) {
+            for (s32 i = 0; i < 3; ++i) {
+                *choices[i] = i == position;
+            }
+        } else if (!*choices[position]) {
+            // Preserve the original hardware choices as visible entries, but never
+            // enter the unfinished Mode-X main loop. Only PCI1 maps to our renderer.
+            display_item_t* message = &msg_to_display[0];
+            strcpy(message->text, language == 1 ? "/mode video indisponible/escape : retour/" :
+                language == 2 ? "/videomodus nicht verfugbar/escape : zuruck/" :
+                "/video mode unavailable/escape : back/");
+            message->xpos = SCREEN_WIDTH / 2;
+            message->ypos = SCREEN_HEIGHT / 2;
+            message->font_size = 2;
+            message->is_fond = 2;
+            message->field_D5 = 0;
+            message->color = 1;
+            INIT_TXT_BOX(message);
+            display_box_msg(message);
+        }
+    }
+    TestButtonReleased();
 }
 
 //4E708
 void END_VIDEOMODE_SCREEN(void) {
-    print_once("Not implemented: END_VIDEOMODE_SCREEN"); //stub
+    if (!MENU_RETURN) {
+        if (options.video_pci1) {
+            GameModeVideo = MODE_NORMAL;
+            P486 = 0;
+            BackgroundOptionOn = 1;
+        } else {
+            GameModeVideo = MODE_X;
+            P486 = options.video_pci2 ? 0 : 1;
+            if (Frequence == 2) {
+                Frequence = 0;
+                NewFrequency(0);
+            }
+        }
+    }
+    menuEtape = 9;
 }
 
 //4E790

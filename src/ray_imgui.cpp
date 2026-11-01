@@ -108,7 +108,8 @@ void show_rendering_info_window(bool* p_open)
 
     s32 frequency = VGA_FREQ;
     if (ImGui::SliderInt("Frequency", &frequency, 0, 100)) {
-        NewFrequency(frequency);
+        // This debug slider specifies literal Hz, unlike the PC menu selectors.
+        set_vga_frequency(frequency);
     }
 
     // TODO: Add fields
