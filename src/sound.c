@@ -417,7 +417,7 @@ s32 get_voice_obj_snd(s16 obj_id, s16 snd) {
     s32 index = 0;
     // NOTE: there is a conditional here, but the branches are identical?
     // if (snd = 48) { ... } else { ... }
-    while ((voice->snd != snd || voice->obj != obj_id) && index < COUNT(voice_table)) {
+    while (index < COUNT(voice_table) && (voice->snd != snd || voice->obj != obj_id)) {
         ++index;
         ++voice;
     }
@@ -514,8 +514,10 @@ void PlaySnd(s16 snd, s16 obj_id) {
             indice_ray_wait = 0;
         }
         s16 sound_to_interrupt = last_snd(obj_id);
+        // manage_snd() uses -1 after clearing a managed voice.
+        u8 previous_flags = sound_to_interrupt >= 0 ? sound_table[sound_to_interrupt] : 0;
 //        printf("playing sound %d: want to interrupt sound %d for obj %d\n", sound_id, sound_to_interrupt, obj_id);
-        if (sound_to_interrupt != snd && (sound_table[sound_to_interrupt] & 8) != 0) {
+        if (sound_to_interrupt != snd && (previous_flags & 8) != 0) {
             erase_pile_snd(obj_id);
             s16 voice_id = get_voice_obj_snd(obj_id, sound_to_interrupt);
             if (voice_id >= 0) {
@@ -530,7 +532,7 @@ void PlaySnd(s16 snd, s16 obj_id) {
 
         u8 pan_snd = 0;
         u8 vol_snd = 0;
-        if (!dans_la_map_monde && snd != 0 && (snd != sound_to_interrupt || (sound_table[sound_to_interrupt] & 4) != 0)) {
+        if (!dans_la_map_monde && snd != 0 && (snd != sound_to_interrupt || (previous_flags & 4) != 0)) {
             if (obj_id == -1 || (obj_id == rayman_obj_id && rayman_obj_id != -1)) {
                 pan_snd = get_pan_snd(&ray);
                 vol_snd = 127;
@@ -685,26 +687,36 @@ void PlaySnd(s16 snd, s16 obj_id) {
                     start_cd_bbdead();
                 }
             }
+        }
 
-            for (s32 i = 0; i < 20; ++i) {
-                if (stk_obj[i] == obj_id || stk_obj[i] == -2) {
-                    stk_obj[i] = obj_id;
-                    stk_snd[i] = snd;
-                    return;
-                }
+        // PC loc_728E4 also runs when playback is skipped, notably for sound 0.
+        // Record that stop so a moving plum (or another loop) can restart the
+        // same sound later instead of being rejected as a duplicate forever.
+        for (s32 i = 0; i < 20; ++i) {
+            if (stk_obj[i] == obj_id || stk_obj[i] == -2) {
+                stk_obj[i] = obj_id;
+                stk_snd[i] = snd;
+                return;
             }
-            if (snd != -1) {
-                s32 index = 19;
-                while(level.objects[stk_obj[index]].is_active) {
-                    --index;
-                    if (index == -1) {
-                        index = 0;
-                        break;
-                    }
+        }
+        // A stop updates an existing/free slot, but must not evict another
+        // object's history when the table is full (PC loc_72909).
+        if (snd != 0) {
+            s32 index = 19;
+            while (index >= 0) {
+                s16 owner = stk_obj[index];
+                // Rayman's -1 owner is valid history, not level.objects[-1].
+                // Stale IDs from another level are reusable inactive entries.
+                if (owner != -1 && (owner < 0 || owner >= level.nb_objects || !level.objects[owner].is_active)) {
+                    break;
                 }
-                stk_obj[index] = obj_id;
-                stk_snd[index] = snd;
+                --index;
             }
+            if (index == -1) {
+                index = 0;
+            }
+            stk_obj[index] = obj_id;
+            stk_snd[index] = snd;
         }
 
     }
@@ -950,7 +962,7 @@ void PlayTchatchVignette(s32 snd) {
                 default: break;
             }
         }
-        PlayTchatch(snd, Volume_Snd); //TODO
+        PlayTchatch(snd, Volume_Snd);
     }
 }
 
