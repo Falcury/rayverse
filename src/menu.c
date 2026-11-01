@@ -318,7 +318,7 @@ void DO_NEW_MENUS(void) {
                 // Options screen
                 pINIT_SCREEN = INIT_OPTIONS_CHOICE;
                 if (pLOAD_SCREEN) {
-                    byte_E4CFD = 1;
+                    options_screen_first_load = 1;
                     pLOAD_SCREEN = LOAD_OPTIONS_SCREEN;
                 }
                 DO_MENU();
@@ -374,7 +374,7 @@ void DO_OPTIONS_IN_GAME(void) {
 
     SetCompteurTrameAudio();
     menuEtape = 4;
-    byte_E4CFD = 1;
+    options_screen_first_load = 1;
     MENU_SUITE = 0;
     MENU_RETURN = 0;
     if (GoMenu == 1) {
@@ -641,11 +641,11 @@ void INIT_OPTIONS_CHOICE(void) {
     delai_barre = 3;
     delai_stereo = 8;
     if (language != 0) {
-        byte_E4CFC = 90;
+        menu_half_width = 90;
     } else {
-        byte_E4CFC = 75;
+        menu_half_width = 75;
     }
-    basex = 160 - byte_E4CFC;
+    basex = 160 - menu_half_width;
     if (OptionGame) {
         position = 6;
         option_exit = 6;
@@ -657,10 +657,10 @@ void INIT_OPTIONS_CHOICE(void) {
     }
     first_option = 0;
     general_init_screen(20, 60, 5);
-    if (byte_96883) {
-        options.sound_volume = byte_E4CD9;
-        byte_96883 = 0;
-        options.music_enabled = byte_E4CD8;
+    if (restore_saved_options) {
+        options.sound_volume = saved_options_sound_volume;
+        restore_saved_options = 0;
+        options.music_enabled = saved_options_music_enabled;
     } else {
         options.music_enabled = options_jeu.music_enabled;
         options.sound_volume = options_jeu.sound_volume;
@@ -735,29 +735,29 @@ void INIT_AFFICHE_ECRAN_OPTIONS(void) {
     msg_to_display[1].is_fond = 2;
     msg_to_display[1].field_D5 = 0;
 
-    if (byte_E4CFD) {
+    if (options_screen_first_load) {
         if (OptionGame) {
-            word_E4CEC_x = basex;
-            word_E4CF4_w = 2 * byte_E4CFC;
-            word_E4CF0_y = debut_titre - 25;
-            word_E4CEE_h = menu_to_display[option_exit].ypos - debut_titre + 35;
-            FonduOption(word_E4CEC_x, word_E4CF0_y, word_E4CF4_w, word_E4CEE_h, 0);
+            menu_rect_x = basex;
+            menu_rect_w = 2 * menu_half_width;
+            menu_rect_y = debut_titre - 25;
+            menu_rect_h = menu_to_display[option_exit].ypos - debut_titre + 35;
+            FonduOption(menu_rect_x, menu_rect_y, menu_rect_w, menu_rect_h, 0);
         }
     } else {
         s16 v21 = debut_titre - 25;
         s16 v42_hi = menu_to_display[option_exit].ypos - debut_titre + 35;
-        s16 v22_x = (basex >= word_E4CEC_x) ? word_E4CEC_x : basex;
-        s16 v23_y = word_E4CF0_y;
-        if (v21 < word_E4CF0_y) {
+        s16 v22_x = (basex >= menu_rect_x) ? menu_rect_x : basex;
+        s16 v23_y = menu_rect_y;
+        if (v21 < menu_rect_y) {
             v23_y = debut_titre - 25;
         }
-        s16 v24 = word_E4CF4_w + word_E4CEC_x;
+        s16 v24 = menu_rect_w + menu_rect_x;
         s32 v37 = basex;
         s32 v33 = v24;
-        s32 v25 = basex + 2 * byte_E4CFC;
+        s32 v25 = basex + 2 * menu_half_width;
         s32 v34 = (v25 >= v24) ? v25 - v22_x : v24 - v22_x;
         s16 unk_w = v34;
-        s32 v26 = word_E4CEE_h + word_E4CF0_y;
+        s32 v26 = menu_rect_h + menu_rect_y;
         s32 v31 = v21;
         s32 v38 = v42_hi;
         s32 v36 = v42_hi + v21;
@@ -765,10 +765,10 @@ void INIT_AFFICHE_ECRAN_OPTIONS(void) {
             v26 = v36;
         }
         s32 v27_h = v26 - v23_y;
-        word_E4CEC_x = basex;
-        word_E4CF0_y = debut_titre - 25;
-        word_E4CEE_h = v42_hi;
-        word_E4CF4_w = 2 * byte_E4CFC;
+        menu_rect_x = basex;
+        menu_rect_y = debut_titre - 25;
+        menu_rect_h = v42_hi;
+        menu_rect_w = 2 * menu_half_width;
         if (OptionGame) {
             FonduOption(v22_x, v23_y, unk_w, v27_h, 1); //TODO
 
@@ -776,14 +776,14 @@ void INIT_AFFICHE_ECRAN_OPTIONS(void) {
             FonduPixel(v22_x, v23_y, unk_w, v27_h); //TODO
         }
     }
-    byte_E4CFD = 0;
+    options_screen_first_load = 0;
 }
 
 //4AB34
 void AFFICHE_ECRAN_OPTIONS(void) {
     DISPLAY_FOND_MENU();
     if (OptionGame) {
-        CadreTrans(word_E4CEC_x, word_E4CF0_y, word_E4CF4_w, word_E4CEE_h);
+        CadreTrans(menu_rect_x, menu_rect_y, menu_rect_w, menu_rect_h);
     }
     display_text(language_txt[181], SCREEN_WIDTH / 2, debut_titre, 1, 1); // /options/
     for (s32 option_index = first_option; option_index <= first_option + nbre_options; ++option_index) {
@@ -904,25 +904,25 @@ void DO_COMMANDE_OPTIONS(void) {
         }
     } else if (position == 3 && ValidButPressed()) {
         if (JoystickPresent()) {
-            byte_E4CD8 = options.music_enabled;
-            byte_E4CD9 = options.sound_volume;
-            byte_96883 = 1;
+            saved_options_music_enabled = options.music_enabled;
+            saved_options_sound_volume = options.sound_volume;
+            restore_saved_options = 1;
             menuEtape = 8; // go to setup pad
             sortie_options = 1;
         } else {
             display_box_msg(&msg_to_display[0]); // no joystick connected
         }
     } else if (position == 2 && ValidButPressed()) {
-        byte_E4CD8 = options.music_enabled;
-        byte_E4CD9 = options.sound_volume;
+        saved_options_music_enabled = options.music_enabled;
+        saved_options_sound_volume = options.sound_volume;
         menuEtape = 7; // go to setup keys
         sortie_options = 1;
-        byte_96883 = 1;
+        restore_saved_options = 1;
     } else if (position == 4 && ValidButPressed()) {
-        byte_E4CD8 = options.music_enabled;
-        byte_E4CD9 = options.sound_volume;
+        saved_options_music_enabled = options.music_enabled;
+        saved_options_sound_volume = options.sound_volume;
         menuEtape = 9; // go to graphics details
-        byte_96883 = 1;
+        restore_saved_options = 1;
         sortie_options = 1;
     } else if (position == 5 && ValidButPressed() && button_released && OptionGame) {
         if (confirmation_msg(0)) {
@@ -947,7 +947,7 @@ void END_OPTIONS_SCREEN(void) {
         }
         menuEtape = 0;
         if (OptionGame) {
-            FonduOption(word_E4CEC_x, word_E4CF0_y, word_E4CF4_w, word_E4CEE_h, 2);
+            FonduOption(menu_rect_x, menu_rect_y, menu_rect_w, menu_rect_h, 2);
         } else {
             DO_FADE_OUT();
         }
@@ -980,18 +980,18 @@ void INIT_KEY_SCREEN(void) {
 
     switch (language) {
         case 1:
-            byte_E4CFC = 105;
+            menu_half_width = 105;
             break;
         case 2:
-            byte_E4CFC = 120;
+            menu_half_width = 120;
             break;
         case 0:
         default:
             /* The PC routine only has layouts for the three shipped languages. */
-            byte_E4CFC = 90;
+            menu_half_width = 90;
             break;
     }
-    basex = (SCREEN_WIDTH / 2) - byte_E4CFC;
+    basex = (SCREEN_WIDTH / 2) - menu_half_width;
     general_init_screen(15, 68, 5);
 }
 
@@ -1050,17 +1050,17 @@ void INIT_AFFICHE_KEY_SCREEN(void) {
 
     const s16 new_x = basex - 2;
     const s16 new_y = debut_titre - 25;
-    const s16 new_w = 2 * byte_E4CFC;
+    const s16 new_w = 2 * menu_half_width;
     const s16 new_h = menu_to_display[option_exit].ypos - debut_titre + 35;
-    const s16 fade_x = MIN(new_x, word_E4CEC_x);
-    const s16 fade_y = MIN(new_y, word_E4CF0_y);
-    const s16 fade_right = MAX(new_x + new_w, word_E4CEC_x + word_E4CF4_w);
-    const s16 fade_bottom = MAX(new_y + new_h, word_E4CF0_y + word_E4CEE_h);
+    const s16 fade_x = MIN(new_x, menu_rect_x);
+    const s16 fade_y = MIN(new_y, menu_rect_y);
+    const s16 fade_right = MAX(new_x + new_w, menu_rect_x + menu_rect_w);
+    const s16 fade_bottom = MAX(new_y + new_h, menu_rect_y + menu_rect_h);
 
-    word_E4CEC_x = new_x;
-    word_E4CF0_y = new_y;
-    word_E4CF4_w = new_w;
-    word_E4CEE_h = new_h;
+    menu_rect_x = new_x;
+    menu_rect_y = new_y;
+    menu_rect_w = new_w;
+    menu_rect_h = new_h;
     if (OptionGame) {
         FonduOption(fade_x, fade_y, fade_right - fade_x, fade_bottom - fade_y, 1);
     } else {
@@ -1087,7 +1087,7 @@ void AFFICHE_KEY_SCREEN(void) {
 
     DISPLAY_FOND_MENU();
     if (OptionGame) {
-        CadreTrans(word_E4CEC_x, word_E4CF0_y, word_E4CF4_w, word_E4CEE_h);
+        CadreTrans(menu_rect_x, menu_rect_y, menu_rect_w, menu_rect_h);
     }
     display_text(key_screen_title, SCREEN_WIDTH / 2, debut_titre, 1, 1); /* /setup keys/ */
 
@@ -1186,7 +1186,7 @@ void END_KEY_SCREEN(void) {
     if (!MENU_RETURN) {
         memcpy(tab_key_sav, key_screen_bindings, sizeof(key_screen_bindings));
     } else {
-        byte_96883 = 0;
+        restore_saved_options = 0;
         if (!OptionGame) {
             DO_FADE_OUT();
         }
@@ -1253,16 +1253,16 @@ static bool graphics_mode_supported(s16 mode) {
 static void graphics_screen_transition(void) {
     s16 x = basex;
     s16 y = debut_titre - 25;
-    s16 w = 2 * byte_E4CFC;
+    s16 w = 2 * menu_half_width;
     s16 h = menu_to_display[option_exit].ypos - debut_titre + 35;
-    s16 fade_x = MIN(x, word_E4CEC_x);
-    s16 fade_y = MIN(y, word_E4CF0_y);
-    s16 right = MAX(x + w, word_E4CEC_x + word_E4CF4_w);
-    s16 bottom = MAX(y + h, word_E4CF0_y + word_E4CEE_h);
-    word_E4CEC_x = x;
-    word_E4CF0_y = y;
-    word_E4CF4_w = w;
-    word_E4CEE_h = h;
+    s16 fade_x = MIN(x, menu_rect_x);
+    s16 fade_y = MIN(y, menu_rect_y);
+    s16 right = MAX(x + w, menu_rect_x + menu_rect_w);
+    s16 bottom = MAX(y + h, menu_rect_y + menu_rect_h);
+    menu_rect_x = x;
+    menu_rect_y = y;
+    menu_rect_w = w;
+    menu_rect_h = h;
     if (OptionGame) {
         FonduOption(fade_x, fade_y, right - fade_x, bottom - fade_y, 1);
     } else {
@@ -1321,16 +1321,16 @@ void InitParamGraphicScreen(void) {
             first_option = fixed_size ? 3 : 2;
             nbre_options = fixed_size ? 3 : 4;
             option_exit = 5;
-            byte_E4CFC = language == 2 ? 120 : 110;
-            basex = SCREEN_WIDTH / 2 - byte_E4CFC;
+            menu_half_width = language == 2 ? 120 : 110;
+            basex = SCREEN_WIDTH / 2 - menu_half_width;
             general_init_screen(20, 60, 5);
         } else {
             position = 7;
             first_option = 1;
             nbre_options = 7;
             option_exit = 7;
-            byte_E4CFC = language == 2 ? 125 : 120;
-            basex = SCREEN_WIDTH / 2 - byte_E4CFC;
+            menu_half_width = language == 2 ? 125 : 120;
+            basex = SCREEN_WIDTH / 2 - menu_half_width;
             general_init_screen(15, 70, 5);
         }
         --nbre_options; // PC reserves the first row for the performance indicator.
@@ -1339,8 +1339,8 @@ void InitParamGraphicScreen(void) {
         option_exit = 6;
         first_option = OptionGame || FondAutorise == 2 ? 3 : 1;
         nbre_options = OptionGame || FondAutorise == 2 ? 4 : 5;
-        byte_E4CFC = language == 2 ? 120 : 110;
-        basex = SCREEN_WIDTH / 2 - byte_E4CFC;
+        menu_half_width = language == 2 ? 120 : 110;
+        basex = SCREEN_WIDTH / 2 - menu_half_width;
         general_init_screen(20, 60, 5);
     }
 }
@@ -1354,10 +1354,10 @@ void INIT_GRAPHIC_SCREEN(void) {
     pEND_SCREEN = END_GRAPHIC_SCREEN;
     if (GameModeVideo == MODE_NORMAL) {
         options.video_mode = 0;
-        byte_E4CFE = 2;
+        max_frequency_choice = 2;
     } else {
         options.video_mode = GameModeVideo == MODE_X && !P486 ? 1 : 2;
-        byte_E4CFE = 1;
+        max_frequency_choice = 1;
     }
     // DO_COMMANDE_OPTIONS saves pending music/volume in byte_E4CD8/9 before
     // entering this screen; INIT_OPTIONS_CHOICE restores them on return.
@@ -1394,14 +1394,14 @@ void INIT_AFFICHE_GRAPHIC_SCREEN(void) {
 void AFFICHE_GRAPHIC_SCREEN(void) {
     DISPLAY_FOND_MENU();
     if (OptionGame) {
-        CadreTrans(word_E4CEC_x, word_E4CF0_y, word_E4CF4_w, word_E4CEE_h);
+        CadreTrans(menu_rect_x, menu_rect_y, menu_rect_w, menu_rect_h);
     }
     display_text(language_txt[235], SCREEN_WIDTH / 2, debut_titre, 1, 1);
     display_text(language_txt[196], basex + 10, debut_options, 2, 5);
     // PC CalcSpeed estimates VGA transfer cost using DOS benchmark tables.
     // Those tables are not measurements of our renderer: show no estimate
     // rather than a misleading gauge derived from their default 255 values.
-    display_text("--", byte_E4CFC + 102, debut_options, 2, 5);
+    display_text("--", menu_half_width + 102, debut_options, 2, 5);
 
     for (s32 i = first_option; i <= option_exit; ++i) {
         if ((options.video_mode != 0 && i == 2) ||
@@ -1417,10 +1417,10 @@ void AFFICHE_GRAPHIC_SCREEN(void) {
         switch (i) {
             case 1:
                 display_text(options.video_mode == 0 ? "pci1" : options.video_mode == 1 ? "pci2" : "vesa",
-                             byte_E4CFC + 118, item->ypos, 2, item->color);
+                             menu_half_width + 118, item->ypos, 2, item->color);
                 break;
             case 2:
-                gauge(byte_E4CFC + 70, item->ypos - 12, 80, 12, 0, 3,
+                gauge(menu_half_width + 70, item->ypos - 12, 80, 12, 0, 3,
                       3 - options.SizeScreen);
                 break;
             case 3: {
@@ -1432,12 +1432,12 @@ void AFFICHE_GRAPHIC_SCREEN(void) {
                 // PC always draws the selected value and one alternative; the
                 // second alternative is only shown in normal mode.
                 if (maximum || options.video_mode == 0) {
-                    graphics_screen_value("max", i, byte_E4CFC + 54, maximum);
+                    graphics_screen_value("max", i, menu_half_width + 54, maximum);
                 }
                 if (!maximum || options.video_mode == 0) {
-                    graphics_screen_value("60", i, byte_E4CFC + 102, rate60);
+                    graphics_screen_value("60", i, menu_half_width + 102, rate60);
                 }
-                graphics_screen_value("50", i, byte_E4CFC + 134, rate50);
+                graphics_screen_value("50", i, menu_half_width + 134, rate50);
             } break;
             case 4:
             case 5:
@@ -1447,8 +1447,8 @@ void AFFICHE_GRAPHIC_SCREEN(void) {
                     break;
                 }
                 bool on = i == 4 ? options.fixon : i == 5 ? options.BackgroundOn : options.ScrollDiffOn;
-                graphics_screen_value("on", i, byte_E4CFC + 102, on);
-                graphics_screen_value("off", i, byte_E4CFC + 134, !on);
+                graphics_screen_value("on", i, menu_half_width + 102, on);
+                graphics_screen_value("off", i, menu_half_width + 134, !on);
             } break;
         }
     }
@@ -1484,14 +1484,14 @@ void DO_COMMANDE_GRAPHIC(void) {
         }
     }
     if (position == 3 && !upjoy() && !downjoy() && button_released) {
-        if (GameModeVideo == MODE_X && options.Frequence > byte_E4CFE) {
-            options.Frequence = byte_E4CFE - 1;
+        if (GameModeVideo == MODE_X && options.Frequence > max_frequency_choice) {
+            options.Frequence = max_frequency_choice - 1;
         }
         if (ValidButPressed() || rightjoy()) {
-            options.Frequence = options.Frequence < byte_E4CFE ? options.Frequence + 1 : 0;
+            options.Frequence = options.Frequence < max_frequency_choice ? options.Frequence + 1 : 0;
             NewFrequency(options.Frequence);
         } else if (leftjoy()) {
-            options.Frequence = options.Frequence > 0 ? options.Frequence - 1 : byte_E4CFE;
+            options.Frequence = options.Frequence > 0 ? options.Frequence - 1 : max_frequency_choice;
             NewFrequency(options.Frequence);
         }
     } else if (position >= 4 && position < option_exit && position != 6 && button_released && action) {
@@ -1505,7 +1505,7 @@ void DO_COMMANDE_GRAPHIC(void) {
             // but gate entry until the planar renderer is available. Normal
             // mode can already draw a black background in the portable port.
             options.video_mode = 1;
-            byte_E4CFE = 1;
+            max_frequency_choice = 1;
             P486 = 0;
             if (options.Frequence == 2) {
                 options.Frequence = 0;
@@ -1537,7 +1537,7 @@ void END_GRAPHIC_SCREEN(void) {
             case 2: GameModeVideo = MODE_X; P486 = 1; break;
         }
     } else {
-        byte_96883 = 0;
+        restore_saved_options = 0;
         if (GameModeVideo == MODE_NORMAL) {
             set_xywhmap(TabW1[SizeScreen], TabW2[SizeScreen], TabH1[SizeScreen], TabH2[SizeScreen]);
         }
@@ -1563,8 +1563,8 @@ void INIT_VIDEOMODE_SCREEN(void) {
     repetition = 6;
     position = option_exit = nbre_options = 3;
     first_option = 0;
-    byte_E4CFC = 140;
-    basex = SCREEN_WIDTH / 2 - byte_E4CFC;
+    menu_half_width = 140;
+    basex = SCREEN_WIDTH / 2 - menu_half_width;
     general_init_screen(15, 68, 5);
     options.video_pci1 = 0;
     options.video_pci2 = 0;

@@ -90,12 +90,12 @@ void setMereDenisAtScrollBorder(obj_t* obj, u8 flip_x) {
 
 //50DA4
 void setCirclePointToReach(obj_t* obj) {
-    bossXToReach = circle_x + (sinus(circle_index) * 100) / 512;
-    bossYToReach = circle_y + (cosinus(circle_index) * 60) / 512;
-    circle_index += 4;
-    if (circle_index < 512) {circle_index += 4;
+    bossXToReach = circle_x + (sinus(circleIndex) * 100) / 512;
+    bossYToReach = circleY + (cosinus(circleIndex) * 60) / 512;
+    circleIndex += 4;
+    if (circleIndex < 512) { circleIndex += 4;
     } else {
-    circle_index = -32000; }
+        circleIndex = -32000; }
 }
 
 //50E5C
@@ -349,7 +349,7 @@ void prepareNewMereDenisAttack(obj_t* smama_obj) {
     u8 old_flip_x;
     s16 i;
 
-    if (circle_index == -32000) 
+    if (circleIndex == -32000)
     {
         while (currentBossActionIsOver) 
         {
@@ -482,9 +482,9 @@ void prepareNewMereDenisAttack(obj_t* smama_obj) {
 
             case 8:
                 swapMereDenisCollZones(smama_obj, 1);
-                circle_index = 4;
+                    circleIndex = 4;
                 circle_x = smama_obj->x;
-                circle_y = smama_obj->y - 60;
+                    circleY = smama_obj->y - 60;
                 setCirclePointToReach(smama_obj);
                 setBossReachingSpeeds(smama_obj, 1, 0xFF, 0xFF);
                 bossReachingTimer = 1;
@@ -982,12 +982,12 @@ void doMereDenisCommand(obj_t* obj) {
                      }
                      bossXToReach = -32000;
                      bossYToReach = -32000;
-                     circle_index = -32000;
+                     circleIndex = -32000;
                      obj->speed_x = 0;
                      obj->speed_y = 0;
                 } else {
                     laserSourceSprNumInAnim = -1;
-                    if (circle_index != -32000) {
+                    if (circleIndex != -32000) {
                         setCirclePointToReach(obj);
                     } else if (timerBeforeFirstBomb == 0 && currentBombSequence != 0xFF &&
                                obj->main_etat == 0 && obj->sub_etat == 15) {

@@ -2287,7 +2287,7 @@ extern s16 TabH2[4] INIT(= {200, 192, 184, 180}); //96864
 extern u8 msg_box_being_displayed INIT(= 0); //96880
 extern u8 first_option INIT(= 0); //96881
 extern u8 yesno_finished INIT(= 0); //96882
-extern u8 byte_96883 INIT(= 0); //96883
+extern u8 restore_saved_options INIT(= 0); //96883
 extern u8 byte_96884 INIT(= 64); //96884
 
 //96888
@@ -3096,7 +3096,6 @@ extern s32 TempsDemo; //CD134
 extern u8* DrawBufferNormal; //CD138
 extern void (*anim_func)(void); //CD13C
 extern credit_t credits[135]; //CD140
-
 extern char save_ray_copy[4]; //CD794
 extern char save_ray[3][4]; //CD798
 extern options_t options; //CD7A4
@@ -3179,7 +3178,7 @@ extern s16 alpha2_sprite_count; //CEDD0
 extern obj_t rms; //CEDD4
 extern s16* link_init; //CEE58
 extern obj_t raytmp; //CEE5C
-extern u8 skops_lave_obj[20]; //CEEE0
+extern u8 sko_lave_obj[20]; //CEEE0
 extern s32 pixels_enfonce; //CEEF4
 extern char TexteStageNameWorld[30]; //CEEF8
 extern char TexteStageNameLevel[47]; //CEF16
@@ -3283,7 +3282,7 @@ extern s16 current_star; //CF7FC
 extern s16 SNSEQ_ptr; //CF7FE
 extern s16 SNSEQ_no; //CF800
 extern s16 MapAvecPluieOuNeige; //CF802
-extern s16 skops_ecroule_plat; //CF804
+extern s16 sko_ecroule_plat; //CF804
 extern s16 bonus_map; //CF806
 extern s16 bateau_obj_id; //CF808
 extern s16 sko_nb_hit; //CF80A
@@ -3395,9 +3394,9 @@ extern u16 sko_rayon_on; //CF8DE
 extern s16 sko_final_x; //CF8E0
 extern s16 sko_final_y; //CF8E2
 extern s16 sko_pince_obj_id; //CF8E4
-extern s16 skops_beam_speed; //CF8E6
-extern s16 skops_beam_dx; //CF8E8
-extern s16 skops_beam_dy; //CF8EA
+extern s16 sko_beam_speed; //CF8E6
+extern s16 sko_beam_dx; //CF8E8
+extern s16 sko_beam_dy; //CF8EA
 extern u16 rubis_list_calculated; //CF8EC
 extern s16 sko_rayon_x; //CF8EE
 extern s16 sko_rayon_y; //CF8F0
@@ -3541,7 +3540,7 @@ extern u8 NiveauDansPhase; //CFA92
 extern u8 FinAnim; //CFA93
 extern u8 Phase; // (?) CFA94
 extern u8 WaitForFinAtan; //CFA95
-extern u8 skops_nb_lave; //CFA96
+extern u8 sko_nb_lave; //CFA96
 extern u8 NbTramesEcrase; //CFA97
 extern u8 RaymanDansUneMapDuJeu; //CFA98
 extern u8 life_becoz_wiz; //CFA99
@@ -3695,13 +3694,13 @@ extern s16 bux10; //E0CC2
 extern s16 bux01; //E0CC4
 extern s16 bux00; //E0CC6
 extern s16 joy_rec_down; //E0CC8
-extern s16 auto_joy_left; //E0CCA (?)
-extern s16 auto_joy_up; //E0CCC (?)
+extern s16 joy_left_threshold; //E0CCA
+extern s16 joy_up_threshold; //E0CCC
 extern s16 joy_rec_left; //E0CCE
 extern s16 word_E0CD0; //E0CD0
-extern s16 auto_joy_down; //E0CD2 (?)
+extern s16 joy_down_threshold; //E0CD2
 extern s16 word_E0CD4; //E0CD4
-extern s16 auto_joy_right; //E0CD6 (?)
+extern s16 joy_right_threshold; //E0CD6
 extern s16 word_E0CD8; //E0CD8
 extern s32 PositionJumelleDemandeY; //E0CDC
 extern s32 PositionJumelleDemandeX; //E0CE0
@@ -3736,8 +3735,8 @@ extern void (*pAFFICHE_SCREEN)(void); //E4CC8
 extern void (*pEND_SCREEN)(void); //E4CCC
 extern void (*pLOAD_SCREEN)(void); //E4CD0
 extern void (*pCOMMANDE_BOX)(void); //E4CD4
-extern u8 byte_E4CD8; //E4CD8
-extern u8 byte_E4CD9; //E4CD9
+extern u8 saved_options_music_enabled; //E4CD8
+extern u8 saved_options_sound_volume; //E4CD9
 
 extern s16 word_E4CE0; //E4CE0
 extern s16 hFondu; //E4CE2
@@ -3745,16 +3744,16 @@ extern s16 xFondu; //E4CE4
 extern s16 yFondu; //E4CE6
 extern s16 wFondu; //E4CE8
 extern s16 EtapeFondu; //E4CEA
-extern s16 word_E4CEC_x; //E4CEC
-extern s16 word_E4CEE_h; //E4CEE
-extern s16 word_E4CF0_y; //E4CF0
+extern s16 menu_rect_x; //E4CEC
+extern s16 menu_rect_h; //E4CEE
+extern s16 menu_rect_y; //E4CF0
 extern s16 VideoSpeed; //E4CF2
-extern s16 word_E4CF4_w; //E4CF4
+extern s16 menu_rect_w; //E4CF4
 extern u8 but_options[4]; //E4CF6
 extern u8 InOut; //E4CFB
-extern u8 byte_E4CFC; //E4CFC
-extern u8 byte_E4CFD; //E4CFD
-extern u8 byte_E4CFE; //E4CFE
+extern u8 menu_half_width; //E4CFC
+extern u8 options_screen_first_load; //E4CFD
+extern u8 max_frequency_choice; //E4CFE
 extern u8 key_select; //E4CFF
 
 extern s16 droppedBombIds[64]; //E4D00
@@ -3763,9 +3762,9 @@ extern u32 mere_denis_wait_time; //E4D88
 extern s16 mereDenis_weapon_id; //E4D8C
 extern s16 lastDroppedBombXCenterPos; //E4D8E
 extern s16 machine_obj_id; //E4D90
-extern s16 circle_x; //E4D92
-extern s16 circle_y; //E4D94
-extern s16 circle_index; //E4D96
+extern s16 circleX; //E4D92
+extern s16 circleY; //E4D94
+extern s16 circleIndex; //E4D96
 extern u8 timerBeforeFirstBomb; //E4D98
 extern u8 currentLaserSize; //E4D99
 extern u8 stepsForward; //E4D9A
@@ -3816,7 +3815,7 @@ extern s16 NbSprite; //E7446
 extern s16 Val_Add_Scroll_Y; //E7448
 extern s16 NbBande; //E744A
 extern s16 Num_Fond; //E744C
-extern s32 skops_screen_tremble; //E7450
+extern s32 sko_screen_tremble; //E7450
 extern s16 PosLave_Y; //E7454
 
 extern s32 OffsetSpriteWorld; //E7470

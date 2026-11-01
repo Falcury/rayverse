@@ -10,7 +10,7 @@ void set_rubis_list(void) {
     s32 rubis_count = 0;
 
     rubis_list_calculated = true;
-    skops_nb_lave = 0;
+    sko_nb_lave = 0;
 
     for (s32 i = 0; i < level.nb_objects; ++i) {
         obj_t* obj = &level.objects[i];
@@ -20,7 +20,7 @@ void set_rubis_list(void) {
         } else if (obj->type == TYPE_248_SKO_PINCE) {
             sko_pince_obj_id = i;
         } else if (obj->type == TYPE_234_LAVE) {
-            skops_lave_obj[skops_nb_lave++] = i;
+            sko_lave_obj[sko_nb_lave++] = i;
         }
     }
 
@@ -44,7 +44,7 @@ void set_rubis_list(void) {
         ecroule_plat_index = (myRand(177) % 3) << 3;
     }
 
-    skops_ecroule_plat = ecroule_rubis_list[ecroule_rubis_order[ecroule_plat_index]];
+    sko_ecroule_plat = ecroule_rubis_list[ecroule_rubis_order[ecroule_plat_index]];
     sko_enfonce_enable = 0;
     mp.height = 32;
 
@@ -54,10 +54,10 @@ void set_rubis_list(void) {
      */
     scroll_end_y = mp.height * 16 - SCREEN_HEIGHT;
     ymapmax = mp.height * 16 - SCREEN_HEIGHT;
-    skops_screen_tremble = 0;
+    sko_screen_tremble = 0;
 
-    for (s32 i = 0; i < skops_nb_lave; ++i) {
-        obj_t* lava = &level.objects[skops_lave_obj[i]];
+    for (s32 i = 0; i < sko_nb_lave; ++i) {
+        obj_t* lava = &level.objects[sko_lave_obj[i]];
         lava->init_y = mp.height * 16 - 60;
         lava->y = lava->init_y;
         /* PC exposes this position to its heat-haze pass; PS1 does not. */
@@ -128,10 +128,10 @@ void do_sko_rayon(void) {
         return;
     }
 
-    skops_beam_speed = 3;
+    sko_beam_speed = 3;
     --sko_rayon_on;
 
-    obj_t* platform = &level.objects[skops_ecroule_plat];
+    obj_t* platform = &level.objects[sko_ecroule_plat];
 
     s16 diff_x = sko_final_x - sko_rayon_x;
     s16 diff_y = sko_final_y - sko_rayon_y;
@@ -143,17 +143,17 @@ void do_sko_rayon(void) {
     }
 
     if (distance > 0) {
-        diff_x = (diff_x * (1 << skops_beam_speed)) / distance;
-        diff_y = (diff_y * (1 << skops_beam_speed)) / distance;
+        diff_x = (diff_x * (1 << sko_beam_speed)) / distance;
+        diff_y = (diff_y * (1 << sko_beam_speed)) / distance;
     }
 
     if (horloge[4] == 0 && sko_rayon_on < 50) {
-        skops_beam_dx += sgn(diff_x - skops_beam_dx);
-        skops_beam_dy += sgn(diff_y - skops_beam_dy);
+        sko_beam_dx += sgn(diff_x - sko_beam_dx);
+        sko_beam_dy += sgn(diff_y - sko_beam_dy);
     }
 
-    sko_rayon_x += skops_beam_dx;
-    sko_rayon_y += skops_beam_dy;
+    sko_rayon_x += sko_beam_dx;
+    sko_rayon_y += sko_beam_dy;
 
     if (horloge[3] == 0 && distance != 0) {
         allocate_rayon(sko_rayon_x, sko_rayon_y);
@@ -167,7 +167,7 @@ void do_sko_rayon2(void) {
     }
 
     --sko_rayon_on;
-    skops_beam_speed = 3;
+    sko_beam_speed = 3;
 
     bool steer_now;
     if (poing.is_active) {
@@ -186,21 +186,21 @@ void do_sko_rayon2(void) {
     s16 distance = Abs(diff_x) + Abs(diff_y);
 
     if (distance > 0) {
-        diff_x = (diff_x * (1 << skops_beam_speed)) / distance;
-        diff_y = (diff_y * (1 << skops_beam_speed)) / distance;
+        diff_x = (diff_x * (1 << sko_beam_speed)) / distance;
+        diff_y = (diff_y * (1 << sko_beam_speed)) / distance;
     }
 
     if (steer_now) {
-        skops_beam_dx += sgn(diff_x - skops_beam_dx);
-        skops_beam_dy += sgn(diff_y - skops_beam_dy);
+        sko_beam_dx += sgn(diff_x - sko_beam_dx);
+        sko_beam_dy += sgn(diff_y - sko_beam_dy);
     }
 
-    sko_rayon_x += skops_beam_dx;
-    sko_rayon_y += skops_beam_dy;
+    sko_rayon_x += sko_beam_dx;
+    sko_rayon_y += sko_beam_dy;
 
     if (sko_rayon_x < -150) {
-        skops_beam_dx = -skops_beam_dx;
-        sko_rayon_x += skops_beam_dx * 2;
+        sko_beam_dx = -sko_beam_dx;
+        sko_rayon_x += sko_beam_dx * 2;
     }
 
     if (horloge[3] == 0 && distance != 0) {
@@ -216,17 +216,17 @@ void do_sko_rayon2(void) {
 //794D4
 void start_sko_rayon(s16 obj_x, s16 obj_y) {
     ++ecroule_plat_index;
-    skops_ecroule_plat = ecroule_rubis_list[ecroule_rubis_order[ecroule_plat_index]];
+    sko_ecroule_plat = ecroule_rubis_list[ecroule_rubis_order[ecroule_plat_index]];
 
-    obj_t* platform = &level.objects[skops_ecroule_plat];
+    obj_t* platform = &level.objects[sko_ecroule_plat];
     if (sko_rayon_on != 0xFF) {
         sko_rayon_on = 60;
     }
 
     sko_rayon_x = obj_x - 80;
-    skops_beam_dx = -4;
+    sko_beam_dx = -4;
     sko_rayon_y = obj_y - 10;
-    skops_beam_dy = 4;
+    sko_beam_dy = 4;
     sko_final_x = platform->x + platform->offset_bx - 120;
     sko_final_y = platform->y + platform->offset_hy - 120;
     allocate_rayon(sko_rayon_x, sko_rayon_y);
@@ -238,9 +238,9 @@ void start_sko_rayon2(s16 obj_x, s16 obj_y) {
 
     sko_rayon_on = 120;
     sko_rayon_x = obj_x - 80;
-    skops_beam_dx = -4;
+    sko_beam_dx = -4;
     sko_rayon_y = obj_y - 10;
-    skops_beam_dy = 2;
+    sko_beam_dy = 2;
     sko_final_x = target->x + target->offset_bx - 120;
     sko_final_y = target->y + target->offset_hy - 120;
     allocate_rayon(sko_rayon_x, sko_rayon_y);
@@ -269,7 +269,7 @@ s32 sko_get_eject_sens(void) {
 void DO_SOL_ENFONCE(void) {
     s16 new_ymapmax = ymapmax;
     s16 new_lava_y = PosLave_Y;
-    s32 tremble = skops_screen_tremble;
+    s32 tremble = sko_screen_tremble;
 
     /*
      * PC treats state 3/7 as a death/reset state here. The PS1 routine uses
@@ -304,8 +304,8 @@ void DO_SOL_ENFONCE(void) {
             --mp.height;
         }
 
-        for (s32 i = 0; i < skops_nb_lave; ++i) {
-            obj_t* lava = &level.objects[skops_lave_obj[i]];
+        for (s32 i = 0; i < sko_nb_lave; ++i) {
+            obj_t* lava = &level.objects[sko_lave_obj[i]];
             --lava->y;
             --lava->init_y;
 
@@ -329,7 +329,7 @@ void DO_SOL_ENFONCE(void) {
         tremble = 60;
     }
 
-    skops_screen_tremble = tremble;
+    sko_screen_tremble = tremble;
     PosLave_Y = new_lava_y;
     ymapmax = new_ymapmax;
 }
@@ -337,7 +337,7 @@ void DO_SOL_ENFONCE(void) {
 //79904
 void DO_SKO_PHASE_0(obj_t* obj) {
     u8 sub_etat = obj->sub_etat;
-    obj_t* platform = &level.objects[skops_ecroule_plat];
+    obj_t* platform = &level.objects[sko_ecroule_plat];
 
     if (obj->main_etat != 0 || sub_etat < 2) {
         return;
@@ -360,7 +360,7 @@ void DO_SKO_PHASE_0(obj_t* obj) {
             set_main_etat(platform, 2);
             set_sub_etat(platform, 2);
             ++ecroule_plat_index;
-            skops_ecroule_plat = ecroule_rubis_list[ecroule_rubis_order[ecroule_plat_index]];
+            sko_ecroule_plat = ecroule_rubis_list[ecroule_rubis_order[ecroule_plat_index]];
         }
 
         if (sko_nb_frap == 4) {
