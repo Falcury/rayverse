@@ -51,8 +51,53 @@ void textmode(void) {
 }
 
 //14828
-void draw_sprite_deform(void) {
-    print_once("Not implemented: draw_sprite_deform");
+void draw_sprite_deform(const u8* image_data, vec2b_t size,
+                        s16 x0, s16 y0, s16 x1, s16 y1,
+                        s16 x2, s16 y2, s16 x3, s16 y3) {
+    /* Portable replacement for the DOS scratch-buffer scan converter. The
+     * corners are TL, TR, BL, BR in source order, even for negative scales.
+     * Inverse mapping avoids holes and keeps transparent run bytes from being
+     * interpreted as destination-space skips after scaling/rotation. The PC
+     * atlases store a byte at every texel, including inside transparent runs. */
+    if (image_data == NULL || draw_buffer == NULL || size.x == 0 || size.y == 0) {
+        return;
+    }
+
+    const s64 ux = (s32)x1 - x0;
+    const s64 uy = (s32)y1 - y0;
+    const s64 vx = (s32)x2 - x0;
+    const s64 vy = (s32)y2 - y0;
+    const s64 determinant = ux * vy - uy * vx;
+    if (determinant == 0) {
+        return; // The glyph is edge-on (including a zero scale).
+    }
+    const s64 winding = determinant < 0 ? -1 : 1;
+    const s64 denominator = 2 * determinant * winding;
+
+    s32 clip_left, clip_right, clip_top, clip_bottom;
+    get_sprite_clipping(&clip_left, &clip_right, &clip_top, &clip_bottom);
+    const s32 left = MAX(MAX(0, clip_left), MIN(MIN(x0, x1), MIN(x2, x3)));
+    const s32 right = MIN(MIN(SCREEN_WIDTH, clip_right), MAX(MAX(x0, x1), MAX(x2, x3)));
+    const s32 top = MAX(MAX(0, clip_top), MIN(MIN(y0, y1), MIN(y2, y3)));
+    const s32 bottom = MIN(MIN(SCREEN_HEIGHT, clip_bottom), MAX(MAX(y0, y1), MAX(y2, y3)));
+
+    for (s32 y = top; y < bottom; ++y) {
+        for (s32 x = left; x < right; ++x) {
+            // Sample pixel centres, with integer arithmetic for both windings.
+            const s64 dx = 2 * (x - (s32)x0) + 1;
+            const s64 dy = 2 * (y - (s32)y0) + 1;
+            const s64 u = (dx * vy - dy * vx) * winding;
+            const s64 v = (ux * dy - uy * dx) * winding;
+            if (u >= 0 && u < denominator && v >= 0 && v < denominator) {
+                const s32 source_x = (s32)(u * size.x / denominator);
+                const s32 source_y = (s32)(v * size.y / denominator);
+                const u8 pixel = image_data[source_y * size.x + source_x];
+                if (pixel < 160) {
+                    draw_buffer[y * SCREEN_WIDTH + x] = pixel;
+                }
+            }
+        }
+    }
 }
 
 //14AB7

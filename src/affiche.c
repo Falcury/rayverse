@@ -776,8 +776,63 @@ void display_text(const char* text, s16 x, s16 y, u8 font_size, s8 color) {
 
 //1A68C
 void display_deform_text(const char* text, s16 x, s16 y, u8 font_size, s8 color, s16 rotation, s16 enx, s16 eny) {
-    display_text(text, x, y, font_size, color); // TODO: implement deform effect
-    //stub
+    const s16 line_height = font_size == 2 ? 15 : (font_size == 1 ? 23 : 36);
+    const s16 char_spacing = font_size == 2 ? 1 : 3;
+    const s16 space_width = font_size == 2 ? 8 : (font_size == 1 ? 10 : 12);
+    s16 current_x = x;
+
+    /* PC 1A68C ignores color: the deformed sprite uses its atlas colours via
+     * DrawSpriteNormalEtX, not the recolouring text blitter. Android additionally
+     * falls back to plain text for language > 2; PC uses its original fonts for
+     * every language. Retain the PC path here. */
+    (void)color;
+    if (text == NULL) {
+        return;
+    }
+    for (s32 i = 0; text[i] != '\0'; ++i) {
+        const u8 c = (u8)text[i];
+        if (c == '/') {
+            current_x = x - calc_largmax_text(text, i, space_width, char_spacing, font_size) / 2;
+            if (i > 1) {
+                y += line_height;
+            }
+            continue;
+        }
+        if (c == ' ') {
+            current_x += space_width;
+            continue;
+        }
+
+        const s32 num_let = deter_num_let(c, text + i + 1);
+        if (num_let == 0) {
+            continue;
+        }
+        obj_t* font = NULL;
+        s32 sprite_index = num_let;
+        s32 sprite_count = 0;
+        if (num_let >= 1000) {
+            font = alpha_numbers;
+            sprite_index -= 1000;
+            sprite_count = font != NULL ? font->nb_sprites : 0;
+            i += 3;
+        } else if (font_size <= 1) {
+            font = alpha2;
+            if (font_size == 1) {
+                sprite_index += 41;
+            }
+            sprite_count = alpha2_sprite_count;
+        } else if (font_size == 2) {
+            font = alpha;
+            sprite_count = alpha_sprite_count;
+        }
+        if (font != NULL && font->sprites != NULL && font->img_buffer != NULL &&
+            sprite_index >= 0 && sprite_index < sprite_count) {
+            const sprite_t* sprite = font->sprites + sprite_index;
+            DISPLAY_DEFORM_SPRITE(sprite, font->img_buffer, current_x,
+                                 y - sprite->outer_height, rotation, enx, eny);
+            current_x += (sprite->sprite_pos & 0xF) + sprite->inner_width - char_spacing;
+        }
+    }
 }
 
 //1A8DC
@@ -1346,8 +1401,15 @@ void DISPLAY_CONTINUE_SPR(void) {
 }
 
 //1B944
-void AFFICHE_SPRITE_DEFORME(void* a1, s32 a2, s16 a3, s16 a4, s16 a5, s16 a6, s16 a7, s16 a8, s16 a9, s16 a10) {
-    print_once("Not implemented: AFFICHE_SPRITE_DEFORME"); //stub
+void AFFICHE_SPRITE_DEFORME(const sprite_t* sprite, const u8* image_atlas,
+                           s16 x0, s16 y0, s16 x1, s16 y1,
+                           s16 x2, s16 y2, s16 x3, s16 y3) {
+    if (sprite == NULL || image_atlas == NULL) {
+        return;
+    }
+    const vec2b_t size = {sprite->outer_width, sprite->outer_height};
+    // Both PC callers supply an affine parallelogram, in TL/TR/BL/BR order.
+    draw_sprite_deform(image_atlas + sprite->offset_in_atlas, size, x0, y0, x1, y1, x2, y2, x3, y3);
 }
 
 //1BBC4
@@ -1356,12 +1418,36 @@ void DISPLAY_DEFORMATION(obj_t* obj, s16 a2, s16 a3, s16 a4) {
 }
 
 //1BEA8
-void DISPLAY_DEFORM_SPRITE(void* a1, s32 a2, s16 a3, s16 a4, s16 a5, s16 a6, s16 a7) {
-    print_once("Not implemented: DISPLAY_DEFORM_SPRITE"); //stub
+void DISPLAY_DEFORM_SPRITE(const sprite_t* sprite, const u8* image_atlas, s16 x, s16 y, s16 rotation, s16 enx, s16 eny) {
+    if (sprite == NULL || image_atlas == NULL) {
+        return;
+    }
+    // PC pivots around the visible bounds, with an extra vertical pixel.
+    const s32 center_x = x + (sprite->sprite_pos & 0xF) + sprite->inner_width / 2;
+    const s32 center_y = y + (sprite->sprite_pos >> 4) + 1 + sprite->inner_height / 2;
+    s16 x0 = x - center_x, y0 = y - center_y;
+    s16 x1 = x + sprite->outer_width - center_x, y1 = y0;
+    s16 x2 = x0, y2 = y + sprite->outer_height - center_y;
+    CALCUL_DEFORMATION(&x0, &y0, rotation, enx, eny);
+    CALCUL_DEFORMATION(&x1, &y1, rotation, enx, eny);
+    CALCUL_DEFORMATION(&x2, &y2, rotation, enx, eny);
+    x0 += center_x; y0 += center_y;
+    x1 += center_x; y1 += center_y;
+    x2 += center_x; y2 += center_y;
+    // Derive the fourth corner after rounding, as in PC 1BEA8.
+    const s16 x3 = x2 + x1 - x0, y3 = y2 + y1 - y0;
+    AFFICHE_SPRITE_DEFORME(sprite, image_atlas, x0, y0, x1, y1, x2, y2, x3, y3);
 }
 
 //1C030
-void CALCUL_DEFORMATION(s16* a1, s16* a2, s16 a3, s16 a4, s16 a5) {
-    print_once("Not implemented: CALCUL_DEFORMATION"); //stub
+void CALCUL_DEFORMATION(s16* x, s16* y, s16 rotation, s16 enx, s16 eny) {
+    // Signed 12-bit scales (4096 = unity), then a 512-unit full rotation.
+    // Assumes arithmetic signed right shifts, matching the PC SAR instructions.
+    const s16 scaled_x = (s16)(((s32)*x * enx) >> 12);
+    const s16 scaled_y = (s16)(((s32)*y * eny) >> 12);
+    s16 cosine, sine;
+    sinus_cosinus(rotation, &cosine, &sine);
+    *x = (s16)(((s32)scaled_x * cosine - (s32)scaled_y * sine) >> 9);
+    *y = (s16)(((s32)scaled_x * sine + (s32)scaled_y * cosine) >> 9);
 }
 

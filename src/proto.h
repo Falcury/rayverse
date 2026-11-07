@@ -33,7 +33,7 @@ void InitModeX(void);
 void block_clear(u8* source, u8* dest);
 void block_copy(u8* source, u8* dest);
 void textmode(void);
-void draw_sprite_deform(void);
+void draw_sprite_deform(const u8* image_data, vec2b_t size, s16 x0, s16 y0, s16 x1, s16 y1, s16 x2, s16 y2, s16 x3, s16 y3);
 void DisplayBufferModeNormal(u8* source, u8* dest);
 void DrawWldPointPlan2Normal(u8* buffer, s32 x, s32 y);
 void DrawBlackBoxNormal(u8* buffer, s32 x, s32 y, s32 height, s32 width);
@@ -173,10 +173,10 @@ void DISPLAY_OPTIONS_POING(void);
 void DISPLAY_YESNO_POING(void);
 void display_time(s16 time);
 void DISPLAY_CONTINUE_SPR(void);
-void AFFICHE_SPRITE_DEFORME(void* a1, s32 a2, s16 a3, s16 a4, s16 a5, s16 a6, s16 a7, s16 a8, s16 a9, s16 a10);
+void AFFICHE_SPRITE_DEFORME(const sprite_t* sprite, const u8* image_atlas, s16 x0, s16 y0, s16 x1, s16 y1, s16 x2, s16 y2, s16 x3, s16 y3);
 void DISPLAY_DEFORMATION(obj_t* obj, s16 a2, s16 a3, s16 a4);
-void DISPLAY_DEFORM_SPRITE(void* a1, s32 a2, s16 a3, s16 a4, s16 a5, s16 a6, s16 a7);
-void CALCUL_DEFORMATION(s16* a1, s16* a2, s16 a3, s16 a4, s16 a5);
+void DISPLAY_DEFORM_SPRITE(const sprite_t* sprite, const u8* image_atlas, s16 x, s16 y, s16 rotation, s16 enx, s16 eny);
+void CALCUL_DEFORMATION(s16* x, s16* y, s16 rotation, s16 enx, s16 eny);
 
 // araignee.c
 void get_spi_zdc(obj_t* obj, s16* x, s16* y, s16* w, s16* h);
