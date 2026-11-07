@@ -432,23 +432,23 @@ void PC_keyboard_interrupt_handler(u8 scancode) {
             PositionStageNameCalcule = 2;
         }
     }
-    if (byte_967CC != 0) {
-        if (byte_967CC <= 1) {
+    if (keyboard_pause_sequence_state != 0) {
+        if (keyboard_pause_sequence_state <= 1) {
             if (scancode == SC_CONTROL) {
-                byte_967CC = 2;
+                keyboard_pause_sequence_state = 2;
             } else {
-                byte_967CC = 0;
+                keyboard_pause_sequence_state = 0;
             }
-        } else if (byte_967CC == 2) {
+        } else if (keyboard_pause_sequence_state == 2) {
             if (scancode == SC_NUMLOCK && RaymanDansUneMapDuJeu) {
                 in_pause = !in_pause;
             }
-            byte_967CC = 0;
+            keyboard_pause_sequence_state = 0;
         } else {
-            byte_967CC = 0;
+            keyboard_pause_sequence_state = 0;
         }
     } else if (scancode == 0xE0) {
-        byte_967CC = 1;
+        keyboard_pause_sequence_state = 1;
     } else {
         v3 = 1;
     }

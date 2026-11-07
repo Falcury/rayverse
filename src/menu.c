@@ -378,7 +378,7 @@ void DO_OPTIONS_IN_GAME(void) {
     MENU_SUITE = 0;
     MENU_RETURN = 0;
     if (GoMenu == 1) {
-        if (byte_96884 == 64) {
+        if (last_options_dead_time == 64) {
             set_xywhmap(TabW1[0], TabW2[0], TabH1[0], TabH2[0]);
             sprite_clipping(Bloc_lim_W1, Bloc_lim_W2, Bloc_lim_H1, Bloc_lim_H2);
             ++GoMenu;
@@ -464,9 +464,9 @@ void DO_OPTIONS_IN_GAME(void) {
         if ((num_world == 6 && num_level == 4) || is_fee) {
             SizeScreen = SizeScreen_saved;
         }
-        byte_96884 = dead_time;
-        button_released = button_released_saved;
     }
+    last_options_dead_time = dead_time;
+    button_released = button_released_saved;
 }
 
 //49E98

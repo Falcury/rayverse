@@ -90,7 +90,7 @@ void setMereDenisAtScrollBorder(obj_t* obj, u8 flip_x) {
 
 //50DA4
 void setCirclePointToReach(obj_t* obj) {
-    bossXToReach = circle_x + (sinus(circleIndex) * 100) / 512;
+    bossXToReach = circleX + (sinus(circleIndex) * 100) / 512;
     bossYToReach = circleY + (cosinus(circleIndex) * 60) / 512;
     circleIndex += 4;
     if (circleIndex < 512) { circleIndex += 4;
@@ -482,9 +482,9 @@ void prepareNewMereDenisAttack(obj_t* smama_obj) {
 
             case 8:
                 swapMereDenisCollZones(smama_obj, 1);
-                    circleIndex = 4;
-                circle_x = smama_obj->x;
-                    circleY = smama_obj->y - 60;
+                circleIndex = 4;
+                circleX = smama_obj->x;
+                circleY = smama_obj->y - 60;
                 setCirclePointToReach(smama_obj);
                 setBossReachingSpeeds(smama_obj, 1, 0xFF, 0xFF);
                 bossReachingTimer = 1;

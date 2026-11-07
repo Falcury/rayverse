@@ -2059,15 +2059,15 @@ extern rgb_t PalPlasma[16] INIT(= {
         {45, 15, 48}, {40, 15, 51}, {35, 12, 53}, {35, 10, 56},
         {32, 7, 58}, {30, 5, 61}, {27, 5, 61}, {32, 7, 63},
 });
-extern s16 word_95FA0 INIT(= 0); //95FA0
-extern s16 word_95FA2 INIT(= 0); //95FA2
-extern s16 word_95FA4 INIT(= 0); //95FA4
-extern s16 word_95FA6 INIT(= 0); //95FA6
-extern s16 word_95FA8 INIT(= 0); //95FA8
-extern s16 word_95FAA INIT(= 0); //95FAA
-extern s16 word_95FAC INIT(= 0); //95FAC
-extern s16 word_95FAE INIT(= 0); //95FAE
-extern s16 word_95FB0 INIT(= 0); //95FB0
+extern s16 plasma_layer2_phase_x INIT(= 0); //95FA0
+extern s16 plasma_layer2_phase_y INIT(= 0); //95FA2
+extern s16 plasma_layer1_phase_x INIT(= 0); //95FA4
+extern s16 plasma_layer1_phase_y INIT(= 0); //95FA6
+extern s16 plasma_layer3_phase_x INIT(= 0); //95FA8
+extern s16 plasma_layer3_phase_y INIT(= 0); //95FAA
+extern s16 plasma_layer4_phase_x INIT(= 0); //95FAC
+extern s16 plasma_layer4_phase_y INIT(= 0); //95FAE
+extern s16 plasma_color_phase INIT(= 0); //95FB0
 
 //95FB2
 extern rgb_t PalFire[16] INIT(= {
@@ -2271,7 +2271,7 @@ extern u8 (*TEST_KEY_BUTTON0)(void) INIT(= TestKeyWeapon); //967BC
 extern u8 (*TEST_KEY_BUTTON1)(void) INIT(= TestKeyJump); //967C0
 extern u8 (*TEST_KEY_BUTTON2)(void) INIT(= TestKeyAction); //967C4
 extern u8 (*TEST_KEY_BUTTON3)(void) INIT(= TestKeyAction); //967C8
-extern u8 byte_967CC INIT(= 0); //967CC
+extern u8 keyboard_pause_sequence_state INIT(= 0); //967CC
 extern s32 XSpeedJumelle INIT(= 0); //967D0
 extern s32 YSpeedJumelle INIT(= 0); //967D4
 
@@ -2288,7 +2288,7 @@ extern u8 msg_box_being_displayed INIT(= 0); //96880
 extern u8 first_option INIT(= 0); //96881
 extern u8 yesno_finished INIT(= 0); //96882
 extern u8 restore_saved_options INIT(= 0); //96883
-extern u8 byte_96884 INIT(= 64); //96884
+extern u8 last_options_dead_time INIT(= 64); //96884
 
 //96888
 extern const char* key_descriptions_azerty[128] INIT(= {
@@ -2967,7 +2967,7 @@ extern u8 heat_wave_phase; //BD948
 extern s16 skops_ray_speed_x[8] INIT(= {4, 2, 0, -2, -4, 2, 0, -2}); //BD94C
 extern s16 skops_ray_speed_y[8] INIT(= {0, 2, 4, 2, 0, -2, -4, -2}); //BD95C
 
-extern s32 dword_BD96C; //BD96C
+extern s32 seed_plant_latched; //BD96C
 
 extern big_map_t BIG_MAP; //C21D8
 extern u8* Scroll_Masque[20]; //C21F8
@@ -3268,11 +3268,11 @@ extern s16 plan0_width; //CF7DE
 extern s16 yp0; //CF7E0
 extern s16 plan2_height; //CF7E2
 extern s16 plan0_height; //CF7E4
-extern s16 word_CF7E6; //CF7E6
+extern s16 game_frame_wait_ticks; //CF7E6
 extern s16 display_mode; //CF7E8
 extern s16 fade_speed; //CF7EA
-extern s16 word_CF7EE; //CF7EE
-extern s16 word_CF7F0; //CF7F0
+extern s16 refresh_wait_ticks; //CF7EE
+extern s16 refresh_period_ticks; //CF7F0
 extern s16 joy_buttonB1; //CF7F2
 extern s16 joy_buttonB2; //CF7F4
 extern s16 joy_buttonA1; //CF7F6
@@ -3429,10 +3429,10 @@ extern u8 is_joypad_mode; //CFA23 //? may be Mode_Pad instead
 extern u8 type_fndscrX; //CFA24
 extern u8 NumCard; //CFA25
 extern u8 TheProcesseur; //CFA26
-extern u8 drm_byte_CFA27; //CFA27
+extern u8 cdrom_drive_letter; //CFA27
 extern u8 VideoBiosCheckSum; //CFA28
-extern u8 byte_CFA29; //CFA29
-extern u8 byte_CFA2A; //CFA2A
+extern u8 mscdex_version_ok; //CFA29
+extern u8 cdrom_launch_drive_matches; //CFA2A
 extern u8 BiosCheckSum; //CFA2B
 extern u8 JeuCracker; //CFA2C
 extern u8 PositionStageNameCalcule; //CFA2D
@@ -3564,18 +3564,18 @@ extern char bonus_time_display_text[20]; //D0014
 extern obj_t* dword_D0028; //D0028
 
 extern s16 p1[21000]; //D002C
-extern u8 byte_DA43C[128*128]; //DA43C
+extern u8 plasma_radial_lut[128 * 128]; //DA43C
 extern rgb_palette_t MenuPalette; //DE43C
 extern u8 plasma_palette_color_index; //DE73C
 
-extern u16 word_DE73E; //DE73E
-extern u16 word_DE740; //DE740
-extern u16 word_DE742; //DE742
-extern u16 word_DE744; //DE744
-extern u16 word_DE746; //DE746
-extern u16 word_DE748; //DE748
-extern u16 word_DE74A; //DE74A
-extern u16 word_DE74C; //DE74C
+extern u16 plasma_layer4_offset_y; //DE73E
+extern u16 plasma_layer4_offset_x; //DE740
+extern u16 plasma_layer3_offset_y; //DE742
+extern u16 plasma_layer3_offset_x; //DE744
+extern u16 plasma_layer2_offset_y; //DE746
+extern u16 plasma_layer2_offset_x; //DE748
+extern u16 plasma_layer1_offset_y; //DE74A
+extern u16 plasma_layer1_offset_x; //DE74C
 
 extern s16 old_num_world_choice; //DE80C
 extern s16 old_num_level_choice; //DE80E
@@ -3591,7 +3591,7 @@ extern s16 YOFFSETCB; //DE820
 extern s16 XOFFSETCBLEFT; //DE822
 extern u8 nb_collis; //DE824
 
-extern s16 word_DE8BC; //DE8BC
+extern s16 cdrom_last_result; //DE8BC
 extern u8 byte_DEEFB; //DEEFB
 
 extern u8 sav_checksum; //DF70C
@@ -3699,9 +3699,9 @@ extern s16 joy_up_threshold; //E0CCC
 extern s16 joy_rec_left; //E0CCE
 extern s16 word_E0CD0; //E0CD0
 extern s16 joy_down_threshold; //E0CD2
-extern s16 word_E0CD4; //E0CD4
+extern s16 joy_center_x; //E0CD4
 extern s16 joy_right_threshold; //E0CD6
-extern s16 word_E0CD8; //E0CD8
+extern s16 joy_center_y; //E0CD8
 extern s32 PositionJumelleDemandeY; //E0CDC
 extern s32 PositionJumelleDemandeX; //E0CE0
 extern s32 PositionJumelleY16; //E0CE4
@@ -3716,7 +3716,7 @@ extern s32* DistPointY; //E0D04
 extern s32* DistPointX; //E0D08
 extern s32 CompteurJumelle; //E0D0C
 extern s32* ExpPoint; //E0D10
-extern s32 dword_E0D14; //E0D14
+extern s32 vignette_scanline_wipe_state; //E0D14
 extern obj_t wldobj[100]; //E0D18
 extern u8 sp_y; //E40A9
 
@@ -3775,7 +3775,7 @@ extern u8 fistAvoided; //E4DA1
 extern u8 mstMustLeaveScreenToProceed; //E4DA2
 extern s16 ot; //E4DA4
 extern u8 oldPrio; //E4DA6
-extern u32 dword_E4DA8; //E4DA8
+extern u32 vignette_rotating_plane_state; //E4DA8
 extern couteaux_info_t CouteauxInfos[5]; //E4DAC
 extern s16 cou_tempo; //E4E10
 extern s16 pma_tempo; //E4E12

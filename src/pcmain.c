@@ -335,7 +335,7 @@ void PcMain(void) {
                 init_moustique();
                 InitPaletteSpecialPC(); //TODO
 
-                if (byte_CFA2A != 0) {
+                if (cdrom_launch_drive_matches != 0) {
                     fade_out(2, &rvb_plan3);
                 }
 

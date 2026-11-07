@@ -333,7 +333,7 @@ void DO_PERFECT_BONUS_MAP(void);
 // box.c
 void CalcTab(void);
 void InitPlasma(u8 need_set_palette);
-void Plasma(s16 x, s16 y, s16 width, s16 height, u8 a5, u8 a6, u8 a7, u8 a8, u8 a9, u8 a10, u8 a11, u8 a12, u8 a13);
+void Plasma(s16 x, s16 y, s16 width, s16 height, u8 layer1_offset_x, u8 layer1_offset_y, u8 layer2_offset_x, u8 layer2_offset_y, u8 layer3_offset_x, u8 layer3_offset_y, u8 layer4_offset_x, u8 layer4_offset_y, u8 color_phase);
 void PlasmaBox(s16 x, s16 y, s16 width, s16 height, u8 a5);
 void InitFire(void);
 void Fire(s16 x, s16 y, s16 width, s16 height);

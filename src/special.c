@@ -714,12 +714,12 @@ void DO_GROWING_PLATFORM(void) {
     obj_t* oldest_obj;
     u8 main_etat; u8 sub_etat;
 
-    if (dword_BD96C != true)
-        dword_BD96C = false;
+    if (seed_plant_latched != true)
+        seed_plant_latched = false;
 
     if (ray.anim_frame == ray.animations[ray.anim_index].frames_count - 1)
     {
-        if (dword_BD96C == false)
+        if (seed_plant_latched == false)
         {
             oldest_obj = oldest_planted();
             if (oldest_obj->is_active) {
@@ -738,11 +738,11 @@ void DO_GROWING_PLATFORM(void) {
             oldest_obj->x = (ray.x + ray.offset_bx) - oldest_obj->offset_bx;
             oldest_obj->y = (ray.y + ray.offset_by) - oldest_obj->offset_by;
             calc_obj_pos(oldest_obj);
-            dword_BD96C = true;
+            seed_plant_latched = true;
         }
     }
     else
-        dword_BD96C = false;
+        seed_plant_latched = false;
 }
 
 //7B29C

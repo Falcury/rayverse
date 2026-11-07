@@ -398,7 +398,7 @@ s16 WORLD_CHOICE(u32 a1) {
     PC_do_cheats_in_world_map();
     s32 next_clock_target = 0;
     if (need_timer) {
-        next_clock_target = word_CF7EE + a1;
+        next_clock_target = refresh_wait_ticks + a1;
     }
 
     DO_RAYMAN_IN_WLD_MAP();
@@ -1159,7 +1159,7 @@ void DEPART_LEVEL(void) {
     num_level = num_level_choice;
     if (!fin_du_jeu) {
 
-        if (byte_CFA2A) {
+        if (cdrom_launch_drive_matches) {
             s16 text_x = 160;
             s16 text_y = 190;
             if (get_casse_brique_active()) {

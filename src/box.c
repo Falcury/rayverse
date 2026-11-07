@@ -1,11 +1,12 @@
 
 //23F30
 void CalcTab(void) {
-    u8* row = byte_DA43C;
+    u8* row = plasma_radial_lut;
     for (s32 j = 64; j > -64; --j) {
         u8* pos = row;
         for (s32 i = 64; i > -64; --i) {
-            double v = sin(sqrt(j*j + i*i) / 9.5);
+            u8 radius = (u8)sqrt(j*j + i*i);
+            double v = sin(radius * (1.0 / 9.5));
             *pos++ = (u8)((v + 1.0) * 40.0);
         }
         row += 128;
@@ -29,19 +30,25 @@ void InitPlasma(u8 need_set_palette) {
 }
 
 //24068
-void Plasma(s16 x, s16 y, s16 width, s16 height, u8 a5, u8 a6, u8 a7, u8 a8, u8 a9, u8 a10, u8 a11, u8 a12, u8 a13) {
+void Plasma(s16 x, s16 y, s16 width, s16 height,
+            u8 layer1_offset_x, u8 layer1_offset_y,
+            u8 layer2_offset_x, u8 layer2_offset_y,
+            u8 layer3_offset_x, u8 layer3_offset_y,
+            u8 layer4_offset_x, u8 layer4_offset_y,
+            u8 color_phase
+) {
     u8* row = draw_buffer + 320 * y + x;
-    u32 v17 = a6 | (a8 << 8) | (a10 << 16) | (a12 << 24);
+    u32 v17 = layer1_offset_y | (layer2_offset_y << 8) | (layer3_offset_y << 16) | (layer4_offset_y << 24);
     for (s32 j = 0; j < height; ++j) {
         v17 = (v17 + 0x01010101) & 0x7F7F7F7F;
-        u32 v18 = a5 | (a7 << 8) | (a9 << 16) | (a11 << 24);
+        u32 v18 = layer1_offset_x | (layer2_offset_x << 8) | (layer3_offset_x << 16) | (layer4_offset_x << 24);
         u8* pos = row;
         for (s32 i = 0; i < width; ++i) {
             v18 = (v18 + 0x01010101) & 0x7F7F7F7F;
-            u8 v22 = a13 + byte_DA43C[128 * (u8)v17 + (u8)v18];
-            v22 += byte_DA43C[128 * (u8)(v17 >> 8) + (u8)(v18 >> 8)];
-            v22 += byte_DA43C[128 * (u8)(v17 >> 16) + (u8)(v18 >> 16)];
-            v22 += byte_DA43C[128 * (u8)(v17 >> 24) + (u8)(v18 >> 24)];
+            u8 v22 = color_phase + plasma_radial_lut[128 * (u8)v17 + (u8)v18];
+            v22 += plasma_radial_lut[128 * (u8)(v17 >> 8) + (u8)(v18 >> 8)];
+            v22 += plasma_radial_lut[128 * (u8)(v17 >> 16) + (u8)(v18 >> 16)];
+            v22 += plasma_radial_lut[128 * (u8)(v17 >> 24) + (u8)(v18 >> 24)];
             v22 >>= 4;
             v22 += plasma_palette_color_index;
             *pos++ = v22;
@@ -53,23 +60,23 @@ void Plasma(s16 x, s16 y, s16 width, s16 height, u8 a5, u8 a6, u8 a7, u8 a8, u8 
 //241FC
 void PlasmaBox(s16 x, s16 y, s16 width, s16 height, u8 a5) {
     if (a5 != 0) {
-        word_95FA0 += 1;
-        word_95FA2 -= 2;
-        word_95FA4 += 1;
-        word_95FA6 -= 2;
-        word_95FA8 += 3;
-        word_95FAA -= 2;
-        word_95FAC += 1;
-        word_95FAE -= 3;
-        word_95FB0 += 5;
-        word_DE748 = (sinus(word_95FA0) + 32) >> 4;
-        word_DE746 = (cosinus(word_95FA2) + 32) >> 4;
-        word_DE74C = (cosinus(word_95FA4) + 32) >> 4;
-        word_DE74A = (sinus(word_95FA6) + 32) >> 4;
-        word_DE744 = (cosinus(word_95FA8) + 32) >> 4;
-        word_DE742 = (sinus(word_95FAA) + 32) >> 4;
-        word_DE740 = (cosinus(word_95FAC) + 32) >> 4;
-        word_DE73E = (sinus(word_95FAE) + 32) >> 4;
+        plasma_layer2_phase_x += 1;
+        plasma_layer2_phase_y -= 2;
+        plasma_layer1_phase_x += 1;
+        plasma_layer1_phase_y -= 2;
+        plasma_layer3_phase_x += 3;
+        plasma_layer3_phase_y -= 2;
+        plasma_layer4_phase_x += 1;
+        plasma_layer4_phase_y -= 3;
+        plasma_color_phase += 5;
+        plasma_layer2_offset_x = (sinus(plasma_layer2_phase_x) + 32) >> 4;
+        plasma_layer2_offset_y = (cosinus(plasma_layer2_phase_y) + 32) >> 4;
+        plasma_layer1_offset_x = (cosinus(plasma_layer1_phase_x) + 32) >> 4;
+        plasma_layer1_offset_y = (sinus(plasma_layer1_phase_y) + 32) >> 4;
+        plasma_layer3_offset_x = (cosinus(plasma_layer3_phase_x) + 32) >> 4;
+        plasma_layer3_offset_y = (sinus(plasma_layer3_phase_y) + 32) >> 4;
+        plasma_layer4_offset_x = (cosinus(plasma_layer4_phase_x) + 32) >> 4;
+        plasma_layer4_offset_y = (sinus(plasma_layer4_phase_y) + 32) >> 4;
     }
     x -= 3;
     y -= 3;
@@ -87,7 +94,12 @@ void PlasmaBox(s16 x, s16 y, s16 width, s16 height, u8 a5) {
     } else if (y + height > 200) {
         height = 200 - y;
     }
-    Plasma(x, y, width, height, word_DE74C, word_DE74A, word_DE748, word_DE746, word_DE744, word_DE742, word_DE740, word_DE73E, word_95FB0);
+    Plasma(x, y, width, height,
+           plasma_layer1_offset_x, plasma_layer1_offset_y,
+           plasma_layer2_offset_x, plasma_layer2_offset_y,
+           plasma_layer3_offset_x, plasma_layer3_offset_y,
+           plasma_layer4_offset_x, plasma_layer4_offset_y,
+           plasma_color_phase);
 }
 
 //243E0
