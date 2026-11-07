@@ -85,8 +85,8 @@ void sub_38064(void) {
 }
 
 //38074
-void sub_38074(void) {
-    print_once("Not implemented: sub_38074"); //stub
+u8 ChooseRandomPausePlaneVariant(void) {
+    return (u8)(myRand(6) + 1);
 }
 
 /* 380A4-38290: PC-only world-vignette transition subsystem.
@@ -262,10 +262,10 @@ static float vignette_edge(float ax, float ay, float bx, float by, float px, flo
  * The DOS routine scan-converts affine texture coordinates into an 8-bit
  * framebuffer. Two triangles give equivalent geometry without retaining the
  * VGA-specific edge tables and self-modifying inner loops. */
-static void draw_vignette_textured_triangle(const vignette_projected_vertex_t* a,
+static void draw_vignette_textured_triangle(const world_vignette_transition_t* transition,
+                                             const vignette_projected_vertex_t* a,
                                              const vignette_projected_vertex_t* b,
                                              const vignette_projected_vertex_t* c) {
-    world_vignette_transition_t* transition = &world_vignette_transition;
     float area = vignette_edge(a->x, a->y, b->x, b->y, c->x, c->y);
     if ((float)fabs(area) < 0.01f) {
         return;
@@ -295,12 +295,13 @@ static void draw_vignette_textured_triangle(const vignette_projected_vertex_t* a
     }
 }
 
-static void draw_vignette_textured_quad(const vignette_projected_vertex_t* top_left,
+static void draw_vignette_textured_quad(const world_vignette_transition_t* transition,
+                                         const vignette_projected_vertex_t* top_left,
                                          const vignette_projected_vertex_t* top_right,
                                          const vignette_projected_vertex_t* bottom_right,
                                          const vignette_projected_vertex_t* bottom_left) {
-    draw_vignette_textured_triangle(top_left, top_right, bottom_right);
-    draw_vignette_textured_triangle(top_left, bottom_right, bottom_left);
+    draw_vignette_textured_triangle(transition, top_left, top_right, bottom_right);
+    draw_vignette_textured_triangle(transition, top_left, bottom_right, bottom_left);
 }
 
 static bool project_vignette_vertex(const vignette_vertex_t* source,
@@ -472,7 +473,7 @@ static void render_vignette_tile_grid(void) {
                                                 &projected[corner]);
         }
         if (can_draw) {
-            draw_vignette_textured_quad(&projected[0], &projected[1], &projected[2], &projected[3]);
+            draw_vignette_textured_quad(&world_vignette_transition, &projected[0], &projected[1], &projected[2], &projected[3]);
         }
         tile->angle_x += tile->angular_velocity_x;
         tile->angle_y += tile->angular_velocity_y;
@@ -620,7 +621,7 @@ static void render_vignette_radial_warp(void) {
 
     for (s32 row = 0; row < VIGNETTE_RADIAL_ROWS; ++row) {
         for (s32 column = 0; column < VIGNETTE_RADIAL_COLUMNS; ++column) {
-            draw_vignette_textured_quad(&vertices[row][column], &vertices[row][column + 1],
+            draw_vignette_textured_quad(&world_vignette_transition, &vertices[row][column], &vertices[row][column + 1],
                                          &vertices[row + 1][column + 1], &vertices[row + 1][column]);
         }
     }
@@ -675,7 +676,7 @@ static void render_vignette_sphere_cells(
     for (s32 cell_index = 0; cell_index < cell_count; ++cell_index) {
         s32 row = cells[cell_index].row;
         s32 column = cells[cell_index].column;
-        draw_vignette_textured_quad(&vertices[row][column], &vertices[row][column + 1],
+        draw_vignette_textured_quad(&world_vignette_transition, &vertices[row][column], &vertices[row][column + 1],
                                      &vertices[row + 1][column + 1], &vertices[row + 1][column]);
     }
 }
@@ -783,8 +784,7 @@ static void render_vignette_sphere_tumble(void) {
     }
 }
 
-static void render_vignette_rotating_plane(void) {
-    world_vignette_transition_t* transition = &world_vignette_transition;
+static void render_vignette_rotating_plane(world_vignette_transition_t* transition, s32 rotation_step) {
     float angle_x = 0.0f;
     float angle_y = 0.0f;
     float angle_z = 0.0f;
@@ -798,16 +798,16 @@ static void render_vignette_rotating_plane(void) {
     s32 maximum = edge_rotation ? 132 : 512;
 
     switch (transition->variant) {
-        case 1: velocity_x = (float)(step * 2); break;
-        case 2: velocity_y = (float)step; break;
-        case 3: velocity_z = (float)step; break;
-        case 4: velocity_x = (float)(step * 2); velocity_y = (float)step; break;
-        case 5: velocity_y = (float)(step * 2); velocity_z = (float)step; break;
-        case 6: velocity_x = (float)(step * 2); velocity_z = (float)step; break;
+        case 1: velocity_x = (float)(rotation_step * 2); break;
+        case 2: velocity_y = (float)rotation_step; break;
+        case 3: velocity_z = (float)rotation_step; break;
+        case 4: velocity_x = (float)(rotation_step * 2); velocity_y = (float)rotation_step; break;
+        case 5: velocity_y = (float)(rotation_step * 2); velocity_z = (float)rotation_step; break;
+        case 6: velocity_x = (float)(rotation_step * 2); velocity_z = (float)rotation_step; break;
         case 7:
-            velocity_x = (float)(step * 2);
-            velocity_y = (float)(step * 3);
-            velocity_z = (float)step;
+            velocity_x = (float)(rotation_step * 2);
+            velocity_y = (float)(rotation_step * 3);
+            velocity_z = (float)rotation_step;
             break;
         case 8:
             angle_x = step > 0 ? 512.0f : 384.0f;
@@ -876,8 +876,8 @@ static void render_vignette_rotating_plane(void) {
         rotate_vignette_vertex(&vertex, angle_x, angle_y, angle_z);
         project_vignette_vertex(&vertex, pivot_x, pivot_y, camera_distance, &projected[point]);
     }
-    draw_vignette_textured_quad(&projected[0], &projected[4], &projected[5], &projected[1]);
-    draw_vignette_textured_quad(&projected[4], &projected[3], &projected[2], &projected[5]);
+    draw_vignette_textured_quad(transition, &projected[0], &projected[4], &projected[5], &projected[1]);
+    draw_vignette_textured_quad(transition, &projected[4], &projected[3], &projected[2], &projected[5]);
 }
 
 static void render_vignette_bouncing_saddle_lens(void) {
@@ -1128,7 +1128,7 @@ static void render_world_vignette_transition(void) {
             render_vignette_sphere_tumble();
             break;
         case VIGNETTE_EFFECT_ROTATING_PLANE:
-            render_vignette_rotating_plane();
+            render_vignette_rotating_plane(transition, transition->opening ? -4 : 4);
             break;
         case VIGNETTE_EFFECT_BOUNCING_SADDLE_LENS:
             render_vignette_bouncing_saddle_lens();
@@ -1277,39 +1277,241 @@ void FreeWorldVignetteTransition(void) {
 }
 
 //382AC
-void SaveScreen(u8* a1, u8* a2) {
-    print_once("Not implemented: SaveScreen"); //stub
+void SaveScreen(const u8* source, u8* dest) {
+    // Rayverse's buffers are linear, including the fallback for PC Mode X.
+    if (source != NULL && dest != NULL) {
+        memmove(dest, source, SCREEN_WIDTH * SCREEN_HEIGHT);
+    }
 }
 
 //38320
-void RestoreScreen(u8* a1, u8* a2) {
-    print_once("Not implemented: RestoreScreen"); //stub
+void RestoreScreen(const u8* source, u8* dest) {
+    SaveScreen(source, dest);
 }
 
 //3839C
 void DO_AFFICHE_PAUSE(void) {
-    print_once("Not implemented: DO_AFFICHE_PAUSE"); //stub
+    s32 xmin, xmax, ymin, ymax;
+    get_sprite_clipping(&xmin, &xmax, &ymin, &ymax);
+    sprite_clipping(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT);
+    display_text(language_txt[160], SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 2, 1);
+    sprite_clipping(xmin, xmax, ymin, ymax);
 }
 
 //38400
 s16 dummy_prg(u32 a1) {
-    print_once("Not implemented: dummy_prg");
-    return 0; //stub
+    (void)a1;
+    return 1;
+}
+
+typedef struct pause_effect_t {
+    world_vignette_transition_t plane;
+    // Portable renderer/callback state; recovered PC globals live in data.c.
+    s16 simple_frames;
+    s16 simple_shift_frames;
+    bool waiting_for_shift;
+} pause_effect_t;
+
+static pause_effect_t pause_effect;
+
+static bool pause_shifts_held(void) {
+    return TOUCHE(SC_LSHIFT) && TOUCHE(SC_RSHIFT);
+}
+
+static void restore_pause_picture(void) {
+    RestoreScreen(pause_effect.plane.source, pause_effect.plane.output);
+}
+
+static s16 pause_simple_prg(u32 timer) {
+    (void)timer;
+    if (FondAutorise == 2) {
+        // The original FondAutorise == 2 fallback waits twelve retraces first.
+        if (pause_effect.simple_frames > 0) {
+            --pause_effect.simple_frames;
+            return 0;
+        }
+        return !in_pause;
+    }
+    if (!in_pause) {
+        restore_pause_picture();
+        return 1;
+    }
+    if (pause_shifts_held()) {
+        ++pause_effect.simple_shift_frames;
+    }
+    --pause_effect.simple_frames;
+    if (pause_effect.simple_frames == 0 || pause_effect.simple_shift_frames > 7) {
+        if (pause_effect.simple_shift_frames != 0) {
+            effect_pause_bloque ^= 1;
+            restore_pause_picture();
+            if (!effect_pause_bloque) {
+                DO_AFFICHE_PAUSE();
+            }
+        }
+        pause_effect.simple_frames = 15;
+        pause_effect.simple_shift_frames = 0;
+        PC_do_cheats();
+    }
+    return 0;
 }
 
 //38408
 void Do_Effect_Pause_Simple(void) {
-    print_once("Not implemented: Do_Effect_Pause_Simple"); //stub
+    restore_pause_picture();
+    DO_AFFICHE_PAUSE();
+    pause_effect.simple_frames = FondAutorise == 2 ? 12 : 15;
+    pause_effect.simple_shift_frames = 0;
+    SYNCHRO_LOOP(pause_simple_prg);
+    restore_pause_picture();
+}
+
+static void build_pause_plane(void) {
+    pause_effect.plane.variant = ChooseRandomPausePlaneVariant();
+    pause_effect.plane.frame = 0;
+    /* PC BuildWorldVignetteRotatingPlane negates effect_speed internally.
+     * Negative input therefore recedes; positive input approaches the viewer.
+     * Rotation velocities for variants 1..7 are positive on both passes. */
+    pause_effect.plane.opening = effect_speed > 0;
+}
+
+static void advance_pause_plane(void) {
+    render_vignette_rotating_plane(&pause_effect.plane, 4);
+    ++pause_effect.plane.frame;
+    // PC Update renders counters 0,4,...,512 and then returns zero.
+    pause_counter = pause_effect.plane.frame <= 128 ? pause_effect.plane.frame * 4 : 0;
 }
 
 //38574
-void Do_Effect_Pause_unknown(void) {
-    print_once("Not implemented: Do_Effect_Pause_unknown"); //stub
+s16 pause_prg(u32 timer) {
+    (void)timer;
+    PC_do_cheats();
+    if (!in_pause) {
+        restore_pause_picture();
+        return 1;
+    }
+    if (pause_intro_frames < 7 * VGA_FREQ) {
+        ++pause_intro_frames;
+        restore_pause_picture();
+        if (pause_shifts_held()) {
+            if (++pause_counter >= 5) {
+                effect_pause_bloque ^= 1;
+                pause_counter = 0;
+            }
+        } else {
+            pause_counter = 0;
+        }
+        if (!effect_pause_bloque) {
+            DO_AFFICHE_PAUSE();
+        }
+        return 0;
+    }
+    if (pause_intro_frames == 7 * VGA_FREQ) {
+        ++pause_intro_frames;
+        pause_delay_frames = 0;
+        pause_counter = 0;
+        effect_pause_bloque = 0;
+    }
+
+    if (pause_effect.waiting_for_shift) {
+        // Replace the original busy wait with one event-pumping frame per tick.
+        if (pause_shifts_held()) {
+            pause_effect.waiting_for_shift = false;
+            effect_pause_bloque = 0;
+            pause_delay_frames = 0;
+            pause_counter = 0;
+            effect_speed = -4;
+            build_pause_plane();
+        }
+        return 0;
+    }
+
+    if (!effect_pause_bloque) {
+        if (pause_counter >= 20 && pause_shifts_held()) {
+            effect_pause_bloque = 1;
+        }
+        // PC finishes this unblocked branch even when Shift sets the latch.
+        if (pause_delay_frames != 0) {
+            --pause_delay_frames;
+            return 0;
+        }
+        advance_pause_plane();
+        DO_AFFICHE_PAUSE();
+        if (pause_counter == 0) {
+            effect_speed = -effect_speed;
+            build_pause_plane();
+            if (effect_speed < 0) {
+                restore_pause_picture();
+                DO_AFFICHE_PAUSE();
+                pause_delay_frames = VGA_FREQ;
+            }
+        }
+    } else if (pause_counter != 0 || effect_speed >= 0) {
+        // Finish returning the plane to its full-size image, without text.
+        advance_pause_plane();
+        if (pause_counter == 0) {
+            effect_speed = -effect_speed;
+            build_pause_plane();
+        }
+    } else {
+        restore_pause_picture();
+        pause_effect.waiting_for_shift = true;
+    }
+    return 0;
 }
 
 //38924
 void Do_Effect_Pause(void) {
-    print_once("Not implemented: Do_Effect_Pause"); //stub
+    if (draw_buffer == NULL) {
+        in_pause = 0;
+        MapTimePause = 0;
+        return;
+    }
+    memset(&pause_effect, 0, sizeof(pause_effect));
+    pause_intro_frames = 0;
+    pause_delay_frames = 0;
+    pause_counter = 0;
+    effect_pause_bloque = 0;
+    const bool freeze_sound = CarteSonAutorisee != 0;
+    const bool resume_music = MusicCdActive && is_ogg_playing;
+    if (freeze_sound) {
+        start_freeze_snd();
+    }
+    /* The PC pauses the CD and offsets its DOS playback timer on return.
+     * Holding the OGG decoder in place does both for our sample-based backend;
+     * stop_cd() would instead re-arm level music and restart the track. */
+    if (resume_music) {
+        is_ogg_playing = false;
+    }
+
+    u8* saved_screen = (u8*)malloc(SCREEN_WIDTH * SCREEN_HEIGHT);
+    pause_effect.plane.source = saved_screen != NULL ? saved_screen : EffetBufferNormal;
+    pause_effect.plane.output = draw_buffer;
+    // Rayverse presents draw_buffer directly; the DOS display buffer is stale.
+    SaveScreen(draw_buffer, pause_effect.plane.source);
+    // Android keeps only the simple pause. PC normal mode animates the scene;
+    // Mode X and failed effect allocation use the static fallback.
+    if (GameModeVideo == MODE_NORMAL && saved_screen != NULL) {
+        effect_speed = -4;
+        build_pause_plane();
+        SYNCHRO_LOOP(pause_prg);
+    } else {
+        Do_Effect_Pause_Simple();
+    }
+    restore_pause_picture();
+    free(saved_screen);
+    memset(&pause_effect, 0, sizeof(pause_effect));
+    pause_intro_frames = 0;
+    pause_delay_frames = 0;
+    pause_counter = 0;
+
+    if (resume_music) {
+        is_ogg_playing = true;
+    }
+    if (freeze_sound) {
+        stop_freeze_snd();
+    }
+    in_pause = 0;
+    MapTimePause = 0;
 }
 
 //38A30

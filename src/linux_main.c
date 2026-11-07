@@ -29,6 +29,14 @@ void toggle_fullscreen(SDL_Window* window) {
 }
 
 void linux_process_keyboard_event(SDL_Scancode scancode, bool is_down) {
+    if (scancode == SDL_SCANCODE_PAUSE) {
+        if (is_down) {
+            PC_keyboard_interrupt_handler(0xE1);
+            PC_keyboard_interrupt_handler(SC_CONTROL);
+            PC_keyboard_interrupt_handler(SC_NUMLOCK);
+        }
+        return;
+    }
     static u8 sdl_scancode_to_dos_scancode[256] = {
             0, 0, 0, 0, SC_A, SC_B, SC_C, SC_D, SC_E, SC_F,
             SC_G, SC_H, SC_I, SC_J, SC_K, SC_L, SC_M, SC_N, SC_O,
@@ -77,7 +85,9 @@ bool process_input(SDL_Window* window) {
         } else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window)) {
             global_app_state.running = false;
         } else if (event.type == SDL_KEYDOWN) {
-            linux_process_keyboard_event(event.key.keysym.scancode, true);
+            if (event.key.keysym.scancode != SDL_SCANCODE_PAUSE || !event.key.repeat) {
+                linux_process_keyboard_event(event.key.keysym.scancode, true);
+            }
         } else if (event.type == SDL_KEYUP) {
             linux_process_keyboard_event(event.key.keysym.scancode, false);
         }

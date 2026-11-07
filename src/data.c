@@ -2204,8 +2204,11 @@ extern u8 cheat_codes[327] INIT(= {
 
 extern u8 effect_choice; //964C9
 extern u8 byte_964CA; //964CA
-extern u8 effect_speed; //964CC
+extern s16 effect_speed; //964CC
 extern u8 effect_pause_bloque; //964CE
+extern s16 pause_intro_frames; //964D0: seven-second static introduction (provisional name).
+extern s16 pause_delay_frames; //964D2: one-second hold after returning flat (provisional name).
+extern s32 pause_counter; //964D4: Shift hold count, then plane counter (provisional name).
 
 extern u8 playing_intro_video INIT(= 0); //964DD
 

@@ -694,12 +694,13 @@ void DrawSpriteNormalNoClip(s32 x, s32 color, s32 y, vec2b_t size, u8* draw_buf,
     s32 sprite_width = size.x;
     u8* sprite_pos = image_data;
     while (draw_pos < draw_end) {
-        for (s32 i = 0; i < size.x; ++i) {
+        for (s32 i = 0; i < size.x;) {
             u8 c = sprite_pos[i];
             if (c < 160) {
                 draw_pos[i] = c;
+                ++i;
             } else {
-                i += (c - 160);
+                i += MAX(1, (s32)c - 160);
             }
         }
         sprite_pos += sprite_width;
@@ -715,12 +716,13 @@ void DrawSpriteNormal(s32 x, s32 color, s32 y, vec2b_t size, u8* draw_buf, u8* i
         s32 sprite_width = saved_sprite_width; // this was saved in clip_sprite_on_screen()
         u8* sprite_pos = image_data;
         while (draw_pos < draw_end) {
-            for (s32 i = 0; i < size.x; ++i) {
+            for (s32 i = 0; i < size.x;) {
                 u8 c = sprite_pos[i];
                 if (c < 160) {
                     draw_pos[i] = c;
+                    ++i;
                 } else {
-                    i += (c - 160);
+                    i += MAX(1, (s32)c - 160);
                 }
             }
             sprite_pos += sprite_width;
@@ -756,12 +758,13 @@ void DrawSpriteFlipNormalNoClip(s32 x, s32 color, s32 y, vec2b_t size, u8* draw_
     s32 sprite_width = size.x;
     u8* sprite_pos = image_data;
     while (draw_pos < draw_end) {
-        for (s32 i = 0; i < size.x; ++i) {
+        for (s32 i = 0; i < size.x;) {
             u8 c = sprite_pos[i];
             if (c < 160) {
                 draw_pos[size.x - i - 1] = c; // reverse order (flipped)
+                ++i;
             } else {
-                i += (c - 160);
+                i += MAX(1, (s32)c - 160);
             }
         }
         sprite_pos += sprite_width;
@@ -777,12 +780,13 @@ void DrawSpriteFlipNormal(s32 x, s32 color, s32 y, vec2b_t size, u8* draw_buf, u
         s32 sprite_width = saved_sprite_width; // this was saved in clip_sprite_on_screen()
         u8* sprite_pos = image_data;
         while (draw_pos < draw_end) {
-            for (s32 i = 0; i < size.x; ++i) {
+            for (s32 i = 0; i < size.x;) {
                 u8 c = sprite_pos[i];
                 if (c < 160) {
                     draw_pos[size.x - i - 1] = c; // reverse order (flipped)
+                    ++i;
                 } else {
-                    i += (c - 160);
+                    i += MAX(1, (s32)c - 160);
                 }
             }
             sprite_pos += sprite_width;

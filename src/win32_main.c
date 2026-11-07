@@ -70,6 +70,15 @@ void win32_get_window_dimension(HWND window, int* client_width, int* client_heig
 }
 
 void win32_process_keyboard_event(u32 vk_code, bool is_down) {
+    if (vk_code == VK_PAUSE) {
+        if (is_down) {
+            // Native events omit the DOS multi-byte Pause make sequence.
+            PC_keyboard_interrupt_handler(0xE1);
+            PC_keyboard_interrupt_handler(SC_CONTROL);
+            PC_keyboard_interrupt_handler(SC_NUMLOCK);
+        }
+        return;
+    }
     static u8 windows_code_to_dos_scancode[256] = {
             0, 0, 0, 0, 0, 0, 0, 0, SC_BACKSPACE, SC_TAB, 0, 0, 0, SC_ENTER, 0, 0,
             SC_LSHIFT, SC_CONTROL, SC_ALT, 0, SC_CAPSLOCK, 0, 0, 0, 0, 0, 0, SC_ESCAPE, 0, 0, 0, 0,

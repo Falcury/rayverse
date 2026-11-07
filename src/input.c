@@ -447,7 +447,7 @@ void PC_keyboard_interrupt_handler(u8 scancode) {
         } else {
             keyboard_pause_sequence_state = 0;
         }
-    } else if (scancode == 0xE0) {
+    } else if (scancode == 0xE1) { // PC Pause make sequence: E1 1D 45.
         keyboard_pause_sequence_state = 1;
     } else {
         v3 = 1;
