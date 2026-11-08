@@ -227,13 +227,26 @@ void display_bar_boss(obj_t* boss_obj) {
             unk_2 = (29 - init_hp) * unk_1;
             unk_3 = 20 - unk_2;
             disp_mode = 1;
-            display_sprite(poing_obj, 61,
-                           extra_x_offset + Bloc_lim_W1 - 4 + unk_3 - (init_hp - hp) * unk_1,
-                           (Bloc_lim_H2 - 19 - extra_y_offset),
-                           disp_mode);
-            display_sprite(poing_obj, 60,
-                           extra_x_offset + Bloc_lim_W1 - 4 + 20 - unk_2 + 1,
-                           (Bloc_lim_H2 - 20 - extra_y_offset), disp_mode);
+#ifdef FIX_BOSS_HEALTH_BAR_DRAWING_BUG
+            // NOTE: optional fix: this drawing bug is also present in the DOS version.
+            // PC shifts the full 29-slot sprites left and relies on the portrait
+            // to hide the surplus. Mr Stone's and Mr Skops' transparent outline leaves some
+            // of those slots exposed. Clip the bar at its intended start.
+            s32 xmin, xmax, ymin, ymax;
+            get_sprite_clipping(&xmin, &xmax, &ymin, &ymax);
+            s32 bar_left = get_proj_x(poing_obj->scale, extra_x_offset + Bloc_lim_W1 - 4 + 20);
+            if (MAX(xmin, bar_left) < xmax && ymin < ymax) {
+                sprite_clipping(MAX(xmin, bar_left), xmax, ymin, ymax);
+                display_sprite(poing_obj, 61,
+                               extra_x_offset + Bloc_lim_W1 - 4 + unk_3 - (init_hp - hp) * unk_1,
+                               (Bloc_lim_H2 - 19 - extra_y_offset),
+                               disp_mode);
+                display_sprite(poing_obj, 60,
+                               extra_x_offset + Bloc_lim_W1 - 4 + 20 - unk_2 + 1,
+                               (Bloc_lim_H2 - 20 - extra_y_offset), disp_mode);
+                sprite_clipping(xmin, xmax, ymin, ymax);
+            }
+#endif
 
             u8 sprite = 0;
             switch (boss_obj->type) {

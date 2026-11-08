@@ -4,6 +4,9 @@
 // Remove the 4-pixel-wide black bar on the left of the screen.
 #define FIX_BLACK_BAR_ON_THE_LEFT
 
+// Fix boss health bar rendering bug with Mr Stone and Mr Skops (yellow is visible behind transparent part of the boss portrait)
+#define FIX_BOSS_HEALTH_BAR_DRAWING_BUG
+
 // Older graphics cards might only work if the texture size is a power of two.
 // This could be relevant if you want to get Rayverse to work on Win9x on period-correct hardware.
 // If set, will use power-of-two sized textures (only applies to Windows in OpenGL 1.1/non-ImGui enabled mode)
