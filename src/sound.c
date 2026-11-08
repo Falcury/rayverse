@@ -12,39 +12,45 @@ u8 snd_sqrt_table[128] = {
 };
 
 
+// Portable music-file lookup, shared by numbered CD tracks and movie overrides.
+static ogg_t open_music_vorbis(const char* basename, bool looping) {
+    ogg_t result = {0};
+    char filename[512];
+    snprintf(filename, sizeof(filename), "Music/%s", basename);
+    mem_t* mem = read_entire_file(filename, false);
+    if (!mem) {
+        // GOG Rayman Forever may keep Music one directory above the game data.
+        snprintf(filename, sizeof(filename), "../Music/%s", basename);
+        mem = read_entire_file(filename, false);
+    }
+    if (!mem) {
+        // Also accept *.ogg files in the base data folder
+        mem = read_entire_file(basename, false);
+    }
+    if (mem) {
+        int error = 0;
+        stb_vorbis* decoder = stb_vorbis_open_memory(mem->data, mem->len, &error, NULL);
+        if (!decoder) {
+            free(mem);
+        } else {
+            result.decoder = decoder;
+            result.file = mem;
+            result.sample_count = stb_vorbis_stream_length_in_samples(decoder);
+            result.sample_rate = stb_vorbis_get_info(decoder).sample_rate;
+            result.looping = looping;
+        }
+    }
+    return result;
+}
+
 ogg_t open_cd_vorbis(s32 track_number, bool looping) {
-	ogg_t result = {0};
-	/* The conclusion movie requests physical CD track 21.  Not every digital
-	   release includes rayman21.ogg, but do not reject it before lookup when a
-	   complete disc extraction does provide that track. */
-    // TODO: What to do if the correct audio file is not present?
-    // The GOG release (as well as original PC Rayman 1.21) do not contain the CD tracks
-    // for the intro/outro movies.
-	if (track_number >= 2 && track_number <= 21) {
-		char filename[512];
-		snprintf(filename, sizeof(filename), "Music/rayman%02d.ogg", track_number);
-		mem_t* mem = read_entire_file(filename, false);
-		if (!mem) {
-			// Try to find a Music directory one level up (for GOG Rayman Forever version)
-			snprintf(filename, sizeof(filename), "../Music/rayman%02d.ogg", track_number);
-			mem = read_entire_file(filename, false);
-		}
-		if (mem) {
-			int error = 0;
-			stb_vorbis* decoder = stb_vorbis_open_memory(mem->data, mem->len, &error, NULL);
-			if (!decoder) {
-				free(mem);
-				return result; // TODO: failure condition
-			} else {
-				result.decoder = decoder;
-				result.file = mem;
-				result.sample_count = stb_vorbis_stream_length_in_samples(decoder);
-                result.looping = looping;
-				return result;
-			}
-		}
-	}
-	return result;
+    if (track_number >= 2 && track_number <= 20) {
+        char basename[32];
+        snprintf(basename, sizeof(basename), "rayman%02d.ogg", track_number);
+        return open_music_vorbis(basename, looping);
+    }
+    ogg_t result = {0};
+    return result;
 }
 
 void stop_ogg(ogg_t* ogg) {
@@ -65,16 +71,108 @@ void play_cd_track(s32 track_number, bool looping) {
 	MusicCdActive = true;
 }
 
+void play_movie_music(const char* movie_filename, s32 cd_track) {
+    // Rayverse extension: later PC/GOG releases omit the original movie CD
+    // audio. Prefer explicit movie tracks without remapping normal CD playback.
+    const char* basename = NULL;
+    if (strcasecmp(movie_filename, "intro.dat") == 0) {
+        basename = "intro.ogg";
+    } else if (strcasecmp(movie_filename, "conclu.dat") == 0) {
+        basename = "conclu.ogg";
+    }
+    if (basename) {
+        ogg_t movie_track = open_music_vorbis(basename, false);
+        if (movie_track.decoder) {
+            stop_ogg(&ogg_cd_track);
+            ogg_cd_track = movie_track;
+            is_ogg_playing = true;
+            MusicCdActive = true;
+            return;
+        }
+    }
+    // Missing or undecodable overrides retain the original numbered lookup.
+    if (cd_track > 0) {
+        play_cd_track(cd_track, false);
+    }
+}
+
 //float volume = 0.5f;
 
+static void rewind_ogg_resampler(ogg_t* ogg) {
+    stb_vorbis_seek_start(ogg->decoder);
+    ogg->resample_buffer_start = 0;
+    ogg->resample_buffer_count = 0;
+}
+
+static void play_ogg_resampled(game_sound_buffer_t* sound_buffer, ogg_t* ogg) {
+    const u32 output_rate = sound_buffer->samples_per_second;
+    const u64 end_position = (u64)ogg->sample_count * output_rate;
+    u32 output_index = 0;
+    if (output_rate == 0 || ogg->sample_rate == 0 || end_position == 0) {
+        is_ogg_playing = false;
+    } else {
+        for (; output_index < sound_buffer->sample_count; ++output_index) {
+            if (ogg->resample_position >= end_position) {
+                ogg->resample_position %= end_position;
+                rewind_ogg_resampler(ogg);
+                SetCompteurTrameAudio();
+                if (!ogg->looping) {
+                    ogg->resample_position = 0;
+                    is_ogg_playing = false;
+                    break;
+                }
+            }
+            u32 source_index = (u32)(ogg->resample_position / output_rate);
+            u32 next_index = MIN(source_index + 1, ogg->sample_count - 1);
+            while (next_index >= ogg->resample_buffer_start + ogg->resample_buffer_count) {
+                // Preserve the boundary sample for interpolation across decode blocks.
+                u32 carry = ogg->resample_buffer_count != 0;
+                if (carry) {
+                    u32 last = ogg->resample_buffer_count - 1;
+                    ogg->resample_buffer[0] = ogg->resample_buffer[2 * last];
+                    ogg->resample_buffer[1] = ogg->resample_buffer[2 * last + 1];
+                    ogg->resample_buffer_start += last;
+                }
+                s32 frames = stb_vorbis_get_samples_short_interleaved(ogg->decoder, 2,
+                        ogg->resample_buffer + 2 * carry,
+                        COUNT(ogg->resample_buffer) - 2 * carry);
+                ogg->resample_buffer_count = carry + frames;
+                if (frames == 0) {
+                    // An unexpectedly truncated stream must not spin in the refill loop.
+                    is_ogg_playing = false;
+                    goto silence_tail;
+                }
+            }
+            u32 index = source_index - ogg->resample_buffer_start;
+            u32 next = next_index - ogg->resample_buffer_start;
+            u32 fraction = (u32)(ogg->resample_position % output_rate);
+            for (u32 channel = 0; channel < 2; ++channel) {
+                s32 a = ogg->resample_buffer[2 * index + channel];
+                s32 b = ogg->resample_buffer[2 * next + channel];
+                sound_buffer->samples[2 * output_index + channel] =
+                        (s16)(a + (s64)(b - a) * fraction / output_rate);
+            }
+            ogg->resample_position += ogg->sample_rate;
+        }
+    }
+silence_tail:
+    memset(sound_buffer->samples + 2 * output_index, 0,
+           (sound_buffer->sample_count - output_index) * 2 * sizeof(s16));
+}
+
 void play_ogg(game_sound_buffer_t* sound_buffer, ogg_t* ogg) {
+    if (ogg->sample_rate != (u32)sound_buffer->samples_per_second) {
+        play_ogg_resampled(sound_buffer, ogg);
+        return;
+    }
 	s32 samples_requested = sound_buffer->sample_count;
 	s32 samples_filled = stb_vorbis_get_samples_short_interleaved(ogg->decoder, 2, sound_buffer->samples, samples_requested * 2);
 	if (samples_filled < samples_requested) {
 		s32 bytes_per_sample = sizeof(short) * 2;
 		s32 bytes_filled = samples_filled * bytes_per_sample;
 		s32 remaining_bytes = (samples_requested - samples_filled) * bytes_per_sample;
-		memset(sound_buffer->samples + bytes_filled, 0, remaining_bytes);
+		// bytes_filled is a byte offset, not an s16 sample index.
+		memset((u8*)sound_buffer->samples + bytes_filled, 0, remaining_bytes);
 		if (samples_filled == 0) {
             stb_vorbis_seek_start(ogg->decoder); // loop track (rewind to start)
             SetCompteurTrameAudio();

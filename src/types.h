@@ -139,6 +139,12 @@ typedef struct ogg_t {
 	mem_t* file;
 	u32 sample_count;
     bool looping;
+    u32 sample_rate;
+    // Streaming linear resampling for music that differs from the output rate.
+    u64 resample_position; // Source position in units of 1 / output sample rate.
+    u32 resample_buffer_start;
+    u32 resample_buffer_count;
+    s16 resample_buffer[2048]; // 1024 interleaved stereo frames, with one-frame carry.
 } ogg_t;
 
 

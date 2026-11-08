@@ -592,8 +592,8 @@ s32 MoviePlayInternal(const char* path, const char* filename, s32 cd_track, u8 l
     memset(&movie.palette, 0, sizeof(movie.palette));
     SetPaletteRGB8(&movie.palette, 0, 256);
 
-    if (music_enabled && cd_track > 0) {
-        play_cd_track(cd_track, false);
+    if (music_enabled) {
+        play_movie_music(filename, cd_track);
     }
 
     result = loop ? movie_play_loop(&movie) : movie_play_once(&movie);

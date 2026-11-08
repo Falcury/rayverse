@@ -1599,6 +1599,7 @@ void unlock_audio(void);
 void game_get_sound_samples(game_sound_buffer_t* output_buffer);
 s16 play_digi_snd(snd_t* snd);
 void play_cd_track(s32 track_number, bool looping);
+void play_movie_music(const char* movie_filename, s32 cd_track);
 void stop_cd_music(void);
 ogg_t open_cd_vorbis(s32 track_number, bool looping);
 void stop_ogg(ogg_t* ogg);
