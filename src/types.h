@@ -288,6 +288,20 @@ typedef struct sprite_t {
 	u8 flags;
 } sprite_t;
 
+typedef struct cb_brick_t {
+    s16 x, y;
+    s16 obj_id;
+    u8 type;
+    u8 padding;
+} cb_brick_t;
+
+typedef struct cb_collision_t {
+    s16 dx, dy;
+    u8 flip_x, flip_y;
+    u8 brick_index;
+    u8 padding;
+} cb_collision_t;
+
 typedef struct anim_layer_t {
 	u8 mirrored;
 	u8 x;

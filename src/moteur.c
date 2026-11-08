@@ -2765,7 +2765,7 @@ void DO_MOTEUR2(void) {
                 DO_MORT_DE_RAY();
             } break;
             case MODE_5_CASSE_BRIQUE: {
-                DO_RAY_CASSE_BRIQUE(); //TODO
+                DO_RAY_CASSE_BRIQUE();
             } break;
             default: {
                 // NOTE: ray_mode is set to negative when the free movement cheat is enabled.
